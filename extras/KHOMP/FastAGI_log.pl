@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 #
-# FastAGI_log.pl version 2.14 (KHOMP VERSION as of svn/trunk rev 3198)
+# FastAGI_log.pl version 2.14 (KHOMP VERSION as of svn/trunk rev 3553)
 # 
 # Experimental Deamon using perl Net::Server that runs as FastAGI to reduce load
 # replaces the following AGI scripts:
@@ -25,7 +25,7 @@
 # exten => h,1,DeadAGI(agi://127.0.0.1:4577/call_log--HVcauses--PRI-----NODEBUG-----${HANGUPCAUSE}-----${DIALSTATUS}-----${DIALEDTIME}-----${ANSWEREDTIME})
 # 
 #
-# Copyright (C) 2020  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
+# Copyright (C) 2022  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
 #
 # CHANGELOG:
 # 61010-1007 - First test build
@@ -85,8 +85,16 @@
 # 190626-1100 - Added more logging for Auto-Alt-Dial debug
 # 190709-2240 - Added Call Quota logging
 # 191001-1509 - Small fix for monitoring issue
-# 200210-1644 - Added KHOMP code
-# 200902-1611 - Fixed bug with khomp_end_call data
+# 200318-1054 - Added code for OpenSIPs CallerIDname
+# 210314-1015 - Added enhanced_disconnect_logging=2 option
+# 210606-1007 - Added TILTX features for pre-carrier call filtering
+# 210718-0358 - Fixes for 24-Hour Call Count Limits with standard Auto-Alt-Dialing
+# 210719-1521 - Added additional state override methods for call_limit_24hour
+# 210827-0936 - Added PJSIP compatibility
+# 210907-0841 - Added KHOMP code (install JSON::PP Perl module and remove '#UC#' in the code to enable)
+# 220103-1520 - Added timeout fix for manual dial calls, set the CAMPDTO dialplan variable
+# 220118-0937 - Added $ADB auto-alt-dial extra debug output option, fix for extended auto-alt-dial issue #1337
+# 220118-2207 - Added auto_alt_threshold campaign & list settings
 #
 
 # defaults for PreFork
@@ -97,6 +105,9 @@ $VARfastagi_log_max_spare_servers = '8';
 $VARfastagi_log_max_requests =	'1000';
 $VARfastagi_log_checkfordead =	'30';
 $VARfastagi_log_checkforwait =	'60';
+$DB=0;
+$DBX=0;
+$ADB=0;
 
 # default path to astguiclient configuration file:
 $PATHconf =		'/etc/astguiclient.conf';
@@ -185,7 +196,7 @@ use Net::Server;
 use vars qw(@ISA);
 use Net::Server::PreFork; # any personality will do
 @ISA = qw(Net::Server::PreFork);
-use Time::HiRes ('gettimeofday','usleep','sleep');  # necessary to have perl sleep command of less than one second
+use Time::HiRes ('tv_interval','gettimeofday','usleep','sleep');  # necessary to have perl sleep command of less than one second
 use Time::Local;
 
 # Needed for Khomp Integration
@@ -274,6 +285,7 @@ sub process_request
 
 	if (!$VARDB_port) {$VARDB_port='3306';}
 	if (!$AGILOGfile) {$AGILOGfile = "$PATHlogs/FASTagiout.$year-$mon-$mday";}
+	if (!$AADLOGfile) {$AADLOGfile = "$PATHlogs/auto-alt-dial.$year-$mon-$mday";}
 
 	$dbhA = DBI->connect("DBI:mysql:$VARDB_database:$VARDB_server:$VARDB_port", "$VARDB_user", "$VARDB_pass")
 		or die "Couldn't connect to database: " . DBI->errstr;
@@ -289,7 +301,7 @@ sub process_request
 		@aryA = $sthA->fetchrow_array;
 		$DBagi_output =			$aryA[0];
 		$asterisk_version =		$aryA[1];
-		$external_server_ip = 		$aryA[2];
+		$external_server_ip = 	$aryA[2];
 		if ($DBagi_output =~ /STDERR/)	{$AGILOG = '1';}
 		if ($DBagi_output =~ /FILE/)	{$AGILOG = '2';}
 		if ($DBagi_output =~ /BOTH/)	{$AGILOG = '3';}
@@ -349,6 +361,8 @@ sub process_request
 				if ( $key eq 'khomp_id_format' )		{ $khomp_id_format = $value; }
 				if ( $key eq 'khomp_api_login_url' )	{ $khomp_api_login_url = $value; }
 				if ( $key eq 'khomp_sub_account_header' )	{ $khomp_sub_account_header = $value; }
+				if ( $key eq 'khomp_api_token' )                { $khomp_api_token = $value; }
+				if ( $key eq 'khomp_api_token_expire' )         { $khomp_api_token_expire = $value; }
 				}
 
 			}
@@ -510,9 +524,9 @@ sub process_request
 			$dial_time =			$ARGV_vars[4];
 			$answered_time =		$ARGV_vars[5];
 			$tech_hangup_cause =	$ARGV_vars[6];
-	    if( $dial_time > $answered_time ) 
+            if( $dial_time > $answered_time ) 
 				{$ring_time = $dial_time - $answered_time;}
-	    else 
+            else 
 				{$ring_time = 0;}
 			$agi_string = "URL HVcauses: |$PRI|$DEBUG|$hangup_cause|$dialstatus|$dial_time|$ring_time|$tech_hangup_cause|";   
 			&agi_output;
@@ -593,7 +607,7 @@ sub process_request
 
 			if ($AGILOG) {$agi_string = "+++++ CALL LOG START : $now_date";   &agi_output;}
 
-			if ($channel =~ /^SIP/) {$channel =~ s/-.*//gi;}
+			if ($channel =~ /^SIP|^PJSIP/) {$channel =~ s/-.*//gi;}
 			if ($channel =~ /^IAX2/) {$channel =~ s/\/\d+$//gi;}
 			if ($channel =~ /^Zap\/|^DAHDI\//)
 				{
@@ -644,7 +658,7 @@ sub process_request
 				if ($AGILOG) {$agi_string = $channel_group . ": $aryA[0]|$channel_line|";   &agi_output;}
 				}
 			### This section breaks the outbound dialed number down(or builds it up) to a 10 digit number and gives it a description
-			if ( ($channel =~ /^SIP|^IAX2/) || ( ($is_client_phone > 0) && (length($channel_group) < 1) ) )
+			if ( ($channel =~ /^SIP|^PJSIP|^IAX2/) || ( ($is_client_phone > 0) && (length($channel_group) < 1) ) )
 				{
 				if ( ($extension =~ /^901144/) && (length($extension)==16) )  #test 207 608 6400 
 					{$extension =~ s/^9//gi;	$channel_group = 'Outbound Intl UK';}
@@ -661,7 +675,7 @@ sub process_request
 				if ($is_client_phone > 0)
 					{$channel_group = 'Client Phone';}
 				
-				$SIP_ext = $channel;	$SIP_ext =~ s/SIP\/|IAX2\/|Zap\/|DAHDI\/|Local\///gi;
+				$SIP_ext = $channel;	$SIP_ext =~ s/PJSIP\/|SIP\/|IAX2\/|Zap\/|DAHDI\/|Local\///gi;
 
 				$number_dialed = $extension;
 				$extension = $SIP_ext;
@@ -701,13 +715,13 @@ sub process_request
 				if ($sthArows > 0)
 					{
 					@aryA = $sthA->fetchrow_array;
-					$CAMPCUST =	$aryA[0];
+					$CAMPCUST	=	$aryA[0];
 					$campaign =	$aryA[0];
 					}
 				$sthA->finish();
 
 				### get campaign settings
-				$stmtA = "SELECT amd_type,campaign_vdad_exten FROM vicidial_campaigns where campaign_id = '$campaign';";
+				$stmtA = "SELECT amd_type,campaign_vdad_exten,dial_timeout,manual_dial_timeout FROM vicidial_campaigns where campaign_id = '$campaign';";
 				$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 				$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
 				$sthArows=$sthA->rows;
@@ -716,15 +730,68 @@ sub process_request
 					@aryA = $sthA->fetchrow_array;
 					$amd_type =     $aryA[0];
 					$campaign_vdad_exten =	$aryA[1];
+					$dial_timeout =			$aryA[2];
+					$man_dial_timeout =		$aryA[3];
 					}
 				$sthA->finish();
 				
 				### set dialplan variable CAMPCUST to the campaign_id of the outbound auto-dial or manual dial call
-				if ((length($CAMPCUST) > 0) && ($DP_variables_enabled > 0) )
+				if (length($CAMPCUST) > 0)
 					{
 					$AGI->exec("EXEC Set(_CAMPCUST=$CAMPCUST)");
 					if ($AGILOG) {$agi_string = "|CAMPCUST: $CAMPCUST|$callerid|";   &agi_output;}
 					}
+
+				### on manual dial calls set the CAMPDTO dialplan variable
+				if ($callerid =~ /^M/)
+					{
+					if (length($man_dial_timeout) > 0)
+						{
+						$dial_timeout = $man_dial_timeout;
+						}
+					$AGI->exec("EXEC Set(_CAMPDTO=$dial_timeout)");
+					if ($AGILOG) {$agi_string = "|CAMPDTO: $dial_timeout|$callerid|";   &agi_output;}
+					}
+
+				### BEGIN OpenSIPs CallerIDname code ###
+				### get system_settings
+				$stmtA = "SELECT opensips_cid_name FROM system_settings";
+				$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+				$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+				$sthArows=$sthA->rows;
+				if ($sthArows > 0)
+					{
+					@aryA = $sthA->fetchrow_array;
+					$opensips_cid_name =     $aryA[0];
+					}
+				$sthA->finish();
+				if ($AGILOG) {$agi_string = "$stmtA|$opensips_cid_name";   &agi_output;}
+
+				### opensips_cid_name is active
+				if ( $opensips_cid_name == 1)
+					{
+					### get the Campaign CID Name
+					$stmtA = "SELECT opensips_cid_name FROM vicidial_campaigns where campaign_id = '$CAMPCUST';";
+					$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+					$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+					$sthArows=$sthA->rows;
+					if ($sthArows > 0)
+						{
+						@aryA = $sthA->fetchrow_array;
+						$camp_opensips_cid_name =     $aryA[0];
+						}
+					$sthA->finish();
+					if ($AGILOG) {$agi_string = "$stmtA|$camp_opensips_cid_name";   &agi_output;}
+
+					### check that the campaign has a CID Name set
+					if ( $camp_opensips_cid_name ne "" ) 
+						{
+						if ($AGILOG) {$agi_string = "Adding \"X-CIDNAME: $camp_opensips_cid_name\" header to INVITE";   &agi_output;}
+						$header = "X-CIDNAME: " . $camp_opensips_cid_name;
+						$AGI->exec("EXEC SIPAddHeader(\"$header\")");
+						}
+					}
+				### END OpenSIPs CallerIDname code ###
 
 				if ($AGILOG) {$agi_string = "|KHOMP $amd_type|$HVcauses|$extension|$campaign_vdad_exten"; &agi_output;}
 
@@ -754,10 +821,7 @@ sub process_request
 						$AGI->exec("EXEC SIPAddHeader(\"$sub_header\")");
 						if ($AGILOG) {$agi_string = "|KHOMP Sub Account Header= $sub_header|";   &agi_output;}
 						}
-
-
 					}
-
 				}
 
 			$stmtA = "INSERT INTO call_log (uniqueid,channel,channel_group,type,server_ip,extension,number_dialed,start_time,start_epoch,end_time,end_epoch,length_in_sec,length_in_min,caller_code) values('$unique_id','$channel','$channel_group','$type','$VARserver_ip','$extension','$number_dialed','$now_date','$now_date_epoch','','','','','$callerid')";
@@ -940,6 +1004,7 @@ sub process_request
 				if ( ( ($callerid =~ /^BM\d\d\d\d\d\d\d\d/) && ($channel =~ /ASTblind/) ) || ($callerid =~ /^BB\d\d\d\d\d\d\d\d/) || ($callerid =~ /^BW\d\d\d\d\d\d\d\d/) )
 					{
 					$stmtA = "SELECT monitor_start_time,UNIX_TIMESTAMP(monitor_start_time) from vicidial_rt_monitor_log where caller_code='$callerid' and ( (monitor_end_time is NULL) or (monitor_start_time=monitor_end_time) );";
+			#		if ($AGILOG) {$agi_string = "|JCJ|$stmtA|$monitor_start_time|$EPOCHmonitor_start_time|";   &agi_output;}
 					$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 					$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
 					$sthArows=$sthA->rows;
@@ -1120,6 +1185,7 @@ sub process_request
 
 				if ($AGILOG) {$agi_string = "VD_hangup : $callerid $channel $priority $CIDlead_id";   &agi_output;}
 
+				$CLauto_alt_threshold=0;
 				if ($callerid =~ /^V\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d/)
 					{
 					$campaign='';
@@ -1154,14 +1220,15 @@ sub process_request
 						}
 
 					### get campaign settings
-					$stmtA = "SELECT amd_type FROM vicidial_campaigns where campaign_id = '$campaign';";
+					$stmtA = "SELECT amd_type,auto_alt_threshold FROM vicidial_campaigns where campaign_id = '$campaign';";
 					$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 					$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
 					$sthArows=$sthA->rows;
 					if ($sthArows > 0)
 						{
 						@aryA = $sthA->fetchrow_array;
-						$amd_type =     $aryA[0];
+						$amd_type =				$aryA[0];
+						$CLauto_alt_threshold = $aryA[1];
 						}
 					$sthA->finish();
 
@@ -1264,8 +1331,8 @@ sub process_request
 							}
 
 						##############################################################
-                                                ### BEGIN - KHOMP status B/DC calls based off result
-                                                ##############################################################
+						### BEGIN - KHOMP status B/DC calls based off result
+						##############################################################
 						if (( $amd_type eq 'KHOMP' ) && ( $khomp_VDL_status ne 'ERROR' ) && ( $khomp_VDAC_status ne 'ERROR' ))
 							{
 							$VDL_status = $khomp_VDL_status;
@@ -1275,26 +1342,44 @@ sub process_request
 								( ( $khomp_action eq 'cpdunknown') && (( $cpd_unknown_action eq 'MESSAGE' ) || ( $cpd_unknown_action eq 'DISPO' ))) ||
 								( ( $khomp_action eq 'amdaction') && (( $cpd_amd_action eq 'MESSAGE' ) || ( $cpd_amd_action eq 'DISPO' ))) ||
 								( $khomp_action eq 'status') 
-							)
+							   )
 								{ $CPDfound = 1; }
 								
 							if ($AGILOG) {$agi_string = "--    KHOMP setting VDL_status = $VDL_status | VDAC_status = $VDAC_status";   &agi_output;}
 							}
 						##############################################################
-                                                ### END - KHOMP status B/DC calls based off result
-                                                ##############################################################
-						
+						### END - KHOMP status B/DC calls based off result
+						##############################################################
 						}
-					if ( ($PRI =~ /^PRI$/) && ($callerid =~ /\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d/) && ( ( ($dialstatus =~ /BUSY/) || ( ($dialstatus =~ /CHANUNAVAIL/) && ($hangup_cause =~ /^1$|^28$/) ) || ( ($enhanced_disconnect_logging > 0) && ( ($dialstatus =~ /CONGESTION/) && ($hangup_cause =~ /^1$|^19$|^21$|^34$|^38$/) ) ) ) || ($CPDfound > 0) ) && ($callerid !~ /^S\d\d\d\d\d\d\d\d\d\d\d\d/) )
+
+					if ( ($PRI =~ /^PRI$/) && ($callerid =~ /\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d/) && ( ( ($dialstatus =~ /BUSY/) || ( ($dialstatus =~ /CHANUNAVAIL/) && ($hangup_cause =~ /^1$|^28$/) ) || ( ($enhanced_disconnect_logging > 0) && ( ( ($dialstatus =~ /CONGESTION/) && ($hangup_cause =~ /^1$|^19$|^21$|^34$|^38$|^102$/) ) || ( ($dialstatus =~ /CHANUNAVAIL/) && ($hangup_cause =~ /^18$/) ) || ($dialstatus =~ /DNC|DISCONNECT/) ) )  || ($CPDfound > 0) && ($callerid !~ /^S\d\d\d\d\d\d\d\d\d\d\d\d/) ) ) )
 						{
 						if ($CPDfound < 1) 
 							{
-							if ($dialstatus =~ /BUSY/) {$VDL_status = 'AB'; $VDAC_status = 'BUSY';}
-							if ($dialstatus =~ /CHANUNAVAIL/) {$VDL_status = 'ADC'; $VDAC_status = 'DISCONNECT';}
-							if ($enhanced_disconnect_logging > 0)
+							if ($enhanced_disconnect_logging == '2') 
 								{
-								if ($dialstatus =~ /CONGESTION/ && $hangup_cause =~ /^1$/) {$VDL_status = 'ADC'; $VDAC_status = 'DISCONNECT';}
-								if ($dialstatus =~ /CONGESTION/ && $hangup_cause =~ /^19$|^21$|^34$|^38$/) {$VDL_status = 'ADCT'; $VDAC_status = 'DISCONNECT';}
+								if ($dialstatus =~ /BUSY/) {$VDL_status = 'AB'; $VDAC_status = 'BUSY';}
+								if ($dialstatus =~ /CHANUNAVAIL/) {$VDL_status = 'ADC'; $VDAC_status = 'DISCONNECT';}
+								if ($enhanced_disconnect_logging > 0)
+									{
+									if ($dialstatus =~ /CHANUNAVAIL/ && $hangup_cause =~/^18/) {$VDL_status = 'ADCT'; $VDAC_status = 'DISCONNECT';}
+									if ($dialstatus =~ /CONGESTION/ && $hangup_cause =~ /^1$/) {$VDL_status = 'ADC'; $VDAC_status = 'DISCONNECT';}
+									if (($dialstatus =~ /CONGESTION/ && $hangup_cause =~ /^21$|^34$|^38$|^102$/) || ($dialstatus =~ /BUSY/ && $hangup_cause =~ /^19$/)) {$VDL_status = 'ADCT'; $VDAC_status = 'DISCONNECT';}
+									if ($dialstatus =~ /DISCONNECT/) {$VDL_status = 'ADCCAR'; $VDAC_status = 'ADCCAR';} # pre-carrier disconnect filter
+									if ($dialstatus =~ /DNC/) {$VDL_status = 'DNCCAR'; $VDAC_status = 'DNCCAR';} # pre-carrier DNC filter
+									}
+								}
+							else
+								{
+								if ($dialstatus =~ /BUSY/) {$VDL_status = 'AB'; $VDAC_status = 'BUSY';}
+								if ($dialstatus =~ /CHANUNAVAIL/) {$VDL_status = 'ADC'; $VDAC_status = 'DISCONNECT';}
+								if ($enhanced_disconnect_logging > 0)
+									{
+									if ($dialstatus =~ /CONGESTION/ && $hangup_cause =~ /^1$/) {$VDL_status = 'ADC'; $VDAC_status = 'DISCONNECT';}
+									if ($dialstatus =~ /CONGESTION/ && $hangup_cause =~ /^19$|^21$|^34$|^38$/) {$VDL_status = 'ADCT'; $VDAC_status = 'DISCONNECT';}
+									if ($dialstatus =~ /DISCONNECT/) {$VDL_status = 'ADCCAR'; $VDAC_status = 'ADCCAR';} # pre-carrier disconnect filter
+									if ($dialstatus =~ /DNC/) {$VDL_status = 'DNCCAR'; $VDAC_status = 'DNCCAR';} # pre-carrier DNC filter
+									}
 								}
 							}
 
@@ -1723,7 +1808,7 @@ sub process_request
 
 							#############################################
 							##### SYSTEM SETTINGS LOOKUP #####
-							$stmtA = "SELECT enable_drop_lists,call_quota_lead_ranking,timeclock_end_of_day FROM system_settings;";
+							$stmtA = "SELECT enable_drop_lists,call_quota_lead_ranking,timeclock_end_of_day,call_limit_24hour FROM system_settings;";
 							$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 							$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
 							$sthArows=$sthA->rows;
@@ -1733,6 +1818,7 @@ sub process_request
 								$enable_drop_lists =			$aryA[0];
 								$SScall_quota_lead_ranking =	$aryA[1];
 								$timeclock_end_of_day =			$aryA[2];
+								$SScall_limit_24hour =			$aryA[3];
 								}
 							$sthA->finish();
 							##### END SYSTEM SETTINGS LOOKUP #####
@@ -1970,7 +2056,7 @@ sub process_request
 							$VD_auto_alt_dial = 'NONE';
 							$VD_auto_alt_dial_statuses='';
 							$VD_call_quota_lead_ranking='DISABLED';
-							$stmtA="SELECT auto_alt_dial,auto_alt_dial_statuses,use_internal_dnc,use_campaign_dnc,use_other_campaign_dnc,call_quota_lead_ranking FROM vicidial_campaigns where campaign_id='$VD_campaign_id';";
+							$stmtA="SELECT auto_alt_dial,auto_alt_dial_statuses,use_internal_dnc,use_campaign_dnc,use_other_campaign_dnc,call_quota_lead_ranking,call_limit_24hour_method,call_limit_24hour_scope,call_limit_24hour,call_limit_24hour_override,auto_alt_threshold FROM vicidial_campaigns where campaign_id='$VD_campaign_id';";
 								if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 							$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 							$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -1979,13 +2065,40 @@ sub process_request
 							while ($sthArows > $epc_countCAMPDATA)
 								{
 								@aryA = $sthA->fetchrow_array;
-								$VD_auto_alt_dial	=			$aryA[0];
-								$VD_auto_alt_dial_statuses	=	$aryA[1];
-								$VD_use_internal_dnc =			$aryA[2];
-								$VD_use_campaign_dnc =			$aryA[3];
-								$VD_use_other_campaign_dnc =	$aryA[4];
-								$VD_call_quota_lead_ranking =	$aryA[5];
+								$VD_auto_alt_dial	=				$aryA[0];
+								$VD_auto_alt_dial_statuses	=		$aryA[1];
+								$VD_use_internal_dnc =				$aryA[2];
+								$VD_use_campaign_dnc =				$aryA[3];
+								$VD_use_other_campaign_dnc =		$aryA[4];
+								$VD_call_quota_lead_ranking =		$aryA[5];
+								$VD_call_limit_24hour_method =		$aryA[6];
+								$VD_call_limit_24hour_scope =		$aryA[7];
+								$VD_call_limit_24hour =				$aryA[8];
+								$VD_call_limit_24hour_override =	$aryA[9];
+								$CLauto_alt_threshold =				$aryA[10];
 								$epc_countCAMPDATA++;
+								}
+
+							$LISTauto_alt_threshold=-1;
+							$stmtA="SELECT auto_alt_threshold from vicidial_lists where list_id='$VD_list_id' limit 1;";
+								if ($DB) {$event_string = "|$stmtA|";   &event_logger;}
+							$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+							$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+							$sthArowsVLL=$sthA->rows;
+							if ($sthArowsVLL > 0)
+								{
+								@aryA = $sthA->fetchrow_array;
+								$LISTauto_alt_threshold = 	$aryA[0];
+								}
+							$sthA->finish();
+
+							$temp_auto_alt_threshold = $CLauto_alt_threshold;
+							if ($LISTauto_alt_threshold > -1 ) {$temp_auto_alt_threshold = $LISTauto_alt_threshold;}
+							$auto_alt_lead_disabled=0;
+							if ( ($temp_auto_alt_threshold > 0) && ($called_count >= $temp_auto_alt_threshold) ) 
+								{
+								$auto_alt_lead_disabled=1;
+								if ($ADB > 0) {$aad_string = "ALT-20: $CLlead_id|$VD_alt_dial|$VD_auto_alt_dial|$CLauto_alt_threshold|$LISTauto_alt_threshold|($called_count <> $temp_auto_alt_threshold)|auto_alt_lead_disabled: $auto_alt_lead_disabled|";   &aad_output;}
 								}
 
 							##### BEGIN Call Quota Lead Ranking logging #####
@@ -2002,14 +2115,17 @@ sub process_request
 							##### BEGIN AUTO ALT PHONE DIAL SECTION #####
 							$sthA->finish();
 				#			if ($AGILOG) {$agi_string = "AUTO-ALT TEST: |$VD_status|$VDL_status|$VD_auto_alt_dial_statuses|$VD_auto_alt_dial|";   &agi_output;}
-							if ($VD_auto_alt_dial_statuses =~ / $VD_status | $VDL_status /)
+							if ($ADB > 0) {$aad_string = "ALT-21: $VD_lead_id|$VD_alt_dial|$VD_status|$VDL_status|$VD_auto_alt_dial_statuses|$VD_auto_alt_dial|";   &aad_output;}
+							if ( ($VD_auto_alt_dial_statuses =~ / $VD_status | $VDL_status /) && ($auto_alt_lead_disabled < 1) )
 								{
+								$alt_skip_reason='';   $addr3_skip_reason='';
 								if ($AGILOG) {$agi_string = "AUTO-ALT MATCH: |$VD_status|$VDL_status|$VD_auto_alt_dial_statuses|$VD_auto_alt_dial|$VD_alt_dial|$VD_alt_dial_log|";   &agi_output;}
+								if ($ADB > 0) {$aad_string = "ALT-22: $VD_lead_id|Alt-Dial Match|";   &aad_output;}
 								if ( ($VD_auto_alt_dial =~ /(ALT_ONLY|ALT_AND_ADDR3|ALT_AND_EXTENDED)/) && ($VD_alt_dial =~ /NONE|MAIN/) )
 									{
 									$alt_dial_skip=0;
 									$VD_alt_phone='';
-									$stmtA="SELECT alt_phone,gmt_offset_now,state,list_id FROM vicidial_list where lead_id='$VD_lead_id';";
+									$stmtA="SELECT alt_phone,gmt_offset_now,state,list_id,phone_code,postal_code FROM vicidial_list where lead_id='$VD_lead_id';";
 										if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 									$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 									$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -2023,9 +2139,12 @@ sub process_request
 										$VD_gmt_offset_now =	$aryA[1];
 										$VD_state =				$aryA[2];
 										$VD_list_id =			$aryA[3];
+										$VD_phone_code =		$aryA[4];
+										$VD_postal_code =		$aryA[5];
 										$epc_countCAMPDATA++;
 										}
 									$sthA->finish();
+									if ($ADB > 0) {$aad_string = "ALT-23: $VD_lead_id|ALT-PHONE: $VD_alt_phone|";   &aad_output;}
 									if (length($VD_alt_phone)>5)
 										{
 										if ( ($VD_use_internal_dnc =~ /Y/) || ($VD_use_internal_dnc =~ /AREACODE/) )
@@ -2075,23 +2194,44 @@ sub process_request
 											}
 										if ($VD_alt_dnc_count < 1)
 											{
-											$stmtA = "INSERT INTO vicidial_hopper SET lead_id='$VD_lead_id',campaign_id='$VD_campaign_id',status='READY',list_id='$VD_list_id',gmt_offset_now='$VD_gmt_offset_now',state='$VD_state',alt_dial='ALT',user='',priority='25',source='A';";
-											$affected_rows = $dbhA->do($stmtA);
-											if ($AGILOG) {$agi_string = "--    VDH record inserted: |$affected_rows|   |$stmtA|";   &agi_output;}
+											$passed_24hour_call_count=1;
+											if ( ($SScall_limit_24hour > 0) && ($VD_call_limit_24hour_method =~ /PHONE_NUMBER|LEAD/) )
+												{
+												$temp_24hour_phone =		$VD_alt_phone;
+												$temp_24hour_phone_code =	$VD_phone_code;
+												$temp_24hour_state =		$VD_state;
+												$temp_24hour_postal_code =	$VD_postal_code;
+												if ($DB > 0) {print "24-Hour Call Count Check: $SScall_limit_24hour|$VD_call_limit_24hour_method|$VD_lead_id|\n";}
+												&check_24hour_call_count;
+												}
+											if ($passed_24hour_call_count > 0) 
+												{
+												$stmtA = "INSERT INTO vicidial_hopper SET lead_id='$VD_lead_id',campaign_id='$VD_campaign_id',status='READY',list_id='$VD_list_id',gmt_offset_now='$VD_gmt_offset_now',state='$VD_state',alt_dial='ALT',user='',priority='25',source='A';";
+												$affected_rows = $dbhA->do($stmtA);
+												if ($AGILOG) {$agi_string = "--    VDH record inserted: |$affected_rows|   |$stmtA|";   &agi_output;}
+												if ($AGILOG) {$aad_string = "$VD_lead_id|$VD_alt_phone|$VD_campaign_id|ALT|25|hopper insert|";   &aad_output;}
+												}
+											else
+												{$alt_dial_skip=1;   $alt_skip_reason='24-hour call count limit failed';}
 											}
 										else
-											{$alt_dial_skip=1;}
+											{$alt_dial_skip=1;   $alt_skip_reason='DNC check failed';}
 										}
 									else
-										{$alt_dial_skip=1;}
+										{$alt_dial_skip=1;   $alt_skip_reason='ALT phone invalid';}
 									if ($alt_dial_skip > 0)
-										{$VD_alt_dial='ALT';}
+										{
+										if ($ADB > 0) {$aad_string = "ALT-24: $VD_lead_id|$VD_alt_dial|ALT-SKIP: $alt_skip_reason|";   &aad_output;}
+										$VD_alt_dial='ALT';
+										if ($AGILOG) {$aad_string = "$VD_lead_id|$VD_alt_phone|$VD_campaign_id|ALT|0|hopper skip|$alt_skip_reason|";   &aad_output;}
+										}
 									}
+									if ($ADB > 0) {$aad_string = "ALT-25: $VD_lead_id|$VD_alt_dial|";   &aad_output;}
 								if ( ( ($VD_auto_alt_dial =~ /(ADDR3_ONLY)/) && ($VD_alt_dial =~ /NONE|MAIN/) ) || ( ($VD_auto_alt_dial =~ /(ALT_AND_ADDR3)/) && ($VD_alt_dial =~ /ALT/) ) )
 									{
 									$addr3_dial_skip=0;
 									$VD_address3='';
-									$stmtA="SELECT address3,gmt_offset_now,state,list_id FROM vicidial_list where lead_id='$VD_lead_id';";
+									$stmtA="SELECT address3,gmt_offset_now,state,list_id,phone_code,postal_code FROM vicidial_list where lead_id='$VD_lead_id';";
 										if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 									$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 									$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -2105,9 +2245,12 @@ sub process_request
 										$VD_gmt_offset_now =	$aryA[1];
 										$VD_state =				$aryA[2];
 										$VD_list_id =			$aryA[3];
+										$VD_phone_code =		$aryA[4];
+										$VD_postal_code =		$aryA[5];
 										$epc_countCAMPDATA++;
 										}
 									$sthA->finish();
+									if ($ADB > 0) {$aad_string = "ALT-26: $VD_lead_id|$VD_alt_dial|ADDR3-PHONE: $VD_address3|";   &aad_output;}
 									if (length($VD_address3)>5)
 										{
 										if ( ($VD_use_internal_dnc =~ /Y/) || ($VD_use_internal_dnc =~ /AREACODE/) )
@@ -2157,18 +2300,39 @@ sub process_request
 											}
 										if ($VD_alt_dnc_count < 1)
 											{
-											$stmtA = "INSERT INTO vicidial_hopper SET lead_id='$VD_lead_id',campaign_id='$VD_campaign_id',status='READY',list_id='$VD_list_id',gmt_offset_now='$VD_gmt_offset_now',state='$VD_state',alt_dial='ADDR3',user='',priority='20',source='A';";
-											$affected_rows = $dbhA->do($stmtA);
-											if ($AGILOG) {$agi_string = "--    VDH record inserted: |$affected_rows|   |$stmtA|";   &agi_output;}
+											$passed_24hour_call_count=1;
+											if ( ($SScall_limit_24hour > 0) && ($VD_call_limit_24hour_method =~ /PHONE_NUMBER|LEAD/) )
+												{
+												$temp_24hour_phone =		$VD_address3;
+												$temp_24hour_phone_code =	$VD_phone_code;
+												$temp_24hour_state =		$VD_state;
+												$temp_24hour_postal_code =	$VD_postal_code;
+												if ($DB > 0) {print "24-Hour Call Count Check: $SScall_limit_24hour|$VD_call_limit_24hour_method|$VD_lead_id|\n";}
+												&check_24hour_call_count;
+												}
+											if ($passed_24hour_call_count > 0) 
+												{
+												$stmtA = "INSERT INTO vicidial_hopper SET lead_id='$VD_lead_id',campaign_id='$VD_campaign_id',status='READY',list_id='$VD_list_id',gmt_offset_now='$VD_gmt_offset_now',state='$VD_state',alt_dial='ADDR3',user='',priority='20',source='A';";
+												$affected_rows = $dbhA->do($stmtA);
+												if ($AGILOG) {$agi_string = "--    VDH record inserted: |$affected_rows|   |$stmtA|";   &agi_output;}
+												if ($AGILOG) {$aad_string = "$VD_lead_id|$VD_address3|$VD_campaign_id|ADDR3|20|hopper insert|";   &aad_output;}
+												}
+											else
+												{$addr3_dial_skip=1;   $addr3_skip_reason='24-hour call count limit failed';}
 											}
 										else
-											{$addr3_dial_skip=1;}
+											{$addr3_dial_skip=1;   $addr3_skip_reason='DNC check failed';}
 										}
 									else
-										{$addr3_dial_skip=1;}
+										{$addr3_dial_skip=1;   $addr3_skip_reason='ADDR3 phone invalid';}
 									if ($addr3_dial_skip > 0)
-										{$VD_alt_dial='ADDR3';}
+										{
+										if ($ADB > 0) {$aad_string = "ALT-27: $VD_lead_id|$VD_alt_dial|ADDR3-SKIP: $addr3_skip_reason|";   &aad_output;}
+										$VD_alt_dial='ADDR3';
+										if ($AGILOG) {$aad_string = "$VD_lead_id|$VD_address3|$VD_campaign_id|ADDR3|0|hopper skip|$addr3_skip_reason|";   &aad_output;}
+										}
 									}
+								if ($ADB > 0) {$aad_string = "ALT-28: $VD_lead_id|$VD_alt_dial|";   &aad_output;}
 								if ( ( ($VD_auto_alt_dial =~ /(EXTENDED_ONLY)/) && ($VD_alt_dial =~ /NONE|MAIN/) ) || ( ($VD_auto_alt_dial =~ /(ALT_AND_EXTENDED)/) && ($VD_alt_dial =~ /ALT/) ) || ( ($VD_auto_alt_dial =~ /ADDR3_AND_EXTENDED|ALT_AND_ADDR3_AND_EXTENDED/) && ($VD_alt_dial =~ /ADDR3/) ) || ( ($VD_auto_alt_dial =~ /(EXTENDED)/) && ($VD_alt_dial =~ /X/) && ($VD_alt_dial !~ /XLAST/) ) )
 									{
 									if ($VD_alt_dial =~ /ADDR3/) {$Xlast=0;}
@@ -2178,7 +2342,7 @@ sub process_request
 									if (length($Xlast)<1)
 										{$Xlast=0;}
 									$VD_altdialx='';
-									$stmtA="SELECT gmt_offset_now,state,list_id FROM vicidial_list where lead_id='$VD_lead_id';";
+									$stmtA="SELECT gmt_offset_now,state,list_id,postal_code FROM vicidial_list where lead_id='$VD_lead_id';";
 										if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 									$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 									$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -2190,6 +2354,7 @@ sub process_request
 										$VD_gmt_offset_now =	$aryA[0];
 										$VD_state =				$aryA[1];
 										$VD_list_id =			$aryA[2];
+										$VD_postal_code =		$aryA[3];
 										$epc_countCAMPDATA++;
 										}
 									$sthA->finish();
@@ -2205,11 +2370,12 @@ sub process_request
 										$alt_dial_phones_count = $aryA[0];
 										}
 									$sthA->finish();
+									if ($ADB > 0) {$aad_string = "ALT-29: $VD_lead_id|$VD_alt_dial|$Xlast|$alt_dial_phones_count|";   &aad_output;}
 
 									while ( ($alt_dial_phones_count > 0) && ($alt_dial_phones_count > $Xlast) )
 										{
 										$Xlast++;
-										$stmtA="SELECT alt_phone_id,phone_number,active FROM vicidial_list_alt_phones where lead_id='$VD_lead_id' and alt_phone_count='$Xlast';";
+										$stmtA="SELECT alt_phone_id,phone_number,active,phone_code FROM vicidial_list_alt_phones where lead_id='$VD_lead_id' and alt_phone_count='$Xlast';";
 											if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 										$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 										$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -2217,13 +2383,15 @@ sub process_request
 										if ($sthArows > 0)
 											{
 											@aryA = $sthA->fetchrow_array;
-											$VD_altdial_id =		$aryA[0];
-											$VD_altdial_phone = 	$aryA[1];
-											$VD_altdial_active = 	$aryA[2];
+											$VD_altdial_id =			$aryA[0];
+											$VD_altdial_phone = 		$aryA[1];
+											$VD_altdial_active = 		$aryA[2];
+											$VD_altdial_phone_code = 	$aryA[3];
 											}
 										else
-											{$Xlast=9999999999;}
+											{$Xlast=99999;}
 										$sthA->finish();
+										if ($ADB > 0) {$aad_string = "ALT-30: $VD_lead_id|$VD_alt_dial|$Xlast|";   &aad_output;}
 
 										if ($VD_altdial_active =~ /Y/)
 											{
@@ -2280,26 +2448,51 @@ sub process_request
 												{
 												if ($alt_dial_phones_count eq '$Xlast') 
 													{$Xlast = 'LAST';}
-												$stmtA = "INSERT INTO vicidial_hopper SET lead_id='$VD_lead_id',campaign_id='$VD_campaign_id',status='READY',list_id='$VD_list_id',gmt_offset_now='$VD_gmt_offset_now',state='$VD_state',alt_dial='X$Xlast',user='',priority='15',source='A';";
-												$affected_rows = $dbhA->do($stmtA);
-												if ($AGILOG) {$agi_string = "--    VDH record inserted: |$affected_rows|   |$stmtA|X$Xlast|$VD_altdial_id|";   &agi_output;}
-												$Xlast=9999999999;
+												$passed_24hour_call_count=1;
+												if ( ($SScall_limit_24hour > 0) && ($VD_call_limit_24hour_method =~ /PHONE_NUMBER|LEAD/) )
+													{
+													$temp_24hour_phone =		$VD_altdial_phone;
+													$temp_24hour_phone_code =	$VD_altdial_phone_code;
+													$temp_24hour_state =		$VD_state;
+													$temp_24hour_postal_code =	$VD_postal_code;
+													if ($DB > 0) {print "24-Hour Call Count Check: $SScall_limit_24hour|$VD_call_limit_24hour_method|$VD_lead_id|\n";}
+													&check_24hour_call_count;
+													}
+												if ($passed_24hour_call_count > 0) 
+													{
+													$stmtA = "INSERT INTO vicidial_hopper SET lead_id='$VD_lead_id',campaign_id='$VD_campaign_id',status='READY',list_id='$VD_list_id',gmt_offset_now='$VD_gmt_offset_now',state='$VD_state',alt_dial='X$Xlast',user='',priority='15',source='A';";
+													$affected_rows = $dbhA->do($stmtA);
+													if ($AGILOG) {$agi_string = "--    VDH record inserted: |$affected_rows|   |$stmtA|X$Xlast|$VD_altdial_id|";   &agi_output;}
+													if ($AGILOG) {$aad_string = "$VD_lead_id|$VD_altdial_phone|$VD_campaign_id|X$Xlast|15|hopper insert|";   &aad_output;}
+													if ($ADB > 0) {$aad_string = "ALT-31: $VD_lead_id|$VD_alt_dial|X$Xlast|";   &aad_output;}
+													$Xlast=99999;
+													$DNC_hopper_trigger=0;
+													}
+												else
+													{$DNC_hopper_trigger=1;}
 												}
 											else
+												{$DNC_hopper_trigger=1;}
+											if ($DNC_hopper_trigger > 0)
 												{
-												if ( ( ($VD_auto_alt_dial_statuses =~ / DNCC /) && ($DNCC > 0) ) || ( ($VD_auto_alt_dial_statuses =~ / DNCL /) && ($DNCL > 0) ) )
+												if ( ( ($VD_auto_alt_dial_statuses =~ / DNCC /) && ($DNCC > 0) ) || ( ($VD_auto_alt_dial_statuses =~ / DNCL /) && ($DNCL > 0) ) || ( ($auto_alt_dial_statuses[$i] =~ / TFHCCL /) && ($TFHCCL > 0) ) )
 													{
+													if ($ADB > 0) {$aad_string = "ALT-32: $VD_lead_id|$VD_alt_dial|$Xlast|$alt_dial_phones_count|";   &aad_output;}
 													if ($alt_dial_phones_count eq '$Xlast') 
 														{$Xlast = 'LAST';}
 													$stmtA = "INSERT INTO vicidial_hopper SET lead_id='$VD_lead_id',campaign_id='$VD_campaign_id',status='DNC',list_id='$VD_list_id',gmt_offset_now='$VD_gmt_offset_now',state='$VD_state',alt_dial='X$Xlast',user='',priority='15',source='A';";
 													$affected_rows = $dbhA->do($stmtA);
 													if ($AGILOG) {$agi_string = "--    VDH record DNC inserted: |$affected_rows|   |$stmtA|X$Xlast|$VD_altdial_id|";   &agi_output;}
-													$Xlast=9999999999;
+													$Xlast=99999;
 													if ($AGILOG) {$agi_string = "--    VDH alt dial inserting DNC|X$Xlast|$VD_altdial_phone|";   &agi_output;}
+													if ($AGILOG) {$aad_string = "$VD_lead_id|$VD_altdial_phone|$VD_campaign_id|X$Xlast|15|hopper DNC insert|";   &aad_output;}
+													if ($ADB > 0) {$aad_string = "ALT-33: $VD_lead_id|$VD_alt_dial|$Xlast|DNC|";   &aad_output;}
 													}
 												else
 													{
 													if ($AGILOG) {$agi_string = "--    VDH alt dial not-inserting DNC|X$Xlast|$VD_altdial_phone|";   &agi_output;}
+													if ($AGILOG) {$aad_string = "$VD_lead_id|$VD_altdial_phone|$VD_campaign_id|X$Xlast|15|hopper DNC skip|";   &aad_output;}
+													if ($ADB > 0) {$aad_string = "ALT-34: $VD_lead_id|$VD_alt_dial|$Xlast|DNC|";   &aad_output;}
 													}
 												}
 											}
@@ -2669,6 +2862,186 @@ sub call_quota_logging
 		}
 	}
 
+sub check_24hour_call_count
+	{
+	$passed_24hour_call_count=0;
+	$limit_scopeSQL='';
+	if ($VD_call_limit_24hour_scope =~ /CAMPAIGN_LISTS/) 
+		{
+		$limit_scopeCAMP='';
+		$stmtY = "SELECT list_id FROM vicidial_lists where campaign_id='$VD_campaign_id';";
+		$sthY = $dbhA->prepare($stmtY) or die "preparing: ",$dbhA->errstr;
+		$sthY->execute or die "executing: $stmtY", $dbhA->errstr;
+		$sthYrows=$sthY->rows;
+		$rec_campLISTS=0;
+		while ($sthYrows > $rec_campLISTS)
+			{
+			@aryY = $sthY->fetchrow_array;
+			$limit_scopeCAMP .= "'$aryY[0]',";
+			$rec_campLISTS++;
+			}
+		if (length($limit_scopeCAMP) < 2) {$limit_scopeCAMP="'1'";}
+		else {chop($limit_scopeCAMP);}
+		$limit_scopeSQL = "and list_id IN($limit_scopeCAMP)";
+		}
+	if ($VD_call_limit_24hour_method =~ /PHONE_NUMBER/)
+		{
+		$stmtA="SELECT count(*) FROM vicidial_lead_24hour_calls where phone_number='$temp_24hour_phone' and phone_code='$temp_24hour_phone_code' and (call_date >= NOW() - INTERVAL 1 DAY) $limit_scopeSQL;";
+		}
+	else
+		{
+		$stmtA="SELECT count(*) FROM vicidial_lead_24hour_calls where lead_id='$VD_lead_id' and (call_date >= NOW() - INTERVAL 1 DAY) $limit_scopeSQL;";
+		}
+	if ($DB) {print "     Doing 24-Hour Call Count Check: $VD_lead_id|$temp_24hour_phone_code|$temp_24hour_phone|$temp_24hour_state|$temp_24hour_postal_code - $VD_call_limit_24hour_method|$VD_call_limit_24hour_scope|$VD_call_limit_24hour\n";}
+	$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+	$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+	$sthArows=$sthA->rows;
+	$TFhourCOUNT=0;
+	$TFhourSTATE='';
+	$TFhourCOUNTRY='';
+	if ($sthArows > 0)
+		{
+		@aryA = $sthA->fetchrow_array;
+		$TFhourCOUNT =		($TFhourCOUNT + $aryA[0]);
+		}
+	$sthA->finish();
+	$TEMPcall_limit_24hour = $VD_call_limit_24hour;
+	if ($DBX) {print "     24-Hour Call Limit Count DEBUG:     $TFhourCOUNT|$stmtA|\n";}
+
+	if ( ($VD_call_limit_24hour_override !~ /^DISABLED$/) && (length($VD_call_limit_24hour_override) > 0) ) 
+		{
+		$TFH_areacode = substr($temp_24hour_phone, 0, 3);
+		$stmtY = "SELECT state,country FROM vicidial_phone_codes where country_code='$temp_24hour_phone_code' and areacode='$TFH_areacode';";
+		$sthY = $dbhA->prepare($stmtY) or die "preparing: ",$dbhA->errstr;
+		$sthY->execute or die "executing: $stmtY", $dbhA->errstr;
+		$sthYrows=$sthY->rows;
+		if ($sthYrows > 0)
+			{
+			@aryY = $sthY->fetchrow_array;
+			$TFhourSTATE =		$aryY[0];
+			$TFhourCOUNTRY =	$aryY[1];
+			}
+		$sthA->finish();
+
+		$TEMP_TFhour_OR_entry='';
+		$TFH_OR_method='state_areacode';
+		$TFH_OR_postcode_field_match=0;
+		$TFH_OR_state_field_match=0;
+		$TFH_OR_postcode_state='';
+		$stmtA = "SELECT container_entry FROM vicidial_settings_containers where container_id='$VD_call_limit_24hour_override';";
+		$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+		$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+		$sthArows=$sthA->rows;
+		if ($DBX) {print "$sthArows|$stmtA\n";}
+		if ($sthArows > 0)
+			{
+			@aryA = $sthA->fetchrow_array;
+			$TEMP_TFhour_OR_entry = $aryA[0];
+			}
+		$sthA->finish();
+
+		if (length($TEMP_TFhour_OR_entry) > 2) 
+			{
+			@container_lines = split(/\n/,$TEMP_TFhour_OR_entry);
+			$c=0;
+			foreach(@container_lines)
+				{
+				$container_lines[$c] =~ s/;.*|\r|\t//gi;
+				$container_lines[$c] =~ s/ => |=> | =>/=>/gi;
+				if (length($container_lines[$c]) > 3)
+					{
+					# define core settings
+					if ($container_lines[$c] =~ /^method/i)
+						{
+						#$container_lines[$c] =~ s/method=>//gi;
+						$TFH_OR_method = $container_lines[$c];
+						if ( ($TFH_OR_method =~ /state$/) && ($TFhourSTATE ne $temp_24hour_state) )
+							{
+							$TFH_OR_state_field_match=1;
+							}
+						if ( ($TFH_OR_method =~ /postcode/) && (length($temp_24hour_postal_code) > 0) )
+							{
+							if ($TFhourCOUNTRY == 'USA') 
+								{
+								$temp_24hour_postal_code =~ s/\D//gi;
+								$temp_24hour_postal_code = substr($temp_24hour_postal_code,0,5);
+								}
+							if ($TFhourCOUNTRY == 'CAN') 
+								{
+								$temp_24hour_postal_code =~ s/[^a-zA-Z0-9]//gi;
+								$temp_24hour_postal_code = substr($temp_24hour_postal_code,0,6);
+								}
+							$stmtA = "SELECT state FROM vicidial_postal_codes where postal_code='$temp_24hour_postal_code';";
+							$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+							$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+							$sthArows=$sthA->rows;
+							if ($DBX) {print "$sthArows|$stmtA\n";}
+							if ($sthArows > 0)
+								{
+								@aryA = $sthA->fetchrow_array;
+								$TFH_OR_postcode_state =		$aryA[0];
+								$TFH_OR_postcode_field_match=1;
+								}
+							$sthA->finish();
+							}
+						}
+					else
+						{
+						if ($container_lines[$c] =~ /^state/i)
+							{
+							$container_lines[$c] =~ s/state=>//gi;	# USA,GA,4
+							@TEMP_state_ARY = split(/,/,$container_lines[$c]);
+							
+							if ($TFhourCOUNTRY eq $TEMP_state_ARY[0]) 
+								{
+								$TEMP_state_ARY[2] =~ s/\D//gi;
+								if ( ($TFhourSTATE eq $TEMP_state_ARY[1]) && (length($TEMP_state_ARY[2]) > 0) )
+									{
+									if ($DB) {print "     24-Hour Call Count State Override Triggered: $TEMPcall_limit_24hour|$container_lines[$c]\n";}
+									$TEMPcall_limit_24hour = $TEMP_state_ARY[2];
+									}
+								if ( ($TFH_OR_postcode_state eq $TEMP_state_ARY[1]) && (length($TEMP_state_ARY[2]) > 0) && ($TFH_OR_postcode_field_match > 0) )
+									{
+									if ($DBX) {print "     24-Hour Call Count State Override Match(postcode $TFH_OR_postcode_state): $TEMPcall_limit_24hour|$container_lines[$c]\n";}
+									if ($TEMP_state_ARY[2] < $TEMPcall_limit_24hour)
+										{
+										if ($DBX) {print "          POSTCODE field override of override triggered: ($TEMP_state_ARY[2] < $TEMPcall_limit_24hour)\n";}
+										$TEMPcall_limit_24hour = $TEMP_state_ARY[2];
+										}
+									}
+								if ( ($temp_24hour_state eq $TEMP_state_ARY[1]) && (length($TEMP_state_ARY[2]) > 0) && ($TFH_OR_state_field_match > 0) )
+									{
+									if ($DBX) {print "     24-Hour Call Count State Override Match(state $temp_24hour_state): $TEMPcall_limit_24hour|$container_lines[$c]\n";}
+									if ($TEMP_state_ARY[2] < $TEMPcall_limit_24hour)
+										{
+										if ($DBX) {print "          STATE field override of override triggered: ($TEMP_state_ARY[2] < $TEMPcall_limit_24hour)\n";}
+										$TEMPcall_limit_24hour = $TEMP_state_ARY[2];
+										}
+									}
+								}
+							}
+						}
+					}
+				if ($DBX) {print "     24-Hour Call Count State Override DEBUG: |$container_lines[$c]|\n";}
+				$c++;
+				}
+			}
+		}
+
+	if ( ($TFhourCOUNT > 0) && ($TFhourCOUNT >= $TEMPcall_limit_24hour) )
+		{
+		$TFHCCLlead=1;
+		$TFHCCL++;
+		$passed_24hour_call_count=0;
+		if ($DBX) {print "Flagging 24-Hour Call Limit lead:     $VD_lead_id ($TFhourCOUNT >= $TEMPcall_limit_24hour) $passed_24hour_call_count\n";}
+		}
+	else
+		{
+		$passed_24hour_call_count=1;
+		if ($DBX) {print "     24-Hour Call Limit check passed:     $VD_lead_id ($TFhourCOUNT < $TEMPcall_limit_24hour) $passed_24hour_call_count\n";}
+		}
+	}
+
 sub agi_output
 	{
 	if ($AGILOG >=2)
@@ -2685,6 +3058,18 @@ sub agi_output
 		print STDERR "$now_date|$script|$process|$agi_string\n";
 		}
 	$agi_string='';
+	}
+
+sub aad_output
+	{
+	if ( ($AGILOG > 0) || ($ADB > 0) )
+		{
+		### open the log file for writing ###
+		open(Aout, ">>$AADLOGfile") || die "Can't open $AADLOGfile: $!\n";
+		print Aout "$now_date|$script|$aad_string\n";
+		close(Aout);
+		}
+	$aad_string='';
 	}
 
 # subroutine to parse the asterisk version
@@ -2760,21 +3145,57 @@ sub process_khomp_analytics
 	elsif ($khomp_id_format eq 'CALLERCODE_CAMP_EXTERNIP')
 		{ $khomp_id = $callerid . '_' . $campaign_id . '_' . $external_server_ip; }
 
-	my $login_token = 'TOKEN';
 	my $api_auth_time = 0;
-	if ( $khomp_api_proxied eq 'false' ) 
+	if ( ($khomp_api_token_expire < time() ) or ( $khomp_api_token eq 'TOKENTOKENTOKEN' ))
 		{
-		($login_token, $api_auth_time) = khomp_api_login( $khomp_api_login_url, $khomp_api_user, $khomp_api_pass );
+		if ($AGILOG) {$agi_string = "--    KHOMP API Token $khomp_api_token has expired at $khomp_api_token_expire";   &agi_output;}
+
+		# get a new API token
+		my $new_khomp_api_token = '';
+		if ( $khomp_api_proxied eq 'false' )
+			{
+			($new_khomp_api_token, $api_auth_time) = khomp_api_login( $khomp_api_login_url, $khomp_api_user, $khomp_api_pass );
+			}
+
+		# update the settings container
+		my $old_token_string = "khomp_api_token => $khomp_api_token";
+		my $new_token_string = "khomp_api_token => $new_khomp_api_token";
+		my $new_token_expire_time = time() + 3600;
+		my $old_token_expire_string = "khomp_api_token_expire => $khomp_api_token_expire";
+		my $new_token_expire_string = "khomp_api_token_expire => $new_token_expire_time";
+
+		# LOCK vicidial_settings_containers
+		$stmtA = "LOCK TABLES vicidial_settings_containers WRITE";
+		$dbhA->do($stmtA);
+		# UPDATE the Token
+		$stmtToken = "UPDATE vicidial_settings_containers SET container_entry = REGEXP_REPLACE(container_entry, '$old_token_string', '$new_token_string') WHERE container_id = 'KHOMPSETTINGS';";
+		$affected_rows = $dbhA->do($stmtToken);
+		# UPDATE the Expire time
+		$stmtExpire = "UPDATE vicidial_settings_containers SET container_entry = REGEXP_REPLACE(container_entry, '$old_token_expire_string', '$new_token_expire_string') WHERE container_id = 'KHOMPSETTINGS';";
+		$affected_rows = $dbhA->do($stmtExpire);
+		# Unlock vicidial_settings_containers
+		$stmtA = "UNLOCK TABLES";
+		$dbhA->do($stmtA);
+
+		if ($AGILOG) {$agi_string = "--    KHOMP SC TOKEN UPDATE|$affected_rows|$stmtToken|";   &agi_output;}
+		if ($AGILOG) {$agi_string = "--    KHOMP SC TOKEN EXPIRE UPDATE|$affected_rows|$stmtExpire|";   &agi_output;}
+
+		# over write the old with the new
+		$khomp_api_token = $new_khomp_api_token;
+		}
+	else
+		{
+		if ($AGILOG) {$agi_string = "--    KHOMP API Token $khomp_api_token still valid till $khomp_api_token_expire";   &agi_output;}
 		}
 	
-	if ( $login_token ne 'login' )
+	if ( $khomp_api_token ne 'TOKENTOKENTOKEN' )
 		{
 		# build JSON object
 		my $khomp_request = {
 			'id' => 0,
 			'method' => 'CallList',
 			'params' => {
-				'token' => "$login_token",
+				'token' => "$khomp_api_token",
 				'query' => {
 					'type' => "eq",
 					'field' => "sip_header:$khomp_header",
@@ -2789,7 +3210,7 @@ sub process_khomp_analytics
 		$khomp_json = encode_json( $khomp_request );
 
 		# call the API
-		($result, $api_query_time) = khomp_json_api( $khomp_json, $khomp_api_url, $khomp_api_user, $khomp_api_pass );
+		($result, $api_query_time) = khomp_json_api( $khomp_json, $khomp_api_url );
 
 		# check the result
 		if ( $result =~ /^ERROR/ )
@@ -2808,10 +3229,6 @@ sub process_khomp_analytics
 				$parsed_data{'api_auth_time'} = $api_auth_time;
 				$parsed_data{'api_query_time'} = $api_query_time;
 
-
-				# log the khomp data in the vicidial_khomp_log
-				log_khomp_call_data( %parsed_data);
-
 				$conclusion = $parsed_data{'conclusion'};
 				$pattern = $parsed_data{'pattern'};
 
@@ -2823,26 +3240,26 @@ sub process_khomp_analytics
 					{
 					# we got a conclusion
 					if ( defined ( $conclusion_map{"$conclusion"}{"$pattern"}{'status'} ) )
-	                                        {
+						{
 						# see if there is a conclusion and pattern for it
 						$khomp_action = $conclusion_map{"$conclusion"}{"$pattern"}{'action'};
-	                                        $khomp_VDL_status = $conclusion_map{"$conclusion"}{"$pattern"}{'status'};
+						$khomp_VDL_status = $conclusion_map{"$conclusion"}{"$pattern"}{'status'};
 						$khomp_VDAC_status = $conclusion_map{"$conclusion"}{"$pattern"}{'dial_status'};
-	                                        }
-	                                elsif ( defined( $conclusion_map{"$conclusion"}{''}{'status'} ) )
-	                                        {
+						}
+					elsif ( defined( $conclusion_map{"$conclusion"}{''}{'status'} ) )
+						{
 						# there is no known pattern for it
 						$khomp_action = $conclusion_map{"$conclusion"}{""}{'action'};
 						$khomp_VDL_status = $conclusion_map{"$conclusion"}{''}{'status'};
 						$khomp_VDAC_status = $conclusion_map{"$conclusion"}{""}{'dial_status'};
-	                                        }
-	                                else
-	                                        {
+						}
+					else
+						{
 						# there isnt even a known conclusion for it
 						$khomp_action = 'error';
-	                                        $khomp_VDL_status = 'KPEROR';
+						$khomp_VDL_status = 'KPEROR';
 						$khomp_VDAC_status = 'NA';
-	                                        }
+						}
 					}
 				else
 					{
@@ -2880,12 +3297,12 @@ sub process_khomp_analytics
 							( $parsed_data{'hangup_cause_recv'} eq '487' ) &&
 							( $parsed_data{'answer_epoch'} > 0 )
 							)				
-                                                        {
-                                                        # Call hung up before Khomp had a conclusion
-                                                        $khomp_action = 'status';
-                                                        $khomp_VDL_status = 'KPDROP';
-                                                        $khomp_VDAC_status = 'ANSWER';
-                                                        }
+							{
+							# Call hung up before Khomp had a conclusion
+							$khomp_action = 'status';
+							$khomp_VDL_status = 'KPDROP';
+							$khomp_VDAC_status = 'ANSWER';
+							}
 						elsif ( $parsed_data{'hangup_cause_recv'} eq '488' )
 							{
 							# Carrier returned "Not Acceptable Here"
@@ -2895,35 +3312,40 @@ sub process_khomp_analytics
 							$khomp_VDAC_status = 'CONGESTION';
 							}
 						elsif ( $parsed_data{'hangup_cause_recv'} eq '500' )
-                                                        {
-                                                        # Carrier returned "Internal Server Error"
+							{
+							# Carrier returned "Internal Server Error"
 							$khomp_action = 'status';
-                                                        $khomp_VDL_status = 'KPCONG';
-                                                        $khomp_VDAC_status = 'CONGESTION';
+							$khomp_VDL_status = 'KPCONG';
+							$khomp_VDAC_status = 'CONGESTION';
 							}
 						elsif ( $parsed_data{'hangup_cause_recv'} eq '503' )
-                                                        {
-                                                        # Carrier returned "Service Unavailable"
+							{
+							# Carrier returned "Service Unavailable"
 							$khomp_action = 'status';
-                                                        $khomp_VDL_status = 'KPCONG';
-                                                        $khomp_VDAC_status = 'CONGESTION';
-                                                        }
+							$khomp_VDL_status = 'KPCONG';
+							$khomp_VDAC_status = 'CONGESTION';
+							}
 						elsif ( $parsed_data{'hangup_cause_recv'} eq '603' )
-                                                        {
-                                                        # Carrier returned "Decline"
+							{
+							# Carrier returned "Decline"
 							$khomp_action = 'status';
-                                                        $khomp_VDL_status = 'KPCONG';
-                                                        $khomp_VDAC_status = 'CONGESTION';
-                                                        }
+							$khomp_VDL_status = 'KPCONG';
+							$khomp_VDAC_status = 'CONGESTION';
+							}
 						else	
 							{
 							$khomp_action = 'error';
 							$khomp_VDL_status = 'KPEROR';
-	                                                $khomp_VDAC_status = 'NA';
+							$khomp_VDAC_status = 'NA';
 							}
 						}
 					}
+					
+				if ( $khomp_action ne '' )		{ $parsed_data{'vici_action'} = "$khomp_action"; }
+				if ( $khomp_VDL_status ne '' )	{ $parsed_data{'vici_status'} = "$khomp_VDL_status"; }
 
+				# log the khomp data in the vicidial_khomp_log
+				log_khomp_call_data( %parsed_data);
 
 				if ($AGILOG) { $agi_string = "--KHOMP: conclusion = $conclusion|pattern = $pattern|status = $khomp_VDL_status"; &agi_output; }
 
@@ -2964,6 +3386,8 @@ sub log_khomp_call_data
 	if ( defined( $khomp_call_data{'hangup_origin'} ) ) { $stmtA .= ", hangup_origin = '$khomp_call_data{'hangup_origin'}'"; }
 	if ( defined( $khomp_call_data{'hangup_cause_recv'} ) ) { $stmtA .= ", hangup_cause_recv = '$khomp_call_data{'hangup_cause_recv'}'"; }
 	if ( defined( $khomp_call_data{'hangup_cause_sent'} ) ) { $stmtA .= ", hangup_cause_sent = '$khomp_call_data{'hangup_cause_sent'}'"; }
+	if ( defined( $khomp_call_data{'vici_action'} ) ) { $stmtA .= ", vici_action = '$khomp_call_data{'vici_action'}'"; }
+	if ( defined( $khomp_call_data{'vici_status'} ) ) { $stmtA .= ", vici_status = '$khomp_call_data{'vici_status'}'"; }
 
 	$stmtA .= " WHERE khomp_id = '$khomp_call_data{'khomp_id'}'";
 
@@ -3033,112 +3457,101 @@ sub khomp_parse_call_data
 
 ### code for logging into KHOMP api
 sub khomp_api_login
-        {
-        (
-        $khomp_api_login_url,
-        $khomp_api_user,
-        $khomp_api_pass
-        ) = @_;
+	{
+	( 
+	$khomp_api_login_url,
+	$khomp_api_user,
+	$khomp_api_pass
+	) = @_;
 
-        my $token = 'login';
+	my $token = 'login';
 	my $auth_start_sec;
 	my $auth_start_usec;
 	my $auth_end_sec;
 	my $auth_end_usec;
 	my $auth_sec;
-        my $auth_usec;
+	my $auth_usec;
 	my $api_auth_time;
 
 	($auth_start_sec, $auth_start_usec) = gettimeofday();
 
-        # build JSON object
-        my $login_json = {
-                'id' => 0,
-                'method' => 'SessionLogin',
-                'params' => {
-                        'username' => "$khomp_api_user",
-                        'password' => "$khomp_api_pass",
-                },
-                'jsonrpc' => '2.0',
-        };
+	# build JSON object
+	my $login_json = {
+		'id' => 0,
+		'method' => 'SessionLogin',
+		'params' => {
+			'username' => "$khomp_api_user",
+			'password' => "$khomp_api_pass",
+		},
+		'jsonrpc' => '2.0',
+	};
 
-        # encode it as JSON
-        $login_json = encode_json( $login_json );
+	# encode it as JSON
+	$login_json = encode_json( $login_json );
 
-        my $curl_cmd = "$curlbin -sS --data \'$login_json\' $khomp_api_login_url";
+	my $curl_cmd = "$curlbin -sS --data \'$login_json\' $khomp_api_login_url";
 
-        $agi_string = "--    KHOMP CURL COMMAND: $curl_cmd";   &agi_output;
+	$agi_string = "--    KHOMP CURL COMMAND: $curl_cmd";   &agi_output;
 
-        $message = `$curl_cmd`;
+	$message = `$curl_cmd`;
 
-        chomp($message);
+	chomp($message);
 
-        if ($AGILOG)
-                {
-                $agi_string = "--    KHOMP LOGIN URL: |$khomp_api_login_url|";   &agi_output;
-                $agi_string = "--    KHOMP LOGIN JSON : |$login_json|";   &agi_output;
-                $agi_string = "--    KHOMP LOGIN RESPONSE JSON: |$message|";   &agi_output;
-                }
+	if ($AGILOG)
+		{
+		$agi_string = "--    KHOMP LOGIN URL: |$khomp_api_login_url|";   &agi_output;
+		$agi_string = "--    KHOMP LOGIN JSON : |$login_json|";   &agi_output;
+		$agi_string = "--    KHOMP LOGIN RESPONSE JSON: |$message|";   &agi_output;
+		}
 
-        $json = JSON::PP->new->ascii->pretty->allow_nonref;
-        $result = $json->decode($message);
+	$json = JSON::PP->new->ascii->pretty->allow_nonref;
+	$result = $json->decode($message);
 
-        $token = $result->{'result'}->{'token'};
+	$token = $result->{'result'}->{'token'};
 
 	($auth_end_sec, $auth_end_usec) = gettimeofday();
 
-	$auth_sec = $auth_end_sec - $auth_start_sec;
-	$auth_usec = $auth_end_usec - $auth_start_usec;
+	$api_auth_time = tv_interval ( [$auth_start_sec, $auth_start_usec], [$auth_end_sec, $auth_end_usec]);
 
-	$api_auth_time = "$auth_sec.$auth_usec";
- 
 	return ($token, $api_auth_time);
-        }
+	}
 
 ### code for connecting to KHOMP api and passing JSON
 sub khomp_json_api
-        {
-        (
-                $khomp_json,
-                $khomp_api_url,
-        ) = @_;
+	{
+	( $khomp_json, $khomp_api_url ) = @_;
 
-        my $query_start_sec;
-        my $query_start_usec;
-        my $query_end_sec;
-        my $query_end_usec;
-        my $query_sec;
-        my $query_usec;
-        my $api_query_time;
+	my $query_start_sec;
+	my $query_start_usec;
+	my $query_end_sec;
+	my $query_end_usec;
+	my $query_sec;
+	my $query_usec;
+	my $api_query_time;
 
-        ($query_start_sec, $query_start_usec) = gettimeofday();
+	($query_start_sec, $query_start_usec) = gettimeofday();
 
-        my $curl_cmd = "$curlbin -sS --data \'$khomp_json\' $khomp_api_url";
+	my $curl_cmd = "$curlbin -sS --data \'$khomp_json\' $khomp_api_url";
 
-        $agi_string = "--    KHOMP CURL COMMAND: $curl_cmd";   &agi_output;
+	$agi_string = "--    KHOMP CURL COMMAND: $curl_cmd";   &agi_output;
 
-        $message = `$curl_cmd`;
+	$message = `$curl_cmd`;
 
-        chomp($message);
+	chomp($message);
 
-        if ($AGILOG)
-                {
-                $agi_string = "--    KHOMP URL: |$khomp_api_url|";   &agi_output;
-                $agi_string = "--    KHOMP JSON : |$khomp_json|";   &agi_output;
-                $agi_string = "--    KHOMP RESPONSE JSON: |$message|";   &agi_output;
-                }
+	if ($AGILOG)
+		{
+		$agi_string = "--    KHOMP URL: |$khomp_api_url|";   &agi_output;
+		$agi_string = "--    KHOMP JSON : |$khomp_json|";   &agi_output;
+		$agi_string = "--    KHOMP RESPONSE JSON: |$message|";   &agi_output;
+		}
 
-        $json = JSON::PP->new->ascii->pretty->allow_nonref;
-        $result = $json->decode($message);
+	$json = JSON::PP->new->ascii->pretty->allow_nonref;
+	$result = $json->decode($message);
 
 	($query_end_sec, $query_end_usec) = gettimeofday();
 
-	$query_sec = $query_end_sec - $query_start_sec;
-	$query_usec = $query_end_usec - $query_start_usec;
+	$api_query_time = tv_interval ( [$query_start_sec, $query_start_usec], [$query_end_sec, $query_end_usec]);
 
-	$api_query_time = "$query_sec.$query_usec";
-
-        return ($result, $api_query_time);
-        }
-
-
+	return ($result, $api_query_time);
+	}

@@ -1,7 +1,7 @@
 <?php 
 # AST_LAGGED_log_report.php
 # 
-# Copyright (C) 2017  Joe Johnson, Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
+# Copyright (C) 2022  Joe Johnson, Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
 #
 # CHANGES
 # 130622-1026 - First build
@@ -10,6 +10,8 @@
 # 141114-0832 - Finalized adding QXZ translation to all admin files
 # 141230-1446 - Added code for on-the-fly language translations display
 # 170409-1536 - Added IP List validation code
+# 220302-1624 - Added allow_web_debug system setting
+# 220812-0946 - Added User Group report permissions checking
 #
 
 $startMS = microtime();
@@ -22,16 +24,13 @@ $report_name='LAGGED Agent Log Report';
 $PHP_AUTH_USER=$_SERVER['PHP_AUTH_USER'];
 $PHP_AUTH_PW=$_SERVER['PHP_AUTH_PW'];
 $PHP_SELF=$_SERVER['PHP_SELF'];
+$PHP_SELF = preg_replace('/\.php.*/i','.php',$PHP_SELF);
 if (isset($_GET["query_date"]))				{$query_date=$_GET["query_date"];}
 	elseif (isset($_POST["query_date"]))	{$query_date=$_POST["query_date"];}
 if (isset($_GET["query_date_D"]))			{$query_date_D=$_GET["query_date_D"];}
 	elseif (isset($_POST["query_date_D"]))	{$query_date_D=$_POST["query_date_D"];}
 if (isset($_GET["query_date_T"]))			{$query_date_T=$_GET["query_date_T"];}
 	elseif (isset($_POST["query_date_T"]))	{$query_date_T=$_POST["query_date_T"];}
-if (isset($_GET["url_type"]))				{$url_type=$_GET["url_type"];}
-	elseif (isset($_POST["url_type"]))		{$url_type=$_POST["url_type"];}
-if (isset($_GET["response_sec"]))			{$response_sec=$_GET["response_sec"];}
-	elseif (isset($_POST["response_sec"]))	{$response_sec=$_POST["response_sec"];}
 if (isset($_GET["file_download"]))			{$file_download=$_GET["file_download"];}
 	elseif (isset($_POST["file_download"]))	{$file_download=$_POST["file_download"];}
 if (isset($_GET["lower_limit"]))			{$lower_limit=$_GET["lower_limit"];}
@@ -47,17 +46,18 @@ if (isset($_GET["SUBMIT"]))					{$SUBMIT=$_GET["SUBMIT"];}
 if (isset($_GET["report_display_type"]))			{$report_display_type=$_GET["report_display_type"];}
 	elseif (isset($_POST["report_display_type"]))	{$report_display_type=$_POST["report_display_type"];}
 
-$NOW_DATE = date("Y-m-d");
+$DB=preg_replace("/[^0-9a-zA-Z]/","",$DB);
 
+$NOW_DATE = date("Y-m-d");
+if (!isset($query_date)) {$query_date = $NOW_DATE;}
 if (strlen($query_date_D) < 6) {$query_date_D = "00:00:00";}
 if (strlen($query_date_T) < 6) {$query_date_T = "23:59:59";}
-if (!isset($query_date)) {$query_date = $NOW_DATE;}
 
 #############################################
 ##### START SYSTEM_SETTINGS LOOKUP #####
-$stmt = "SELECT use_non_latin,outbound_autodial_active,slave_db_server,reports_use_slave_db,enable_languages,language_method FROM system_settings;";
+$stmt = "SELECT use_non_latin,outbound_autodial_active,slave_db_server,reports_use_slave_db,enable_languages,language_method,allow_web_debug FROM system_settings;";
 $rslt=mysql_to_mysqli($stmt, $link);
-if ($DB) {$MAIN.="$stmt\n";}
+#if ($DB) {$MAIN.="$stmt\n";}
 $qm_conf_ct = mysqli_num_rows($rslt);
 if ($qm_conf_ct > 0)
 	{
@@ -68,9 +68,21 @@ if ($qm_conf_ct > 0)
 	$reports_use_slave_db =			$row[3];
 	$SSenable_languages =			$row[4];
 	$SSlanguage_method =			$row[5];
+	$SSallow_web_debug =			$row[6];
 	}
+if ($SSallow_web_debug < 1) {$DB=0;}
 ##### END SETTINGS LOOKUP #####
 ###########################################
+
+$query_date = preg_replace('/[^- \:\_0-9a-zA-Z]/', '', $query_date);
+$query_date_D = preg_replace('/[^- \:\_0-9a-zA-Z]/', '', $query_date_D);
+$query_date_T = preg_replace('/[^- \:\_0-9a-zA-Z]/', '', $query_date_T);
+$lower_limit = preg_replace('/[^-_0-9a-zA-Z]/', '', $lower_limit);
+$upper_limit = preg_replace('/[^-_0-9a-zA-Z]/', '', $upper_limit);
+$submit = preg_replace('/[^-_0-9a-zA-Z]/', '', $submit);
+$SUBMIT = preg_replace('/[^-_0-9a-zA-Z]/', '', $SUBMIT);
+$report_display_type = preg_replace('/[^-_0-9a-zA-Z]/', '', $report_display_type);
+$file_download = preg_replace('/[^-_0-9a-zA-Z]/', '', $file_download);
 
 if ($non_latin < 1)
 	{
@@ -79,11 +91,11 @@ if ($non_latin < 1)
 	}
 else
 	{
-	$PHP_AUTH_PW = preg_replace("/'|\"|\\\\|;/","",$PHP_AUTH_PW);
-	$PHP_AUTH_USER = preg_replace("/'|\"|\\\\|;/","",$PHP_AUTH_USER);
+	$PHP_AUTH_USER = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_USER);
+	$PHP_AUTH_PW = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_PW);
 	}
 
-$stmt="SELECT selected_language from vicidial_users where user='$PHP_AUTH_USER';";
+$stmt="SELECT selected_language,user_group from vicidial_users where user='$PHP_AUTH_USER';";
 if ($DB) {echo "|$stmt|\n";}
 $rslt=mysql_to_mysqli($stmt, $link);
 $sl_ct = mysqli_num_rows($rslt);
@@ -91,6 +103,7 @@ if ($sl_ct > 0)
 	{
 	$row=mysqli_fetch_row($rslt);
 	$VUselected_language =		$row[0];
+	$LOGuser_group =			$row[1];
 	}
 
 $auth=0;
@@ -150,6 +163,33 @@ else
 	exit;
 	}
 
+$stmt="SELECT allowed_campaigns,allowed_reports,admin_viewable_groups,admin_viewable_call_times from vicidial_user_groups where user_group='$LOGuser_group';";
+if ($DB) {$HTML_text.="|$stmt|\n";}
+$rslt=mysql_to_mysqli($stmt, $link);
+$row=mysqli_fetch_row($rslt);
+$LOGallowed_campaigns =			$row[0];
+$LOGallowed_reports =			$row[1];
+$LOGadmin_viewable_groups =		$row[2];
+$LOGadmin_viewable_call_times =	$row[3];
+
+$LOGallowed_campaignsSQL='';
+$whereLOGallowed_campaignsSQL='';
+if ( (!preg_match('/\-ALL/i', $LOGallowed_campaigns)) )
+	{
+	$rawLOGallowed_campaignsSQL = preg_replace("/ -/",'',$LOGallowed_campaigns);
+	$rawLOGallowed_campaignsSQL = preg_replace("/ /","','",$rawLOGallowed_campaignsSQL);
+	$LOGallowed_campaignsSQL = "and campaign_id IN('$rawLOGallowed_campaignsSQL')";
+	$whereLOGallowed_campaignsSQL = "where campaign_id IN('$rawLOGallowed_campaignsSQL')";
+	}
+$regexLOGallowed_campaigns = " $LOGallowed_campaigns ";
+
+if ( (!preg_match("/$report_name/",$LOGallowed_reports)) and (!preg_match("/ALL REPORTS/",$LOGallowed_reports)) )
+	{
+    Header("WWW-Authenticate: Basic realm=\"CONTACT-CENTER-ADMIN\"");
+    Header("HTTP/1.0 401 Unauthorized");
+    echo "You are not allowed to view this report: |$PHP_AUTH_USER|$report_name|\n";
+    exit;
+	}
 
 ##### BEGIN log visit to the vicidial_report_log table #####
 $LOGip = getenv("REMOTE_ADDR");
@@ -287,20 +327,20 @@ if ($SUBMIT && $query_date) {
 		$HTML_text.="<TR><TH class='small_standard_bold grey_graph_cell'>"._QXZ("TOTAL")."</th><TH class='small_standard_bold grey_graph_cell'>$total_count</th></tr></table>";
 
 
-		$rpt_stmt="SELECT * from vicidial_agent_log where sub_status='LAGGED' and event_time>='$query_date $query_date_D' and event_time<='$query_date $query_date_T' $url_type_SQL order by user, event_time asc";
+		$rpt_stmt="SELECT * from vicidial_agent_log where sub_status='LAGGED' and event_time>='$query_date $query_date_D' and event_time<='$query_date $query_date_T' order by user, event_time asc";
 		$rpt_rslt=mysql_to_mysqli($rpt_stmt, $link);
 		if ($DB) {$ASCII_text.=$rpt_stmt."\n";}
 
 		if (!$lower_limit) {$lower_limit=1;}
 		if ($lower_limit+999>=mysqli_num_rows($rpt_rslt)) {$upper_limit=($lower_limit+mysqli_num_rows($rpt_rslt)%1000)-1;} else {$upper_limit=$lower_limit+999;}
 
-		$ASCII_text.="--- "._QXZ("LAGGED LOG RECORDS FOR")." $query_date, $query_date_D "._QXZ("TO")." $query_date_T $server_rpt_string, "._QXZ("RECORDS")." #$lower_limit-$upper_limit               <a href=\"$PHP_SELF?SUBMIT=$SUBMIT&DB=$DB&type=$type&query_date=$query_date&query_date_D=$query_date_D&query_date_T=$query_date_T$url_typeQS&lower_limit=$lower_limit&upper_limit=$upper_limit&file_download=1\">["._QXZ("DOWNLOAD")."]</a>\n";
+		$ASCII_text.="--- "._QXZ("LAGGED LOG RECORDS FOR")." $query_date, $query_date_D "._QXZ("TO")." $query_date_T $server_rpt_string, "._QXZ("RECORDS")." #$lower_limit-$upper_limit               <a href=\"$PHP_SELF?SUBMIT=$SUBMIT&DB=$DB&type=$type&query_date=$query_date&query_date_D=$query_date_D&query_date_T=$query_date_T&lower_limit=$lower_limit&upper_limit=$upper_limit&file_download=1\">["._QXZ("DOWNLOAD")."]</a>\n";
 		$lagged_rpt.="+--------------+------------+-----------------+---------------------+-----------+----------+--------+----------------------+----------------------+----------------------+\n";
 		$lagged_rpt.="| "._QXZ("AGENT LOG ID",12)." | "._QXZ("USER",10)." | "._QXZ("SERVER IP",15)." | "._QXZ("EVENT TIME",19)." | "._QXZ("LEAD ID",9)." | "._QXZ("CAMPAIGN",8)." | "._QXZ("STATUS",6)." | "._QXZ("USER GROUP",20)." | "._QXZ("COMMENTS",20)." | "._QXZ("UNIQUE ID",20)." |\n";
 		$lagged_rpt.="+--------------+------------+-----------------+---------------------+-----------+----------+--------+----------------------+----------------------+----------------------+\n";
 
 		$HTML_text.="<BR><BR><table border='0' cellpadding='0' cellspacing='2' width='1000'>";
-		$HTML_rpt.="<TR><TH colspan='9' class='small_standard_bold grey_graph_cell'>"._QXZ("LAGGED LOG RECORDS FOR")." $query_date, $query_date_D "._QXZ("TO")." $query_date_T $server_rpt_string, "._QXZ("RECORDS")." #$lower_limit-$upper_limit</TH><TD align='right' class='small_standard_bold grey_graph_cell'><a href=\"$PHP_SELF?SUBMIT=$SUBMIT&DB=$DB&type=$type&query_date=$query_date&query_date_D=$query_date_D&query_date_T=$query_date_T$url_typeQS&lower_limit=$lower_limit&upper_limit=$upper_limit&file_download=1\">["._QXZ("DOWNLOAD")."]</a></td></TR>";
+		$HTML_rpt.="<TR><TH colspan='9' class='small_standard_bold grey_graph_cell'>"._QXZ("LAGGED LOG RECORDS FOR")." $query_date, $query_date_D "._QXZ("TO")." $query_date_T $server_rpt_string, "._QXZ("RECORDS")." #$lower_limit-$upper_limit</TH><TD align='right' class='small_standard_bold grey_graph_cell'><a href=\"$PHP_SELF?SUBMIT=$SUBMIT&DB=$DB&type=$type&query_date=$query_date&query_date_D=$query_date_D&query_date_T=$query_date_T&lower_limit=$lower_limit&upper_limit=$upper_limit&file_download=1\">["._QXZ("DOWNLOAD")."]</a></td></TR>";
 		$HTML_rpt.="<TR><TH class='small_standard_bold grey_graph_cell' width='90'>"._QXZ("AGENT LOG ID")."</TH><TH class='small_standard_bold grey_graph_cell' width='80'>"._QXZ("USER")."</TH><TH class='small_standard_bold grey_graph_cell' width='120'>"._QXZ("SERVER IP")."</TH><TH class='small_standard_bold grey_graph_cell' width='100'>"._QXZ("EVENT TIME")."</TH><TH class='small_standard_bold grey_graph_cell' width='80'>"._QXZ("LEAD ID")."</TH><TH class='small_standard_bold grey_graph_cell' width='80'>"._QXZ("CAMPAIGN")."</TH><TH class='small_standard_bold grey_graph_cell' width='60'>"._QXZ("STATUS")."</TH><TH class='small_standard_bold grey_graph_cell' width='80'>"._QXZ("USER GROUP")."</TH><TH class='small_standard_bold grey_graph_cell' width='160'>"._QXZ("COMMENTS")."</TH><TH class='small_standard_bold grey_graph_cell' width='120'>"._QXZ("UNIQUE ID")."</TH></TR>";
 
 		$CSV_text="\""._QXZ("AGENT LOG ID")."\",\""._QXZ("USER")."\",\""._QXZ("SERVER IP")."\",\""._QXZ("EVENT TIME")."\",\""._QXZ("LEAD ID")."\",\""._QXZ("CAMPAIGN")."\",\""._QXZ("STATUS")."\",\""._QXZ("USER GROUP")."\",\""._QXZ("COMMENTS")."\",\""._QXZ("UNIQUE ID")."\"\n";
@@ -335,8 +375,8 @@ if ($SUBMIT && $query_date) {
 		if ($ll<1 || ($lower_limit+1000)>=mysqli_num_rows($rpt_rslt)) {$HTML_colspan=6;} else {$HTML_colspan=3;}
 
 		if ($ll>=1) {
-			$lagged_rpt_hf.="<a href=\"$PHP_SELF?SUBMIT=$SUBMIT&DB=$DB&report_display_type=$report_display_type&type=$type&query_date=$query_date&query_date_D=$query_date_D&query_date_T=$query_date_T$url_typeQS&lower_limit=$ll\">[<<< "._QXZ("PREV 1000 records")."]</a>";
-			$HTML_rpt_hf.="<Td colspan='$HTML_colspan' class='small_standard_bold grey_graph_cell' align='left'><a href=\"$PHP_SELF?SUBMIT=$SUBMIT&DB=$DB&report_display_type=$report_display_type&type=$type&query_date=$query_date&query_date_D=$query_date_D&query_date_T=$query_date_T$url_typeQS&lower_limit=$ll\">[<<< "._QXZ("PREV 1000 records")."]</a></TH>";
+			$lagged_rpt_hf.="<a href=\"$PHP_SELF?SUBMIT=$SUBMIT&DB=$DB&report_display_type=$report_display_type&type=$type&query_date=$query_date&query_date_D=$query_date_D&query_date_T=$query_date_T&lower_limit=$ll\">[<<< "._QXZ("PREV 1000 records")."]</a>";
+			$HTML_rpt_hf.="<Td colspan='$HTML_colspan' class='small_standard_bold grey_graph_cell' align='left'><a href=\"$PHP_SELF?SUBMIT=$SUBMIT&DB=$DB&report_display_type=$report_display_type&type=$type&query_date=$query_date&query_date_D=$query_date_D&query_date_T=$query_date_T&lower_limit=$ll\">[<<< "._QXZ("PREV 1000 records")."]</a></TH>";
 
 		} else {
 			$lagged_rpt_hf.=sprintf("%-23s", " ");
@@ -344,8 +384,8 @@ if ($SUBMIT && $query_date) {
 		$lagged_rpt_hf.=sprintf("%-145s", " ");
 		if (($lower_limit+1000)<mysqli_num_rows($rpt_rslt)) {
 			if ($upper_limit+1000>=mysqli_num_rows($rpt_rslt)) {$max_limit=mysqli_num_rows($rpt_rslt)-$upper_limit;} else {$max_limit=1000;}
-			$lagged_rpt_hf.="<a href=\"$PHP_SELF?SUBMIT=$SUBMIT&DB=$DB&report_display_type=$report_display_type&type=$type&query_date=$query_date&query_date_D=$query_date_D&query_date_T=$query_date_T$url_typeQS&lower_limit=".($lower_limit+1000)."\">["._QXZ("NEXT")." $max_limit "._QXZ("records")." >>>]</a>";
-			$HTML_rpt_hf.="<Td colspan='$HTML_colspan' class='small_standard_bold grey_graph_cell' align='right'><a href=\"$PHP_SELF?SUBMIT=$SUBMIT&DB=$DB&report_display_type=$report_display_type&type=$type&query_date=$query_date&query_date_D=$query_date_D&query_date_T=$query_date_T$url_typeQS&lower_limit=".($lower_limit+1000)."\">["._QXZ("NEXT")." $max_limit "._QXZ("records")." >>>]</a></TH>";
+			$lagged_rpt_hf.="<a href=\"$PHP_SELF?SUBMIT=$SUBMIT&DB=$DB&report_display_type=$report_display_type&type=$type&query_date=$query_date&query_date_D=$query_date_D&query_date_T=$query_date_T&lower_limit=".($lower_limit+1000)."\">["._QXZ("NEXT")." $max_limit "._QXZ("records")." >>>]</a>";
+			$HTML_rpt_hf.="<Td colspan='$HTML_colspan' class='small_standard_bold grey_graph_cell' align='right'><a href=\"$PHP_SELF?SUBMIT=$SUBMIT&DB=$DB&report_display_type=$report_display_type&type=$type&query_date=$query_date&query_date_D=$query_date_D&query_date_T=$query_date_T&lower_limit=".($lower_limit+1000)."\">["._QXZ("NEXT")." $max_limit "._QXZ("records")." >>>]</a></TH>";
 		} else {
 			$lagged_rpt_hf.=sprintf("%23s", " ");
 		}

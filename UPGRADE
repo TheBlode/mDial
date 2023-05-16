@@ -633,6 +633,165 @@ OTHER CHANGES:
 	It will define the Hold music played to a customer when the phone user
 	puts them on hold through the phone.
 
+177. Added compatibility with TILTX STIR/SHAKEN Call Shaper pre-carrier call
+	filtering service. Read the TILTX_SHAKEN_API.txt doc for more info.
+
+178. Added In-Group Drop Seconds Override Container, allowing for overriding of
+	the Drop Seconds setting based upon the day of the week and time of day.
+
+179. Added Inbound Manual Dial Agent Forced Ready features allowing for forcing
+	agents in INBOUND_MAN dial method campaigns to be in the READY state
+	(able to take inbound calls) for a set amount of time before they are 
+	able to click on the DIAL NEXT NUMBER button each time. Also allows for 
+	an override setting based upon the day of the week and time of day.
+
+180. Added CORS(Cross-Origin Resource Sharing) support for the VICIdial agent
+	PHP scripts and select admin PHP scripts. see the CORS_SUPPORT.txt doc
+	for more information.
+
+181. Added Transfer No Dispo campaign setting, allowing for transferred calls
+	to not immediately show the disposition panel on the agent screen.
+
+182. Added User override setting for campaign Manual Dial Filter option.
+
+183. Added display of active Call Time Holidays in the agent screen Scheduled 
+	Callbacks calendar panel.
+
+184. SECURITY NOTE: For agent screen Webform buttons, we have changed the 
+	default behavior to not include user credentials in non-custom URL
+	strings unless you set the new agc/options.php settings to do so:
+	"$user_pass_webform and "$phone_login_webform"
+	See the "agc/options-example.php" file for more information.
+	*This will not affect custom webform query strings that start with "VAR"
+
+185. Added display of the Phone Codes and Postal Codes that are loaded into the
+	system. Linked from the System Settings page.
+
+186. Added 24-Hour Called Count Limit campaign feature, allows you to limit the
+	number of calls to be placed to a phone number or lead in a 24-hour time
+	period. Also allows for state-based override settings. For more 
+	information, read the CALL_COUNT_LIMITS.txt doc.
+
+187. Added CID Group Failover setting for campaigns, to allow for backup CID
+	Group to use if no AREACODE or STATE match found from first CID Group.
+
+188. Added agc/dispo_list_quota.php script to deactivate lists once a limit of
+	the number of leads matching set statuses is reached. See the comments
+	in the code for more details.
+
+189. Changed agc/dispo_send_email.php to only allow attachments in the new 
+	"agc/attachments" web directory.
+
+190. Added Asterisk 16 "PJSIP" compatibility
+
+191. Added 'batch_update_lead' Non-Agent API function
+
+192. Added 'Agent In-Call Tally Seconds Threshold' campaign setting, to better
+	handle dialing volume on campaigns with long agent talk time.
+
+193. Added 'In-Queue No Agents Check' in-group setting, to allow for checking of
+	logged-in or available agents for the in-group while calls are in-queue,
+	and if there are no agents available, sending the customers to the
+	No-Agent-No-Queue Action. With configurable pause code exceptions.
+
+194. Added MIN LENGTH to the Dispo Call URL ALT admin screen, allowing for a
+	minimum call time threshold before a Dispo Call URL will trigger.
+
+195. Added User Location to the Modify User page. Also added Queue Groups Admin
+	pages, allowing you to define multiple campaigns and/or in-groups in a 
+	single Queue Group to be used in some reports.
+
+196. Added Campaign and List options for "Auto Alt-Number Dialing Threshold"
+	allowing you to stop auto-dialing alternate phone numbers for a lead 
+	after a set number of call attempts, and thereafter only dialing the 
+	main phone number for the lead.
+
+197. Added 'update_alt_url' Non-Agent API function
+
+198. Added "Pause Max URL" Campaign feature
+
+199. Added "Allow Web DB Debug" System Settings feature, to allow use of the $DB
+	variable on the web screens for troubleshooting issues. 
+	It is disabled by default.
+
+200. Added List CID Group Override to the List Modification admin screen.
+
+201. Added "Pre-Filter Recent Call" DID feature, to be able to filter out 
+	inbound calls based on the caller phone number and whether it had been 
+	called(or had called in) within the last X number of days.
+
+202. Added the "Inbound DID Detail Report" to the Admin Utilities page.
+
+203. Added Beta support for ConfBridge Asterisk Conferencing engine. See the
+	"/extras/ConfBridge" directory for more information.
+
+204. Added Beta support for VERM(the VICIdial Enhanced Reporting Module),
+	accessible from the "Reports -> Admin Utilities" page.
+
+205. Added User Group "Script Override" option, with per-campaign activation.
+
+206. Added "Webphone Settings" option to Phones, allows for more WebRTC config
+	options to be set through a Settings Container.
+
+207. Added "Agent Call Hangup Route" campaign settings, allowing you to send 
+	calls that an agent is finished with to a Call Menu, In-Group or a 
+	pre-recorded message before hanging up the call.
+
+	NOTE: After upgrading your system, be sure to set each dialer to 
+	"Rebuild conf files" = 'Y' for this feature to work properly.
+
+208. Added instructions and scripts for creating a Gateway Recording server
+	See the GATEWAY_RECORDING_SERVER.txt doc for more info.
+
+209. Added the ability to have multiple "No Agent Call URL" entries for a 
+	single Campaign/In-Group/List, by putting "ALT" in the No Agent Call URL
+	field on the Campaign, In-Group, List modify screen. Just like how it 
+	works with Dispo Call URL currently.
+
+210. Added new User Group “Script Tab Frame Location” allowing the script tab 
+	to extend to the far left side of the screen.
+
+211. Added new campaign setting “Max Logged-In Agents”, allowing you to set a 
+	maximum number of agents that can be logged into this campaign at any 
+	time.
+
+212. Added list option for “Dial Prefix Override”.
+
+213. Added a “color chooser” for the In-Group Color and Screen Colors fields. 
+	Also added color hex code validation to those fields.
+
+214. Added “Invalid Phone Number Replacement” option to the Web Lead Loader, 
+	allowing you to replace an invalid phone_number lead value with either 
+	the alt_phone or address3 value in the same lead.
+
+215. Added optional “Agent Login Kick-all” system setting which hangs up any 
+	channels that were already in the agent session before the agent is 
+	placed into the session.
+
+216. Added “User Codes Admin Pulldown” allowing only User Level 9 users to 
+	modify the User Code field on the User Modify page, and it will change 
+	the User Code field to a pulldown menu.
+
+217. Added "Show Confetti" campaign setting, allowing for confetti to be shown
+	to agents when they disposition a call as a SALE and/or a CALLBACK
+	flagged status.
+
+218. Added "Abandon Check Queue" feature, to catch dropped Call Menu calls that
+	are tagged with a Lead ID. For more information, see the bottom of the
+	INBOUND_CALLBACK_QUEUE.txt document.
+
+219. Added "Asterisk Restart URL" to the Modify Servers page, this can send a 
+	URL request any time Asterisk is auto-restarted on that server.
+
+220. Added Agent API "send_notification" function, allowing you to send 
+	notifications to agents by User, User Group or Campaign.
+
+221. Added "AMD Agent Route Options" flag to allow immediately hangup and dispo
+	of calls with no audio data. This is a campaign feature.
+
+222. Added agent screen latency logging, viewable in the Real-Time Report and
+	the new Agent Latency Report.
+
 
 
 

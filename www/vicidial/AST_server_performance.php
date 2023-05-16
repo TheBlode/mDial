@@ -1,7 +1,7 @@
 <?php 
 # AST_server_performance.php
 # 
-# Copyright (C) 2019  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
+# Copyright (C) 2022  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
 #
 # CHANGES
 #
@@ -29,6 +29,7 @@
 # 170422-0750 - Added input variable filtering
 # 180223-1541 - Fixed blank default date/time ranges
 # 191013-0842 - Fixes for PHP7
+# 220302-0841 - Added allow_web_debug system setting
 #
 
 $startMS = microtime();
@@ -39,6 +40,7 @@ require("functions.php");
 $PHP_AUTH_USER=$_SERVER['PHP_AUTH_USER'];
 $PHP_AUTH_PW=$_SERVER['PHP_AUTH_PW'];
 $PHP_SELF=$_SERVER['PHP_SELF'];
+$PHP_SELF = preg_replace('/\.php.*/i','.php',$PHP_SELF);
 if (isset($_GET["begin_query_time"]))			{$begin_query_time=$_GET["begin_query_time"];}
 	elseif (isset($_POST["begin_query_time"]))	{$begin_query_time=$_POST["begin_query_time"];}
 if (isset($_GET["end_query_time"]))				{$end_query_time=$_GET["end_query_time"];}
@@ -52,14 +54,23 @@ if (isset($_GET["submit"]))				{$submit=$_GET["submit"];}
 if (isset($_GET["SUBMIT"]))				{$SUBMIT=$_GET["SUBMIT"];}
 	elseif (isset($_POST["SUBMIT"]))	{$SUBMIT=$_POST["SUBMIT"];}
 
+$DB=preg_replace("/[^0-9a-zA-Z]/","",$DB);
+
+$NOW_DATE = date("Y-m-d");
+$NOW_TIME = date("Y-m-d H:i:s");
+$STARTtime = date("U");
+if (strlen($begin_query_time) < 10) {$begin_query_time = "$NOW_DATE 09:00:00";}
+if (strlen($end_query_time) < 10) {$end_query_time = "$NOW_DATE 15:30:00";}
+if (!isset($group)) {$group = '';}
+
 $report_name = 'Server Performance Report';
 $db_source = 'M';
 
 #############################################
 ##### START SYSTEM_SETTINGS LOOKUP #####
-$stmt = "SELECT use_non_latin,outbound_autodial_active,slave_db_server,reports_use_slave_db,enable_languages,language_method FROM system_settings;";
+$stmt = "SELECT use_non_latin,outbound_autodial_active,slave_db_server,reports_use_slave_db,enable_languages,language_method,allow_web_debug FROM system_settings;";
 $rslt=mysql_to_mysqli($stmt, $link);
-if ($DB) {echo "$stmt\n";}
+#if ($DB) {echo "$stmt\n";}
 $qm_conf_ct = mysqli_num_rows($rslt);
 if ($qm_conf_ct > 0)
 	{
@@ -70,9 +81,17 @@ if ($qm_conf_ct > 0)
 	$reports_use_slave_db =			$row[3];
 	$SSenable_languages =			$row[4];
 	$SSlanguage_method =			$row[5];
+	$SSallow_web_debug =			$row[6];
 	}
+if ($SSallow_web_debug < 1) {$DB=0;}
 ##### END SETTINGS LOOKUP #####
 ###########################################
+
+$begin_query_time = preg_replace('/[^- \:_0-9a-zA-Z]/', '', $begin_query_time);
+$end_query_time = preg_replace('/[^- \:_0-9a-zA-Z]/', '', $end_query_time);
+$group = preg_replace('/[^- \.\:\_0-9a-zA-Z]/', '', $group);
+$submit = preg_replace('/[^-_0-9a-zA-Z]/', '', $submit);
+$SUBMIT = preg_replace('/[^-_0-9a-zA-Z]/', '', $SUBMIT);
 
 if ($non_latin < 1)
 	{
@@ -81,13 +100,9 @@ if ($non_latin < 1)
 	}
 else
 	{
-	$PHP_AUTH_PW = preg_replace("/'|\"|\\\\|;/","",$PHP_AUTH_PW);
-	$PHP_AUTH_USER = preg_replace("/'|\"|\\\\|;/","",$PHP_AUTH_USER);
+	$PHP_AUTH_USER = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_USER);
+	$PHP_AUTH_PW = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_PW);
 	}
-
-$begin_query_time = preg_replace('/[^- \:_0-9a-zA-Z]/', '', $begin_query_time);
-$end_query_time = preg_replace('/[^- \:_0-9a-zA-Z]/', '', $end_query_time);
-$group = preg_replace('/[^\._0-9a-zA-Z]/', '', $group);
 
 $stmt="SELECT selected_language from vicidial_users where user='$PHP_AUTH_USER';";
 if ($DB) {echo "|$stmt|\n";}
@@ -240,14 +255,6 @@ if ( (!preg_match("/$report_name/",$LOGallowed_reports)) and (!preg_match("/ALL 
 $PLOTroot = "vicidial/ploticus";
 $DOCroot = "$WeBServeRRooT/$PLOTroot/";
 
-$NOW_DATE = date("Y-m-d");
-$NOW_TIME = date("Y-m-d H:i:s");
-$STARTtime = date("U");
-
-if (strlen($begin_query_time) < 10) {$begin_query_time = "$NOW_DATE 09:00:00";}
-if (strlen($end_query_time) < 10) {$end_query_time = "$NOW_DATE 15:30:00";}
-if (!isset($group)) {$group = '';}
-
 $stmt="select server_ip from servers order by server_ip;";
 $rslt=mysql_to_mysqli($stmt, $link);
 if ($DB) {echo "$stmt\n";}
@@ -260,6 +267,10 @@ while ($i < $servers_to_print)
 	$groups[$i] =$row[0];
 	$i++;
 	}
+
+$NWB = "<IMG SRC=\"help.png\" onClick=\"FillAndShowHelpDiv(event, '";
+$NWE = "')\" WIDTH=20 HEIGHT=20 BORDER=0 ALT=\"HELP\" ALIGN=TOP>";
+
 ?>
 
 <HTML>
@@ -275,11 +286,18 @@ while ($i < $servers_to_print)
 
 <?php 
 echo "<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=utf-8\">\n";
-echo "<TITLE>"._QXZ("$report_name")."</TITLE></HEAD><BODY BGCOLOR=WHITE marginheight=0 marginwidth=0 leftmargin=0 topmargin=0>\n";
+echo "<TITLE>"._QXZ("$report_name")."</TITLE></HEAD><BODY BGCOLOR=WHITE marginheight=0 marginwidth=0 leftmargin=0 topmargin=0></TITLE>\n";
+echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"vicidial_stylesheet.php\">\n";
+echo "<script language=\"JavaScript\" src=\"help.js\"></script>\n";
+
+echo "<div id='HelpDisplayDiv' class='help_info' style='display:none;'></div>";
+echo "</head>";
 
 	$short_header=1;
 
 	require("admin_header.php");
+
+echo "<b>"._QXZ("$report_name")."</b> $NWB#serverperformance$NWE\n";
 
 echo "<TABLE CELLPADDING=4 CELLSPACING=0><TR><TD>";
 

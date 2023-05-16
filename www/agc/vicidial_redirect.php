@@ -1,13 +1,15 @@
 <?php
 # vicidial_redirect.php - forwards agents to another URL for vicidial.php login
 # 
-# Copyright (C) 2014  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
+# Copyright (C) 2022  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
 #
 # CHANGELOG
 # 71202-1546 - First Build 
 # 90508-0727 - Changed to PHP long tags
 # 140811-0852 - Changed to use QXZ function for echoing text
 # 141216-2131 - Added language settings lookups and user/pass variable standardization
+# 210823-1004 - Fix for security issue
+# 220220-0924 - Added allow_web_debug system setting
 #
 
 require_once("functions.php");
@@ -39,24 +41,19 @@ if (!isset($phone_pass))
 			elseif (isset($_POST["pp"]))   {$phone_pass=$_POST["pp"];}
 	}
 
-$VD_login=preg_replace("/\'|\"|\\\\|;| /","",$VD_login);
+$DB = preg_replace('/[^-\._0-9\p{L}]/u',"",$DB);
+$phone_login = preg_replace('/[^-\._0-9\p{L}]/u',"",$phone_login);
+$phone_pass = preg_replace('/[^-\._0-9\p{L}]/u',"",$phone_pass);
+$VD_login = preg_replace('/[^-\._0-9\p{L}]/u',"",$VD_login);
+$VD_pass = preg_replace('/[^-\._0-9\p{L}]/u',"",$VD_pass);
+$VD_campaign = preg_replace('/[^-\._0-9\p{L}]/u',"",$VD_campaign);
+$relogin = preg_replace('/[^-\._0-9\p{L}]/u',"",$relogin);
+
 
 #############################################
 ##### START SYSTEM_SETTINGS AND USER LANGUAGE LOOKUP #####
-$VUselected_language = '';
-$stmt="SELECT selected_language from vicidial_users where user='$VD_login';";
-if ($DB) {echo "|$stmt|\n";}
-$rslt=mysql_to_mysqli($stmt, $link);
-	if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'00XXX',$VD_login,$server_ip,$session_name,$one_mysql_log);}
-$sl_ct = mysqli_num_rows($rslt);
-if ($sl_ct > 0)
-	{
-	$row=mysqli_fetch_row($rslt);
-	$VUselected_language =		$row[0];
-	}
-
-$stmt = "SELECT use_non_latin,admin_home_url,admin_web_directory,enable_languages,language_method FROM system_settings;";
-if ($DB) {echo "$stmt\n";}
+$stmt = "SELECT use_non_latin,admin_home_url,admin_web_directory,enable_languages,language_method,allow_web_debug FROM system_settings;";
+#if ($DB) {echo "$stmt\n";}
 $rslt=mysql_to_mysqli($stmt, $link);
 	if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'00XXX',$VD_login,$server_ip,$session_name,$one_mysql_log);}
 $qm_conf_ct = mysqli_num_rows($rslt);
@@ -68,6 +65,20 @@ if ($qm_conf_ct > 0)
 	$admin_web_directory =	$row[2];
 	$SSenable_languages =	$row[3];
 	$SSlanguage_method =	$row[4];
+	$SSallow_web_debug =	$row[5];
+	}
+if ($SSallow_web_debug < 1) {$DB=0;}
+
+$VUselected_language = '';
+$stmt="SELECT selected_language from vicidial_users where user='$VD_login';";
+if ($DB) {echo "|$stmt|\n";}
+$rslt=mysql_to_mysqli($stmt, $link);
+	if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'00XXX',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+$sl_ct = mysqli_num_rows($rslt);
+if ($sl_ct > 0)
+	{
+	$row=mysqli_fetch_row($rslt);
+	$VUselected_language =		$row[0];
 	}
 ##### END SETTINGS LOOKUP #####
 ###########################################

@@ -1,7 +1,7 @@
 <?php
 # options.php - manually defined options for vicidial.php
 # 
-# Copyright (C) 2020  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
+# Copyright (C) 2023  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
 #
 # rename this file to options.php for the settings here to go into effect
 #
@@ -19,6 +19,14 @@
 # 191107-0925 - Added $webphone_call_seconds
 # 200515-1339 - Added ast13_volume_override option
 # 200827-1230 - Added alt_display_enabled option
+# 210616-0959 - Added CORS support
+# 210705-1624 - Added user_pass_webform and phone_login_webform options
+# 210823-1633 - Added email_attachment_path option for dispo_send_email.php script
+# 220127-0931 - Added email_header_attach and allow_sendmail_bypass options
+# 220916-0901 - Added INSERT_before_body_close option, Issue #1375
+# 221206-1458 - Added login_submit_once option
+# 230418-1008 - Added astguiclient_disabled option
+# 230418-1548 - Added dial_override_limit option
 #
 
 $conf_silent_prefix		= '5';	# vicidial_conferences prefix to enter silently and muted for recording
@@ -59,7 +67,15 @@ $use_agent_colors		= '1';	# agent chat colors
 $no_empty_session_warnings=0;	# set to 1 to disable empty session warnings on agent screen
 $logged_in_refresh_link = '0';	# set to 1 to allow clickable "Logged in as..." link at top to force Javascript refresh
 $webphone_call_seconds	= '0';	# set to 1 or higher to have the agent phone(if set to webphone) called X seconds after login
+$user_pass_webform		= '0';	# set to 1 or 2 to return to default of including the 'user'(1) and 'pass'(2) by default in webform URLs
+$phone_login_webform	= '0';	# set to 1 or 2 to return to default of including the 'phone_login'(1) and 'phone_pass'(2) by default in webform URLs
 $alt_display_enabled	= '0';	# set to 1 to allow the alt_display.php script to be used
+$email_attachment_path	= './attachments';	# set to the absolute path from where all of the dispo_send_email.php script attachemnts will be located
+$email_header_attach	= '0';	# set to 1 to force blank line after attachments in header. WARNING: Will break on newer versions of PHP
+$allow_sendmail_bypass	= '';	# some setups require bypassing PHP's mail() function to send properly, set this to 'sendmail' path: '/usr/sbin/sendmail'
+$login_submit_once		= '1';	# set to 0 to remove the "disable the login submit button after submitting" feature
+$astguiclient_disabled	= '1';	# set to 0 to allow use of the astguiclient.php script
+$dial_override_limit	= '6';	# number of dial-override calls per minute that will lock user account, set to 0 to disable dial_override limit
 
 $TEST_all_statuses		= '0';	# TEST variable allows all statuses in dispo screen
 
@@ -78,17 +94,34 @@ $SIDEBAR_COLOR			= '#F6F6F6';
 $window_validation		= 0;	# set to 1 to disallow direct logins to vicidial.php
 $win_valid_name			= 'subwindow_launch';	# only window name to allow if validation enabled
 
-# thin bar webphone settings:
+# Thin bar webphone settings:
 #	$webphone_width			= 1085;	# set the webphone frame width
 #	$webphone_height		= 36;	# set the webphone frame height
 #	$webphone_pad			= 0;	# set the table cellpadding for the webphone
 #	$webphone_location		= 'bar';	# set the location on the agent screen 'right' or 'bar'
 
+# Agent screen code injection options:
 $INSERT_head_script		= '';	# inserted right above the <script language="Javascript"> line after logging in
 $INSERT_head_js			= '';	# inserted after first javascript function
 $INSERT_first_onload	= '';	# inserted at the beginning of the first section of the onload function
 $INSERT_window_onload	= '';	# inserted at the end of the onload function
 $INSERT_agent_events	= '';	# inserted within the agent_events function
+$INSERT_before_body_close = '';	# inserted before each BODY close tag
 
+# CORS settings: (to enable, customize the variables below, and uncomment the "require_once('agentCORS.php');" line at the bottom)
+# (NOTE: The first 3 variables must be set for these features to be active)
+$CORS_allowed_origin		= '';	# if multiple origins allowed, separate them by a pipe (also allows PHP preg syntax)
+									# examples: 'https://acme.org|https://internal.acme.org' or "https?:\/\/(.*\\.?example\\.com|localhost):?[0-9]*|null"
+$CORS_allowed_methods		= '';	# if multiple methods allowed, separate them by a comma 
+									# example: 'GET,POST,OPTIONS,HEAD'
+$CORS_affected_scripts		= '';	# use '--ALL--' for all agc scripts. If multiple(but less than all) scripts affected, separate them by a space 
+									# examples: 'api.php alt_display.php' or '--ALL--'
+$CORS_allowed_headers		= '';	# passed in Access-Control-Allow-Headers http response header, 
+									# examples: X-Requested-With, X-Forwarded-For, X-Forwarded-Proto, Authorization, Cookie, Content-Type
+$CORS_allowed_credentials	= 'N';	# 'Y' or 'N', whether to send credentials to browser or not
+$Xframe_options				= 'N';	# Not part of CORS, but can prevent Iframe/embed/etc... use by foreign website, will populate for all affected scripts
+									# examples: 'N', 'SAMEORIGIN', 'DENY'   NOTE: using 'DENY' may break some agent screen functionality
+$CORS_debug					= 0;	# 0 = no, 1 = yes (default is no) This will generate a lot of log entries in a CORSdebug_log.txt file
+#	require_once('agentCORS.php');
 
 ?>

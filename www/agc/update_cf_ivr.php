@@ -1,7 +1,7 @@
 <?php
 # update_cf_ivr.php
 # 
-# Copyright (C) 2017  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
+# Copyright (C) 2022  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
 #
 # This script is part of the API group and any modifications of data are
 # logged to the vicidial_api_log table.
@@ -11,9 +11,13 @@
 # CHANGES
 # 150814-1441 - First Build
 # 170526-2319 - Added additional variable filtering
+# 210615-1030 - Default security fixes, CVE-2021-28854
+# 210616-2041 - Added optional CORS support, see options.php for details
+# 220219-2238 - Added allow_web_debug system setting
 #
 
 $api_script = 'update_cf_ivr';
+$php_script = 'update_cf_ivr.php';
 
 header ("Content-type: text/html; charset=utf-8");
 
@@ -27,7 +31,6 @@ $BR = getenv ("HTTP_USER_AGENT");
 
 $PHP_AUTH_USER=$_SERVER['PHP_AUTH_USER'];
 $PHP_AUTH_PW=$_SERVER['PHP_AUTH_PW'];
-$PHP_SELF=$_SERVER['PHP_SELF'];
 if (isset($_GET["caller_id"]))				{$caller_id=$_GET["caller_id"];}
 	elseif (isset($_POST["caller_id"]))		{$caller_id=$_POST["caller_id"];}
 if (isset($_GET["lead_id"]))				{$lead_id=$_GET["lead_id"];}
@@ -45,6 +48,7 @@ if (isset($_GET["DB"]))						{$DB=$_GET["DB"];}
 if (isset($_GET["log_to_file"]))			{$log_to_file=$_GET["log_to_file"];}
 	elseif (isset($_POST["log_to_file"]))	{$log_to_file=$_POST["log_to_file"];}
 
+$DB=preg_replace("/[^0-9a-zA-Z]/","",$DB);
 
 #$DB = '1';	# DEBUG override
 $US = '_';
@@ -59,14 +63,25 @@ $k=0;
 # filter variables
 $user=preg_replace("/\'|\"|\\\\|;| /","",$user);
 $pass=preg_replace("/\'|\"|\\\\|;| /","",$pass);
-$caller_id = preg_replace('/[^-_0-9a-zA-Z]/', '', $caller_id);
-$lead_id = preg_replace('/[^_0-9]/', '', $lead_id);
-$list_id = preg_replace('/[^_0-9]/', '', $list_id);
-$field = preg_replace('/[^-_0-9a-zA-Z]/', '', $field);
-$value = preg_replace("/\'|\"|\\\\|;| /","",$value);
 
 #############################################
 ##### START SYSTEM_SETTINGS AND USER LANGUAGE LOOKUP #####
+$stmt = "SELECT use_non_latin,enable_languages,language_method,active_modules,allow_web_debug FROM system_settings;";
+$rslt=mysql_to_mysqli($stmt, $link);
+	if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'02001',$user,$server_ip,$session_name,$one_mysql_log);}
+#if ($DB) {echo "$stmt\n";}
+$qm_conf_ct = mysqli_num_rows($rslt);
+if ($qm_conf_ct > 0)
+	{
+	$row=mysqli_fetch_row($rslt);
+	$non_latin =				$row[0];
+	$SSenable_languages =		$row[1];
+	$SSlanguage_method =		$row[2];
+	$active_modules =			$row[3];
+	$SSallow_web_debug =		$row[4];
+	}
+if ($SSallow_web_debug < 1) {$DB=0;}
+
 $VUselected_language = '';
 $stmt="SELECT selected_language from vicidial_users where user='$user';";
 if ($DB) {echo "|$stmt|\n";}
@@ -78,26 +93,32 @@ if ($sl_ct > 0)
 	$row=mysqli_fetch_row($rslt);
 	$VUselected_language =		$row[0];
 	}
-
-$stmt = "SELECT use_non_latin,enable_languages,language_method,active_modules FROM system_settings;";
-$rslt=mysql_to_mysqli($stmt, $link);
-	if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'02001',$user,$server_ip,$session_name,$one_mysql_log);}
-if ($DB) {echo "$stmt\n";}
-$qm_conf_ct = mysqli_num_rows($rslt);
-if ($qm_conf_ct > 0)
-	{
-	$row=mysqli_fetch_row($rslt);
-	$non_latin =				$row[0];
-	$SSenable_languages =		$row[1];
-	$SSlanguage_method =		$row[2];
-	$active_modules =			$row[3];
-	}
 ##### END SETTINGS LOOKUP #####
 ###########################################
+
+$caller_id = preg_replace('/[^-_0-9a-zA-Z]/', '', $caller_id);
+$lead_id = preg_replace('/[^_0-9]/', '', $lead_id);
+$list_id = preg_replace('/[^_0-9]/', '', $list_id);
+$field = preg_replace('/[^-_0-9a-zA-Z]/', '', $field);
+$value = preg_replace("/\'|\"|\\\\|;| /","",$value);
+$log_to_file = preg_replace('/[^-_0-9a-zA-Z]/', '', $log_to_file);
 
 if ($non_latin < 1)
 	{
 	$user=preg_replace("/[^-_0-9a-zA-Z]/","",$user);
+	$pass=preg_replace("/[^-\.\+\/\=_0-9a-zA-Z]/","",$pass);
+	}
+else
+	{
+	$user=preg_replace("/[^-_0-9\p{L}]/u","",$user);
+	$pass = preg_replace('/[^-\.\+\/\=_0-9\p{L}]/u','',$pass);
+	}
+
+# if options file exists, use the override values for the above variables
+#   see the options-example.php file for more information
+if (file_exists('options.php'))
+	{
+	require_once('options.php');
 	}
 
 if ($DB>0) {echo "$lead_id|$caller_id|$list_id|$field|$value|$user|$DB|$log_to_file|\n";}
@@ -192,7 +213,7 @@ else
 
 if ($log_to_file > 0)
 	{
-	$fp = fopen ("./update_cf.txt", "a");
-	fwrite ($fp, "$NOW_TIME|$k|$lead_id|$caller_id|$list_id|$field|$value|$user|XXXX|$DB|$log_to_file|$MESSAGE|\n");
+	$fp = fopen ("./update_cf.txt", "w");
+#	fwrite ($fp, "$NOW_TIME|$k|$lead_id|$caller_id|$list_id|$field|$value|$user|XXXX|$DB|$log_to_file|$MESSAGE|\n");
 	fclose($fp);
 	}

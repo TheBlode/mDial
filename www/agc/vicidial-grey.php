@@ -1,7 +1,7 @@
 <?php
 # vicidial-grey.php - the web-based version of the astVICIDIAL client application
 # 
-# Copyright (C) 2019  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
+# Copyright (C) 2022  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
 #
 # Other scripts that this application depends on:
 # - vdc_db_query.php: Updates information in the database
@@ -527,10 +527,14 @@
 #               NOTE: THIS VERSION WILL EVENTUALLY BECOME UNSUPPORTED!!!!!!!!!!
 # 161102-1120 - Fixed QM partition problem
 # 190111-0908 - Fix for PHP7
+# 210615-1029 - Default security fixes, CVE-2021-28854
+# 210616-1852 - Added optional CORS support, see options.php for details
+# 220220-0926 - Added allow_web_debug system setting
 #
 
-$version = '2.12-494c-grey';
-$build = '190111-0908';
+$version = '2.12-496c-grey';
+$build = '220220-0926';
+$php_script = 'vicidial-grey.php';
 $mel=1;					# Mysql Error Log enabled = 1
 $mysql_log_count=87;
 $one_mysql_log=0;
@@ -593,6 +597,10 @@ $VD_pass=preg_replace("/\'|\"|\\\\|;| /","",$VD_pass);
 $VD_campaign = preg_replace("/[^-_0-9a-zA-Z]/","",$VD_campaign);
 $VD_language = preg_replace("/\'|\"|\\\\|;/","",$VD_language);
 $admin_test = preg_replace("/[^0-9a-zA-Z]/","",$admin_test);
+$JS_browser_width = preg_replace('/[^-_0-9\p{L}]/u',"",$JS_browser_width);
+$JS_browser_height = preg_replace('/[^-_0-9\p{L}]/u',"",$JS_browser_height);
+$relogin = preg_replace('/[^-_0-9\p{L}]/u',"",$relogin);
+$MGR_override = preg_replace('/[^-_0-9\p{L}]/u',"",$MGR_override);
 
 $forever_stop=0;
 
@@ -616,7 +624,7 @@ $random = (rand(1000000, 9999999) + 10000000);
 
 
 $stmt="SELECT user,selected_language from vicidial_users where user='$VD_login';";
-if ($DB) {echo "|$stmt|\n";}
+#if ($DB) {echo "|$stmt|\n";}
 $rslt=mysql_to_mysqli($stmt, $link);
 	if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01081',$VD_login,$server_ip,$session_name,$one_mysql_log);}
 $sl_ct = mysqli_num_rows($rslt);
@@ -629,10 +637,10 @@ if ($sl_ct > 0)
 
 #############################################
 ##### START SYSTEM_SETTINGS LOOKUP #####
-$stmt = "SELECT use_non_latin,vdc_header_date_format,vdc_customer_date_format,vdc_header_phone_format,webroot_writable,timeclock_end_of_day,vtiger_url,enable_vtiger_integration,outbound_autodial_active,enable_second_webform,user_territories_active,static_agent_url,custom_fields_enabled,pllb_grouping_limit,qc_features_active,allow_emails,callback_time_24hour,enable_languages,language_method,meetme_enter_login_filename,meetme_enter_leave3way_filename,enable_third_webform,default_language,active_modules,allow_chats,chat_url,default_phone_code FROM system_settings;";
+$stmt = "SELECT use_non_latin,vdc_header_date_format,vdc_customer_date_format,vdc_header_phone_format,webroot_writable,timeclock_end_of_day,vtiger_url,enable_vtiger_integration,outbound_autodial_active,enable_second_webform,user_territories_active,static_agent_url,custom_fields_enabled,pllb_grouping_limit,qc_features_active,allow_emails,callback_time_24hour,enable_languages,language_method,meetme_enter_login_filename,meetme_enter_leave3way_filename,enable_third_webform,default_language,active_modules,allow_chats,chat_url,default_phone_code,allow_web_debug FROM system_settings;";
 $rslt=mysql_to_mysqli($stmt, $link);
 	if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01001',$VD_login,$server_ip,$session_name,$one_mysql_log);}
-if ($DB) {echo "$stmt\n";}
+#if ($DB) {echo "$stmt\n";}
 $qm_conf_ct = mysqli_num_rows($rslt);
 if ($qm_conf_ct > 0)
 	{
@@ -664,12 +672,14 @@ if ($qm_conf_ct > 0)
 	$chat_enabled =						$row[24];
 	$chat_URL =							$row[25];
 	$default_phone_code =				$row[26];
+	$SSallow_web_debug =				$row[27];
 	}
 else
 	{
 	echo _QXZ("ERROR: System Settings missing")."\n";
 	exit;
 	}
+if ($SSallow_web_debug < 1) {$DB=0;}
 ##### END SETTINGS LOOKUP #####
 ###########################################
 
@@ -677,6 +687,11 @@ if ($non_latin < 1)
 	{
 	$VD_login=preg_replace("/[^-_0-9a-zA-Z]/","",$VD_login);
 	$VD_pass=preg_replace("/[^-_0-9a-zA-Z]/","",$VD_pass);
+	}
+else
+	{
+	$VD_login = preg_replace('/[^-_0-9\p{L}]/u','',$VD_login);
+	$VD_pass = preg_replace('/[^-_0-9\p{L}]/u','',$VD_pass);
 	}
 
 if ($force_logout)
@@ -759,6 +774,8 @@ $browser=preg_replace("/\'|\"|\\\\/","",$browser);
 $script_name = getenv("SCRIPT_NAME");
 $server_name = getenv("SERVER_NAME");
 $server_port = getenv("SERVER_PORT");
+$PHP_SELF=$_SERVER['PHP_SELF'];
+$PHP_SELF = preg_replace('/\.php.*/i','.php',$PHP_SELF);
 if (preg_match("/443/i",$server_port)) {$HTTPprotocol = 'https://';}
   else {$HTTPprotocol = 'http://';}
 if (($server_port == '80') or ($server_port == '443') ) {$server_port='';}
@@ -1171,7 +1188,7 @@ if ( (strlen($phone_login)<2) or (strlen($phone_pass)<2) )
 else
 	{
 	if ($WeBRooTWritablE > 0)
-		{$fp = fopen ("./vicidial_auth_entries.txt", "a");}
+		{$fp = fopen ("./vicidial_auth_entries.txt", "w");}
 	$VDloginDISPLAY=0;
 
 	if ( (strlen($VD_login)<2) or (strlen($VD_pass)<2) or (strlen($VD_campaign)<2) )
@@ -1498,7 +1515,7 @@ else
 
 			if ($WeBRooTWritablE > 0)
 				{
-				fwrite ($fp, "vdweb|GOOD|$date|$VD_login|XXXX|$ip|$browser|$LOGfullname|\n");
+				fwrite ($fp, "vdweb|GOOD|$date|\n");
 				fclose($fp);
 				}
 			$user_abb = "$VD_login$VD_login$VD_login$VD_login";
@@ -2310,7 +2327,7 @@ else
 			{
 			if ($WeBRooTWritablE > 0)
 				{
-				fwrite ($fp, "vdweb|FAIL|$date|$VD_login|XXXX|$ip|$browser|\n");
+				fwrite ($fp, "vdweb|FAIL|$date|\n");
 				fclose($fp);
 				}
 			$VDloginDISPLAY=1;

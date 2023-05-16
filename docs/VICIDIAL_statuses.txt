@@ -17,10 +17,12 @@ AB - Busy Auto - Carrier-received Busy signal
 DC - Disconnected Number - Agent-Defined Disconnected number
 ADC - Disconnected Number Auto - Carrier-received Disconnected number
 ADCT - Congested Number Auto - Carrier-received Congestion(19,21,34,38)
+ADCCAR - Disconnect Carrier-Defined, used by TILTX service
 DEC - Declined Sale - Agent-defined status
 DNC - DO NOT CALL - If defined, lead will also go in the VICIDIAL DNC list
 DNCL - DO NOT CALL Hopper Match - status of a lead that matches the phone number of a lead that has been placed in the VICIDIAL DNC list
 DNCC - DO NOT CALL Hopper Match Campaign- status of a lead that matches the phone number of a lead that has been placed in the VICIDIAL Campaign-specific DNC list for this Campaign
+DNCCAR - DO NOT CALL Carrier-Defined, used by TILTX service
 SALE - Sale Made - Agent-defined status
 N - No Answer - Agent-defined status
 NI - Not Interested - Agent-defined status
@@ -76,3 +78,7 @@ UNKAL - CPD Unknown call sent to a message and message has been played
 NVAINS - Default status for new inserted lead on phone NVA call
 CLOSOP - In-Group Closing-Time option selected
 PAUSMX - Pause Max Seconds timeout default status
+IQNANQ - In-Queue call No-Agent-No-Queue drop
+SRDROP - SHARED outbound campaign drop to in-group, not included in most DROP stats
+HUCXXX - Enhanced Disconnect Logging level 3 failed calls, where 'XXX' is the disconnect code. For example: "HUC18" for Cause 18 (SIP 408 Request timeout)
+ADAIR - Dead Air Auto, for AMD NOAUDIODATA calls

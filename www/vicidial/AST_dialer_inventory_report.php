@@ -1,7 +1,7 @@
 <?php 
 # AST_dialer_inventory_report.php
 # 
-# Copyright (C) 2019  Joe Johnson <freewermadmin@gmail.com>    LICENSE: AGPLv2
+# Copyright (C) 2022  Joe Johnson <freewermadmin@gmail.com>    LICENSE: AGPLv2
 #                     Matt Florell <vicidial@gmail.com>
 #
 # NOTES:
@@ -26,6 +26,7 @@
 # 170409-1538 - Added IP List validation code
 # 170829-0040 - Added screen color settings
 # 191013-0845 - Fixes for PHP7
+# 220303-0803 - Added allow_web_debug system setting
 #
 
 $startMS = microtime();
@@ -38,6 +39,7 @@ require("functions.php");
 $PHP_AUTH_USER=$_SERVER['PHP_AUTH_USER'];
 $PHP_AUTH_PW=$_SERVER['PHP_AUTH_PW'];
 $PHP_SELF=$_SERVER['PHP_SELF'];
+$PHP_SELF = preg_replace('/\.php.*/i','.php',$PHP_SELF);
 if (isset($_GET["group"]))					{$group=$_GET["group"];}
 	elseif (isset($_POST["group"]))			{$group=$_POST["group"];}
 if (isset($_GET["report_type"]))			{$report_type=$_GET["report_type"];}
@@ -61,6 +63,9 @@ if (isset($_GET["snapshot_time"]))			{$snapshot_time=$_GET["snapshot_time"];}
 if (isset($_GET["override_24hours"]))			{$override_24hours=$_GET["override_24hours"];}
 	elseif (isset($_POST["override_24hours"]))	{$override_24hours=$_POST["override_24hours"];}
 
+$DB=preg_replace("/[^0-9a-zA-Z]/","",$DB);
+$DBX=preg_replace("/[^0-9a-zA-Z]/","",$DBX);
+
 $MT[0]='';
 $NOW_DATE = date("Y-m-d");
 $NOW_TIME = date("Y-m-d H:i:s");
@@ -70,15 +75,14 @@ if (!isset($group)) {$group = array();}
 if (!isset($query_date)) {$query_date = $NOW_DATE;}
 if (!isset($end_date)) {$end_date = $NOW_DATE;}
 
-
 $report_name = 'Dialer Inventory Report';
 $db_source = 'M';
 
 #############################################
 ##### START SYSTEM_SETTINGS LOOKUP #####
-$stmt = "SELECT use_non_latin,outbound_autodial_active,slave_db_server,reports_use_slave_db,enable_languages,language_method FROM system_settings;";
+$stmt = "SELECT use_non_latin,outbound_autodial_active,slave_db_server,reports_use_slave_db,enable_languages,language_method,allow_web_debug FROM system_settings;";
 $rslt=mysql_to_mysqli($stmt, $link);
-if ($DB) {$HTML_header.="$stmt\n";}
+#if ($DB) {$HTML_header.="$stmt\n";}
 $qm_conf_ct = mysqli_num_rows($rslt);
 if ($qm_conf_ct > 0)
 	{
@@ -89,9 +93,24 @@ if ($qm_conf_ct > 0)
 	$reports_use_slave_db =			$row[3];
 	$SSenable_languages =			$row[4];
 	$SSlanguage_method =			$row[5];
+	$SSallow_web_debug =			$row[6];
 	}
+if ($SSallow_web_debug < 1) {$DB=0;   $DBX=0;}
 ##### END SETTINGS LOOKUP #####
 ###########################################
+
+$snapshot_time = preg_replace('/[^- \:\_0-9a-zA-Z]/', '', $snapshot_time);
+$time_setting = preg_replace('/[^- \:\_0-9a-zA-Z]/', '', $time_setting);
+$selected_list = preg_replace('/[^- \:\_0-9a-zA-Z]/', '', $selected_list);
+$time_setting = preg_replace('/[^- \:\_0-9a-zA-Z]/', '', $time_setting);
+$SUBMIT = preg_replace('/[^-_0-9a-zA-Z]/', '', $SUBMIT);
+$override_24hours = preg_replace('/[^-_0-9a-zA-Z]/', '', $override_24hours);
+$file_download = preg_replace('/[^-_0-9a-zA-Z]/', '', $file_download);
+$report_source = preg_replace('/[^-_0-9a-zA-Z]/', '', $report_source);
+$report_type = preg_replace('/[^-_0-9a-zA-Z]/', '', $report_type);
+
+# Variables filtered further down in the code
+# $group
 
 if ($non_latin < 1)
 	{
@@ -100,8 +119,8 @@ if ($non_latin < 1)
 	}
 else
 	{
-	$PHP_AUTH_PW = preg_replace("/'|\"|\\\\|;/","",$PHP_AUTH_PW);
-	$PHP_AUTH_USER = preg_replace("/'|\"|\\\\|;/","",$PHP_AUTH_USER);
+	$PHP_AUTH_USER = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_USER);
+	$PHP_AUTH_PW = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_PW);
 	}
 
 $stmt="SELECT selected_language from vicidial_users where user='$PHP_AUTH_USER';";
@@ -211,7 +230,7 @@ else
 	$webserver_id = mysqli_insert_id($link);
 	}
 
-$stmt="INSERT INTO vicidial_report_log set event_date=NOW(), user='$PHP_AUTH_USER', ip_address='$LOGip', report_name='$report_name', browser='$LOGbrowser', referer='$LOGhttp_referer', notes='$LOGserver_name:$LOGserver_port $LOGscript_name |$group[0], $query_date, $end_date, $shift, $file_download, $report_display_type|', url='$LOGfull_url', webserver='$webserver_id';";
+$stmt="INSERT INTO vicidial_report_log set event_date=NOW(), user='$PHP_AUTH_USER', ip_address='$LOGip', report_name='$report_name', browser='$LOGbrowser', referer='$LOGhttp_referer', notes='$LOGserver_name:$LOGserver_port $LOGscript_name |$query_date, $end_date, $shift, $file_download, $report_display_type|', url='$LOGfull_url', webserver='$webserver_id';";
 if ($DB) {echo "|$stmt|\n";}
 $rslt=mysql_to_mysqli($stmt, $link);
 $report_log_id = mysqli_insert_id($link);
@@ -269,6 +288,7 @@ $group_string='|';
 $group_ct = count($group);
 while($i < $group_ct)
 	{
+	$group[$i] = preg_replace('/[^-_0-9\p{L}]/u', '', $group[$i]);
 	$group_string .= "$group[$i]|";
 	$i++;
 	}
@@ -294,6 +314,7 @@ $group_string='|';
 $group_ct = count($group);
 while($i < $group_ct)
 	{
+	$group[$i] = preg_replace('/[^-_0-9\p{L}]/u', '', $group[$i]);
 	if ( (preg_match("/ $group[$i] /",$regexLOGallowed_campaigns)) or (preg_match("/-ALL/",$LOGallowed_campaigns)) )
 		{
 		$group_string .= "$group[$i]|";
@@ -369,11 +390,13 @@ $snapshot_span_txt.="</SELECT>\n";
 
 require("screen_colors.php");
 
-$NWB = " &nbsp; <a href=\"javascript:openNewWindow('help.php?ADD=99999";
-$NWE = "')\"><IMG SRC=\"help.gif\" WIDTH=20 HEIGHT=20 BORDER=0 ALT=\"HELP\" ALIGN=TOP></A>";
+$NWB = "<IMG SRC=\"help.png\" onClick=\"FillAndShowHelpDiv(event, '";
+$NWE = "')\" WIDTH=20 HEIGHT=20 BORDER=0 ALT=\"HELP\" ALIGN=TOP>";
 
 $HTML_header.="<HTML>\n";
 $HTML_header.="<HEAD>\n";
+$HTML_header.="<link rel=\"stylesheet\" type=\"text/css\" href=\"vicidial_stylesheet.php\">\n";
+$HTML_header.="<script language=\"JavaScript\" src=\"help.js\"></script>\n";
 $HTML_header.="<STYLE type='text/css'>\n";
 $HTML_header.="<!--\n";
 $HTML_header.="   .green {color: white; background-color: green}\n";
@@ -399,6 +422,7 @@ $HTML_header.="</script>\n";
 $HTML_header.="\n";
 $HTML_header.="<META HTTP-EQUIV='Content-Type' CONTENT='text/html; charset=utf-8'>\n";
 $HTML_header.="<TITLE>"._QXZ("$report_name")."</TITLE></HEAD><BODY $onload BGCOLOR=WHITE marginheight=0 marginwidth=0 leftmargin=0 topmargin=0>\n";
+$HTML_header.="<div id='HelpDisplayDiv' class='help_info' style='display:none;'></div>";
 $HTML_header.="<PRE>\n";
 
 $rpt_header="";

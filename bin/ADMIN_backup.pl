@@ -1,11 +1,11 @@
 #!/usr/bin/perl
 #
-# ADMIN_backup.pl    version 2.12
+# ADMIN_backup.pl    version 2.14
 #
 # DESCRIPTION:
 # Backs-up the asterisk database, conf/agi/sounds/bin files 
 #
-# Copyright (C) 2019  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
+# Copyright (C) 2023  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
 #
 # CHANGELOG
 #
@@ -26,6 +26,8 @@
 # 161030-0847 - Added CLI ftp options, Issue #442
 # 191119-1649 - Fix for sounds symlinks with Asterisk 13, issue #1149
 # 191119-1658 - Added --db-remote option to specify '--host' parameter for mysqldumpdump
+# 210817-1956 - Added --db-leads-only option to dump only the vicidial_list table
+# 230215-1456 - update of table categories
 #
 
 $secT = time();
@@ -108,6 +110,7 @@ if (length($ARGV[0])>1)
 		print "  [--db-settings-only] = only backup the database without leads, logs, servers or phones\n";
 		print "  [--db-without-logs] = do not backup the log tables in the database\n";
 		print "  [--db-without-archives] = do not backup the archive tables in the database\n";
+		print "  [--db-leads-only] = only export vicidial_list table(not compressed)\n";
 		print "  [--db-remote] = database is not on this server, use --host flag when backing it up\n";
 		print "  [--dbs-selected=X] = backup only selected databases, default uses conf file db only\n";
 		print "                       to backup databases X and Y, use X---Y, can use --ALL-- for all dbs on server\n";
@@ -168,6 +171,11 @@ if (length($ARGV[0])>1)
 			{
 			$db_without_archives=1;
 			print "\n----- Backup Database Without Archives -----\n\n";
+			}
+		if ($args =~ /--db-leads-only/i)
+			{
+			$db_leads_only=1;
+			print "\n----- Backup Database Leads Only (not compressed) -----\n\n";
 			}
 		if ($args =~ /--db-remote/i)
 			{
@@ -350,6 +358,20 @@ if ( ($without_db < 1) && ($conf_only < 1) )
 					}
 				}
 			}
+		$mysqlbin = '';
+		if ( -e ('/usr/bin/mysql')) {$mysqlbin = '/usr/bin/mysql';}
+		else 
+			{
+			if ( -e ('/usr/local/mysql/bin/mysql')) {$mysqlbin = '/usr/local/mysql/bin/mysql';}
+			else
+				{
+				if ( -e ('/bin/mysql')) {$mysqlbin = '/bin/mysql';}
+				else
+					{
+					print "Can't find mysql binary! MySQL lead-only backups will not work...\n";
+					}
+				}
+			}
 
 		use DBI;
 
@@ -433,11 +455,11 @@ if ( ($without_db < 1) && ($conf_only < 1) )
 					{
 					$archive_tables .= " $aryA[0]";
 					}
-				elsif ($aryA[0] =~ /_log|server_performance|vicidial_ivr|vicidial_hopper|vicidial_manager|web_client_sessions|imm_outcomes/) 
+				elsif ($aryA[0] =~ /_log|server_performance|vicidial_ivr|vicidial_hopper|vicidial_manager|web_client_sessions|imm_outcomes|_counts|_sip$|_recent|_queue$|_urls$/) 
 					{
 					$log_tables .= " $aryA[0]";
 					}
-				elsif ($aryA[0] =~ /server|^phones|conferences|stats|vicidial_list$|^custom/) 
+				elsif ($aryA[0] =~ /server|^phones|conferences|stats|vicidial_list$|^custom|_email_list|_email_attachments|_notes$/) 
 					{
 					$regular_tables .= " $aryA[0]";
 					}				
@@ -450,8 +472,19 @@ if ( ($without_db < 1) && ($conf_only < 1) )
 			$sthA->finish();
 
 			$MSDhost='';
+			$temp_file_path='';
+			$temp_file_name='';
 			if ($db_remote) {$MSDhost = "--host=$VARDB_server";}
-			if ($db_without_logs)
+			if ($db_leads_only) 
+				{
+				$temp_file_name = "$VARserver_ip$temp_dbname" ."_leads_". "$file_date.txt";
+				$temp_file_path = "$ARCHIVEpath/temp/$temp_file_name";
+				$dump_non_log_command = "$mysqlbin $MSDhost --user=$VARDB_user --password=$VARDB_pass $temp_dbname -e \"SELECT * from vicidial_list;\" > $temp_file_path";
+
+				if ($DBX) {print "\nDEBUG: LEADS EXPORT COMMAND: $dump_non_log_command\n";}
+				`$dump_non_log_command`;
+				}
+			elsif ($db_without_logs)
 				{
 				$dump_non_log_command = "$mysqldumpbin $MSDhost --user=$VARDB_user --password=$VARDB_pass --lock-tables --flush-logs $temp_dbname $regular_tables $conf_tables | $gzipbin > $ARCHIVEpath/temp/$VARserver_ip$temp_dbname$wday.gz";
 				$dump_log_command = "$mysqldumpbin $MSDhost --user=$VARDB_user --password=$VARDB_pass --lock-tables --flush-logs --no-data --no-create-db $temp_dbname $log_tables $archive_tables | $gzipbin > $ARCHIVEpath/temp/LOGS_$VARserver_ip$temp_dbname$wday.gz";
@@ -579,13 +612,11 @@ if ($DBX) {print "rm -f $ARCHIVEpath/$VARserver_ip$all$wday$tar$gz\n";}
 `rm -f $ARCHIVEpath/$VARserver_ip$all$wday$tar$gz`;
 
 ### COMPRESS THE ALL FILE ###
-if ($DBX) {print "$gzipbin -9 $ARCHIVEpath/$VARserver_ip$all$wday$tar\n";}
-`$gzipbin -9 $ARCHIVEpath/$VARserver_ip$all$wday$tar`;
-
-### REMOVE TEMP FILES ###
-if ($DBX) {print "rm -fR $ARCHIVEpath/temp\n";}
-`rm -fR $ARCHIVEpath/temp`;
-
+if (!$db_leads_only)
+	{
+	if ($DBX) {print "$gzipbin -9 $ARCHIVEpath/$VARserver_ip$all$wday$tar\n";}
+	`$gzipbin -9 $ARCHIVEpath/$VARserver_ip$all$wday$tar`;
+	}
 
 #### FTP to the Backup server and upload the final file
 if ($ftp_transfer > 0)
@@ -596,9 +627,16 @@ if ($ftp_transfer > 0)
 	$ftp->login("$VARREPORT_user","$VARREPORT_pass");
 	$ftp->cwd("$VARREPORT_dir");
 	$ftp->binary();
-	$ftp->put("$ARCHIVEpath/$VARserver_ip$all$wday$tar$gz", "$VARserver_ip$all$wday$tar$gz");
+	if ($db_leads_only)
+		{$ftp->put("$temp_file_path", "$temp_file_name");}
+	else
+		{$ftp->put("$ARCHIVEpath/$VARserver_ip$all$wday$tar$gz", "$VARserver_ip$all$wday$tar$gz");}
 	$ftp->quit;
 	}
+
+### REMOVE TEMP FILES ###
+if ($DBX) {print "rm -fR $ARCHIVEpath/temp\n";}
+`rm -fR $ARCHIVEpath/temp`;
 
 
 ### calculate time to run script ###

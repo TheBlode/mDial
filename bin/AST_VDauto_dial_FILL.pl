@@ -12,7 +12,7 @@
 #
 # Should only be run on one server in a multi-server Asterisk/VICIDIAL cluster
 #
-# Copyright (C) 2020  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
+# Copyright (C) 2022  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
 #
 # CHANGELOG:
 # 61115-1246 - First build, framework setup, non-functional
@@ -48,6 +48,10 @@
 # 200122-1850 - Added code for CID Group auto-rotate feature
 # 201122-0932 - Added code for dialy call count limits
 # 201220-1034 - Changes for shared agent campaigns
+# 210715-1335 - Added call_limit_24hour feature support, also fix for variable issue
+# 210731-0951 - Added cid_group_id_two campaign option
+# 220311-1922 - Added List CID Group Override option
+# 220623-1622 - Added List dial_prefix override
 #
 
 ### begin parsing run-time options ###
@@ -213,7 +217,7 @@ $event_string='LOGGED INTO MYSQL SERVER ON 1 CONNECTION|';
 &event_logger;
 
 ### Grab system_settings values from the database
-$stmtA = "SELECT use_non_latin FROM system_settings;";
+$stmtA = "SELECT use_non_latin,call_limit_24hour FROM system_settings;";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
 $sthArows=$sthA->rows;
@@ -221,6 +225,7 @@ if ($sthArows > 0)
 	{
 	@aryA = $sthA->fetchrow_array;
 	$non_latin = 						$aryA[0];
+	$SScall_limit_24hour =				$aryA[1];
 	}
 $sthA->finish();
 
@@ -281,6 +286,7 @@ while($one_day_interval > 0)
 		@DBIPqueue_priority=@MT;
 		@DBIPuse_custom_cid=@MT;
 		@DBIPcid_group_id=@MT;
+		@DBIPcid_group_id_two=@MT;
 
 		$active_line_counter=0;
 		$camp_counter=0;
@@ -368,7 +374,7 @@ while($one_day_interval > 0)
 
 					### grab the dial_level and multiply by active agents to get your goalcalls
 					$DBIPadlevel[$camp_CIPct]=0;
-					$stmtA = "SELECT dial_timeout,dial_prefix,campaign_cid,active,campaign_vdad_exten,omit_phone_code,auto_alt_dial,queue_priority,use_custom_cid,cid_group_id,scheduled_callbacks_auto_reschedule,dial_timeout_lead_container FROM vicidial_campaigns where campaign_id='$DBfill_campaign[$camp_CIPct]';";
+					$stmtA = "SELECT dial_timeout,dial_prefix,campaign_cid,active,campaign_vdad_exten,omit_phone_code,auto_alt_dial,queue_priority,use_custom_cid,cid_group_id,scheduled_callbacks_auto_reschedule,dial_timeout_lead_container,cid_group_id_two FROM vicidial_campaigns where campaign_id='$DBfill_campaign[$camp_CIPct]';";
 					$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 					$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
 					$sthArows=$sthA->rows;
@@ -389,6 +395,7 @@ while($one_day_interval > 0)
 						$DBIPcid_group_id[$camp_CIPct] =	$aryA[9];
 						$DBIPscheduled_callbacks_auto_reschedule[$camp_CIPct] =	$aryA[10];
 						$DBIPdial_timeout_lead_container[$camp_CIPct] =	$aryA[11];
+						$DBIPcid_group_id_two[$camp_CIPct] =$aryA[12];
 
 						if ($omit_phone_code =~ /Y/) {$DBIPomitcode[$camp_CIPct] = 1;}
 						else {$DBIPomitcode[$camp_CIPct] = 0;}
@@ -725,7 +732,7 @@ while($one_day_interval > 0)
 													if ( (length($DBIPdial_timeout_lead_container[$camp_CIPct]) > 1) && ($DBIPdial_timeout_lead_container[$camp_CIPct] !~ /^DISABLED$/i) )
 														{
 														# Gather settings container for Call Quota Lead Ranking
-														$stmtA = "SELECT container_entry FROM vicidial_settings_containers where container_id='$DBIPdial_timeout_lead_container[$user_CIPct]';";
+														$stmtA = "SELECT container_entry FROM vicidial_settings_containers where container_id='$DBIPdial_timeout_lead_container[$camp_CIPct]';";
 														$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 														$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
 														$sthArows=$sthA->rows;
@@ -831,15 +838,19 @@ while($one_day_interval > 0)
 													### END check for Dial Timeout Lead override for this lead ###
 													
 													$campaign_cid_override='';
+													$LIST_cid_group_override='';
+													$LIST_dial_prefix_override='';
 													### gather list_id overrides
-													$stmtA = "SELECT campaign_cid_override FROM vicidial_lists where list_id='$list_id';";
+													$stmtA = "SELECT campaign_cid_override,cid_group_id,dial_prefix FROM vicidial_lists where list_id='$list_id';";
 													$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 													$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
 													$sthArowsL=$sthA->rows;
 													if ($sthArowsL > 0)
 														{
 														@aryA = $sthA->fetchrow_array;
-														$campaign_cid_override =	$aryA[0];
+														$campaign_cid_override =		$aryA[0];
+														$LIST_cid_group_override =		$aryA[1];
+														$LIST_dial_prefix_override =	$aryA[2];
 														}
 													$sthA->finish();
 
@@ -869,19 +880,19 @@ while($one_day_interval > 0)
 													if ($Lsec < 10) {$Lsec = "0$Lsec";}
 													$LLCT_DATE = "$Lyear-$Lmon-$Lmday $Lhour:$Lmin:$Lsec";
 
-													if ( ($alt_dial =~ /ALT|ADDR3|X/) && ($DBIPautoaltdial[$user_CIPct] =~ /ALT|ADDR|X/) )
+													if ( ($alt_dial =~ /ALT|ADDR3|X/) && ($DBIPautoaltdial[$camp_CIPct] =~ /ALT|ADDR|X/) )
 														{
-														if ( ($alt_dial =~ /ALT/) && ($DBIPautoaltdial[$user_CIPct] =~ /ALT/) )
+														if ( ($alt_dial =~ /ALT/) && ($DBIPautoaltdial[$camp_CIPct] =~ /ALT/) )
 															{
 															$alt_phone =~ s/\D//gi;
 															$phone_number = $alt_phone;
 															}
-														if ( ($alt_dial =~ /ADDR3/) && ($DBIPautoaltdial[$user_CIPct] =~ /ADDR3/) )
+														if ( ($alt_dial =~ /ADDR3/) && ($DBIPautoaltdial[$camp_CIPct] =~ /ADDR3/) )
 															{
 															$address3 =~ s/\D//gi;
 															$phone_number = $address3;
 															}
-														if  ( ($alt_dial =~ /^X/) && ($DBIPautoaltdial[$user_CIPct] =~ /^X/) )
+														if  ( ($alt_dial =~ /^X/) && ($DBIPautoaltdial[$camp_CIPct] =~ /^X/) )
 															{
 															if ($alt_dial =~ /LAST/) 
 																{
@@ -958,7 +969,7 @@ while($one_day_interval > 0)
 													$stmtA = "DELETE FROM vicidial_hopper where lead_id='$lead_id';";
 													$affected_rows = $dbhA->do($stmtA);
 
-													$CCID_on=0;   $CCID='';
+													$CCID_on=0;   $CCID='';   $CCIDtype='';
 													$local_DEF = 'Local/';
 													$local_AMP = '@';
 													$Local_out_prefix = '9';
@@ -967,11 +978,81 @@ while($one_day_interval > 0)
 													if ($DTL_override > 4) {$Local_dial_timeout = $DTL_override;}
 													$Local_dial_timeout = ($Local_dial_timeout * 1000);
 													if (length($DBIPdialprefix[$camp_CIPct]) > 0) {$Local_out_prefix = "$DBIPdialprefix[$camp_CIPct]";}
+													if (length($LIST_dial_prefix_override) > 0) {$Local_out_prefix = "$LIST_dial_prefix_override";}
 													if (length($DBIPvdadexten[$camp_CIPct]) > 0) {$VDAD_dial_exten = "$DBIPvdadexten[$camp_CIPct]";}
 													else {$VDAD_dial_exten = "$answer_transfer_agent";}
 
-													if (length($DBIPcampaigncid[$camp_CIPct]) > 6) {$CCID = "$DBIPcampaigncid[$camp_CIPct]";   $CCID_on++;}
-													if (length($campaign_cid_override) > 6) {$CCID = "$campaign_cid_override";   $CCID_on++;}
+													if (length($DBIPcampaigncid[$camp_CIPct]) > 6) 
+														{$CCID = "$DBIPcampaigncid[$camp_CIPct]";   $CCID_on++;   $CCIDtype='CAMPAIGN_CID';}
+
+													$temp_CID='';
+													if ( (length($LIST_cid_group_override) > 0) && ($LIST_cid_group_override !~ /\-\-\-DISABLED\-\-\-/) )
+														{
+														$stmtA = "SELECT cid_group_type FROM vicidial_cid_groups where cid_group_id='$LIST_cid_group_override';";
+														$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+														$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+														$sthArows=$sthA->rows;
+														if ($sthArows > 0)
+															{
+															@aryA = $sthA->fetchrow_array;
+															$cid_group_type =	$aryA[0];
+															$temp_CID='';
+															$temp_vcca='';
+															$temp_ac='';
+
+															if ($cid_group_type =~ /AREACODE/)
+																{
+																$temp_ac_two = substr("$phone_number", 0, 2);
+																$temp_ac_three = substr("$phone_number", 0, 3);
+																$temp_ac_four = substr("$phone_number", 0, 4);
+																$temp_ac_five = substr("$phone_number", 0, 5);
+																$stmtA = "SELECT outbound_cid,areacode FROM vicidial_campaign_cid_areacodes where campaign_id='$LIST_cid_group_override' and areacode IN('$temp_ac_two','$temp_ac_three','$temp_ac_four','$temp_ac_five') and active='Y' order by CAST(areacode as SIGNED INTEGER) asc, call_count_today desc limit 100000;";
+																}
+															if ($cid_group_type =~ /STATE/)
+																{
+																$temp_state = $state;
+																$stmtA = "SELECT outbound_cid,areacode FROM vicidial_campaign_cid_areacodes where campaign_id='$LIST_cid_group_override' and areacode IN('$temp_state') and active='Y' order by call_count_today desc limit 100000;";
+																}
+															if ($cid_group_type =~ /NONE/)
+																{
+																$stmtA = "SELECT outbound_cid,areacode FROM vicidial_campaign_cid_areacodes where campaign_id='$LIST_cid_group_override' and active='Y' order by call_count_today desc limit 100000;";
+																}
+															$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+															$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+															$sthArows=$sthA->rows;
+															$act=0;
+															while ($sthArows > $act)
+																{
+																@aryA = $sthA->fetchrow_array;
+																$temp_vcca =	$aryA[0];
+																$temp_ac =		$aryA[1];
+																$act++;
+																}
+															if ($act > 0) 
+																{
+																$sthA->finish();
+																$stmtA="UPDATE vicidial_campaign_cid_areacodes set call_count_today=(call_count_today + 1) where campaign_id='$LIST_cid_group_override' and areacode='$temp_ac' and outbound_cid='$temp_vcca';";
+																$affected_rows = $dbhA->do($stmtA);
+
+																if ($cid_group_type =~ /NONE/)
+																	{
+																	$stmtA="UPDATE vicidial_cid_groups set cid_auto_rotate_calls=(cid_auto_rotate_calls + 1) where cid_group_id='$LIST_cid_group_override';";
+																	$affected_rows = $dbhA->do($stmtA);
+																	}
+																}
+															else
+																{$sthA->finish();}
+															$temp_CID = $temp_vcca;
+															$temp_CID =~ s/\D//gi;
+															}
+														}
+													if ( (length($campaign_cid_override) > 6) || (length($temp_CID) > 6) )
+														{
+														if (length($temp_CID) > 6) 
+															{$CCID = "$temp_CID";   $CCID_on++;   $CCIDtype='LIST_CID_GROUP';}
+														else
+															{$CCID = "$campaign_cid_override";   $CCID_on++;   $CCIDtype='LIST_CID';}
+														}
 													else
 														{
 														if ($DBIPuse_custom_cid[$camp_CIPct] =~ /Y/) 
@@ -979,7 +1060,7 @@ while($one_day_interval > 0)
 															$temp_CID = $security_phrase;
 															$temp_CID =~ s/\D//gi;
 															if (length($temp_CID) > 6) 
-																{$CCID = "$temp_CID";   $CCID_on++;}
+																{$CCID = "$temp_CID";   $CCID_on++;   $CCIDtype='CUSTOM_CID';}
 															}
 														$CIDG_set=0;
 														if ($DBIPcid_group_id[$camp_CIPct] !~ /\-\-\-DISABLED\-\-\-/) 
@@ -1041,7 +1122,69 @@ while($one_day_interval > 0)
 																$temp_CID = $temp_vcca;
 																$temp_CID =~ s/\D//gi;
 																if (length($temp_CID) > 6) 
-																	{$CCID = "$temp_CID";   $CCID_on++;   $CIDG_set++;}
+																	{$CCID = "$temp_CID";   $CCID_on++;   $CIDG_set++;   $CCIDtype='CID_GROUP';}
+																}
+															}
+														if ( ($DBIPcid_group_id_two[$camp_CIPct] !~ /\-\-\-DISABLED\-\-\-/) && ($CIDG_set < 1) )
+															{
+															$stmtA = "SELECT cid_group_type FROM vicidial_cid_groups where cid_group_id='$DBIPcid_group_id_two[$camp_CIPct]';";
+															$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+															$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+															$sthArows=$sthA->rows;
+															if ($sthArows > 0)
+																{
+																@aryA = $sthA->fetchrow_array;
+																$cid_group_type =	$aryA[0];
+																$temp_CID='';
+																$temp_vcca='';
+																$temp_ac='';
+
+																if ($cid_group_type =~ /AREACODE/)
+																	{
+																	$temp_ac_two = substr("$phone_number", 0, 2);
+																	$temp_ac_three = substr("$phone_number", 0, 3);
+																	$temp_ac_four = substr("$phone_number", 0, 4);
+																	$temp_ac_five = substr("$phone_number", 0, 5);
+																	$stmtA = "SELECT outbound_cid,areacode FROM vicidial_campaign_cid_areacodes where campaign_id='$DBIPcid_group_id_two[$camp_CIPct]' and areacode IN('$temp_ac_two','$temp_ac_three','$temp_ac_four','$temp_ac_five') and active='Y' order by CAST(areacode as SIGNED INTEGER) asc, call_count_today desc limit 100000;";
+																	}
+																if ($cid_group_type =~ /STATE/)
+																	{
+																	$temp_state = $state;
+																	$stmtA = "SELECT outbound_cid,areacode FROM vicidial_campaign_cid_areacodes where campaign_id='$DBIPcid_group_id_two[$camp_CIPct]' and areacode IN('$temp_state') and active='Y' order by call_count_today desc limit 100000;";
+																	}
+																if ($cid_group_type =~ /NONE/)
+																	{
+																	$stmtA = "SELECT outbound_cid,areacode FROM vicidial_campaign_cid_areacodes where campaign_id='$DBIPcid_group_id_two[$camp_CIPct]' and active='Y' order by call_count_today desc limit 100000;";
+																	}
+																$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+																$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+																$sthArows=$sthA->rows;
+																$act=0;
+																while ($sthArows > $act)
+																	{
+																	@aryA = $sthA->fetchrow_array;
+																	$temp_vcca =	$aryA[0];
+																	$temp_ac =		$aryA[1];
+																	$act++;
+																	}
+																if ($act > 0) 
+																	{
+																	$sthA->finish();
+																	$stmtA="UPDATE vicidial_campaign_cid_areacodes set call_count_today=(call_count_today + 1) where campaign_id='$DBIPcid_group_id_two[$camp_CIPct]' and areacode='$temp_ac' and outbound_cid='$temp_vcca';";
+																	$affected_rows = $dbhA->do($stmtA);
+
+																	if ($cid_group_type =~ /NONE/)
+																		{
+																		$stmtA="UPDATE vicidial_cid_groups set cid_auto_rotate_calls=(cid_auto_rotate_calls + 1) where cid_group_id='$DBIPcid_group_id_two[$camp_CIPct]';";
+																		$affected_rows = $dbhA->do($stmtA);
+																		}
+																	}
+																else
+																	{$sthA->finish();}
+																$temp_CID = $temp_vcca;
+																$temp_CID =~ s/\D//gi;
+																if (length($temp_CID) > 6) 
+																	{$CCID = "$temp_CID";   $CCID_on++;   $CIDG_set++;   $CCIDtype='CID_GROUP_TWO';}
 																}
 															}
 														if ( ($DBIPuse_custom_cid[$camp_CIPct] =~ /AREACODE/) && ($CIDG_set < 1) )
@@ -1076,11 +1219,11 @@ while($one_day_interval > 0)
 															$temp_CID = $temp_vcca;
 															$temp_CID =~ s/\D//gi;
 															if (length($temp_CID) > 6) 
-																{$CCID = "$temp_CID";   $CCID_on++;}
+																{$CCID = "$temp_CID";   $CCID_on++;   $CCIDtype='AC_CID';}
 															}
 														}
 
-													if ($DBIPdialprefix[$camp_CIPct] =~ /x/i) {$Local_out_prefix = '';}
+													if ($Local_out_prefix =~ /x/i) {$Local_out_prefix = '';}
 
 													if ($RECcount)
 														{
@@ -1100,6 +1243,23 @@ while($one_day_interval > 0)
 													else
 														{$Ndialstring = "$Local_out_prefix$phone_code$phone_number";}
 
+													$TFhourSTATE='';
+													if ($SScall_limit_24hour > 0) 
+														{
+														$TFH_areacode = substr($phone_number, 0, 3);
+														$stmtY = "SELECT state,country FROM vicidial_phone_codes where country_code='$phone_code' and areacode='$TFH_areacode';";
+														$sthY = $dbhA->prepare($stmtY) or die "preparing: ",$dbhA->errstr;
+														$sthY->execute or die "executing: $stmtY", $dbhA->errstr;
+														$sthYrows=$sthY->rows;
+														if ($sthYrows > 0)
+															{
+															@aryY = $sthY->fetchrow_array;
+															$TFhourSTATE =		$aryY[0];
+															$TFhourCOUNTRY =	$aryY[1];
+															}
+														$sthA->finish();
+														}
+
 													if (length($ext_context) < 1) {$ext_context='default';}
 													### use manager middleware-app to connect the next call to the meetme room
 													if ($CCID_on) {$CIDstring = "\"$VqueryCID\" <$CCID>";}
@@ -1116,10 +1276,10 @@ while($one_day_interval > 0)
 															}
 
 														### insert a NEW record to the vicidial_manager table to be processed
-														$stmtA = "INSERT INTO vicidial_manager values('','','$SQLdate','NEW','N','$DB_camp_server_server_ip[$server_CIPct]','','Originate','$VqueryCID','Exten: $VDAD_dial_exten','Context: $ext_context','Channel: $local_DEF$Ndialstring$local_AMP$ext_context','Priority: 1','Callerid: $CIDstring','Timeout: $Local_dial_timeout','','','','VDACnote: $DBfill_campaign[$camp_CIPct]|$lead_id|$phone_code|$phone_number|OUTBALANCE|$alt_dial|$DBIPqueue_priority[$camp_CIPct]|$server_ip')";
+														$stmtA = "INSERT INTO vicidial_manager values('','','$SQLdate','NEW','N','$DB_camp_server_server_ip[$server_CIPct]','','Originate','$VqueryCID','Exten: $VDAD_dial_exten','Context: $ext_context','Channel: $local_DEF$Ndialstring$local_AMP$ext_context','Priority: 1','Callerid: $CIDstring','Timeout: $Local_dial_timeout','','','','VDACnote: $DBfill_campaign[$camp_CIPct]|$lead_id|$phone_code|$phone_number|OUTBALANCE|$alt_dial|$DBIPqueue_priority[$camp_CIPct]|$server_ip|$CCIDtype')";
 														$affected_rows = $dbhA->do($stmtA);
 
-														$event_string = "|     number call dialed|$DBfill_campaign[$camp_CIPct]|$VqueryCID|$stmtA|$gmt_offset_now|$alt_dial|$DB_camp_server_server_ip[$server_CIPct]|$DB_camp_server_asterisk_version[$server_CIPct]";
+														$event_string = "|     number call dialed|$DBfill_campaign[$camp_CIPct]|$VqueryCID|$stmtA|$gmt_offset_now|$alt_dial|$DB_camp_server_server_ip[$server_CIPct]|$DB_camp_server_asterisk_version[$server_CIPct]|$CCIDtype";
 														 &event_logger;
 
 													### insert a SENT record to the vicidial_auto_calls table 
@@ -1130,17 +1290,29 @@ while($one_day_interval > 0)
 													### insert log record into vicidial_dial_log table 
 														$stmtA = "INSERT INTO vicidial_dial_log SET caller_code='$VqueryCID',lead_id='$lead_id',server_ip='$DB_camp_server_server_ip[$server_CIPct]',call_date='$SQLdate',extension='$VDAD_dial_exten',channel='$local_DEF$Ndialstring$local_AMP$ext_context',timeout='$Local_dial_timeout',outbound_cid='$CIDstring',context='$ext_context';";
 														$affected_rows = $dbhA->do($stmtA);
+
+													### insert log record into vicidial_lead_24hour_calls table 
+														$stmtD = "INSERT INTO vicidial_lead_24hour_calls SET lead_id='$lead_id',list_id='$list_id',call_date=NOW(),phone_number='$phone_number',phone_code='$phone_code',state='$TFhourSTATE',call_type='AUTO';";
+														$affected_rowsD = $dbhA->do($stmtD);
+
+													### insert log record into vicidial_dial_cid_log table 
+														$stmtE = "INSERT INTO vicidial_dial_cid_log SET caller_code='$VqueryCID',call_date='$SQLdate',call_type='OUTBALANCE',call_alt='$alt_dial',outbound_cid='$CCID',outbound_cid_type='$CCIDtype';";
+														$affected_rowsE = $dbhA->do($stmtE);
 														}
 													else
 														{
 														##### create dummy records to have their server_ip filled in at the stagger section
-														$vm_inserts[$staggered_ct] = "INSERT INTO vicidial_manager values('','','$SQLdate','NEW','N','XXXXXXXXXXXXXXX','','Originate','$VqueryCID','Exten: $VDAD_dial_exten','Context: $ext_context','Channel: $local_DEF$Ndialstring$local_AMP$ext_context','Priority: 1','Callerid: $CIDstring','Timeout: $Local_dial_timeout','','','','VDACnote: $DBfill_campaign[$camp_CIPct]|$lead_id|$phone_code|$phone_number|OUTBALANCE|$alt_dial|$DBIPqueue_priority[$camp_CIPct]|$server_ip')";
+														$vm_inserts[$staggered_ct] = "INSERT INTO vicidial_manager values('','','$SQLdate','NEW','N','XXXXXXXXXXXXXXX','','Originate','$VqueryCID','Exten: $VDAD_dial_exten','Context: $ext_context','Channel: $local_DEF$Ndialstring$local_AMP$ext_context','Priority: 1','Callerid: $CIDstring','Timeout: $Local_dial_timeout','','','','VDACnote: $DBfill_campaign[$camp_CIPct]|$lead_id|$phone_code|$phone_number|OUTBALANCE|$alt_dial|$DBIPqueue_priority[$camp_CIPct]|$server_ip|$CCIDtype')";
 
 														$vac_inserts[$staggered_ct] = "INSERT INTO vicidial_auto_calls (server_ip,campaign_id,status,lead_id,callerid,phone_code,phone_number,call_time,call_type,alt_dial,queue_priority) values('XXXXXXXXXXXXXXX','$DBfill_campaign[$camp_CIPct]','SENT','$lead_id','$VqueryCID','$phone_code','$phone_number','$SQLdate','OUTBALANCE','$alt_dial','$DBIPqueue_priority[$camp_CIPct]')";
 
-														$st_logged[$staggered_ct] = "$phone_number|$DBfill_campaign[$camp_CIPct]|$VqueryCID|$gmt_offset_now|$alt_dial|";
+														$st_logged[$staggered_ct] = "$phone_number|$DBfill_campaign[$camp_CIPct]|$VqueryCID|$gmt_offset_now|$alt_dial|$CCIDtype|";
 
 														$vddl_inserts[$staggered_ct] = "INSERT INTO vicidial_dial_log SET caller_code='$VqueryCID',lead_id='$lead_id',server_ip='XXXXXXXXXXXXXXX',call_date='$SQLdate',extension='$VDAD_dial_exten',channel='$local_DEF$Ndialstring$local_AMP$ext_context',timeout='$Local_dial_timeout',outbound_cid='$CIDstring',context='$ext_context';";
+
+														$vltfh_inserts[$staggered_ct] = "INSERT INTO vicidial_lead_24hour_calls SET lead_id='$lead_id',list_id='$list_id',call_date=NOW(),phone_number='$phone_number',phone_code='$phone_code',state='$TFhourSTATE',call_type='AUTO';";
+
+														$vdcl_inserts[$staggered_ct] = "INSERT INTO vicidial_dial_cid_log SET caller_code='$VqueryCID',call_date='$SQLdate',call_type='OUTBALANCE',call_alt='$alt_dial',outbound_cid='$CCID',outbound_cid_type='$CCIDtype';";
 
 														$DB_camp_servers_calls_placed++;
 														$calls_placed++;
@@ -1240,6 +1412,8 @@ while($one_day_interval > 0)
 							$TEMP_vl_update = '';
 							$TEMP_st_logged = '';
 							$TEMP_vddl_inserts = '';
+							$TEMP_vltfh_inserts = '';
+							$TEMP_vdcl_inserts = '';
 							$TEMP_vm_insert = '';
 							$TEMP_vac_insert = '';
 							$TEMP_vddl_inserts = '';
@@ -1256,6 +1430,8 @@ while($one_day_interval > 0)
 								$TEMP_vdc_update = $vdc_updates[$staggered_fill];
 								$TEMP_st_logged = $st_logged[$staggered_fill];
 								$TEMP_vddl_inserts = $vddl_inserts[$staggered_fill];
+								$TEMP_vltfh_inserts = $vltfh_inserts[$staggered_fill];
+								$TEMP_vdcl_inserts = $vdcl_inserts[$staggered_fill];
 
 								$TEMP_vm_insert =~ s/XXXXXXXXXXXXXXX/$TEMP_server_ip/gi;
 								$TEMP_vac_insert =~ s/XXXXXXXXXXXXXXX/$TEMP_server_ip/gi;
@@ -1273,15 +1449,19 @@ while($one_day_interval > 0)
 									$affected_rows_vm = $dbhA->do($TEMP_vm_insert);
 									$affected_rows_vac = $dbhA->do($TEMP_vac_insert);
 									$affected_rows_vddl = $dbhA->do($TEMP_vddl_inserts);
+									$affected_rows_vltfh = $dbhA->do($TEMP_vltfh_inserts);
+									$affected_rows_vdcl = $dbhA->do($TEMP_vdcl_inserts);
 
 									if ($DB) {print "LEAD UPDATE: $affected_rows_vl|$TEMP_vl_update|\n";}
 									if ($DB) {print "LEAD CALL COUNT UPDATE: $affected_rows_vdc|$TEMP_vdc_update|\n";}
 									if ($DB) {print "VICIDIAL_MANAGER INSERT: $affected_rows_vm|$TEMP_vm_insert|\n";}
 									if ($DB) {print "VICIDIAL_AUTO_CALLS INSERT: $affected_rows_vac|$TEMP_vac_insert|\n";}
 									if ($DB) {print "VICIDIAL_DIAL_LOG INSERT: $affected_rows_vddl|$TEMP_vddl_inserts|\n";}
+									if ($DB) {print "VICIDIAL_LEAD_24HOUR_CALLS INSERT: $affected_rows_vltfh|$TEMP_vltfh_inserts|\n";}
+									if ($DB) {print "VICIDIAL_DIAL_CID_LOG INSERT: $affected_rows_vdcl|$TEMP_vdcl_inserts|\n";}
 									}
 
-								$event_string = "|     number call stagger dialed|$TEMP_vm_insert|$TEMP_server_ip|$staggered_fill|$staggered_ct|$affected_rows_vm|$affected_rows_vac|$affected_rows_vl|$affected_rows_vddl   $TEMP_st_logged";
+								$event_string = "|     number call stagger dialed|$TEMP_vm_insert|$TEMP_server_ip|$staggered_fill|$staggered_ct|$affected_rows_vm|$affected_rows_vac|$affected_rows_vl|$affected_rows_vddl|$affected_rows_vltfh|$affected_rows_vdcl   $TEMP_st_logged";
 								 &event_logger;
 
 								### sleep for 2.5 hundredths of a second to not flood the server with new calls

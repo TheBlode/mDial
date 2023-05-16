@@ -47,16 +47,22 @@ $linkAST=mysqli_connect("1.1.1.1", "cron", "1234", "asterisk");
 $PHP_AUTH_USER=$_SERVER['PHP_AUTH_USER'];
 $PHP_AUTH_PW=$_SERVER['PHP_AUTH_PW'];
 $PHP_SELF=$_SERVER['PHP_SELF'];
+$PHP_SELF = preg_replace('/\.php.*/i','.php',$PHP_SELF);
 if (isset($_GET["phone"]))				{$phone=$_GET["phone"];}
 	elseif (isset($_POST["phone"]))		{$phone=$_POST["phone"];}
 if (isset($_GET["format"]))				{$format=$_GET["format"];}
 	elseif (isset($_POST["format"]))	{$format=$_POST["format"];}
 if (isset($_GET["auth"]))				{$auth=$_GET["auth"];}
 	elseif (isset($_POST["auth"]))		{$auth=$_POST["auth"];}
+if (isset($_GET["DB"]))					{$DB=$_GET["DB"];}
+	elseif (isset($_POST["DB"]))		{$DB=$_POST["DB"];}
 
-$phone = preg_replace("/'|\"|\\\\|;/","",$phone);
-$format = preg_replace("/'|\"|\\\\|;/","",$format);
-$auth = preg_replace("/'|\"|\\\\|;/","",$auth);
+$DB = preg_replace('/[^0-9]/','',$DB);
+$DB=0; # disable $DB, it's not used in this script
+
+$phone = preg_replace("/\<|\>|\'|\"|\\\\|;/","",$phone);
+$format = preg_replace("/\<|\>|\'|\"|\\\\|;/","",$format);
+$auth = preg_replace("/\<|\>|\'|\"|\\\\|;/","",$auth);
 
 $US='_';
 
@@ -68,11 +74,11 @@ else
 	exit;
 	}
 
-$fp = fopen ("/usr/local/apache2/htdocs/vicidial/auth_entries.txt", "a");
+$fp = fopen ("/usr/local/apache2/htdocs/vicidial/auth_entries.txt", "w");
 $date = date("r");
 $ip = getenv("REMOTE_ADDR");
 $browser = getenv("HTTP_USER_AGENT");
-fwrite ($fp, "AUTH|VDC   |$date|$auth|$ip|$phone|$format|$browser|\n");
+fwrite ($fp, "AUTH|VDC   |$date|\n");
 fclose($fp);
 
 if (strlen($format)<3) {$format='WAV';}

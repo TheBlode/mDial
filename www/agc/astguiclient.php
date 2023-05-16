@@ -1,7 +1,7 @@
 <?php
 # astguiclient.php - the web-based version of the astGUIclient client application
 # 
-# Copyright (C) 2020  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
+# Copyright (C) 2023  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
 #
 # make sure you have added a user to the vicidial_users MySQL table with at least
 # user_level 1 or greater to access this page. Also you need to have the login
@@ -70,10 +70,16 @@
 # 150727-0915 - Added default_language
 # 190111-0902 - Fix for PHP7
 # 200319-1532 - Small fixes for conference tab issues
+# 210615-1037 - Default security fixes, CVE-2021-28854
+# 210616-2053 - Added optional CORS support, see options.php for details
+# 220220-0938 - Added allow_web_debug system setting
+# 230418-1009 - Added astguiclient_disabled options.php setting, disabled by default
 #
 
-$version = '2.2.6-3';
-$build = '200319-1532';
+$version = '2.2.6-7';
+$build = '230418-1009';
+$php_script = 'astguiclient.php';
+$astguiclient_disabled = '1';
 
 require_once("dbconnect_mysqli.php");
 require_once("functions.php");
@@ -111,10 +117,39 @@ $phone_login=preg_replace("/[^-_0-9a-zA-Z]/","",$phone_login);
 $phone_pass=preg_replace("/[^-_0-9a-zA-Z]/","",$phone_pass);
 $user=preg_replace("/\'|\"|\\\\|;| /","",$user);
 $pass=preg_replace("/\'|\"|\\\\|;| /","",$pass);
+$relogin=preg_replace("/[^-_0-9a-zA-Z]/","",$relogin);
 
+# if options file exists, use the override values for the above variables
+#   see the options-example.php file for more information
+if (file_exists('options.php'))
+	{
+	require_once('options.php');
+	}
+
+if ($astguiclient_disabled > 0)
+	{
+	echo "astguiclient is disabled on this system\n";
+	exit;
+	}
 
 #############################################
 ##### START SYSTEM_SETTINGS AND USER LANGUAGE LOOKUP #####
+$stmt = "SELECT use_non_latin,enable_languages,language_method,default_language,allow_web_debug FROM system_settings;";
+$rslt=mysql_to_mysqli($stmt, $link);
+	if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'00XXX',$user,$server_ip,$session_name,$one_mysql_log);}
+#if ($DB) {echo "$stmt\n";}
+$qm_conf_ct = mysqli_num_rows($rslt);
+if ($qm_conf_ct > 0)
+	{
+	$row=mysqli_fetch_row($rslt);
+	$non_latin =				$row[0];
+	$SSenable_languages =		$row[1];
+	$SSlanguage_method =		$row[2];
+	$SSdefault_language =		$row[3];
+	$SSallow_web_debug =		$row[4];
+	}
+if ($SSallow_web_debug < 1) {$DB=0;}
+
 $VUselected_language = '';
 $stmt="SELECT selected_language from vicidial_users where user='$user';";
 if ($DB) {echo "|$stmt|\n";}
@@ -127,20 +162,6 @@ if ($sl_ct > 0)
 	$VUselected_language =		$row[0];
 	}
 
-$stmt = "SELECT use_non_latin,enable_languages,language_method,default_language FROM system_settings;";
-$rslt=mysql_to_mysqli($stmt, $link);
-	if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'00XXX',$user,$server_ip,$session_name,$one_mysql_log);}
-if ($DB) {echo "$stmt\n";}
-$qm_conf_ct = mysqli_num_rows($rslt);
-if ($qm_conf_ct > 0)
-	{
-	$row=mysqli_fetch_row($rslt);
-	$non_latin =				$row[0];
-	$SSenable_languages =		$row[1];
-	$SSlanguage_method =		$row[2];
-	$SSdefault_language =		$row[3];
-	}
-
 if (strlen($VUselected_language) < 1)
 	{$VUselected_language = $SSdefault_language;}
 ##### END SETTINGS LOOKUP #####
@@ -150,6 +171,11 @@ if ($non_latin < 1)
 	{
 	$user=preg_replace("/[^-_0-9a-zA-Z]/","",$user);
 	$pass=preg_replace("/[^-_0-9a-zA-Z]/","",$pass);
+	}
+else
+	{
+	$user = preg_replace('/[^-_0-9\p{L}]/u','',$user);
+	$pass = preg_replace('/[^-_0-9\p{L}]/u','',$pass);
 	}
 
 if ($force_logout)
@@ -180,7 +206,7 @@ if (preg_match("/^GOOD/",$auth_message))
 $US='_';
 $CL=':';
 if ($WeBRooTWritablE > 0)
-	{$fp = fopen ("./astguiclient_auth_entries.txt", "a");}
+	{$fp = fopen ("./astguiclient_auth_entries.txt", "w");}
 $date = date("r");
 $ip = getenv("REMOTE_ADDR");
 $browser = getenv("HTTP_USER_AGENT");
@@ -238,7 +264,7 @@ else
 		$LOGfullname=$row[0];
 		if ($WeBRooTWritablE > 0)
 			{
-			fwrite ($fp, "VICIDIAL|GOOD|$date|$user|XXXX|$ip|$browser|$LOGfullname|\n");
+			fwrite ($fp, "VICIDIAL|GOOD|$date|\n");
 			fclose($fp);
 			}
 		}
@@ -246,7 +272,7 @@ else
 		{
 		if ($WeBRooTWritablE > 0)
 			{
-			fwrite ($fp, "VICIDIAL|FAIL|$date|$user|XXXX|$ip|$browser|$LOGfullname|\n");
+			fwrite ($fp, "VICIDIAL|FAIL|$date|\n");
 			fclose($fp);
 			}
 		}

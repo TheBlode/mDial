@@ -1,7 +1,7 @@
 <?php
 # admin_phones_bulk_insert.php
 # 
-# Copyright (C) 2020  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
+# Copyright (C) 2022  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
 #
 # this screen will insert phones into your multi-server system with aliases
 #
@@ -21,10 +21,12 @@
 # 180503-2015 - Added new help display
 # 181130-1304 - Added template option
 # 201112-1017 - Fix for side menu issue #1223
+# 210827-0907 - Added PJSIP support
+# 220222-1942 - Added allow_web_debug system setting
 #
 
-$admin_version = '2.14-14';
-$build = '201112-1017';
+$admin_version = '2.14-16';
+$build = '220222-1942';
 
 require("dbconnect_mysqli.php");
 require("functions.php");
@@ -32,6 +34,7 @@ require("functions.php");
 $PHP_AUTH_USER=$_SERVER['PHP_AUTH_USER'];
 $PHP_AUTH_PW=$_SERVER['PHP_AUTH_PW'];
 $PHP_SELF=$_SERVER['PHP_SELF'];
+$PHP_SELF = preg_replace('/\.php.*/i','.php',$PHP_SELF);
 if (isset($_GET["DB"]))							{$DB=$_GET["DB"];}
 	elseif (isset($_POST["DB"]))				{$DB=$_POST["DB"];}
 if (isset($_GET["action"]))						{$action=$_GET["action"];}
@@ -71,12 +74,13 @@ if (strlen($action) < 2)
 	{$action = 'BLANK';}
 if (strlen($DB) < 1)
 	{$DB=0;}
+$DB=preg_replace("/[^0-9a-zA-Z]/","",$DB);
 
 #############################################
 ##### START SYSTEM_SETTINGS LOOKUP #####
-$stmt = "SELECT use_non_latin,webroot_writable,enable_languages,language_method,admin_screen_colors,campaign_cid_areacodes_enabled,sounds_central_control_active,contacts_enabled,enable_auto_reports FROM system_settings;";
+$stmt = "SELECT use_non_latin,webroot_writable,enable_languages,language_method,admin_screen_colors,campaign_cid_areacodes_enabled,sounds_central_control_active,contacts_enabled,enable_auto_reports,allowed_sip_stacks,allow_web_debug FROM system_settings;";
 $rslt=mysql_to_mysqli($stmt, $link);
-if ($DB) {echo "$stmt\n";}
+#if ($DB) {echo "$stmt\n";}
 $ss_conf_ct = mysqli_num_rows($rslt);
 if ($ss_conf_ct > 0)
 	{
@@ -90,7 +94,10 @@ if ($ss_conf_ct > 0)
 	$SSsounds_central_control_active =	$row[6];
 	$SScontacts_enabled =				$row[7];
 	$SSenable_auto_reports =			$row[8];
+	$SSallowed_sip_stacks =				$row[9];
+	$SSallow_web_debug =				$row[10];
 	}
+if ($SSallow_web_debug < 1) {$DB=0;}
 ##### END SETTINGS LOOKUP #####
 ###########################################
 
@@ -101,31 +108,37 @@ $date = date("r");
 $ip = getenv("REMOTE_ADDR");
 $browser = getenv("HTTP_USER_AGENT");
 
+$servers = preg_replace("/'|\"|\\\\|;/","",$servers);
+$phones = preg_replace("/'|\"|\\\\|;/","",$phones);
+$action = preg_replace("/[^-_0-9a-zA-Z]/", "",$action);
+$alias_option = preg_replace("/[^-_0-9a-zA-Z]/", "",$alias_option);
+$protocol = preg_replace("/[^-_0-9a-zA-Z]/", "",$protocol);
+$local_gmt = preg_replace("/[^- \.\,\_0-9a-zA-Z]/","",$local_gmt);
+$is_webphone = preg_replace("/[^-_0-9a-zA-Z]/", "",$is_webphone);
+$webphone_dialpad = preg_replace("/[^-_0-9a-zA-Z]/", "",$webphone_dialpad);
+$webphone_auto_answer = preg_replace("/[^NY]/","",$webphone_auto_answer);
+$use_external_server_ip = preg_replace("/[^NY]/","",$use_external_server_ip);
+$SUBMIT = preg_replace("/[^-_0-9a-zA-Z]/", "",$SUBMIT);
+
 if ($non_latin < 1)
 	{
 	$PHP_AUTH_USER = preg_replace("/[^-_0-9a-zA-Z]/", "",$PHP_AUTH_USER);
 	$PHP_AUTH_PW = preg_replace("/[^-_0-9a-zA-Z]/", "",$PHP_AUTH_PW);
-
-	$servers = preg_replace("/'|\"|\\\\|;/","",$servers);
-	$phones = preg_replace("/'|\"|\\\\|;/","",$phones);
-	$action = preg_replace("/[^-_0-9a-zA-Z]/", "",$action);
 	$conf_secret = preg_replace("/[^-_0-9a-zA-Z]/", "",$conf_secret);
 	$pass = preg_replace("/[^-_0-9a-zA-Z]/", "",$pass);
-	$alias_option = preg_replace("/[^-_0-9a-zA-Z]/", "",$alias_option);
 	$alias_suffix = preg_replace("/[^0-9a-zA-Z]/","",$alias_suffix);
-	$protocol = preg_replace("/[^-_0-9a-zA-Z]/", "",$protocol);
-	$local_gmt = preg_replace("/[^- \.\,\_0-9a-zA-Z]/","",$local_gmt);
-	$is_webphone = preg_replace("/[^-_0-9a-zA-Z]/", "",$is_webphone);
-	$webphone_dialpad = preg_replace("/[^-_0-9a-zA-Z]/", "",$webphone_dialpad);
-	$webphone_auto_answer = preg_replace("/[^NY]/","",$webphone_auto_answer);
-	$use_external_server_ip = preg_replace("/[^NY]/","",$use_external_server_ip);
 	$phone_context = preg_replace("/[^-\_0-9a-zA-Z]/","",$phone_context);
 	$template_id = preg_replace('/[^-_0-9a-zA-Z]/','',$template_id);
 	}	# end of non_latin
 else
 	{
-	$PHP_AUTH_USER = preg_replace("/'|\"|\\\\|;/","",$PHP_AUTH_USER);
-	$PHP_AUTH_PW = preg_replace("/'|\"|\\\\|;/","",$PHP_AUTH_PW);
+	$PHP_AUTH_USER = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_USER);
+	$PHP_AUTH_PW = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_PW);
+	$conf_secret = preg_replace("/[^-_0-9\p{L}]/u", "",$conf_secret);
+	$pass = preg_replace("/[^-_0-9\p{L}]/u", "",$pass);
+	$alias_suffix = preg_replace("/[^0-9\p{L}]/u","",$alias_suffix);
+	$phone_context = preg_replace("/[^-\_0-9\p{L}]/u","",$phone_context);
+	$template_id = preg_replace('/[^-_0-9\p{L}]/u','',$template_id);
 	}
 
 $user = $PHP_AUTH_USER;
@@ -257,7 +270,7 @@ if ($action == "HELP")
 
 	<A NAME="registration_password">
 	<BR>
-	 <B><?php echo _QXZ("Registration Password"); ?> -</B> <?php echo _QXZ("This is the registration password that will be used for all of the phones that are created. For SIP and IAX2 protocol you should use a complex password for secutiry reasons."); ?>
+	 <B><?php echo _QXZ("Registration Password"); ?> -</B> <?php echo _QXZ("This is the registration password that will be used for all of the phones that are created. For SIP, PJSIP and IAX2 protocol you should use a complex password for secutiry reasons."); ?>
 	<BR><BR>
 
 	<A NAME="login_password">
@@ -277,7 +290,7 @@ if ($action == "HELP")
 
 	<A NAME="protocol">
 	<BR>
-	 <B><?php echo _QXZ("Client Protocol"); ?> -</B> <?php echo _QXZ("This is the phone protocol that will be used for all phones created when submitted. SIP and IAX2 are VOIP protocols that will create conf file entries to allow those phoens to register on the servers."); ?>
+	 <B><?php echo _QXZ("Client Protocol"); ?> -</B> <?php echo _QXZ("This is the phone protocol that will be used for all phones created when submitted. SIP, PJSIP and IAX2 are VOIP protocols that will create conf file entries to allow those phoens to register on the servers."); ?>
 	<BR><BR>
 
 	<A NAME="gmt">
@@ -419,7 +432,13 @@ if ($action == "BLANK")
 	echo "<option>"._QXZ("NO")."</option>";
 	echo "</select> $NWB#admin_phones_bulk_insert-create_alias$NWE </td></tr>\n";
 	echo "<tr bgcolor=#".$SSstd_row4_background."><td align=right>"._QXZ("Alias Suffix").": </td><td align=left><input type=text name=alias_suffix size=2 maxlength=4> $NWB#admin_phones_bulk_insert-alias_suffix$NWE </td></tr>\n";
-	echo "<tr bgcolor=#".$SSstd_row4_background."><td align=right>"._QXZ("Client Protocol").": </td><td align=left><select size=1 name=protocol><option value='SIP'>SIP</option><option value='Zap'>Zap</option><option value='IAX2'>IAX2</option><option value='EXTERNAL'>"._QXZ("EXTERNAL")."</option></select> $NWB#admin_phones_bulk_insert-protocol$NWE </td></tr>\n";
+	echo "<tr bgcolor=#".$SSstd_row4_background."><td align=right>"._QXZ("Client Protocol").": </td><td align=left><select size=1 name=protocol>";
+	if ( ($SSallowed_sip_stacks == 'SIP') or ($SSallowed_sip_stacks == 'SIP_and_PJSIP') ) {echo "<option>SIP</option>";}
+	if ( ($SSallowed_sip_stacks == 'PJSIP') or ($SSallowed_sip_stacks == 'SIP_and_PJSIP') ) {echo "<option>PJSIP</option>";}
+	echo "<option>Zap</option>";
+	echo "<option>IAX2</option>";
+	echo "<option value='EXTERNAL'>"._QXZ("EXTERNAL")."</option>";
+	echo "</select> $NWB#admin_phones_bulk_insert-protocol$NWE </td></tr>\n";
 	echo "<tr bgcolor=#".$SSstd_row4_background."><td align=right>"._QXZ("Local GMT").": </td><td align=left><select size=1 name=local_gmt><option>12.75</option><option>12.00</option><option>11.00</option><option>10.00</option><option>9.50</option><option>9.00</option><option>8.00</option><option>7.00</option><option>6.50</option><option>6.00</option><option>5.75</option><option>5.50</option><option>5.00</option><option>4.50</option><option>4.00</option><option>3.50</option><option>3.00</option><option>2.00</option><option>1.00</option><option>0.00</option><option>-1.00</option><option>-2.00</option><option>-3.00</option><option>-3.50</option><option>-4.00</option><option selected>-5.00</option><option>-6.00</option><option>-7.00</option><option>-8.00</option><option>-9.00</option><option>-10.00</option><option>-11.00</option><option>-12.00</option></select> ("._QXZ("Do NOT Adjust for DST").") $NWB#admin_phones_bulk_insert-gmt$NWE </td></tr>\n";
 	echo "<tr bgcolor=#".$SSstd_row4_background."><td align=right>"._QXZ("Phone Context").": </td><td align=left><input type=text name=phone_context size=20 maxlength=20> $NWB#admin_phones_bulk_insert-phone_context$NWE </td></tr>\n";
 	echo "<tr bgcolor=#".$SSstd_row4_background."><td align=right>"._QXZ("Set As Webphone").": </td><td align=left><select size=1 name=is_webphone><option value='Y'>"._QXZ("Y")."</option><option selected value='N'>"._QXZ("N")."</option><option value='Y_API_LAUNCH'>"._QXZ("Y_API_LAUNCH")."</option></select>$NWB#admin_phones_bulk_insert-is_webphone$NWE</td></tr>\n";
@@ -554,7 +573,7 @@ if ($action == "ADD_PHONES_SUBMIT")
 							if ($s >= 49) {$login_suffix = 'ax';}
 
 							$extension =		$PN[$p];
-							if ( ($protocol == 'SIP') or ($protocol == 'IAX2') )
+							if ( ($protocol == 'SIP') or ($protocol == 'PJSIP') or ($protocol == 'IAX2') )
 								{$dialplan_number =	"$dialplan_prefix$PN[$p]";}
 							else
 								{$dialplan_number =	"$PN[$p]";}

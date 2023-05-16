@@ -6,7 +6,7 @@
 # qc_modify_lead.php
 # 
 # Copyright (C) 2012  poundteam.com    LICENSE: AGPLv2
-# Copyright (C) 2021  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
+# Copyright (C) 2022  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
 #
 # This script is designed to allow QC review and modification of leads, contributed by poundteam.com
 #
@@ -30,6 +30,8 @@
 # 171001-1110 - Added in-browser audio control, if recording access control is disabled
 # 210304-1650 - Added modify_leads=5 read-only option
 # 210306-0854 - Redesign of QC module
+# 210827-1818 - Fix for security issue
+# 220224-2143 - Added allow_web_debug system setting
 #
 
 require("dbconnect_mysqli.php");
@@ -38,6 +40,7 @@ require("functions.php");
 $PHP_AUTH_USER=$_SERVER['PHP_AUTH_USER'];
 $PHP_AUTH_PW=$_SERVER['PHP_AUTH_PW'];
 $PHP_SELF=$_SERVER['PHP_SELF'];
+$PHP_SELF = preg_replace('/\.php.*/i','.php',$PHP_SELF);
 if (isset($_GET["vendor_id"]))				{$vendor_id=$_GET["vendor_id"];}
 	elseif (isset($_POST["vendor_id"]))		{$vendor_id=$_POST["vendor_id"];}
 if (isset($_GET["phone"]))				{$phone=$_GET["phone"];}
@@ -154,8 +157,6 @@ if (isset($_POST["finish_qc"]))			{$finish_qc=$_POST["finish_qc"];}
 	elseif (isset($_GET["finish_qc"]))	{$finish_qc=$_GET["finish_qc"];}
 if (isset($_POST["qc_display_method"]))			{$qc_display_method=$_POST["qc_display_method"];}
 	elseif (isset($_GET["qc_display_method"]))	{$qc_display_method=$_GET["qc_display_method"];}
-if (isset($_POST["qc_display_method"]))			{$qc_display_method=$_POST["qc_display_method"];}
-	elseif (isset($_GET["qc_display_method"]))	{$qc_display_method=$_GET["qc_display_method"];}
 if (isset($_POST["qc_display_group_type"]))			{$qc_display_group_type=$_POST["qc_display_group_type"];}
 	elseif (isset($_GET["qc_display_group_type"]))	{$qc_display_group_type=$_GET["qc_display_group_type"];}
 if (isset($_POST["qc_status"]))			{$qc_status=$_POST["qc_status"];}
@@ -166,6 +167,168 @@ if (isset($_POST["referring_section"]))			{$referring_section=$_POST["referring_
 	elseif (isset($_GET["referring_section"]))	{$referring_section=$_GET["referring_section"];}
 if (isset($_POST["referring_element"]))			{$referring_element=$_POST["referring_element"];}
 	elseif (isset($_GET["referring_element"]))	{$referring_element=$_GET["referring_element"];}
+
+$DB=preg_replace('/[^0-9]/','',$DB);
+
+#############################################
+##### START SYSTEM_SETTINGS LOOKUP #####
+$stmt = "SELECT use_non_latin,custom_fields_enabled,enable_languages,language_method,active_modules,log_recording_access,allow_web_debug FROM system_settings;";
+$rslt=mysql_to_mysqli($stmt, $link);
+#if ($DB) {echo "$stmt\n";}
+$qm_conf_ct = mysqli_num_rows($rslt);
+if ($qm_conf_ct > 0)
+	{
+	$row=mysqli_fetch_row($rslt);
+	$non_latin =				$row[0];
+	$custom_fields_enabled =	$row[1];
+	$SSenable_languages =		$row[2];
+	$SSlanguage_method =		$row[3];
+	$active_modules =			$row[4];
+	$log_recording_access =		$row[5];
+	$SSallow_web_debug =		$row[6];
+	}
+if ($SSallow_web_debug < 1) {$DB=0;}
+##### END SETTINGS LOOKUP #####
+###########################################
+
+$CBchangeANYtoUSER=preg_replace('/[^A-Z]/','',$CBchangeANYtoUSER);
+$CBchangeDATE=preg_replace('/[^A-Z]/','',$CBchangeDATE);
+$CBchangeUSERtoANY=preg_replace('/[^A-Z]/','',$CBchangeUSERtoANY);
+$CBchangeUSERtoUSER=preg_replace('/[^A-Z]/','',$CBchangeUSERtoUSER);
+$claim_QC=preg_replace('/[^A-Z]/','',$claim_QC);
+$referring_section=preg_replace('/[^A-Z]/','',$referring_section);
+$call_began = preg_replace("/\<|\>|\'|\"|\\\\|;/","",$call_began);
+
+if ($non_latin < 1)
+	{
+	$PHP_AUTH_USER = preg_replace('/[^-_0-9a-zA-Z]/','',$PHP_AUTH_USER);
+	$PHP_AUTH_PW = preg_replace('/[^-_0-9a-zA-Z]/','',$PHP_AUTH_PW);
+	$user = preg_replace('/[^-\_0-9a-zA-Z]/','',$user);
+	$tsr = preg_replace('/[^-\_0-9a-zA-Z]/','',$tsr);
+	$CBuser = preg_replace('/[^-\_0-9a-zA-Z]/','',$CBuser);
+	$qc_agent = preg_replace('/[^-\_0-9a-zA-Z]/','',$qc_agent);
+	$title = preg_replace('/[^- \'\_\.0-9a-zA-Z]/','',$title);
+	$first_name = preg_replace('/[^- \'\+\_\.0-9a-zA-Z]/','',$first_name);
+	$middle_initial = preg_replace('/[^0-9a-zA-Z]/','',$middle_initial);
+	$last_name = preg_replace('/[^- \'\+\_\.0-9a-zA-Z]/','',$last_name);
+	$lead_name = preg_replace('/[^- \'\+\_\.0-9a-zA-Z]/','',$lead_name);
+	$address1 = preg_replace('/[^- \'\+\.\:\/\@\_0-9a-zA-Z]/','',$address1);
+	$address2 = preg_replace('/[^- \'\+\.\:\/\@\_0-9a-zA-Z]/','',$address2);
+	$address3 = preg_replace('/[^- \'\+\.\:\/\@\_0-9a-zA-Z]/','',$address3);
+	$city = preg_replace('/[^- \'\+\.\:\/\@\_0-9a-zA-Z]/','',$city);
+	$state = preg_replace('/[^- 0-9a-zA-Z]/','',$state);
+	$province = preg_replace('/[^- \'\+\.\_0-9a-zA-Z]/','',$province);
+	$postal_code = preg_replace('/[^- \'\+0-9a-zA-Z]/','',$postal_code);
+	$alt_phone = preg_replace('/[^- \'\+\_\.0-9a-zA-Z]/','',$alt_phone);
+	$email = preg_replace('/[^- \'\+\.\:\/\@\%\_0-9a-zA-Z]/','',$email);
+	$security = preg_replace('/[^- \'\+\.\:\/\@\_0-9a-zA-Z]/','',$security);
+	$campaign_id = preg_replace('/[^-\_0-9a-zA-Z]/', '',$campaign_id);
+	$owner = preg_replace('/[^- \'\+\.\:\/\@\_0-9a-zA-Z]/','',$owner);
+	$country_code = preg_replace('/[^A-Z]/','',$country_code);
+	$gender = preg_replace('/[^A-Z]/','',$gender);
+	$qc_display_group_type = preg_replace('/[^A-Z]/','',$qc_display_group_type);
+	$qc_display_method = preg_replace('/[^A-Z]/','',$qc_display_method);
+	$qc_process_status = preg_replace('/[^A-Z]/','',$qc_process_status);
+	$channel = preg_replace('/[^- \'\+\.\:\/\@\_0-9a-zA-Z]/','',$channel);
+	$dispo = preg_replace('/[^-\_0-9a-zA-Z]/', '',$dispo);
+	$status = preg_replace('/[^-\_0-9a-zA-Z]/', '',$status);
+	$qc_status = preg_replace('/[^-\_0-9a-zA-Z]/', '',$qc_status);
+	$referring_element = preg_replace('/[^-\_0-9a-zA-Z]/', '',$referring_element);
+	$submit = preg_replace('/[^- 0-9a-zA-Z]/','',$submit);
+	$SUBMIT = preg_replace('/[^- 0-9a-zA-Z]/','',$SUBMIT);
+	}
+else
+	{
+	$PHP_AUTH_USER = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_USER);
+	$PHP_AUTH_PW = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_PW);
+	$user=preg_replace('/[^-_0-9\p{L}]/u','',$user);
+	$tsr=preg_replace('/[^-_0-9\p{L}]/u','',$tsr);
+	$CBuser=preg_replace('/[^-_0-9\p{L}]/u','',$CBuser);
+	$qc_agent=preg_replace('/[^-_0-9\p{L}]/u','',$qc_agent);
+	$title = preg_replace('/[^- \'\_\.0-9\p{L}]/u','',$title);
+	$first_name = preg_replace('/[^- \'\+\_\.0-9\p{L}]/u','',$first_name);
+	$middle_initial = preg_replace('/[^0-9\p{L}]/u','',$middle_initial);
+	$last_name = preg_replace('/[^- \'\+\_\.0-9\p{L}]/u','',$last_name);
+	$lead_name = preg_replace('/[^- \'\+\_\.0-9\p{L}]/u','',$lead_name);
+	$address1 = preg_replace('/[^- \'\+\.\:\/\@\_0-9\p{L}]/u','',$address1);
+	$address2 = preg_replace('/[^- \'\+\.\:\/\@\_0-9\p{L}]/u','',$address2);
+	$address3 = preg_replace('/[^- \'\+\.\:\/\@\_0-9\p{L}]/u','',$address3);
+	$city = preg_replace('/[^- \'\+\.\:\/\@\_0-9\p{L}]/u','',$city);
+	$state = preg_replace('/[^- 0-9\p{L}]/u','',$state);
+	$province = preg_replace('/[^- \'\+\.\_0-9\p{L}]/u','',$province);
+	$postal_code = preg_replace('/[^- \'\+0-9\p{L}]/u','',$postal_code);
+	$alt_phone = preg_replace('/[^- \'\+\_\.0-9\p{L}]/u','',$alt_phone);
+	$email = preg_replace('/[^- \'\+\.\:\/\@\%\_0-9\p{L}]/u','',$email);
+	$security = preg_replace('/[^- \'\+\.\:\/\@\_0-9\p{L}]/u','',$security);
+	$campaign_id = preg_replace('/[^-\_0-9\p{L}]/u', '',$campaign_id);
+	$owner = preg_replace('/[^- \'\+\.\:\/\@\_0-9\p{L}]/u','',$owner);
+	$country_code = preg_replace('/[^\p{L}]/u','',$country_code);
+	$gender = preg_replace('/[^\p{L}]/u','',$gender);
+	$qc_display_group_type = preg_replace('/[^\p{L}]/u','',$qc_display_group_type);
+	$qc_display_method = preg_replace('/[^\p{L}]/u','',$qc_display_method);
+	$qc_process_status = preg_replace('/[^\p{L}]/u','',$qc_process_status);
+	$channel = preg_replace('/[^- \'\+\.\:\/\@\_0-9\p{L}]/u','',$channel);
+	$dispo = preg_replace('/[^-_0-9\p{L}]/u','',$dispo);
+	$status = preg_replace('/[^-_0-9\p{L}]/u','',$status);
+	$qc_status = preg_replace('/[^-_0-9\p{L}]/u','',$qc_status);
+	$referring_element = preg_replace('/[^-\_0-9\p{L}]/u', '',$referring_element);
+	$submit = preg_replace('/[^- 0-9\p{L}]/u','',$submit);
+	$SUBMIT = preg_replace('/[^- 0-9\p{L}]/u','',$SUBMIT);
+	}
+
+$first_name = preg_replace('/\+/',' ',$first_name);
+$last_name = preg_replace('/\+/',' ',$last_name);
+$address1 = preg_replace('/\+/',' ',$address1);
+$address2 = preg_replace('/\+/',' ',$address2);
+$address3 = preg_replace('/\+/',' ',$address3);
+$city = preg_replace('/\+/',' ',$city);
+$province = preg_replace('/\+/',' ',$province);
+$postal_code = preg_replace('/\+/',' ',$postal_code);
+$alt_phone = preg_replace('/\+/',' ',$alt_phone);
+$email = preg_replace('/\+/',' ',$email);
+$security_phrase = preg_replace('/\+/',' ',$security_phrase);
+$owner = preg_replace('/\+/',' ',$owner);
+
+$list_id = preg_replace('/[^0-9]/','',$list_id);
+$lead_id = preg_replace('/[^0-9a-zA-Z]/','',$lead_id);
+$entry_list_id = preg_replace('/[^0-9]/','',$entry_list_id);
+$phone_code = preg_replace('/[^0-9]/','',$phone_code);
+$update_phone_number=preg_replace('/[^A-Z]/','',$update_phone_number);
+$phone_number = preg_replace('/[^0-9]/','',$phone_number);
+$old_phone = preg_replace('/[^0-9]/','',$old_phone);
+$phone = preg_replace('/[^0-9]/','',$phone);
+$vendor_lead_code = preg_replace('/;|#/','',$vendor_lead_code);
+	$vendor_lead_code = preg_replace('/\+/',' ',$vendor_lead_code);
+$vendor_id = preg_replace('/;|#/','',$vendor_id);
+	$vendor_id = preg_replace('/\+/',' ',$vendor_id);
+$source_id = preg_replace('/;|#/','',$source_id);
+	$source_id = preg_replace('/\+/',' ',$source_id);
+$gmt_offset_now = preg_replace('/[^-\_\.0-9]/','',$gmt_offset_now);
+$comments = preg_replace('/;|#/','',$comments);
+	$comments = preg_replace('/\+/',' ',$comments);
+$rank = preg_replace('/[^0-9]/','',$rank);
+$no_update = preg_replace('/[^A-Z]/','',$no_update);
+$called_count=preg_replace('/[^0-9]/','',$called_count);
+$local_gmt=preg_replace('/[^-\.0-9]/','',$local_gmt);
+
+$callback = preg_replace('/[^A-Z]/','',$callback);
+$callback_type = preg_replace('/[^A-Z]/','',$callback_type);
+$add_closer_record = preg_replace('/[^0-9]/','',$add_closer_record);
+$agent_log_id = preg_replace('/[^0-9]/','',$agent_log_id);
+$appointment_date = preg_replace('/[^-0-9]/','',$appointment_date);
+$appointment_time = preg_replace('/[^0-9\:]/','',$appointment_time);
+$parked_time = preg_replace('/[^0-9\:\-]/','',$parked_time);
+$callback_id = preg_replace('/[^0-9]/','',$callback_id);
+$server_ip=preg_replace("/[^0-9\.]/", "", $server_ip);
+$end_call=preg_replace('/[^0-9]/','',$end_call);
+$finish_qc=preg_replace('/[^0-9]/','',$finish_qc);
+$group_id=preg_replace('/[^-_0-9\p{L}]/u','',$group_id);
+$extension=preg_replace('/[^0-9]/','',$extension);
+$qc_log_id = preg_replace('/[^0-9\:\-]/','',$qc_log_id);
+$modify_agent_logs = preg_replace('/[^0-9]/','',$modify_agent_logs);
+$modify_closer_logs = preg_replace('/[^0-9]/','',$modify_closer_logs);
+$modify_logs = preg_replace('/[^0-9]/','',$modify_logs);
+
 
 $STARTtime = date("U");
 $defaultappointment = date("Y-m-d");
@@ -182,40 +345,6 @@ switch($referring_section) # was $scorecard_source
 	case "INGROUP":
 		$back_link.="&group_id=$referring_element";
 		break;
-	}
-
-#############################################
-##### START SYSTEM_SETTINGS LOOKUP #####
-$stmt = "SELECT use_non_latin,custom_fields_enabled,enable_languages,language_method,active_modules,log_recording_access FROM system_settings;";
-$rslt=mysql_to_mysqli($stmt, $link);
-if ($DB) {echo "$stmt\n";}
-$qm_conf_ct = mysqli_num_rows($rslt);
-if ($qm_conf_ct > 0)
-	{
-	$row=mysqli_fetch_row($rslt);
-	$non_latin =				$row[0];
-	$custom_fields_enabled =	$row[1];
-	$SSenable_languages =		$row[2];
-	$SSlanguage_method =		$row[3];
-	$active_modules =			$row[4];
-	$log_recording_access =			$row[5];
-	}
-##### END SETTINGS LOOKUP #####
-###########################################
-
-if ($non_latin < 1)
-	{
-	$PHP_AUTH_USER = preg_replace('/[^-_0-9a-zA-Z]/','',$PHP_AUTH_USER);
-	$PHP_AUTH_PW = preg_replace('/[^-_0-9a-zA-Z]/','',$PHP_AUTH_PW);
-
-	$old_phone = preg_replace('/[^0-9]/','',$old_phone);
-	$phone_number = preg_replace('/[^0-9]/','',$phone_number);
-	$alt_phone = preg_replace('/[^0-9]/','',$alt_phone);
-	}	# end of non_latin
-else
-	{
-	$PHP_AUTH_USER = preg_replace("/'|\"|\\\\|;/","",$PHP_AUTH_USER);
-	$PHP_AUTH_PW = preg_replace("/'|\"|\\\\|;/","",$PHP_AUTH_PW);
 	}
 
 $rights_stmt = "SELECT modify_leads,qc_enabled,full_name,modify_leads,user_group,selected_language from vicidial_users where user='$PHP_AUTH_USER';";
@@ -422,7 +551,7 @@ if ($claim_QC && $auth==1)
 			}
 		if (!$qc_scorecard_id) 
 			{
-			echo _QXZ("Can't claim this - no QC scorecard found")."\n";
+			echo _QXZ("Cannot claim this - no QC scorecard found")."\n";
 			exit;
 			}
 
@@ -458,7 +587,7 @@ if ($claim_QC && $auth==1)
 		}
 	else 
 		{
-		echo _QXZ("Can't claim this - there's no QC display method")."\n";
+		echo _QXZ("Cannot claim this - there is no QC display method")."\n";
 		exit;
 		}
 

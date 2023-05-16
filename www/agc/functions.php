@@ -4,7 +4,7 @@
 #
 # functions for agent scripts
 #
-# Copyright (C) 2021  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
+# Copyright (C) 2022  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
 #
 #
 # CHANGES:
@@ -54,9 +54,12 @@
 # 210310-1322 - Added BUTTON field type
 # 210401-2132 - Fixed issue #1271, security_phrase field not populating in custom fields form
 # 210404-0902 - Added function to refresh a single field
+# 210603-1616 - Fix for specific custom field values with a slash in them
+# 210615-1032 - Default security fixes, CVE-2021-28854
+# 220921-1204 - Added more failed login logging in user_authorization function
 #
 
-# $mysql_queries = 26
+# $mysql_queries = 28
 
 ##### BEGIN validate user login credentials, check for failed lock out #####
 function user_authorization($user,$pass,$user_option,$user_update,$bcrypt,$return_hash,$api_call,$source)
@@ -136,7 +139,7 @@ function user_authorization($user,$pass,$user_option,$user_update,$bcrypt,$retur
 
 			if ($failed_login_count < $LOCK_trigger_attempts)
 				{
-				$stmt="UPDATE vicidial_users set failed_login_count=(failed_login_count+1),last_ip='$ip' where user='$user';";
+				$stmt="UPDATE vicidial_users set failed_login_count=(failed_login_count+1),failed_login_attempts_today=(failed_login_attempts_today+1),failed_login_count_today=(failed_login_count_today+1),failed_last_ip_today='$ip',failed_last_type_today='01cBAD' where user='$user';";
 				$rslt=mysql_to_mysqli($stmt, $link);
 					if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'05011',$user,$server_ip,$session_name,$one_mysql_log);}
 				}
@@ -144,18 +147,23 @@ function user_authorization($user,$pass,$user_option,$user_update,$bcrypt,$retur
 				{
 				if ($LOCK_over > $last_login_date)
 					{
-					$stmt="UPDATE vicidial_users set last_login_date=NOW(),failed_login_count=1,last_ip='$ip' where user='$user';";
+					$stmt="UPDATE vicidial_users set last_login_date=NOW(),failed_login_count=1,failed_last_ip_today='$ip',failed_login_attempts_today=(failed_login_attempts_today+1),failed_login_count_today=(failed_login_count_today+1),failed_last_type_today='02cBAD' where user='$user';";
 					$rslt=mysql_to_mysqli($stmt, $link);
 						if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'05012',$user,$server_ip,$session_name,$one_mysql_log);}
 					}
 				else
-					{$auth_key='LOCK';}
+					{
+					$auth_key='LOCK';
+					$stmt="UPDATE vicidial_users set failed_login_attempts_today=(failed_login_attempts_today+1),failed_last_type_today='03cLOCK' where user='$user';";
+					$rslt=mysql_to_mysqli($stmt, $link);
+						if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'05027',$user,$server_ip,$session_name,$one_mysql_log);}
+					}
 				}
 			}
 		if ($SSwebroot_writable > 0)
 			{
-			$fp = fopen ("./project_auth_entries.txt", "a");
-			fwrite ($fp, "AGENT|FAIL|$NOW_TIME|$user|$auth_key|$ip|$browser|\n");
+			$fp = fopen ("./project_auth_entries.txt", "w");
+			fwrite ($fp, "AGENT|FAIL|$NOW_TIME|\n");
 			fclose($fp);
 			}
 		}
@@ -319,6 +327,12 @@ function user_authorization($user,$pass,$user_option,$user_update,$bcrypt,$retur
 			$auth_key='GOOD';
 			if ( ($return_hash == '1') and ($SSpass_hash_enabled > 0) and (strlen($pass_hash) > 12) )
 				{$auth_key .= "|$pass_hash";}
+			}
+		else
+			{
+			$stmt="UPDATE vicidial_users set failed_login_attempts_today=(failed_login_attempts_today+1),failed_last_type_today='04c$auth_key' where user='$user';";
+			$rslt=mysql_to_mysqli($stmt, $link);
+				if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'05028',$user,$server_ip,$session_name,$one_mysql_log);}
 			}
 		}
 	return $auth_key;
@@ -688,7 +702,7 @@ function custom_list_fields_values($lead_id,$list_id,$uniqueid,$user,$DB,$call_i
 								if (strlen($A_field_value[$o]) > 0)
 									{
 									$temp_opt_val = $field_options_value_array[0];
-									if ( (preg_match("/^$temp_opt_val$/",$A_field_value[$o])) or (preg_match("/,$temp_opt_val$/",$A_field_value[$o])) or (preg_match("/$temp_opt_val,/",$A_field_value[$o])) )
+									if ( (preg_match("/^" . preg_quote($temp_opt_val, "/") . "$/",$A_field_value[$o])) or (preg_match("/," . preg_quote($temp_opt_val, "/") . "$/",$A_field_value[$o])) or (preg_match("/" . preg_quote($temp_opt_val, "/") . ",/",$A_field_value[$o])) )
 										{$field_selected = 'SELECTED';}
 									if ($default_field_flag > 0)
 										{$field_selected = '--A--gender'.$field_options_value_array[0].'SELECT--B--';}
@@ -706,7 +720,7 @@ function custom_list_fields_values($lead_id,$list_id,$uniqueid,$user,$DB,$call_i
 								if (strlen($A_field_value[$o]) > 0)
 									{
 									$temp_opt_val = $field_options_value_array[0];
-									if ( (preg_match("/^$temp_opt_val$/",$A_field_value[$o])) or (preg_match("/,$temp_opt_val$/",$A_field_value[$o])) or (preg_match("/$temp_opt_val,/",$A_field_value[$o])) )
+									if ( (preg_match("/^" . preg_quote($temp_opt_val, "/") . "$/",$A_field_value[$o])) or (preg_match("/," . preg_quote($temp_opt_val, "/") . "$/",$A_field_value[$o])) or (preg_match("/" . preg_quote($temp_opt_val, "/") . ",/",$A_field_value[$o])) )
 										{$field_selected = 'SELECTED';}
 									if ($DB > 0) {echo "DEBUG2: |$field_options_value_array[0]|$A_field_value[$o]|$field_selected|\n";}
 									}
@@ -724,7 +738,7 @@ function custom_list_fields_values($lead_id,$list_id,$uniqueid,$user,$DB,$call_i
 								if (strlen($A_field_value[$o]) > 0) 
 									{
 									$temp_opt_val = $field_options_value_array[0];
-									if ( (preg_match("/^$temp_opt_val$/",$A_field_value[$o])) or (preg_match("/,$temp_opt_val$/",$A_field_value[$o])) or (preg_match("/$temp_opt_val,/",$A_field_value[$o])) )
+									if ( (preg_match("/^" . preg_quote($temp_opt_val, "/") . "$/",$A_field_value[$o])) or (preg_match("/," . preg_quote($temp_opt_val, "/") . "$/",$A_field_value[$o])) or (preg_match("/" . preg_quote($temp_opt_val, "/") . ",/",$A_field_value[$o])) )
 										{$field_selected = 'CHECKED';}
 									if ($DB > 0) {echo "DEBUG3: |$temp_options_value|$A_field_value[$o]|$field_selected|\n";}
 									}
@@ -742,7 +756,7 @@ function custom_list_fields_values($lead_id,$list_id,$uniqueid,$user,$DB,$call_i
 								if ($A_multi_position[$o]=='VERTICAL')
 									{$field_HTML .= " &nbsp; ";}
 								$temp_opt_val = $field_options_value_array[0];
-								if (preg_match("/^$temp_opt_val$/",$list_id))
+								if (preg_match("/^" . preg_quote($temp_opt_val, "/") . "$/",$list_id))
 									{
 									$field_HTML .= "<button class='button_inactive' disabled onclick=\"nothing();\"> "._QXZ("$field_options_value_array[1]")." </button> \n";
 									}
@@ -2688,8 +2702,9 @@ function mysql_error_logging($NOW_TIME,$link,$mel,$stmt,$query_id,$user,$server_
 		if ( ($errno > 0) or ($mel > 1) or ($one_mysql_log > 0) )
 			{
 			$error = mysqli_error($link);
-			$efp = fopen ("./vicidial_mysqli_errors.txt", "a");
-			fwrite ($efp, "$NOW_TIME|vdc_db_query|$query_id|$errno|$error|$stmt|$user|$server_ip|$session_name|\n");
+			$efp = fopen ("./vicidial_mysqli_errors.txt", "w");
+		#	fwrite ($efp, "$NOW_TIME|vdc_db_query|$query_id|$errno|$error|$stmt|$user|$server_ip|$session_name|\n");
+			fwrite ($efp, "$NOW_TIME|vdc_db_query|$query_id|\n");
 			fclose($efp);
 			}
 		}

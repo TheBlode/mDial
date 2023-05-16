@@ -1,7 +1,7 @@
 <?php
 # AST_inbound_forecasting.php
 # 
-# Copyright (C) 2019  Matt Florell <vicidial@gmail.com>, Joe Johnson <freewermadmin@gmail.com>    LICENSE: AGPLv2
+# Copyright (C) 2022  Matt Florell <vicidial@gmail.com>, Joe Johnson <freewermadmin@gmail.com>    LICENSE: AGPLv2
 #
 # CHANGES
 #
@@ -12,6 +12,8 @@
 # 180507-2315 - Added new help display
 # 180712-1508 - Fix for rare allowed reports issue
 # 191013-0856 - Fixes for PHP7
+# 210823-0948 - Fix for security issue, added NONE option for campaigns
+# 220301-2219 - Added allow_web_debug system setting
 #
 
 $startMS = microtime();
@@ -58,6 +60,7 @@ if (file_exists('options.php'))
 $PHP_AUTH_USER=$_SERVER['PHP_AUTH_USER'];
 $PHP_AUTH_PW=$_SERVER['PHP_AUTH_PW'];
 $PHP_SELF=$_SERVER['PHP_SELF'];
+$PHP_SELF = preg_replace('/\.php.*/i','.php',$PHP_SELF);
 if (isset($_GET["group"]))				{$group=$_GET["group"];}
 	elseif (isset($_POST["group"]))		{$group=$_POST["group"];}
 if (isset($_GET["campaign"]))				{$campaign=$_GET["campaign"];}
@@ -95,6 +98,17 @@ if (isset($_GET["DB"]))				{$DB=$_GET["DB"];}
 if (isset($_GET["report_display_type"]))				{$report_display_type=$_GET["report_display_type"];}
 	elseif (isset($_POST["report_display_type"]))	{$report_display_type=$_POST["report_display_type"];}
 
+$DB=preg_replace("/[^0-9a-zA-Z]/","",$DB);
+
+$MT[0]='';
+$NOW_DATE = date("Y-m-d");
+$NOW_TIME = date("Y-m-d H:i:s");
+$STARTtime = date("U");
+if (!isset($group)) {$group = array();}
+if (!isset($campaign)) {$campaign = array();}
+if (!isset($drop_percent)) {$drop_percent = '3';}
+if (!isset($query_date)) {$query_date = $NOW_DATE;}
+if (!isset($end_date)) {$end_date = $NOW_DATE;}
 if (strlen($shift)<2) {$shift='ALL';}
 
 $report_name = 'Inbound Forecasting Report';
@@ -133,9 +147,9 @@ $JS_onload="onload = function() {\n";
 
 #############################################
 ##### START SYSTEM_SETTINGS LOOKUP #####
-$stmt = "SELECT use_non_latin,outbound_autodial_active,slave_db_server,reports_use_slave_db,enable_languages,language_method FROM system_settings;";
+$stmt = "SELECT use_non_latin,outbound_autodial_active,slave_db_server,reports_use_slave_db,enable_languages,language_method,allow_web_debug FROM system_settings;";
 $rslt=mysql_to_mysqli($stmt, $link);
-if ($DB) {$MAIN.="$stmt\n";}
+#if ($DB) {$MAIN.="$stmt\n";}
 $qm_conf_ct = mysqli_num_rows($rslt);
 if ($qm_conf_ct > 0)
 	{
@@ -146,19 +160,42 @@ if ($qm_conf_ct > 0)
 	$reports_use_slave_db =			$row[3];
 	$SSenable_languages =			$row[4];
 	$SSlanguage_method =			$row[5];
+	$SSallow_web_debug =			$row[6];
 	}
+if ($SSallow_web_debug < 1) {$DB=0;}
 ##### END SETTINGS LOOKUP #####
 ###########################################
+
+$query_date = preg_replace('/[^- \:\_0-9a-zA-Z]/', '', $query_date);
+$end_date = preg_replace('/[^- \:\_0-9a-zA-Z]/', '', $end_date);
+$actual_agents=preg_replace("/[^0-9.]/", "", $actual_agents);
+$hourly_pay=preg_replace("/[^0-9.]/", "", $hourly_pay);
+$revenue_per_sale=preg_replace("/[^0-9.]/", "", $revenue_per_sale);
+$sale_chance=preg_replace("/[^0-9.]/", "", $sale_chance);
+$retry_rate=preg_replace("/[^0-9.]/", "", $retry_rate);
+$submit = preg_replace('/[^-_0-9a-zA-Z]/', '', $submit);
+$SUBMIT = preg_replace('/[^-_0-9a-zA-Z]/', '', $SUBMIT);
+$drop_percent = preg_replace('/[^-\.\_0-9a-zA-Z]/', '', $drop_percent);
+$erlang_type = preg_replace('/[^-_0-9a-zA-Z]/', '', $erlang_type);
+$target_pqueue = preg_replace('/[^-_0-9a-zA-Z]/', '', $target_pqueue);
+$file_download = preg_replace('/[^-_0-9a-zA-Z]/', '', $file_download);
+$report_display_type = preg_replace('/[^-_0-9a-zA-Z]/', '', $report_display_type);
+
+# Variables filtered further down in the code
+# $campaign
+# $group
 
 if ($non_latin < 1)
 	{
 	$PHP_AUTH_USER = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_USER);
 	$PHP_AUTH_PW = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_PW);
+	$shift = preg_replace('/[^-_0-9a-zA-Z]/', '', $shift);
 	}
 else
 	{
-	$PHP_AUTH_PW = preg_replace("/'|\"|\\\\|;/","",$PHP_AUTH_PW);
-	$PHP_AUTH_USER = preg_replace("/'|\"|\\\\|;/","",$PHP_AUTH_USER);
+	$PHP_AUTH_USER = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_USER);
+	$PHP_AUTH_PW = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_PW);
+	$shift = preg_replace('/[^-_0-9\p{L}]/u', '', $shift);
 	}
 
 $stmt="SELECT selected_language from vicidial_users where user='$PHP_AUTH_USER';";
@@ -316,7 +353,7 @@ else
 	$webserver_id = mysqli_insert_id($link);
 	}
 
-$stmt="INSERT INTO vicidial_report_log set event_date=NOW(), user='$PHP_AUTH_USER', ip_address='$LOGip', report_name='$report_name', browser='$LOGbrowser', referer='$LOGhttp_referer', notes='$LOGserver_name:$LOGserver_port $LOGscript_name |$group[0], $query_date, $end_date, $shift, $file_download, $report_display_type|', url='$LOGfull_url', webserver='$webserver_id';";
+$stmt="INSERT INTO vicidial_report_log set event_date=NOW(), user='$PHP_AUTH_USER', ip_address='$LOGip', report_name='$report_name', browser='$LOGbrowser', referer='$LOGhttp_referer', notes='$LOGserver_name:$LOGserver_port $LOGscript_name |$query_date, $end_date, $shift, $file_download, $report_display_type|', url='$LOGfull_url', webserver='$webserver_id';";
 if ($DB) {echo "|$stmt|\n";}
 $rslt=mysql_to_mysqli($stmt, $link);
 $report_log_id = mysqli_insert_id($link);
@@ -399,16 +436,6 @@ while ($i < $groups_to_print)
 $groups_selected_str=preg_replace('/, $/', '', $groups_selected_str);
 $group_name_str=preg_replace('/, $/', '', $group_name_str);
 
-$MT[0]='';
-$NOW_DATE = date("Y-m-d");
-$NOW_TIME = date("Y-m-d H:i:s");
-$STARTtime = date("U");
-if (!isset($group)) {$group = array();}
-if (!isset($drop_percent)) {$drop_percent = '3';}
-if (!isset($campaign)) {$campaign = array();}
-if (!isset($query_date)) {$query_date = $NOW_DATE;}
-if (!isset($end_date)) {$end_date = $NOW_DATE;}
-
 $drop_percent=preg_replace("/[^\.0-9]/", "", $drop_percent);
 if ($drop_percent>100) {$drop_percent=100;}
 $drop_rate=$drop_percent/100;
@@ -419,10 +446,11 @@ $group_string='|';
 $group_ct = count($group);
 while($i < $group_ct)
 	{
+	$group[$i] = preg_replace('/[^-_0-9\p{L}]/u', '', $group[$i]);
 	if (in_array("--ALL--", $group))
 		{
 		$group_string = "--ALL--";
-		$group_SQL .= "'$campaign[$i]',";
+		$group_SQL .= "'$group[$i]',";
 		$groupQS = "&group[]=--ALL--";
 		}
 	if ( (strlen($group[$i]) > 0) and (preg_match("/\|$group[$i]\|/",$groups_string)) )
@@ -433,7 +461,7 @@ while($i < $group_ct)
 		}
 	$i++;
 	}
-if ( (preg_match('/\s\-\-NONE\-\-\s/',$group_string) ) or ($group_ct < 1) )
+if ( (preg_match('/\-\-NONE\-\-/',$group_string) ) or ($group_ct < 1) )
 	{
 	$group_SQL = "''";
 	}
@@ -448,6 +476,7 @@ $campaign_string='|';
 $campaign_ct = count($campaign);
 while($i < $campaign_ct)
 	{
+	$campaign[$i] = preg_replace('/[^-_0-9\p{L}]/u', '', $campaign[$i]);
 	if (in_array("--ALL--", $campaign))
 		{
 		$campaign_string = "--ALL--";
@@ -462,7 +491,7 @@ while($i < $campaign_ct)
 		}
 	$i++;
 	}
-if ( (preg_match('/\s\-\-NONE\-\-\s/',$campaign_string) ) or ($campaign_ct < 1) )
+if ( (preg_match('/\-\-NONE\-\-/',$campaign_string) ) or ($campaign_ct < 1) )
 	{
 	$campaign_SQL = "''";
 	}
@@ -580,6 +609,7 @@ $MAIN.="<SELECT SIZE=5 NAME=campaign[] multiple>\n";
 #else
 #	{$MAIN.="<option value=\"--ALL--\">-- "._QXZ("ALL CAMPAIGNS")." --</option>\n";}
 $MAIN.="<option value=\"--ALL--\"".(in_array("--ALL--", $campaign) ? " selected" : "").">-- "._QXZ("ALL CAMPAIGNS")." --</option>\n";
+$MAIN.="<option value=\"--NONE--\"".(in_array("--NONE--", $campaign) ? " selected" : "").">-- "._QXZ("NONE")." --</option>\n";
 $o=0;
 $campaign_SQL="";
 while ($campaigns_to_print > $o)
@@ -600,6 +630,7 @@ $MAIN.="</TD>\n";
 
 $MAIN.="<TD VALIGN=TOP> <B>"._QXZ("In-groups").":</B><BR><SELECT SIZE=5 NAME=group[] multiple>\n";
 $MAIN.="<option value=\"--ALL--\"".(in_array("--ALL--", $group) ? " selected" : "").">--"._QXZ("ALL INGROUPS")."--</option>\n";
+$MAIN.="<option value=\"--NONE--\"".(in_array("--NONE--", $group) ? " selected" : "").">-- "._QXZ("NONE")." --</option>\n";
 
 $o=0;
 while ($groups_to_print > $o)
@@ -675,12 +706,12 @@ else
 
 	$campaign_string=preg_replace("/^\||\|$/", "", $campaign_string);
 	$group_string=preg_replace("/^\||\|$/", "", $group_string);
-	$ASCII_text =" Date range :  $query_date to $end_date\n";
+	$ASCII_text =" Date range :  $query_date to $end_date ($groups_selected==0 && $campaigns_selected==0)\n";
 	$ASCII_text.=" Campaigns  :  ".preg_replace("/\|/", ", ", $campaign_string)."\n";
 	$ASCII_text.=" In-groups  :  ".preg_replace("/\|/", ", ", $group_string)."\n\n";
 # 	$ASCII_text.=" Report type:  $erlang_type\n\n";
 
-	$HTML_text.=" Date range :  $query_date to $end_date\n";
+	$HTML_text.=" Date range :  $query_date to $end_date ($groups_selected==0 && $campaigns_selected==0)\n";
 	$HTML_text.=" Campaigns  :  ".preg_replace("/\|/", ", ", $campaign_string)."\n";
 	$HTML_text.=" In-groups  :  ".preg_replace("/\|/", ", ", $group_string)."";
 # 	$HTML_text.=" Report type:  $erlang_type\n\n";

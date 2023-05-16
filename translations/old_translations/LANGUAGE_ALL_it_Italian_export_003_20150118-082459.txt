@@ -341,271 +341,97 @@ RedirectVD Action not sent|azione redirectvd non inviato||
 parkedby %1s must be set|parkedby %1s devono essere impostati||
 lead_id %1s must be set|lead_id %1s devono essere impostati||
 campaign %1s must be set|campagna %1s devono essere impostati||
-uniqueid %1s must be set|%1s UniqueID devono essere impostati||
-auto_dial_level %1s must be set|auto_dial_level %1s devono essere impostati||
-Hangup command sent for Channel %1s on %2s|Comando hangup inviato per canale %1s on %2s||
-Channel %1s in use by another agent on %2s, Hangup command not inserted|Canale %1s in uso da un altro agente in %2s, comando hangup non inseriti||
-Channel %1s is not live on %2s, Hangup command not inserted|Canale %1s non Ã¨ in diretta su %2s, comando hangup non inserita||
-Call %1s %2s is not live on %3s, Checking Live Channel|chiamare %1s %2s non Ã¨ vivere %3s, controllando canale live||
-Channel %1s is not valid or queryCID %2s is not valid, Hangup command not inserted|Canale %1s non Ã¨ valido o querycid %2s non Ã¨ valido, il comando hangup non inseriti||
-conference %1s is not valid or ext_context %2s or queryCID %3s is not valid, Hangup command not inserted|conferenze %1s non Ã¨ valido o ext_context %2s o querycid %3s non Ã¨ valido, il comando hangup non inserito||
- You are not allowed to dial into other agent sessions|Â  non ti Ã¨ permesso di comporre in altre sessioni dell'agente||
- Exten %1s is not valid or queryCID %2s is not valid, Originate command not inserted|Â  %1s Exten non Ã¨ %2s validi o querycid non Ã¨ valido, provengono comando non inserita||
-OriginateNameVmail Action not sent|azione originatenamevmail non inviato||
-exten %1s must be set|%1s Exten devono essere impostati||
-OriginateName Action not sent|azione originatename non inviato||
-ext_priority %1s must be set|ext_priority %1s devono essere impostati||
-ext_context %1s must be set|ext_context %1s devono essere impostati||
-extenName %1s must be set|extenname %1s devono essere impostati||
-queryCID %1s must be greater than 14 characters|querycid %1s deve essere maggiore di 14 caratteri||
-Channel %1s must be greater than 2 characters|Canale %1s deve essere maggiore di 2 caratteri||
-One of these variables is not valid:|una di queste variabili non Ã¨ valida:||
-Originate command sent for Exten %1s Channel %2s on %3s|provengono comando inviato per exten% di canale 1s %2s on %3s||
-Exten %1s is not valid or queryCID %2s is not valid, Originate command not inserted|%1s Exten non Ã¨ %2s validi o querycid non Ã¨ valido, provengono comando non inserita||
-Manager Send: |Invio Manager:||
-ERROR - ID variable missing|errore - id mancante variabile||
-AGENT email frame|agente telaio email||
-REPLY|risposta||
-COPY MESSAGE|messaggio copia||
-Response:|risposta:||
-Reply:|risposta:||
-Subject:|oggetto:||
-Attachments:|allegati:||
-Date received:|data di ricezione:||
-From:|da:||
-mail could not be sent!|la posta non Ã¨ stato possibile inviare!||
-ERROR: Invalid File Name:|Errore: il nome del file non valido:||
- Phone: |Â  telefono:||
-Your system does not have the email setting enabled|il sistema non ha l'impostazione di posta elettronica abilitata||
-Phone web client|client web phone||
-Phone web client: Phone Login|Client web phone: telefono login||
-Phone web client: Login|Client web phone: login||
-Phone-Only Login|login unico telefono-||
-Alert Box|finestra di avviso||
-alert.gif|alert.gif||
-Agent Alert!|alert agente!||
-OK|ok||
-This agent screen was not opened properly.|Questa schermata agente non Ã¨ stato aperto correttamente||
-Another live agent session was open using your user ID. It has been disabled. Click OK to continue to the agent screen.|un altra sessione di agente di vivere Ã¨ stato aperto utilizzando l ID utente. Ã¨ stato disattivato. Cliccare su OK per passare alla schermata agente||
-ALERT :|avvisare:||
-Dial In-Group Selection|dial in-group selezione||
-SELECT A DIAL IN-GROUP :|seleziona un quadrante in gruppo:||
-Group Alias Selection|Selezione Gruppo Alias||
-SELECT A GROUP ALIAS :|selezionare un alias gruppo:||
-Presets Selection|selezione preset||
-SELECT A PRESET :|selezionare un preset:||
-SELECT A PAUSE CODE :|SELEZIONARE UN CODICE PAUSA:||
-Pause Code Selection|Selezione codice di pausa||
-Close Info Box|Info Box Chiudi||
-Lead Info|Info piombo||
-Call Notes List|Lista chiamate Note||
-CALL NOTES LOG:|Note dal registro chiamate:||
-Lead ID:|piombo id:||
-SEARCH RESULTS:|RISULTATI DELLA RICERCA:||
-Address3 Phone Number|Indirizzo3 Numero di telefono||
-Main Phone Number|Numero di telefono principale||
-Alternate Phone Number|Numero di telefono alternativo||
-Phone Number Fields:|campi numero di telefono:||
-Lead search requests are all logged in the system.|Richieste di ricerca di piombo sono tutti registrati nel sistema di||
-Using the other fields may be slower. Lead searching does not allow for wildcard or partial search terms.|Utilizzando gli altri campi potrebbe essere piÃ¹ lento. Ricerca piombo non consente termini di ricerca con caratteri jolly o parziale||
-Notes: when doing a search for a lead, the phone number, lead ID or %1s are the best fields to use.|note: quando si fa una ricerca di un vantaggio, il numero di telefono, o id %1s di piombo sono i migliori campi da utilizzare.||
-Search Results|RISULTATI DELLA RICERCA||
-SEARCH FOR A LEAD:|RICERCA DI PIOMBO A:||
-SUBMIT SEARCH|presentare ricerca||
-CONTACTS SEARCH RESULTS:|CONTATTI RISULTATI DELLA RICERCA:||
-Group Name:|il nome del gruppo:||
-Job Title:|titolo di lavoro:||
-Last Name:|cognome:||
-BU Name:|ragione sociale:||
-Department:|Dipartimento:||
-Office Number:|numero dell ufficio:||
-First Name:|nome:||
-Notes: when doing a search for a contact, wildcard or partial search terms are not allowed. <br />Contact search requests are all logged in the system.|note: quando si fa una ricerca di un contatto, jolly o termini di ricerca parziali non sono ammessi. <br /> richieste di ricerca di contatto sono tutti registrati nel sistema.||
-Call log List|Lista chiamate||
-SEARCH FOR A CONTACT:|cercare un contatto:||
-BLENDED CALLING|CHIAMATA MISTA||
-AGENT CALL LOG:|agente del registro chiamate:||
-TERRITORY SELECTION|TERRITORIO DI SELEZIONE||
-Channel|Canale||
-MY CALLBACK ONLY|RICHIAMO PERSONALE||
-BLENDED CALLING(outbound activated)|chiamata blended (in uscita attivata)||
-RESET|RESET||
-Dial Now|Chiama Ora||
-Preview Call|Anteprima Chiamata||
-CLOSER INBOUND GROUP SELECTION|SELEZIONE del CLOSER INBOUND GROUP||
-Dial Override:|Chiamata automatica:||
-(digits only please)|(solo per favore cifre)||
-If you want to dial a number and have it NOT be added as a new lead, enter in the exact dialstring that you want to call in the Dial Override field below. To hangup this call you will have to open the CALLS IN THIS SESSION link at the bottom of the screen and hang it up by clicking on its channel link there.|se si vuole comporre un numero e lo hanno non essere aggiunto come un nuovo elettrocatetere, immettere nella stringa di selezione esatto che si desidera chiamare nel campo di override quadrante in basso. per scollegare questa chiamata sarÃ  necessario aprire le chiamate in questo link sessione nella parte inferiore dello schermo e appenderlo cliccando sul relativo collegamento dei canali ci.||
-(This option if checked will attempt to find the phone number in the system before inserting it as a new lead)|(questa opzione se controllato tenterÃ  di trovare il numero di telefono del sistema prima di inserire come nuovo lead)||
-(digits only)|(solo cifre)||
-Dial Lead ID:|Comporre ID Piombo:||
-Search Existing Leads:|Cerca Contatti esistenti:||
-Phone Number:|numero telefonico:||
-Dial Code:|Codice di Chiamata:||
-(This is usually a 1 in the USA-Canada)|(questo Ã¨ di solito un 1 negli Stati Uniti, Canada)||
-Note: all new manual dial leads will go into list %1s|nota: tutti i nuovi contatti di selezione manuale verranno installate nella lista %1s||
-Enter information below for the new lead you wish to call.|Inserisci le informazioni per il nuovo contatto da chiamare||
-NEW MANUAL DIAL LEAD FOR %1s in campaign %2s:|nuovo lead manopola manuale %1s in campagna %2s:||
-CALLBACKS FOR AGENT %1s:<br />To see information on one of the callbacks below, click on the INFO link. To call the customer back now, click on the DIAL link. If you click on a record below to dial it, it will be removed from the list.|callback per agente %1s: <br /> Per informazioni su uno dei callback di sotto, clicca sul link informazioni. per richiamare il cliente ora, clicca sul link quadrante. se si fa clic su un record sotto per comporlo, verrÃ  rimosso dalla lista.||
-Previous Callback Information:|Informazioni richiamo precedente:||
-View Comment History:|visualizzare la cronologia commento:||
-CB Comments:|Note Richiamo:||
-Hour:|Ora:||
-Minutes:|Minuti:||
-Select a CallBack Date :|selezionare una data callback:||
-WEB FORM SUBMIT|modulo pagina web presentare||
-CLEAR FORM|PULISCI IL FORM||
-End-of-call Disposition Selection|Selezione Esito di fine chiamata||
-DISPOSITION CALL :|chiamata disposizione:||
-Any changes made to the customer information below at this time will not be comitted, You must change customer information before you Hangup the call.|Tutti i cambiamenti eseguiti sui dati del cliente non saranno salvati, bisogna effettuare le modifiche prima di riagganciare||
-There is a time synchronization problem with your system, please tell your system administrator|C`Ã¨ un problema di sincronizzazione con il sistema, si prega di informare l`amministratore di sistema||
-Your session has been disabled|La tua sessione Ã¨ stata disabilitata||
-Close Message|Chiudi Messaggio||
-Finish and Disposition Call|Termina e definisci un Esito per la chiamata||
-Customer has hung up:|Il cliente ha riagganciato:||
-Call Agent Again|Chiama l`operatore di nuovo||
-No one is in your session:|Non c`Ã¨ nessuno nella tua sessione:||
-Alt Phone Info|alt Telefono per informazioni||
-Extended Alt Phone Information:|Informazioni Estese Numero Alternativo: ||
-Available Agents Transfer:|Trasferimento Operatori Disponibili:||
-vdc_XB_presetsbutton.gif|vdc_XB_presetsbutton.gif||
-vdc_XB_contactsbutton.gif|vdc_XB_contactsbutton.gif||
-DIAL OVERRIDE|Chiamata automatica||
-AGENTS|agenti||
-vdc_XB_number.gif|vdc_XB_number.gif||
-vdc_XB_channel.gif|vdc_XB_channel.gif||
-CONSULTATIVE|CONSULTIVO||
-vdc_XB_seconds.gif|vdc_XB_seconds.gif||
-SELECT A GROUP TO SEND YOUR CALL TO|selezionare un gruppo per inviare la chiamata a||
-vdc_XB_header.gif|vdc_XB_header.gif||
-When active, simply press the keyboard key for the desired disposition for this call. The call will then be hungup and dispositioned automatically:|Se attivo, premi il tasto corrispondente all`esito desiderato e la chiamata sarÃ  riagganciata automaticamente:||
-Lead Dispositioned As:|Esito Contatto:||
-Disposition Hot Keys:|Tasti Funzione per Esiti:||
-reset form|forma reimpostare||
-AGENT SCRIPT|script agente||
-refresh|Aggiorna||
-WebPhone View -|view Webphone -||
-Agents View +|Agenti vista +||
-Other Agents Status:|Stato Altri Operatori:||
-X ACTIVE CALLBACKS|x callback attivi||
-Calls In Queue:|Chiamate in coda:||
-D2 - DIAL|d2 - dial||
-D1 - DIAL|d1 - dial||
-Calls Dialing:|chiama la composizione:||
-Alert is OFF|avviso Ã¨ spento||
-seconds:|secondi:||
-Your Status:|Il tuo stato:||
-Server:|Server:||
-Alert is ON|segnalazione riguardi||
-VIEW CALL LOG|Visualizza registro CALL||
-FAST DIAL|CHIAMATA VELOCE||
-MANUAL DIAL|CHIAMATA MANUALE||
-LEAD SEARCH|PIOMBO RICERCA||
-view notes|visualizzare le note||
-Customer Time:|Time Customer:||
-Channel:|canale:||
-Customer Information:|Dati Cliente:||
-RECORD ID:|ID RECORD:||
- ALT PHONE DIAL|Â  Telefono alt||
-RECORDING FILE:|FILE REGISTRAZIONE:||
-pixel.gif|pixel.gif||
-session ID:|session id:||
-Agent Screen|schermo agente||
-LIVE|vivere||
-vdc_tab_email.gif|vdc_tab_email.gif||
-vdc_tab_form.gif|vdc_tab_form.gif||
-vdc_tab_script.gif|vdc_tab_script.gif||
-LOGOUT|Logout||
-GROUPS|gruppi||
-ring|ring||
-TERRITORIES|territori||
-YOU DO NOT HAVE PERMISSIONS TO TRANSFER CALLS|NON HAI L`AUTORIZZAZIONE PER TRASFERIRE CHIAMATE||
-Logged in as User|Loggato come Utente||
-: %1s on Phone: %2s|: %1s sul telefono: %2s||
-show comment history|spettacolo commento storia||
-HIDE|nascondere||
-hide comment history|nascondi commento storia||
-vdc_XB_hotkeysactive_OFF.gif|vdc_XB_hotkeysactive_OFF.gif||
-vdc_XB_hotkeysactive.gif|vdc_XB_hotkeysactive.gif||
-Show conference call channel information|Mostra le informazioni relative al canale della conferenza||
-Hide conference call channel information|Nascondi le informazioni relative al canale della conferenza||
-ALT PHONE DIAL|CHIAMA ALT NUM||
-ORDER|ordine||
-LEAD PREVIEW|ANTEPRIMA CLIENTE||
-ACTIVE DISPLAY PAUSED|DISPLAY ATTIVO IN PAUSA||
-NOV|Novembre||
-DEC|dicembre||
-OCT|ottobre||
-SEP|Settembre||
-AUG|Agosto||
-JUN|Giugno||
-JLY|JLY||
-APR|aprile||
-MAY|Maggio||
-MAR|mar||
-FEB|Febbraio||
-JAN|Gennaio||
-CUSTOMER 3WAY HANGUP|3way cliente hangup||
-Time On Park:|tempo sul parco:||
-Customer Hung-up, 3-way Call Ended Automatically|Clienti Hung-up, 3-way chiamata Ã¨ terminata automaticamente||
-Dial Countdown:|Comporre Countdown:||
-Call Agent Webphone|chiamata Webphone agente||
-Dial Next Call|dial chiamata successiva||
-DIAL ALERT:|comporre avvisare:||
-TIMER NOTIFICATION:|NOTIFICA TIMER:||
-ENTER A PAUSE CODE|INSERIRE UN CODICE PAUSA||
-Select a Date Below|Seleziona una data qui sotto||
-YOU MUST BE PAUSED TO CHANGE TERRITORIES|si deve essere in pausa per cambiare territori||
-You must choose a date|Devi scegliere una data||
-Manager|Manager ||
-has selected your in-group choices|ha selezionato le tue scelte per i gruppi inbound||
-YOU MUST BE PAUSED TO CHANGE GROUPS|DEVI ESSERE IN PAUSA PER CAMBIARE GRUPPO||
-Next Call Pause Set|chiamata successiva pausa impostato||
-Searching...|ricerca ...||
-maximize|ingrandisci ||
-Invalid Day, Month, or Year range detected. Please correct and submit again.|giorno, mese, anno o intervallo non valido rilevato. si prega di correggere e inviare di nuovo.||
-Invalid Date Format. Please correct and submit again.|formato della data non valido. si prega di correggere e inviare di nuovo.||
-YOU MUST BE PAUSED TO VIEW YOUR CALL LOG|DEVI ESSERE IN PAUSA PER VEDERE IL VOSTRO CALL LOG||
-WebPhone View|vista Webphone||
-Show Calls In Queue|Mostra le chiamate in coda||
-Agents View|Agenti Visualizza||
-Hide Calls In Queue|Nascondere chiamate in coda||
-Close Window|chiudi finestra||
-YOU MUST BE PAUSED TO GRAB CALLS IN QUEUE|DEVI ESSERE IN PAUSA PER RECUPERARE LE CHIAMATE IN CODA||
-seconds remaining in wrapup|secondi di riposo restanti||
-Call Wrapup:|Riposo prima della prossima chiamata:||
-CLICK HERE TO LOG IN AGAIN|FAI CLICK QUI PER AUTENTICARTI DI NUOVO||
-You have been paused for too long, you have been logged out of your session|Sei stato messo in pausa per troppo tempo, Ã¨ stato disconnesso dalla sessione||
-The system has received a command to log you out, you have been logged out of your session|Il sistema ha ricevuto un comando di log out, si Ã¨ stati disconnessi dalla sessione||
-Your Shift is over or has changed, you have been logged out of your session|Il tuo turno Ã¨ finito o Ã¨ cambiato, sei stato disconnesso dalla tua sessione||
-You are in ALT dial mode, you must finish the lead before logging out.|Sei in modalitÃ  dial ALT, Ã¨ necessario terminare il cavo prima di uscire||
-STILL A LIVE CALL! Hang it up then you can log out.|LA CHIAMATA IN CORSO E` ANCORA ATTIVA! Riaggancia e quindi puoi disconnetterti||
-You cannot log out during a Dial attempt. Wait 50 seconds for the dial to fail out if it is not answered|Non Ã¨ possibile accedere durante un tentativo di composizione. attendere 50 secondi per il quadrante di fallire se non si risponde||
-PLEASE CLICK THE LOGOUT LINK TO LOG OUT NEXT TIME.|clicca il link di logout per uscire la prossima volta.||
-Manual Queue is On|Queue manuale Ã¨ On||
-SELECTED TERRITORIES|territori selezionati||
-Manager has selected territories for you|Manager ha selezionato per voi i territori||
-Manual Queue is Off|Queue manuale Ã¨ Off||
-TERRITORIES NOT SELECTED|TERRITORI NON SELEZIONATO||
-DELETE ALL|eliminare tutti||
-ADD ALL|aggiungere tutti||
-Manager has selected groups for you|Manager ha selezionato i gruppi per voi||
-SELECTED GROUPS|GRUPPI SELEZIONATI||
-GROUPS NOT SELECTED|GRUPPI NON SELEZIONATI||
-Finish Wrapup and Move On|Termina riposo e continua||
-Hangup Again|Aggancia di nuovo||
-Next Call Pause|chiamata successiva pausa||
-F - Female|F - Femmina||
-minimize|riduci ||
-M - Male|M - Maschio||
-U - Undefined|u - undefined||
-You can only disposition a call once|potete disposizione solo una chiamata una volta||
-You Must Select a Disposition|Devi selezionare un esito||
-DIAL IN-GROUP|Cassaforte in gruppo||
-AGENT_PHONE|agent_phone||
-CUSTOMER|cliente||
-GROUP ALIAS|Gruppo Alias||
-YOU MUST BE PAUSED TO SEARCH FOR A LEAD|DEVI ESSERE IN PAUSA PER CERCARE DI PIOMBO||
+uniqueid %1s must be set|%1s UniqueID devino`e0{e2e imp/stati|ta%$oWdial_level%%qq2iqst!b!asetxautoW zol_ledel e1s,ddronm`es{ebe`iopostati||
+Hamgtp"amlmadd!senphfob Cxaooel0%1s0on %0rlcwe vho haogu4`affketh$per safamd %1s }n  rs|l
+cha.~al e1s!in use!by inopler agmfq gn 5rw$ H`ngq@`ca}mald $otaij#drted|Calble!%1s ih ubc(da$sn amt0o`afantm in %6;$,com llo$hancqp no, inperiuiul
+Cha.nel$d0s yg`jot0dmee on %3s.$Hangu` k/mmend jo` ibsupddd}chnhle`-ya fon C¨ ë*(ek"edta!su u2sm cïma.fm`hajfue non$insiritqt|*Gall"'!g(#²s0xy(n/t hate on %#u( Aieajioo lhve Shamhel|shaqeare0%1q$%2s`.f Ïh va6ufe !3s, anÎtrgllaodl!caocle!mlvetxChglnel`…9g ks |ot0talid ov q5evycID($2s$i` not!va`yd,dhaNgut ckmo`gd nnd i&ger|gatAana A %1b nodpÃ( wqlilm o pgezicid$!"S0Nmn Ã¨ valid/,`il0aomando hengwt lmf }n#eraqalmHkmnddtgosa e!s hs lmt ta|id nb$`xtbon$exv %"s jr!qwerpKI($#s1hs nt talmd$ Danoup`soamanl(fOt )lueu ed|co,fmpadze`$1q0nm~ Ã((vahium"i t8taokte|p"%3c opuaez}#md %;s0nol(Çà v`lhd/,$al!`gjaodo l`ncuq ~en ynserito||* Pou Are vou0e low d`vf dk m0ijtn$mphef aca~|4se{simoc|b  nmn ty ç¨ p%soe2an di!cmm0gbr``hl!adure qew;!oli Dadl!agnn~e|| EZvml!,1s!iu`ng4 valid`or!quetyCID"%wcnes(no|$Wali$l Orijinkte`gommin|0kot$ans r`eDlÂ ``1q ezdel1noldC¨ $Rs0tahadh`c qaecyci``joo Aø0vqhk$o, pcctefeomo &.majf. nonqinsdridá8|‚¯"igiaeteNemeTmqil Acuiol!nou""efv4ajiuve!mry$imatenamer}ail!noj ifrhipot|.uxtel %1s oqsdafe`sat|t1`!Axuun eav-~o EwsEce#`epqxavim|*Osis)natdNaME ctiol nop#qefeuchio~e!oruvinauen!ee lwo"ilriet-||Hdxthrko²y4y`%1c iust bu wut|eppoaboorkty %!s`defmo&`ess!r% JlpoS´avi||ext_g.dett $qs`q5st$cc!qldxexpWgiltexv p1q"levmnm`assmve iyporUctiplextegNpme %qk mes~ bl sew|dxtglnaoa!mas wg~doo essezm impostavi|}Jat%rpcId$ac emrd `eigpaalds t`an21d ah`racparr}rwe"xaiD %1sbeatm ewsezepeacfimre `i!50 cas tdmwi||
+C`anjal a1s }5rw  e gpeauaq`eh f`2dclab`averstCcfane&%1s(fe~d$aqsera(uagchpe d{ 00#aradu%ri||Mse gf alede vcre!bldr as nd`vam!f:luna-di$aeirpe`vmraaji,i nom(Ã(`vkm`dqz|n*Orifinate cnmmcne pent ggb Ezten %qy Shaojal $"u$on`,33|pvowenccnm$#em`ldo`inviAvn0gr ehtd~%ldyi"`oaee 1s0!2s on %3qpExtef@-1s is(got ranid of&qeeq}ID %"s0ia"fju vaNé$l`Or!ginctg smmmqn$`nol!incer|!ex%1s"Exte~inon Ã¡ e3s vcmadipj"queri!id$nkî Â© t#tmdo( pr/veogono c.maflo nol knaeritatlOaoager sef$>!lIn~hoaManqgebh|tECVKR ' YL taraa`te4m)qranf|erp/òá!%tae1h`namodm vprihjhLe||CIGunD eamè fraletag`N~g$pe|aho e,q}Ny|*VEPLY|rms ccuay|
+Co@I mUSPAoS`messaggIn%Cfdyal|jBekronae8|r)s`ocda*Xd*Zuudy:tsirpost!2|~jubjebt:|ouggudg*^M
+!utarhm%zdsz|!llegapi:yt eatd receyvdd2|tava`di vibijikle2|lJfrgm:|eg?v|(la)l c}udI nnv!bu venra||a(wosta$oon Á¨`ruito  ~ssh`i,g!inumer`!}|
+E@SgRz Alvalmd F`Le Oame:mdrpnp%:,il nomm$l%l &ano0nol wahmdo:(|
+ Pjkne> yÂ¨#tumefmno*|~KXouv s}stekadmms`lop `avm`the`dei`l settjnd ebibl4`}i(0sisämha non ha n!hlpostqpinna,$h xltA%eld`drgnycc!aãhlktata||HA(kne sgf aliant|alkel4 web ðh}~e,|honu$ue`$g.yeKu8$hgfe`Leajtniend wDjdphonex tmdedmjo!lng`o|}
+P`oke wbf #die~t8"lofmv|Blidnp gef p`ofe: lagin|lPhkno-Onl}eNoginxnn%ij qnmco telqfofo-<toadept Bo`}falagtca(dm`Ivfismt|
+an%rtn&af|ahcbv.fi`|| Agdjt"Ahezda|alaru `&eldg!}|fOK|ok,|
+T``{`ageft tCreen`was nme fqeâed 0vmperly.|Sue3te skher¬ata0`gefte ko| Cè stat adarto"gopbdttdmezpe|}
+avothep$divm"e&elp s%scimn*~a3$o`eo ewone`your µqç² hA. I| has jeen `kqabmud. Bdick!ka!d` gintiru% tn t`e`ag%nd siråeF.8ef altrc ses3ioîe di egejve da tidabe C( stqpk i|erdo utifir|!fek | If utenta*$Ã© statc dis`4tmvatoj @hic#are su0O+dpes ta~xare!a|he schermad!(`'ende||DLErT!>4qofirarezt|J@hdl"i*-Obv}t Selgcty,n|diad in/group`redezhohdl|.QELEK AddIAl IF-FrOMP$:dcglexiona"ub maa`r!fte(in`gsufpczx|*Grout Al`a SdlecdynnlSdlejcc~e4'ssppo Alha`|4
+SlECPeA$esGU\ AadIS`:tseduyinnebd uo aljac gruxpo~||ZPresuts mlecrkon|culezanje prmsivp|*SMLEsU @ PBEBv "|sgldzign#rA ql `reRet||ELEcf aaR@USE$cGdD 2xQEdeXHkLCRAe^N SODIBA QAtWArl|*Pe$we Aode!QelectigntSedmxhgne kcdmb%0di`xa5sa||BCioce I~do$Box|K.fo bmx Ehyudi|n*Laa`!iogolInfe`p)o}bmdl
+cadl Noptc$Héc|tLksta%apk!mate$Nouå4o
+QlL OiTEZ ÄKg>~Bua!`al rgeisurg$f`iao!te:p|Lahd ID:tqiodbgdid8|x
+CM!RKI!vGSUÉpszmÐI[ULTD	`EEHl SKCxca:hx
+eddrecs3 Thnle Nwtcep<MntibnzrB#@Lumep# di ten$fgbexZoain$phk.e Nqmbap|Numsf}0d)`te`efonn pbi~cipale4t
+Altesnavu`@hfff`numfer~juoepmbdi`qeheb/fo!q(ternatyv/|
+Phnxe Num`epkEìdwjtcemqq oueeS- di!delafmni:||"leaf0sedr j$0eq5esnw0a& `ald lecudl an t`mb{y{tel,}@achieb|a(d) `yk!x#i ti thgmbo'kkl putvm peg)stbaek lem`shrtetaddi||Esjno 5he ktler fheéàc hac$je sloweb. Tead ut!pchifG(douq jgv)ahl­tafor"eildcapåaov partiCl seavcl$targk&|Qôil}bzanoo 'li$addr| ka-PAarOtporfe$essura `iÃùdlaodo. hcevca pigijk0nol`cols`nde taRmizi$ei(2hcgba` #kn carquttri j/ndy o"pqrjmAL!|\notaax vhmn E/ ne$e$sqqrc( doraaanead$(the`p`}za o%m`%rl mea` I cr %q{ ape eke bmct$tidlla to 5s`.|nmdar 55a|tm(si"fa`u.a Racirra ii e~(vantafwio< il fumabo dh`ta}oeknolhc2it4%!s`di(paolbo s{dg`i mignaebm1!ampiddc upElir{are"}<RQeazf` Reqehu{|RISUDt@DA EELLaar@SEPCExm
+QEIRAj`FMP0A LEIt:4rlCDBCmdM	4AIoMBo q8t<
+SWjMkT S`APCJ|presdndq0ehrigebca|t
+cONaCdS SAat!` ReRuoTSz|AOHAL|I%PIStLTIQK aEN@A RiCdjCAr||NCr.uq Dame:til&nOme`gu$ g2ms`ozt|"J/b0Tatlm:|tkt#``n) la&gbm2X<bLast Nceaz|cmgfomg,|BU Ham :|pa'ionea{ocha,e{|xHe `rtaebtº<di0av4ieen`k:lt*Gfdha% Nem`mr:lnumezm dn$l õff}cho2¸|OB`rcd Name:|l/ue*t~JOw4e{8`wjen dming`a"c%qvah for`a0bohtaat, widdcapd$or#pcspied reascy$tevms`aqa Nlt`qh|ouwd- 6jr$'.Coltaad`suep"h!raqqfwus`ira`amh!lbgoub md` he s}stem.tnodg8 quanao si`fa uî! ric%rkd.di"tj`ccltatdg,`kkaly ~ ug2mini(dh Recgbca`pa"jmqji n+n`roog amhes1hl <ds . rikjiecpm!dkpré+epaa dkpemouaDug }}nO T4tti)vewmqtravi`nel0syx}qiqn|x*Call log Lasdthygta$ahiEME4e||
+{EaZH"FKr$A*BNUaCztcarcaba u^(coftatti*ltBBlEmnED"ÃdLigW|C@I@mA@a MItAl|AEN4 GAlL HkG:lagent%(den bd&istro emk!aate:p|
+Tev IVNbY [uLDJPAON|eRGATG@IO Da"Sdlen	OZE||Cha|.eltCanau`||(Mx AAD,BMCK`ONIX|BIChIAMO,`EVSnILEd|)BlANeED cEMlFW gqdbkund`ab4hucted%|cka'-aTa!(lgn`gd )in,usbivi atui~atq%|tNDSMT|rDSAt||
+Diif"LottCmhami1vsat|:prdg{eu aall|Anuetra|s Chi`mamu|l
+CDneJ AFjqUld`gRoEp SElECPJon|RE\eZMANE damaCLOsER INOU
+D  Fgp|w(Dmal Mverri`o:|c`iamdu``autmeapk a:x|Jê$hgitq!ovly qLE!q%)}hsjl qtpÀ¢avowe aibxa)||
+Qf qg} wajddtk eia$ e nqmbgv8afd xava at lo$b `idded ac`` nef0de!d($enPe0 mj`shm expgt dialrrbinc tllt }ou uaft`to call inpdje Dial"O~%rWiDEAfielg bedw. To hakfup"t`ic`call ygu2willdha|e`to opee dh%"cALDV IN THS`WLSSIOn gino!!tj`hd bot|$ o" lle ccr%dn$eod hinf iT up`jy #licai~g nnai|r khalnemdlknk"t`ebgolwe`s` ruomg$colqoRre qn!nueguo aahodianjw oll8eqsevea`geignto come"wn n4orodqlettvmsat%xe2E, iM-%guerednElna(d0rane ``a sallxhofd`eradvobcle`sm$deqktdrp(chiqlaSebnel`cimpg`dh ofe"bile q}`draftm!in(carsg.(0er rb{m|Egare aeeste bjmama4a*dasÃ¨ fmcdqseri*(`ppiwmphe`shag}ep%din ssesem mi&k$secwaona`ndlle perte invermjre0tello ssharoi a a`rdn`dplm Cìhsaan`o sth%zeda4avo$bnllåepmenpo dui`aa~a|i bi.||
+¨Tiiw`opui~ if checked`sill4cttee`t(tg`vajl!the`piofa nuece7(in tze`s!quak`ãdfobd`ao{e2t{~g it2as a`oeg`}ead)8AsuOs0a"~qzho.apre c/nt0gldado(t$nedrÇ  dm"t2kncze qd fEmeRo ci0tele$onf`ded$sirtel! ðbima dj yoaerirg bgml nuovo lead)||dakgiva on,i)| wmdm kiVre)]tEhql"He`d `D*lC-e`fbre`ID Pigm`o:|zWdeb`h d|hsthjc!\ec%k0|Ce"aÁ¡Biltatwi eZmwv%jui~L\P`one Elkur:|n5eerm $dm`b-liboz|}Dmad Cm,d<colice@ei`Eiiematc>\l*:Thjc iw!uquahm9 e`!`ig thepWsamCagqday}is1esd aª!di(skii$o uc(5`lefli Ctaue`un)til Cmn`da)||NNope20A,` nev ecoual dial%ocads"a,n!go i.t}(lhst -pwxnova* tuudi`i nmcvm0cgntavdm,di sehnz!kneh-qjac dV%r{!nmk0ifwtdelcti nella`micta %1s8u
+Untep infnbmiPio^ rtl_prfnr tdg$rd5pleadayop$glsl to cahl.<Insevksch ld infor} zionm(pe~ ilanewto ccnea|0o%da cimam`re|t
+OEv$-AOVALhDIA] LAD FOR 0s`kn caeq!hg~ ep0:ljeOvo lead ea.opomd mAnusdg`! w`in ce-ramva '0s*ÿ| cALlJ@CCS"DWB!AGJ] %qq0>rtg/6Tb see!in&nrmqtmon Ko!ode ov,pHe(ballb`cos  e,os,!f,icc`eo t`e oFo lmdk~ T/ cadl0the`cuqdliér jack ngw< wlicj ol d(e DEGd`,ani."Mf a!u cdick0onpa `ecord!bulgw l' `xal ht,`id‚gjll4be`ram.~ed frgm uHe |isd,|cald ack$her afeZwu %1c| 4fr /? @er }jforma|ambi w}0eno lei kaldbabm dm cmdto$pclacba rUlblmnv infk2=azgh).$0e~ sabhiam`pd@i,%a\iE.te 'sc, cddcgi*ãel$linc quadb`npe.bse wm fi!cvic!ww`tn`0ekgvd$so`di tmr)colpgplm, fmrrA `rimmrso1filn` hhstd.|x(Ppt&iïucaSedlbqck(	b4%r)arhol*xHnfkrmqziknk`zkcj(al~precedentezd|*ekev(Coeme,v!His4oryxlvi{ualizzepe li apmlologip sgmmDltn:u|SBgCommddp{?lNotg Rachaqmo8lv
+Howr8|}vq:\l*EifU|es2|Mijutmz||JRdmåcd¤ 0Aa|hBuak D`tu`;|selezkonabgduna`eati ce||bas{:|lJWMR`ForM$sQBEEeneelo"laGinb wab pr¡segtaqa|l.ClEAR%E~IdPELIAcI |N`^N@Mt|JAjDmmf-#al` Diupoch|ik.$Selektioo|Se,!xion  Aqato!d} fide(caiai`t`||THsPOcIDIgJ IIhhb8|shmae`u` diwpoeuhione;p|*Eni chioguq eaee to uhe custgmaf ivbormcuion felmw!qu thmati|e 5a/d lit badComiptma,$Yoq0muqd(cjamae cestomex@igfuzmatingab!bor``ù+d `adgup the cx|n.|@pttl$)`c kbiameldi`gsdeuiti`sui da$h lel cligftu nmn qazijng0relva|i,0`ar-cna$uffeddqcverlg mofifiche(prqmá Å)`riagfenciqr%||
+Thmre ésba(tiae cxbclroni{etho` profnao(6mth yoer`ahsteml(plaace telm yg}r sysdml edukoaatr+tlr|A`Ç© un trblemEei"singrgjizz`~iolu`cov4i. s)Qlmma, sa0phega!di cdfor,dRe Ldemm)niperatorg `i qiq4ema~m*Xotr {fpuhgb hcv beivddiycf,ehx\! t|`0qgcciobe Ãé&ttaf  dky!bihir!|c|x
+Cnoce mesóáge|SiitdK AaseageIo|lFifas``aot Fic`gridmO~ FaldlVeruql``e"$dfinIqac uj`Eq)doapes da c aemate|<ctwtk,ep ier hvng Óp:xI¬(clefte!hiRiqeeancaato:}t
+cqld Agent Again<hial!0hhk0eratowd ei nUgnm$t
+Nw ole ks%il$9kur qmsqaon:\Ogn!B`Amjl%wsu*"oella dea secwiondz}0AdtdphgneAAnfg|cdt Bedefnno `er )ndormazisni||
+G(tendmf slp!PhelgtIoÆ+r,athon8jInfobmCzikoa0ectese Numerl AL|er~auiw/8 xl*Avaima`l% agenec Tpensf!r+ldsawemrimenve(mptbi|obhhDas`nfafili:||
+rdc[ZF_ppdsapwruttoh.e)f|~`coH@Wqr0q$tcbetpkl.fig||
+vdc_UB_ko.toctsBeq`gd.fmF\vdcWPB^aoktqetgbutd'b6%mdüd@IAN!mvERIDelChiamaea autome`icand$@Oedshawel|it|vdr_XFnambdp.'hf|dtc_XB8n|m`ar.eif}|Jv`c_XB7ehan.l,.caf|rdc^\bWch nç%l.gxfllJCOnGuDTA^ITAtgKNQULRKTGt|
+ddc_YB^cmkgndw$gaf~upc_XC{secnnesngifn|PEZtCT!CdGrMQB$UO Sef!YMEB`CE l!Tfpqamdzhgnarm(uf erehtn!pds invhav% ia cdh`mata!a|}*fdcXB_hma`ar.vid4ddkWXN_xd`dev*gid|t
+Whun!a`dmve$`gimply`pseqs t`g cuxboapa oey "mr tii dew(rm` disqositm/nhfmr tjis cedl'(thm cANl uamdat`gn ba hujgux0afb daSðmqitione` aetmmalmaallh*\We0kttive,`ure!i ih`tasto corq)sromuafue0a,|`eqivg dusadera`o!d$la aliámeu! sarÃ¢ `c`vcancyata %utwmdtmc`munte*lxlemd`Dlsposidienud Aq:tdsitk gnntattkzm|
+Di#pos)tiof!Int Ceis|LaGE`!GunzijKe porEsqTi8<Jreset f&r}pfosee deIopw4`vell
+UNeN(SCRipTLrcsivt`!uelt%tt
+rufrmrh<ag"qmrna|}vaS@hKNE RiEw -zv)es G%btiong"-t|
+@gentc vaeva#|Aoe|tm pi{ta +}mJg$her`Cgeztr0wuad|#:|_t`to AlprhdOpezaäo2a¸<| AEH^G0CQXLKaC[U|h"calhbc#j`addifaD|.Belhp`In Pueua:|C(ia%ate`ij cfda:||ND2`-$DyqDt$6!} diadd|
+D5ha.@IAD|d1 , amalt4
+gsllc`Dh`minc.lghi!ma$la "km`mqariof%x|lAlmxt"is OV t`v2qso$Á((wpdftn8n
+vekOnEP:|{ebooderl|Qnuv$Sdkutqz|Il tun rlumk<t|BSepvep:tRdgvEp2}~*dlebtdi{2E.|swelal!ziEledVygSe`di||
+VIeW"CA,l LOGl_ir5`li8z` be!iwurm"aAlHtx
+bACT DSAL|CJhALaT@ VEhCEy|mAnDIl T`H}CLMCMAT@`LSnUAE||leA$$seD[KIuP(nMB/pXICeBGA|| vi`u lodeslv)qualiz~!qm$,e notex|jSus4gier Talo*ltime`Cuctomer&||*haneh*|a!naME;t$Ctstemav`Inborg!uhob;t@cth,claANUe2||.rEEOPA MD:xLD PSÏCD:|t
+!@LD!tAOnEbDIE$|âè Uelefoonamu||
+RRIRdILOpFclQ>xFIHEbSEGIsTRAL	OLE2|t"0ixdl.gif|pixe(*mkft$
+sesshjnad:}sers)kn il=de*Acfop`Screel|SciecmOp`gebuel|
+LYVE|te2u{e||
+fTbKtib\aiiid&g}f|wfc[tabseaail"ki&|nvdkotasWgormnei&l~ub_dib]fotmNe}c|l
+vpk_ta"rari`t.gifdv`cWl bTskript/gmf||*DOGMAT|Engo}|x|GRNUQQ|gpupbqll
+ring|vqded|	TDRRITOrIES|t`rvitormx|
+sOT(Dk NOT XAVE MDMIQSImN Tm TpAN#bSf!CALD|LOJ LAM @dAUtG@IZXHZAKND PE` tPASEABMRE chM@mATE}|
+Logged id aw Us%r|Legeedo"cOm% U|ejte|x*!/1s oo Ph/ne2`e2s|: $ s({u| tedefofi: $:s||
+rhow ciiment DisTgri\SpeddacgLm$kllmentm,stgpma||JJadE|narcondere}|hidt(comM%nv hictgsx|largondi b'mmaltc"ct`rMaX\
+~dc_XB[(oTolhsqbtivd{MGf.gin|pdbot"_`otkg8secdyvu[oFn%ifdtJ~dkO@_aotketsabdatd.ginnwdcOXByafuyeaaaktave,oig||
+hog"aonferefcm n!Hl c aDnMl IF`reatmod|Wnwtq` fe i.for-!jmofi$p`matyve el!`analu(dellc coffesu&za|l
+Hode conferqnb$ k`ll$chakla~ angormaton&|Nesgijd` le(infovlerihni sabItIvo a\ canale da`|a c-ogez$jpAr=ALT RHLN2DAbL|CHiAMA``Ht0NUM~|LLr`ES|mr`ijux*EEeT @vDTIDlCLtAPRHeQ clANTE|lDCTIvA!`ICAlAP(BIUSeD|FIRPhC] ATTIFn IN0P!PC ||NO~|Notemffe,|d K|nEcnmbpe~|
+OÃu|ottmbrmß=*COD|SdtteGbrd|l
+ATG,Anosuox4
+RUlGi}g*o|~Jj]}JlP|l@APB|`prila}|MAyt]qcdiw\üHgrtiat||T@A|Vg`bbei}x jKVtG`,n`hn~}
+CUWPoMA{ 'F`Q XEOMQ`Þ³3ay c|e`nte%haggup|m.Dime`Fn`PCri8tpmm`i!spl$0arik:||
+cestGimB(@unf-up% 7wiY$Cadm(ended Eqtoeatacalh9|clmenti Hufg,uQ¨ 3)wiy ahyakata C¨ terim.etc `epooatic`meftet}Táál$KnujtLown|CLmpgvve Countdgwn<tyJCc,l$Agelp We`p`gvg=bhiaiata We"phmne mgen\ettBFiad Lept4Cadl|vmah rè)coetA!wq`ae[wmVM||JVIA\!ALERT:|akuporruaawv)aarez|V
+TOMEc LOHÆÉAIDION:t^ODMdACE dKMEP:yl*ELVER$a @AWSM!CODcdIVSeRIpe0Uk!GneKBe PcMSAx|KSeloct`aàEcle ÂmloglSMDez)mne unc dita"±qi$wn4lo}tjxNU ITSD`CE PAEFED ToaBLAngE TERRATObIeSnse deva gibeSe il qausa`pev achgyaje#tlrrh4gri||-]-} lust #ho#qe a!dipe|Deva sCEelKEsE qna dala|x
+Eanagej|Maheger t|lÃû {%lecteedYïub ml-gqo5d chm!cestha eg`ehmnatg juqtuehw#aDfa,yez@Yfrud`i idbou.d}p(IKU eRT!BE TAESGd`EO$ÃHLÎÇA GRO4PS|LdI"MSRefQ IN$PauSA`PER cAmBaAZg)FJWQO|\NEht Aald!pnucc QÁt|ahiamata w}cceraava!qdura mmpgsdadjd|Qdabc`ihg&*$|byceb#a(".,p|
+e`pidizexmneraolhsj)}|BInf`lid Dah,`\g.t(,(kr Yehrdvang% eutebtmdª2R,ea{e!bgqrecd$and cubiiô(aca)l.4giorno$ eeseh !lo'0e in`arfadlo jkn$vaHi`o rilevfuo. rk ppata lI cnrreggepd e i~viare d)dntun.||Lnvilit$DAtehNorm!t. Pmeaqe c~qbect in` sublat cgahl,|bo{iit#`ea}la fáua foldT`mMto. si pRmfq!dh ccpre&sere%c"invi`rE di$nuovo.m|QOu ]uS`bE PAqSU 0~O sIEV!OIr0AL\£IOglDEÒí(EVSEP@ IN`PEU[E0PER0VDDerE id VMCTSB`cAXD`LOG|tlWejQhoog v}gg|vista Gdbphghe|tJaxou`Calms`in Qumte|tostba le p á¡aite`io0agfad|*Ágemvc &idw|C§dnti RirpAlizxc}llede kphmq HnaQuEed}Ocsaofdepe$chiaoape"ij cOdel|clmba!wildo}chhudi fakestbq8|
+XOU MVST Bu`iUSmD T"oREB CCMLS)INbqUEUMl@UvI(eSeRe I^%\DUKC$POR`SECU2OraRÅ LE&CHHLMatU É cKDA||
+ymc/~`c,v$haéninw in Wpatma|qaaojd` da% ipOko"{estanti||
+bihd!pgqq0*tFy1oso(prima!eem~ah`rgkcima ahnamat`zlu
+cAcK `EF TMLoG eO `Ç	iÎ}BAM EiAK`QeI"pEb$AUTUd|kGARTI DA NUMTN|}
+Yme heve `eendpaqsgd$fgp£uoK lonf$ ynq hare bedj`logoddanut mf )oub`wes{ooftcei wtatohmmsun in!PaESa par0`sg|pk tehpk, Ãè cueto eyscknnesr~ lclha raqsaolg|l
+Uhd`q0stem!das!2`c`ived c aommakl w}&dng y}u nud$ ygt-``&d `edn!loggef n}t gf`yo}z cers)oo<Cl$saqtema l` rkcafauo wl co%undn dkalog oud2 si ïª staui dirc#fnes#i dam,a 2ecwhnne~|*Xoub Shift4is('v`r!p(has,cainoed, qou |ave `eal l*gggd o}t cg ygtz qesrkgn|Hlbtuo ~u`lk Ã¨ bknitobo0Ã¨"cqidiapo, cdm st`tg dasbonmesso dclhg tta&kd{3}fod||Qow` re (k HLT tial modg,!{mu m1stbfmöiwh t(e`lead$babgre logginfdoutm|w%i!)N kdal)eË° `iex ahT,"Ã¨`faaewraB)k terijfare il!a!vo pr(ma`di"us#iret|qDalD a$LYwA E@NH! H!ln`)| ap the. }/u cqn!lçg mtu'tC0C`IAMADE"aF!B
+RSN Eh!aNcgVA ATUicQa`Raaggcfcme`mpquijd) puoy$tiscennetue2t)||JYou ãannnd#low oup derkgf4a$Thil attelpl. Vait"%0esecoldc fos`ux$`äaal ug`nqhy`~ut*id`mp``s%v~t slswered|lïn Ã¨ porscbide ea#elere durande`endtfnt%tivo`d{ a/ipgsi:K,.e& at|dldepeh10!qesonda!tmv!`o${uafsal|e ba0felemrm 3a!nof si0risponde}|PMEAe`ChMC
+`La LOGOuD$LHNk dN loW OUP nExt!TIEe,}alicce`)malink gi"fogo5t`peb$uqbmpe q pposcimi fmlta.e|Eaouah qtaug(ka!LntQt$ua$|enqcha Ã¨RO~||SD\EbTED$TERRHtO@IES|tCrsytm2ihqn`ejiojapa||Llenqgar `q{ qelectudduq`ra4ocags egp you}Majafep0ha4selepieni|o rebivgi0i`teczmtczip|@Menuad(YtaUm ic Ovf|Ppeue gCju!mu Cî&On"||
+tEFVApOsADC LOU`SElEcFE`|TDP@ITOrA NOO SGHEZhmLIPOTx
+êEZetg AhL~glimiv!rå tudti~xADD0ELH|adgktlwepe`tutpi||Msjagdb$haw cala#te` gzo}pr nr qmu~OcnQsec (a felekaooatmha gRtppm!pe~ toa||ReHCtED gpOQ@S|ERUPPM SALUJIGJ`Wi|h
+GROUPS ^Kx$SELEBDED EBUPPi NMn rELMJMgNiTI|mJFébiCh FvAqUppand Mipe,On~\ermija rKøocodebcoÎthov!|tN@angep$Ie!xou`gg!ngic` c"oum0o|d
+D%xd cali!daqsg|#hyemet`.s4cc!aóèt` `aesa||Bf -!FdmmzalF - fameinatmBianilaze}riduaj h|I 9 Eelg}M-$OUScjoo|z
+U  UndeVIjep<u - ufdefif$d|m
+You Cen gnly eh3posktion aa`Ahm"mlcgl`otude haBpkgi{iona aojo wna0ch)imQu! na ~eltaw|
+Yo1 Eewt,[e`aat a divpoqithmnlDevi!selejyo.ave`çl`e3ito~l eIAl(MH)GDOuT|Cissabgrte`i$*gputqtl
+AgÅnDTHON}cgentWph/ne||
+KqSdNMeZ|#mhlntel|
+grouP QLËAs|G`5ppo`A`iasx|
+QKtcMUsTbbu PaCrEd(T	éWECRiJ DOR A \AAD|DEVI ESSERE IN PAUSA PER CERCARE DI PIOMBO||
 YOU MUST BE ON AN ACTIVE INBOUND CALL TO SEARCH FOR A LEAD|si deve essere in una chiamata in entrata attiva per la ricerca di un vantaggio||
 PAUSE CODE|codice di pausa||
 YOU MUST BE PAUSED TO ENTER A PAUSE CODE IN AUTO-DIAL MODE|DEVI ESSERE IN PAUSA PER INSERIRE UN CODICE PAUSA IN MODALITÃ  AUTODIAL||

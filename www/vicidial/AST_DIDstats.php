@@ -1,7 +1,7 @@
 <?php 
 # AST_DIDstats.php
 # 
-# Copyright (C) 2019  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
+# Copyright (C) 2022  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
 #
 # CHANGES
 #
@@ -36,6 +36,8 @@
 # 170829-0040 - Added screen color settings
 # 171012-2015 - Fixed javascript/apache errors with graphs
 # 191013-0850 - Fixes for PHP7
+# 210525-1715 - Fixed help display, modification for more call details
+# 220303-0759 - Added allow_web_debug system setting
 #
 
 $startMS = microtime();
@@ -46,6 +48,7 @@ require("functions.php");
 $PHP_AUTH_USER=$_SERVER['PHP_AUTH_USER'];
 $PHP_AUTH_PW=$_SERVER['PHP_AUTH_PW'];
 $PHP_SELF=$_SERVER['PHP_SELF'];
+$PHP_SELF = preg_replace('/\.php.*/i','.php',$PHP_SELF);
 if (isset($_GET["group"]))					{$group=$_GET["group"];}
 	elseif (isset($_POST["group"]))			{$group=$_POST["group"];}
 if (isset($_GET["query_date"]))				{$query_date=$_GET["query_date"];}
@@ -71,6 +74,16 @@ if (isset($_GET["report_display_type"]))			{$report_display_type=$_GET["report_d
 if (isset($_GET["search_archived_data"]))			{$search_archived_data=$_GET["search_archived_data"];}
 	elseif (isset($_POST["search_archived_data"]))	{$search_archived_data=$_POST["search_archived_data"];}
 
+$DB=preg_replace("/[^0-9a-zA-Z]/","",$DB);
+
+$NOW_DATE = date("Y-m-d");
+$NOW_TIME = date("Y-m-d H:i:s");
+$STARTtime = date("U");
+if (!isset($group)) {$group = array();}
+if (!isset($query_date)) {$query_date = $NOW_DATE;}
+if (!isset($end_date)) {$end_date = $NOW_DATE;}
+if (!isset($time_BEGIN)) {$time_BEGIN = "00:00:00";}
+if (!isset($time_END)) {$time_END = "23:59:59";}
 if (strlen($shift)<2) {$shift='--';}
 
 $report_name = 'Inbound DID Report';
@@ -78,9 +91,9 @@ $db_source = 'M';
 
 #############################################
 ##### START SYSTEM_SETTINGS LOOKUP #####
-$stmt = "SELECT use_non_latin,outbound_autodial_active,slave_db_server,reports_use_slave_db,enable_languages,language_method,report_default_format FROM system_settings;";
+$stmt = "SELECT use_non_latin,outbound_autodial_active,slave_db_server,reports_use_slave_db,enable_languages,language_method,report_default_format,allow_web_debug FROM system_settings;";
 $rslt=mysql_to_mysqli($stmt, $link);
-if ($DB) {$MAIN.="$stmt\n";}
+#if ($DB) {$MAIN.="$stmt\n";}
 $qm_conf_ct = mysqli_num_rows($rslt);
 if ($qm_conf_ct > 0)
 	{
@@ -92,37 +105,62 @@ if ($qm_conf_ct > 0)
 	$SSenable_languages =			$row[4];
 	$SSlanguage_method =			$row[5];
 	$SSreport_default_format =		$row[6];
+	$SSallow_web_debug =			$row[7];
 	}
+if ($SSallow_web_debug < 1) {$DB=0;}
+if (strlen($report_display_type)<2) {$report_display_type = $SSreport_default_format;}
 ##### END SETTINGS LOOKUP #####
 ###########################################
-if (strlen($report_display_type)<2) {$report_display_type = $SSreport_default_format;}
 
-### ARCHIVED DATA CHECK CONFIGURATION
-$archives_available="N";
-$table_name="vicidial_did_log";
-$archive_table_name=use_archive_table($table_name);
-if ($archive_table_name!=$table_name) {$archives_available="Y";}
+$query_date = preg_replace('/[^- \:\_0-9a-zA-Z]/', '', $query_date);
+$end_date = preg_replace('/[^- \:\_0-9a-zA-Z]/', '', $end_date);
+$time_BEGIN = preg_replace('/[^- \:\_0-9a-zA-Z]/', '', $time_BEGIN);
+$time_END = preg_replace('/[^- \:\_0-9a-zA-Z]/', '', $time_END);
+$SUBMIT = preg_replace('/[^-_0-9a-zA-Z]/', '', $SUBMIT);
+$submit = preg_replace('/[^-_0-9a-zA-Z]/', '', $submit);
+$file_download = preg_replace('/[^-_0-9a-zA-Z]/', '', $file_download);
+$search_archived_data = preg_replace('/[^-_0-9a-zA-Z]/', '', $search_archived_data);
+$report_display_type = preg_replace('/[^-_0-9a-zA-Z]/', '', $report_display_type);
 
-if ($search_archived_data) 
-	{
-	$vicidial_did_log_table=use_archive_table("vicidial_did_log");
-	}
-else
-	{
-	$vicidial_did_log_table="vicidial_did_log";
-	}
-#############
+# Variables filtered further down in the code
+# $group
 
 if ($non_latin < 1)
 	{
 	$PHP_AUTH_USER = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_USER);
 	$PHP_AUTH_PW = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_PW);
+	$shift = preg_replace('/[^-_0-9a-zA-Z]/', '', $shift);
 	}
 else
 	{
-	$PHP_AUTH_PW = preg_replace("/'|\"|\\\\|;/","",$PHP_AUTH_PW);
-	$PHP_AUTH_USER = preg_replace("/'|\"|\\\\|;/","",$PHP_AUTH_USER);
+	$PHP_AUTH_USER = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_USER);
+	$PHP_AUTH_PW = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_PW);
+	$shift = preg_replace('/[^-_0-9\p{L}]/u', '', $shift);
 	}
+
+### ARCHIVED DATA CHECK CONFIGURATION
+$archives_available="N";
+$log_tables_array=array("vicidial_did_log", "vicidial_closer_log", "live_inbound_log");
+for ($t=0; $t<count($log_tables_array); $t++) 
+	{
+	$table_name=$log_tables_array[$t];
+	$archive_table_name=use_archive_table($table_name);
+	if ($archive_table_name!=$table_name) {$archives_available="Y";}
+	}
+
+if ($search_archived_data) 
+	{
+	$vicidial_did_log_table=use_archive_table("vicidial_did_log");
+	$vicidial_closer_log_table=use_archive_table("vicidial_closer_log");
+	$live_inbound_log_table=use_archive_table("live_inbound_log");
+	}
+else
+	{
+	$vicidial_did_log_table="vicidial_did_log";
+	$vicidial_closer_log_table="vicidial_closer_log";
+	$live_inbound_log_table="live_inbound_log";
+	}
+#############
 
 $stmt="SELECT selected_language from vicidial_users where user='$PHP_AUTH_USER';";
 if ($DB) {echo "|$stmt|\n";}
@@ -235,14 +273,6 @@ if ( (!preg_match('/\-\-ALL\-\-/i', $LOGadmin_viewable_call_times)) and (strlen(
 	$whereLOGadmin_viewable_call_timesSQL = "where call_time_id IN('---ALL---','$rawLOGadmin_viewable_call_timesSQL')";
 	}
 
-$NOW_DATE = date("Y-m-d");
-$NOW_TIME = date("Y-m-d H:i:s");
-$STARTtime = date("U");
-if (!isset($group)) {$group = array();}
-if (!isset($query_date)) {$query_date = $NOW_DATE;}
-if (!isset($end_date)) {$end_date = $NOW_DATE;}
-if (!isset($time_BEGIN)) {$time_BEGIN = "00:00:00";}
-if (!isset($time_END)) {$time_END = "23:59:59";}
 
 $stmt="select did_id,did_pattern,did_description from vicidial_inbound_dids $whereLOGadmin_viewable_groupsSQL order by did_pattern;";
 $rslt=mysql_to_mysqli($stmt, $link);
@@ -268,6 +298,7 @@ $group_string='|';
 $group_ct = count($group);
 while($i < $group_ct)
 	{
+	$group[$i] = preg_replace('/[^-_0-9\p{L}]/u', '', $group[$i]);
 	if ( (strlen($group[$i]) > 0) and (preg_match("/\|$group[$i]\|/",$groups_string)) )
 		{
 		$group_string .= "$group[$i]|";
@@ -331,7 +362,7 @@ else
 
 $AMP='&';
 $QM='?';
-$stmt="INSERT INTO vicidial_report_log set event_date=NOW(), user='$PHP_AUTH_USER', ip_address='$LOGip', report_name='$report_name', browser='$LOGbrowser', referer='$LOGhttp_referer', notes='$LOGserver_name:$LOGserver_port $LOGscript_name |$group[0], $query_date, $end_date, $shift, $file_download, $report_display_type|', url='".$LOGfull_url."?DB=".$DB."&file_download=".$file_download."&query_date=".$query_date."&end_date=".$end_date."&shift=".$shift."&report_display_type=".$report_display_type."$groupQS', webserver='$webserver_id';";
+$stmt="INSERT INTO vicidial_report_log set event_date=NOW(), user='$PHP_AUTH_USER', ip_address='$LOGip', report_name='$report_name', browser='$LOGbrowser', referer='$LOGhttp_referer', notes='$LOGserver_name:$LOGserver_port $LOGscript_name |$query_date, $end_date, $shift, $file_download, $report_display_type|', url='".$LOGfull_url."?DB=".$DB."&file_download=".$file_download."&query_date=".$query_date."&end_date=".$end_date."&shift=".$shift."&report_display_type=".$report_display_type."$groupQS', webserver='$webserver_id';";
 if ($DB) {echo "|$stmt|\n";}
 $rslt=mysql_to_mysqli($stmt, $link);
 $report_log_id = mysqli_insert_id($link);
@@ -348,8 +379,8 @@ if ( (strlen($slave_db_server)>5) and (preg_match("/$report_name/",$reports_use_
 
 require("screen_colors.php");
 
-$NWB = " &nbsp; <a href=\"javascript:openNewWindow('help.php?ADD=99999";
-$NWE = "')\"><IMG SRC=\"help.gif\" WIDTH=20 HEIGHT=20 BORDER=0 ALT=\"HELP\" ALIGN=TOP></A>";
+$NWB = "<IMG SRC=\"help.png\" onClick=\"FillAndShowHelpDiv(event, '";
+$NWE = "')\" WIDTH=20 HEIGHT=20 BORDER=0 ALT=\"HELP\" ALIGN=TOP>";
 
 $HEADER.="<HTML>\n";
 $HEADER.="<HEAD>\n";
@@ -375,6 +406,8 @@ $HEADER.="-->\n";
 $HEADER.="</style>\n";
 
 $HEADER.="<script language=\"JavaScript\" src=\"calendar_db.js\"></script>\n";
+$HEADER.="<link rel=\"stylesheet\" type=\"text/css\" href=\"vicidial_stylesheet.php\">\n";
+$HEADER.="<script language=\"JavaScript\" src=\"help.js\"></script>\n";
 $HEADER.="<link rel=\"stylesheet\" href=\"calendar.css\">\n";
 $HEADER.="<link rel=\"stylesheet\" href=\"horizontalbargraph.css\">\n";
 require("chart_button.php");
@@ -383,6 +416,7 @@ $HEADER.="<script language=\"JavaScript\" src=\"vicidial_chart_functions.js\"></
 
 $HEADER.="<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=utf-8\">\n";
 $HEADER.="<TITLE>"._QXZ("$report_name")."</TITLE></HEAD><BODY BGCOLOR=WHITE marginheight=0 marginwidth=0 leftmargin=0 topmargin=0>\n";
+$HEADER.="<div id='HelpDisplayDiv' class='help_info' style='display:none;'></div>";
 
 $short_header=1;
 
@@ -744,7 +778,7 @@ else
 
 
 	### GRAB ALL RECORDS WITHIN RANGE FROM THE DATABASE ###
-	$stmt="select UNIX_TIMESTAMP(call_date),extension,server_ip from ".$vicidial_did_log_table." where call_date >= '$query_date_BEGIN' and call_date <= '$query_date_END' and did_id IN($group_SQL);";
+	$stmt="select UNIX_TIMESTAMP(call_date),extension,server_ip,uniqueid,did_route,did_id from ".$vicidial_did_log_table." where call_date >= '$query_date_BEGIN' and call_date <= '$query_date_END' and did_id IN($group_SQL) order by extension;";
 	$rslt=mysql_to_mysqli($stmt, $link);
 	if ($DB) {$MAIN.="$stmt\n";}
 	$records_to_grab = mysqli_num_rows($rslt);
@@ -753,6 +787,7 @@ else
 	$dt=array();
 	$extension=array();
 	$did_server_ip=array();
+	$unique_ids=array();
 	$extension[0]='';
 	$did_server_ip[0]='';
 	while ($i < $records_to_grab)
@@ -762,6 +797,9 @@ else
 		$ut[$i] =			($row[0] - $SQepochDAY);
 		$extension[$i] =	$row[1];
 		$did_server_ip[$i] =$row[2];
+
+		$unique_ids["$row[1]"]["$row[4]"].="$row[3]|";
+
 		while($ut[$i] >= 86400) 
 			{
 			$ut[$i] = ($ut[$i] - 86400);
@@ -792,12 +830,12 @@ else
 	if (strlen($extension[0]) > 0)
 		{
 		$ASCII_text.=_QXZ("DID Summary").":\n";
-		$ASCII_text.="+--------------------+--------------------------------+------------+------------+\n";
-		$ASCII_text.="| "._QXZ("DID",18)." | "._QXZ("DESCRIPTION",30)." | "._QXZ("ROUTE",10)." | "._QXZ("CALLS",10)." |\n";
-		$ASCII_text.="+--------------------+--------------------------------+------------+------------+\n";
+		$ASCII_text.="+--------------------+--------------------------------+----------------------+------------+------------+------------+------------+\n";
+		$ASCII_text.="| "._QXZ("DID",18)." | "._QXZ("DESCRIPTION",30)." | "._QXZ("CURRENT ROUTE",20)." | "._QXZ("CALLS",10)." | "._QXZ("LOST", 10)." | "._QXZ("TRANSFER", 10)." | "._QXZ("ROUTED", 10)." |\n";
+		$ASCII_text.="+--------------------+--------------------------------+----------------------+------------+------------+------------+------------+\n";
 
 		$CSV_text1.="\""._QXZ("DID Summary").":\"\n";
-		$CSV_text1.="\""._QXZ("DID")."\",\""._QXZ("DESCRIPTION")."\",\""._QXZ("ROUTE")."\",\""._QXZ("CALLS")."\"\n";
+		$CSV_text1.="\""._QXZ("DID")."\",\""._QXZ("DESCRIPTION")."\",\""._QXZ("CURRENT ROUTE")."\",\""._QXZ("CALLS")."\",\""._QXZ("LOST")."\",\""._QXZ("TRANSFER")."\",\""._QXZ("ROUTED")."\"\n";
 
 		$GRAPH_text.="</PRE>";
 
@@ -811,13 +849,16 @@ else
 			{
 			$stat_description =		' *** default *** ';
 			$stat_route =			$default_route;
+			$lost_calls=0;
+			$transferred_calls=0;
+			$routed_calls=0;
 
 			$stat_record_array = explode(' ',$stats_array[$d]);
 			$stat_count = ($stat_record_array[0] + 0);
 			$stat_pattern = $stat_record_array[1];
 			if ($stat_count>$max_calls) {$max_calls=$stat_count;}
-			$graph_stats[$d][0]=$stat_count;
-			$graph_stats[$d][1]=$stat_pattern;
+			$graph_stats[$d][0]=$stat_pattern;
+			$graph_stats[$d][1]=$stat_count;
 
 			$stmt="select did_description,did_route from vicidial_inbound_dids where did_pattern='$stat_pattern';";
 			$rslt=mysql_to_mysqli($stmt, $link);
@@ -827,20 +868,60 @@ else
 				$row=mysqli_fetch_row($rslt);
 				$stat_description =		$row[0];
 				$stat_route =			$row[1];
+				
+				$did_activity=$unique_ids["$stat_pattern"];
+				# print_r($did_activity);
+				foreach ($did_activity as $keyroute => $uid_str)
+					{
+					$uid_str=preg_replace('/\|$/', '', $uid_str);
+					$did_activity_uid_array=explode("|", $uid_str);
+					$did_activity_call_count=count($did_activity_uid_array);
+
+					if (preg_match('/EXTEN|PHONE|VOICEMAIL/', $keyroute)) 
+						{
+						$transferred_calls+=$did_activity_call_count;
+						}
+					else
+						{
+						if (preg_match('/CALLMENU/', $keyroute)) 
+							{
+							$did_lookup_stmt="select count(distinct uniqueid) from ".$live_inbound_log_table." where start_time >= '$query_date_BEGIN' and start_time <= '$query_date_END' and uniqueid IN('".implode("','", $did_activity_uid_array)."');";
+							}
+						else
+							{
+							$did_lookup_stmt="select count(distinct uniqueid) from ".$vicidial_closer_log_table." where call_date >= '$query_date_BEGIN' and call_date <= '$query_date_END' and uniqueid IN('".implode("','", $did_activity_uid_array)."')";
+							}
+						$did_lookup_rslt=mysql_to_mysqli($did_lookup_stmt, $link);
+						if ($DB) {$MAIN.="$did_lookup_stmt<BR>\n";}
+						$did_lookup_row=mysqli_fetch_row($did_lookup_rslt);
+						$routed_calls+=$did_lookup_row[0];
+						}
+					}
 				}
+			$lost_calls=$stat_count-$transferred_calls-$routed_calls;
+
+			$graph_stats[$d][2]=$lost_calls;
+			$graph_stats[$d][3]=$transferred_calls;
+			$graph_stats[$d][4]=$routed_calls;
 
 			$totCALLS =			($totCALLS + $stat_count);
+			$totLOSTCALLS =			($totLOSTCALLS + $lost_calls);
+			$totTRANSFERREDCALLS =			($totTRANSFERREDCALLS + $transferred_calls);
+			$totROUTEDCALLS =			($totROUTEDCALLS + $routed_calls);
 			$stat_pattern =		sprintf("%-18s", $stat_pattern);
 			$stat_description =	sprintf("%-30s", $stat_description);
 			while (strlen($stat_description) > 30) {$stat_description = preg_replace('/.$/i', '',$stat_description);}
-			$stat_route =		sprintf("%-10s", $stat_route);
+			$stat_route =		sprintf("%-20s", $stat_route);
 			$stat_count =		sprintf("%10s", $stat_count);
+			$lost_calls =		sprintf("%10s", $lost_calls);
+			$transferred_calls =		sprintf("%10s", $transferred_calls);
+			$routed_calls =		sprintf("%10s", $routed_calls);
 
 			$CSV_text1.="\"$stat_pattern\",\"$stat_description\",\"$stat_route\",\"$stat_count\"\n";
 
 			$stat_pattern = "<a href=\"admin.php?ADD=3311&did_pattern=$stat_pattern\">$stat_pattern</a>";
 
-			$ASCII_text.="| $stat_pattern | $stat_description | $stat_route | $stat_count |\n";
+			$ASCII_text.="| $stat_pattern | $stat_description | $stat_route | $stat_count | $lost_calls | $transferred_calls | $routed_calls |\n";
 			$d++;
 			}
 
@@ -852,7 +933,8 @@ else
 
 			$graph_totals_array=array();
 			$graph_totals_rawdata=array();
-			for ($q=0; $q<count($graph_array); $q++) {
+			for ($q=0; $q<count($graph_array); $q++) 
+				{
 				$graph_info=explode("|", $graph_array[$q]); 
 				$current_graph_total=0;
 				$dataset_name=$graph_info[0];
@@ -863,51 +945,61 @@ else
 				# $JS_text.="\ttype: \"\",\n";
 				# $JS_text.="\t\tdata: {\n";
 				$datasets="\t\tdatasets: [\n";
-				$datasets.="\t\t\t{\n";
-				$datasets.="\t\t\t\tlabel: \"\",\n";
-				$datasets.="\t\t\t\tfill: false,\n";
 
-				$labels="\t\tlabels:[";
-				$data="\t\t\t\tdata: [";
-				$graphConstantsA="\t\t\t\tbackgroundColor: [";
-				$graphConstantsB="\t\t\t\thoverBackgroundColor: [";
-				$graphConstantsC="\t\t\t\thoverBorderColor: [";
-				for ($d=0; $d<count($graph_stats); $d++) {
-					$labels.="\"".$graph_stats[$d][1]."\",";
-					$data.="\"".$graph_stats[$d][0]."\",";
-					$current_graph_total+=$graph_stats[$d][0];
-					$bgcolor=$backgroundColor[($d%count($backgroundColor))];
-					$hbgcolor=$hoverBackgroundColor[($d%count($hoverBackgroundColor))];
-					$hbcolor=$hoverBorderColor[($d%count($hoverBorderColor))];
-					$graphConstantsA.="\"$bgcolor\",";
-					$graphConstantsB.="\"$hbgcolor\",";
-					$graphConstantsC.="\"$hbcolor\",";
-				}	
-				$graphConstantsA.="],\n";
-				$graphConstantsB.="],\n";
-				$graphConstantsC.="],\n";
-				$labels=preg_replace('/,$/', '', $labels)."],\n";
-				$data=preg_replace('/,$/', '', $data)."],\n";
-				
-				$graph_totals_rawdata[$q]=$current_graph_total;
-				switch($dataset_type) {
-					case "time":
-						$graph_totals_array[$q]="  <caption align=\"bottom\">"._QXZ("TOTAL")." - ".sec_convert($current_graph_total, 'H')." </caption>\n";
-						$chart_options="options: {tooltips: {callbacks: {label: function(tooltipItem, data) {var value = Math.round(data.datasets[0].data[tooltipItem.index]); return value.toHHMMSS();}}}, legend: { display: false }},";
-						break;
-					case "percent":
-						$graph_totals_array[$q]="";
-						$chart_options="options: {tooltips: {callbacks: {label: function(tooltipItem, data) {var value = data.datasets[0].data[tooltipItem.index]; return value + '%';}}}, legend: { display: false }},";
-						break;
-					default:
-						$graph_totals_array[$q]="  <caption align=\"bottom\">"._QXZ("TOTAL").": $current_graph_total</caption>\n";
-						$chart_options="options: { legend: { display: false }},";
-						break;
-				}
+				$graph_labels=array("", "CALLS", "LOST", "TRANSFER", "ROUTED");
+				for ($n=1; $n<count($graph_stats[0]); $n++)
+					{
 
-				$datasets.=$data;
-				$datasets.=$graphConstantsA.$graphConstantsB.$graphConstantsC.$graphConstants; # SEE TOP OF SCRIPT
-				$datasets.="\t\t\t}\n";
+					$datasets.="\t\t\t{\n";
+					$datasets.="\t\t\t\tlabel: \"".$graph_labels[$n]."\",\n";
+					$datasets.="\t\t\t\tfill: false,\n";
+
+					$labels="\t\tlabels:[";
+					$data="\t\t\t\tdata: [";
+					$graphConstantsA="\t\t\t\tbackgroundColor: [";
+					$graphConstantsB="\t\t\t\thoverBackgroundColor: [";
+					$graphConstantsC="\t\t\t\thoverBorderColor: [";
+					for ($d=0; $d<count($graph_stats); $d++) 
+						{
+						$labels.="\"".$graph_stats[$d][0]."\",";
+						$data.="\"".$graph_stats[$d][$n]."\",";
+						$current_graph_total+=$graph_stats[$d][$n];
+						$bgcolor=$backgroundColor[($d%count($backgroundColor))];
+						$hbgcolor=$hoverBackgroundColor[($d%count($hoverBackgroundColor))];
+						$hbcolor=$hoverBorderColor[($d%count($hoverBorderColor))];
+						$graphConstantsA.="\"$bgcolor\",";
+						$graphConstantsB.="\"$hbgcolor\",";
+						$graphConstantsC.="\"$hbcolor\",";
+						}	
+					$graphConstantsA.="],\n";
+					$graphConstantsB.="],\n";
+					$graphConstantsC.="],\n";
+					$labels=preg_replace('/,$/', '', $labels)."],\n";
+					$data=preg_replace('/,$/', '', $data)."],\n";
+					
+					$graph_totals_rawdata[$q]=$current_graph_total;
+					switch($dataset_type) 
+						{
+						case "time":
+							$graph_totals_array[$q]="  <caption align=\"bottom\">"._QXZ("TOTAL")." - ".sec_convert($current_graph_total, 'H')." </caption>\n";
+							$chart_options="options: {tooltips: {callbacks: {label: function(tooltipItem, data) {var value = Math.round(data.datasets[0].data[tooltipItem.index]); return value.toHHMMSS();}}}, legend: { display: false }},";
+							break;
+						case "percent":
+							$graph_totals_array[$q]="";
+							$chart_options="options: {tooltips: {callbacks: {label: function(tooltipItem, data) {var value = data.datasets[0].data[tooltipItem.index]; return value + '%';}}}, legend: { display: false }},";
+							break;
+						default:
+							$graph_totals_array[$q]="  <caption align=\"bottom\">"._QXZ("TOTAL").": $current_graph_total</caption>\n";
+							$chart_options="options: { legend: { display: false }},";
+							break;
+						}
+	
+					$datasets.=$data;
+					$datasets.=$graphConstantsA.$graphConstantsB.$graphConstantsC.$graphConstants; # SEE TOP OF SCRIPT
+					$datasets.="\t\t\t},\n";
+	
+					}
+
 				$datasets.="\t\t]\n";
 				$datasets.="\t}\n";
 
@@ -916,7 +1008,7 @@ else
 				# $JS_text.="prepChart('$default_graph', $graph_id, $q, $dataset_name);\n";
 				$JS_text.="var main_ctx = document.getElementById(\"CanvasID".$graph_id."_".$q."\");\n";
 				$JS_text.="var GraphID".$graph_id."_".$q." = new Chart(main_ctx, {type: '$default_graph', $chart_options data: $dataset_name});\n";
-			}
+				}
 
 			$graph_count=count($graph_array);
 			$graph_title=_QXZ("DID Summary");
@@ -926,11 +1018,14 @@ else
 
 
 			$FtotCALLS =	sprintf("%10s", $totCALLS);
+			$FtotLOSTCALLS =	sprintf("%10s", $totLOSTCALLS);
+			$FtotTRANSFERREDCALLS =	sprintf("%10s", $totTRANSFERREDCALLS);
+			$FtotROUTEDCALLS =	sprintf("%10s", $totROUTEDCALLS);
 
-		$ASCII_text.="+--------------------+--------------------------------+------------+------------+\n";
-		$ASCII_text.="| "._QXZ("TOTALS",64,"r")." | $FtotCALLS |\n";
-		$ASCII_text.="+------------------------------------------------------------------+------------+\n";
-		$CSV_text1.="\"\",\"\",\""._QXZ("TOTALS")."\",\"$FtotCALLS\"\n";
+		$ASCII_text.="+--------------------+--------------------------------+----------------------+------------+------------+------------+------------+\n";
+		$ASCII_text.="| "._QXZ("TOTALS",74,"r")." | $FtotCALLS | $FtotLOSTCALLS | $FtotTRANSFERREDCALLS | $FtotROUTEDCALLS |\n";
+		$ASCII_text.="+----------------------------------------------------------------------------+------------+------------+------------+------------+\n";
+		$CSV_text1.="\"\",\"\",\""._QXZ("TOTALS")."\",\"$FtotCALLS\",\"$FtotLOSTCALLS\",\"$FtotTRANSFERREDCALLS\",\"$FtotROUTEDCALLS\"\n";
 		#$MAIN.=$GRAPH;
 		}
 

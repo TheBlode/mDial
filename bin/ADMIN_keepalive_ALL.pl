@@ -15,7 +15,7 @@
 #  - Auto reset lists at defined times
 #  - Auto restarts Asterisk process if enabled in servers settings
 #
-# Copyright (C) 2021  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
+# Copyright (C) 2023  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
 #
 # CHANGES
 # 61011-1348 - First build
@@ -148,9 +148,24 @@
 # 210311-2229 - Added purging of old records from vicidial_two_factor_auth
 # 210325-2145 - Fix for -adfill-delay= CLI flag, Issue #1266
 # 210429-1644 - Added mohsuggest config for SIP and IAX phones
+# 210605-1407 - Added purging of vicidial_tiltx_shaken_log log entries
+# 210630-1630 - Remove commas from mailbox name before writing to conf file, use "Full Name" for a phone's mailbox name, if set
+# 210712-2312 - Added purging of vicidial_lead_24hour_calls table
+# 210827-0939 - Added PJSIP compatibility
+# 210924-2333 - Fix for calls_today issue at timeclock-end-of-day
+# 220310-0959 - Added purging of vicidial_sync_log table
+# 220312-0819 - Added CID Group Auto-Rotate to check for List use
+# 220526-1444 - Fix for CID auto-rotate functions
+# 220921-1255 - Added vicidial_user_logins_daily TEOD population
+# 221116-1157 - Added vicidial_long_extensions TEOD truncating
+# 230118-1623 - Added Playback audio then hangup extension
+# 230309-0926 - Added ara_url for server asterisk reboots, daily rolling of vicidial_abandon_check_queue table
+# 230331-2155 - Fix for issue #1458
+# 230412-1405 - Added daily rolling of vicidial_agent_notifications table, truncating of vicidial_agent_notifications_queue table
+# 230420-2321 - Added latency live agent detail updates and log rolling nightly
 #
 
-$build = '210429-1644';
+$build = '230420-2321';
 
 $DB=0; # Debug flag
 $teodDB=0; # flag to log Timeclock End of Day processes to log file
@@ -1298,6 +1313,12 @@ if ($timeclock_end_of_day_NOW > 0)
 		if($DB){print STDERR "\n|$affected_rows vicidial_live_inbound_agents call counts reset|\n";}
 		if ($teodDB) {$event_string = "vicidial_live_inbound_agents records reset: $affected_rows";   &teod_logger;}
 
+		$stmtA = "update vicidial_live_agents SET calls_today=0;";
+		if($DBX){print STDERR "\n|$stmtA|\n";}
+		$affected_rows = $dbhA->do($stmtA);
+		if($DB){print STDERR "\n|$affected_rows vicidial_live_agents call counts reset|\n";}
+		if ($teodDB) {$event_string = "vicidial_live_agents calls_today records reset: $affected_rows";   &teod_logger;}
+
 		$stmtA = "delete from vicidial_lead_call_daily_counts;";
 		if($DBX){print STDERR "\n|$stmtA|\n";}
 		$affected_rows = $dbhA->do($stmtA);
@@ -1320,6 +1341,21 @@ if ($timeclock_end_of_day_NOW > 0)
 		if ($teodDB) {$event_string = "vicidial_agent_dial_campaigns records reset: $affected_rows";   &teod_logger;}
 
 		$stmtA = "optimize table vicidial_agent_dial_campaigns;";
+		if($DBX){print STDERR "\n|$stmtA|\n";}
+		$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+		$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+		$sthArows=$sthA->rows;
+		@aryA = $sthA->fetchrow_array;
+		if ($DB) {print "|",$aryA[0],"|",$aryA[1],"|",$aryA[2],"|",$aryA[3],"|","\n";}
+		$sthA->finish();
+
+		$stmtA = "delete from vicidial_long_extensions where call_date < \"$RMSQLdate\";";
+		if($DBX){print STDERR "\n|$stmtA|\n";}
+		$affected_rows = $dbhA->do($stmtA);
+		if($DB){print STDERR "\n|$affected_rows vicidial_long_extensions records deleted|\n";}
+		if ($teodDB) {$event_string = "vicidial_long_extensions records reset: $affected_rows";   &teod_logger;}
+
+		$stmtA = "optimize table vicidial_long_extensions;";
 		if($DBX){print STDERR "\n|$stmtA|\n";}
 		$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 		$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -1446,6 +1482,21 @@ if ($timeclock_end_of_day_NOW > 0)
 		if ($teodDB) {$event_string = "vicidial_monitor_calls old records deleted($TDSQLdate): $affected_rows";   &teod_logger;}
 
 		$stmtA = "optimize table vicidial_monitor_calls;";
+		if($DBX){print STDERR "\n|$stmtA|\n";}
+		$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+		$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+		$sthArows=$sthA->rows;
+		@aryA = $sthA->fetchrow_array;
+		if ($DB) {print "|",$aryA[0],"|",$aryA[1],"|",$aryA[2],"|",$aryA[3],"|","\n";}
+		$sthA->finish();
+
+		$stmtA = "delete from vicidial_agent_notifications_queue where queue_date < \"$TDSQLdate\";";
+		if($DBX){print STDERR "\n|$stmtA|\n";}
+		$affected_rows = $dbhA->do($stmtA);
+		if($DB){print STDERR "\n|$affected_rows vicidial_agent_notifications_queue old records deleted|\n";}
+		if ($teodDB) {$event_string = "vicidial_agent_notifications_queue old records deleted($TDSQLdate): $affected_rows";   &teod_logger;}
+
+		$stmtA = "optimize table vicidial_agent_notifications_queue;";
 		if($DBX){print STDERR "\n|$stmtA|\n";}
 		$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 		$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -1646,6 +1697,60 @@ if ($timeclock_end_of_day_NOW > 0)
 			}
 
 
+		# roll of vicidial_abandon_check_queue records, keep only 1 day of records in active table
+		if (!$Q) {print "\nProcessing vicidial_abandon_check_queue table...\n";}
+		$stmtA = "INSERT IGNORE INTO vicidial_abandon_check_queue_archive SELECT * from vicidial_abandon_check_queue;";
+		$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+		$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+		$sthArows = $sthA->rows;
+		$event_string = "$sthArows rows inserted into vicidial_abandon_check_queue_archive table";
+		if (!$Q) {print "$event_string \n";}
+		if ($teodDB) {&teod_logger;}
+
+		$rv = $sthA->err();
+		if (!$rv) 
+			{	
+			$stmtA = "DELETE FROM vicidial_abandon_check_queue WHERE abandon_time < \"$RMSQLdate\";";
+			$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+			$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+			$sthArows = $sthA->rows;
+			$event_string = "$sthArows rows deleted from vicidial_abandon_check_queue table";
+			if (!$Q) {print "$event_string \n";}
+			if ($teodDB) {&teod_logger;}
+
+			$stmtA = "optimize table vicidial_abandon_check_queue;";
+			$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+			$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+			}
+
+
+		# roll of vicidial_agent_notifications records, keep only 1 day of records in active table
+		if (!$Q) {print "\nProcessing vicidial_agent_notifications table...\n";}
+		$stmtA = "INSERT IGNORE INTO vicidial_agent_notifications_archive SELECT * from vicidial_agent_notifications;";
+		$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+		$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+		$sthArows = $sthA->rows;
+		$event_string = "$sthArows rows inserted into vicidial_agent_notifications_archive table";
+		if (!$Q) {print "$event_string \n";}
+		if ($teodDB) {&teod_logger;}
+
+		$rv = $sthA->err();
+		if (!$rv) 
+			{	
+			$stmtA = "DELETE FROM vicidial_agent_notifications WHERE notification_date < \"$RMSQLdate\";";
+			$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+			$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+			$sthArows = $sthA->rows;
+			$event_string = "$sthArows rows deleted from vicidial_agent_notifications table";
+			if (!$Q) {print "$event_string \n";}
+			if ($teodDB) {&teod_logger;}
+
+			$stmtA = "optimize table vicidial_agent_notifications;";
+			$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+			$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+			}
+
+
 		# reset in-group closing_time_now_trigger trigger flag
 		$stmtA = "UPDATE vicidial_inbound_groups SET closing_time_now_trigger='N' WHERE closing_time_now_trigger='Y';";
 		$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
@@ -1653,6 +1758,32 @@ if ($timeclock_end_of_day_NOW > 0)
 		$sthArows = $sthA->rows;
 		if (!$Q) {print "$sthArows vicidial_inbound_groups rows closing_time_now_trigger value reset \n";}
 		if ($teodDB) {$event_string = "$sthArows vicidial_inbound_groups rows closing_time_now_trigger value reset";   &teod_logger;}
+
+		# population of vicidial_user_logins_daily table and reset of vicidial_users table
+		if (!$Q) {print "\nProcessing vicidial_user_logins_daily/vicidial_users tables...\n";}
+		$stmtA = "INSERT IGNORE INTO vicidial_user_logins_daily(user,login_day,last_login_date,last_ip,failed_login_attempts_today,failed_login_count_today,failed_last_ip_today,failed_last_type_today) SELECT user,'$today_date',last_login_date,last_ip,failed_login_attempts_today,failed_login_count_today,failed_last_ip_today,failed_last_type_today from vicidial_users where last_login_date >= \"$RMSQLdate\";";
+		$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+		$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+		$sthArows = $sthA->rows;
+		$event_string = "$sthArows rows inserted into vicidial_user_logins_daily table";
+		if (!$Q) {print "$event_string \n";}
+		if ($teodDB) {&teod_logger;}
+
+		$rv = $sthA->err();
+		if (!$rv) 
+			{	
+			$stmtA = "UPDATE vicidial_users SET failed_login_attempts_today=0,failed_login_count_today=0,failed_last_ip_today='',failed_last_type_today='';";
+			$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+			$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+			$sthArows = $sthA->rows;
+			$event_string = "$sthArows rows reset in vicidial_users table";
+			if (!$Q) {print "$event_string \n";}
+			if ($teodDB) {&teod_logger;}
+
+			$stmtA = "optimize table vicidial_users;";
+			$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+			$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+			}
 
 		##### BEGIN max stats end of day process #####
 		# set OPEN max stats records to CLOSING for processing
@@ -1848,6 +1979,24 @@ if ($timeclock_end_of_day_NOW > 0)
 		##### END vicidial_ajax_log end of day process removing records older than 7 days #####
 
 
+		##### BEGIN vicidial_sync_log end of day process removing records older than 7 days #####
+		$stmtA = "DELETE from vicidial_sync_log where db_time < \"$SDSQLdate\";";
+		if($DBX){print STDERR "\n|$stmtA|\n";}
+		$affected_rows = $dbhA->do($stmtA);
+		if($DB){print STDERR "\n|$affected_rows vicidial_sync_log records older than 7 days purged|\n";}
+		if ($teodDB) {$event_string = "vicidial_sync_log records older than 7 days purged: |$stmtA|$affected_rows|";   &teod_logger;}
+
+		$stmtA = "optimize table vicidial_sync_log;";
+		if($DBX){print STDERR "\n|$stmtA|\n";}
+		$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+		$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+		$sthArows=$sthA->rows;
+		@aryA = $sthA->fetchrow_array;
+		if ($DB) {print "|",$aryA[0],"|",$aryA[1],"|",$aryA[2],"|",$aryA[3],"|","\n";}
+		$sthA->finish();
+		##### END vicidial_sync_log end of day process removing records older than 7 days #####
+
+
 		##### BEGIN vicidial_vdad_log end of day process removing records older than 7 days #####
 		$stmtA = "DELETE from vicidial_vdad_log where db_time < \"$SDSQLdate\";";
 		if($DBX){print STDERR "\n|$stmtA|\n";}
@@ -1938,6 +2087,24 @@ if ($timeclock_end_of_day_NOW > 0)
 		##### END vicidial_shared_log end of day process removing records older than 7 days #####
 
 
+		##### BEGIN vicidial_tiltx_shaken_log end of day process removing records older than 7 days #####
+		$stmtA = "DELETE from vicidial_tiltx_shaken_log where db_time < \"$SDSQLdate\";";
+		if($DBX){print STDERR "\n|$stmtA|\n";}
+		$affected_rows = $dbhA->do($stmtA);
+		if($DB){print STDERR "\n|$affected_rows vicidial_tiltx_shaken_log records older than 7 days purged|\n";}
+		if ($teodDB) {$event_string = "vicidial_tiltx_shaken_log records older than 7 days purged: |$stmtA|$affected_rows|";   &teod_logger;}
+
+		$stmtA = "optimize table vicidial_tiltx_shaken_log;";
+		if($DBX){print STDERR "\n|$stmtA|\n";}
+		$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+		$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+		$sthArows=$sthA->rows;
+		@aryA = $sthA->fetchrow_array;
+		if ($DB) {print "|",$aryA[0],"|",$aryA[1],"|",$aryA[2],"|",$aryA[3],"|","\n";}
+		$sthA->finish();
+		##### END vicidial_tiltx_shaken_log end of day process removing records older than 7 days #####
+
+
 		##### BEGIN vicidial_two_factor_auth end of day process removing expired and older records #####
 		$stmtA = "DELETE from vicidial_two_factor_auth where (auth_exp_date < NOW()) or ( (auth_code_exp_date < NOW()) and (auth_stage != '1') );";
 		if($DBX){print STDERR "\n|$stmtA|\n";}
@@ -1969,6 +2136,122 @@ if ($timeclock_end_of_day_NOW > 0)
 		$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 		$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
 		##### END vicidial_lead_messages end of day process removing records older than 1 day #####
+
+
+		##### BEGIN vicidial_lead_24hour_calls end of day process removing records older than 1 day #####
+		$stmtA = "DELETE FROM vicidial_lead_24hour_calls WHERE call_date < \"$RMSQLdate\";";
+		$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+		$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+		$sthArows = $sthA->rows;
+		$event_string = "$sthArows rows deleted from vicidial_lead_24hour_calls table";
+		if (!$Q) {print "$event_string \n";}
+		if ($teodDB) {&teod_logger;}
+
+		$stmtA = "optimize table vicidial_lead_24hour_calls;";
+		$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+		$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+		##### END vicidial_lead_24hour_calls end of day process removing records older than 1 day #####
+
+
+		#####  START latency log summary log inserts
+
+		##### gather vicidial_agent_latency_log #####
+		$stmtA = "SELECT user,web_ip,count(*),max(latency),avg(latency) FROM vicidial_agent_latency_log where log_date >= \"$RMSQLdate\" and log_date < \"$now_date\" group by user,web_ip order by user,web_ip;";
+		if ($DBX) {print "$stmtA\n";}
+		$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+		$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+		$sthArows=$sthA->rows;
+		$i=0;
+		while ($sthArows > $i)
+			{
+			@aryA = $sthA->fetchrow_array;
+			$VLADuser[$i] =				$aryA[0];
+			$VLADweb_ip[$i] =			$aryA[1];
+			$VLADcount_latency[$i] =	$aryA[2];
+			$VLADmax_latency[$i] =		$aryA[3];
+			$VLADavg_latency[$i] =		$aryA[4];
+			$i++;
+			}
+		$sthA->finish();
+
+		if ($DB) {print "   past day vicidial_agent_latency_log user/ip entries to insert: $i\n";}
+
+		if ($i > 0) 
+			{
+			$i=0;
+			$sum_inserts=0;
+			while ($sthArows > $i)
+				{
+				$stmtA = "INSERT INTO vicidial_agent_latency_summary_log SET user='$VLADuser[$i]',log_date='$RMSQLdate',web_ip='$VLADweb_ip[$i]',latency_avg='$VLADavg_latency[$i]',latency_peak='$VLADmax_latency[$i]',latency_count='$VLADcount_latency[$i]';";
+				$affected_rows = $dbhA->do($stmtA) or die  "Couldn't execute query: |$stmtA|\n";
+				$sum_inserts = ($sum_inserts + $affected_rows);
+				$event_string = "vicidial_agent_latency_summary_log insert query: $sum_inserts|$affected_rows|$stmtA|";
+				if ($DBX) {print "$event_string\n";}
+				if ($teodDB) {&teod_logger;}
+
+				$i++;
+				}
+			
+			if ($sum_inserts > 0) 
+				{
+				$stmtA = "INSERT INTO vicidial_agent_latency_summary_log(user,log_date,web_ip,latency_count,latency_peak,latency_avg) SELECT user,'$RMSQLdate','---ALL---',sum(latency_count),max(latency_peak),sum(latency_avg * latency_count) / sum(latency_count) from vicidial_agent_latency_summary_log where log_date = \"$RMSQLdate\" group by user order by user;";
+				$affected_rows = $dbhA->do($stmtA) or die  "Couldn't execute query: |$stmtA|\n";
+				$event_string = "vicidial_agent_latency_summary_log ALL insert query: |$affected_rows|$stmtA|";
+				if ($DBX) {print "$event_string\n";}
+				if ($teodDB) {&teod_logger;}
+				}
+
+			# remove non-active records from vicidial_live_agents_details table and optimize
+			$stmtA = "DELETE FROM vicidial_live_agents_details where update_date < (NOW()-INTERVAL 5 MINUTE);";
+			$affected_rows = $dbhA->do($stmtA) or die  "Couldn't execute query: |$stmtA|\n";
+			$event_string = "vicidial_live_agents_details delete query: |$affected_rows|$stmtA|";
+			if ($DBX) {print "$event_string\n";}
+			if ($teodDB) {&teod_logger;}
+
+			$stmtA = "optimize table vicidial_live_agents_details;";
+			$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+			$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+
+			# archive vicidial_agent_latency_log table every night
+			if (!$Q) {print "\nProcessing vicidial_agent_latency_log table...\n";}
+			$stmtA = "INSERT IGNORE INTO vicidial_agent_latency_log_archive SELECT * from vicidial_agent_latency_log;";
+			$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+			$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+			$sthArows = $sthA->rows;
+			$event_string = "$sthArows rows inserted into vicidial_agent_latency_log_archive table";
+			if (!$Q) {print "$event_string \n";}
+			if ($teodDB) {&teod_logger;}
+
+			$rv = $sthA->err();
+			if (!$rv) 
+				{	
+				$stmtA = "DELETE FROM vicidial_agent_latency_log WHERE log_date < \"$now_date\";";
+				$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+				$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+				$sthArows = $sthA->rows;
+				$event_string = "$sthArows rows deleted from in vicidial_agent_latency_log table";
+				if (!$Q) {print "$event_string \n";}
+				if ($teodDB) {&teod_logger;}
+
+				$stmtA = "optimize table vicidial_agent_latency_log;";
+				$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+				$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+				}
+			
+			# delete vicidial_agent_latency_log_archive records older than 7 days old
+			$stmtA = "DELETE FROM vicidial_agent_latency_log_archive WHERE log_date < \"$SDSQLdate\";";
+			$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+			$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+			$sthArows = $sthA->rows;
+			$event_string = "$sthArows old rows deleted from in vicidial_agent_latency_log_archive table ($SDSQLdate)";
+			if (!$Q) {print "$event_string \n";}
+			if ($teodDB) {&teod_logger;}
+
+			$stmtA = "optimize table vicidial_agent_latency_log_archive;";
+			$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+			$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+			}
+		#####  END latency log summary log inserts
 
 
 		##### BEGIN usacan_phone_dialcode_fix funciton #####
@@ -2862,7 +3145,17 @@ if ( ($active_asterisk_server =~ /Y/) && ($generate_vicidial_conf =~ /Y/) && ($r
 		{$Vext .= "exten => 83047777777777,2,Playback(\${CALLERID(name)})\n";}
 	$Vext .= "exten => 83047777777777,3,Hangup()\n";
 
-	$Vext .= "; This is a loopback dial-around to allow for immediate answer of outbound calls\n";
+	$Vext .= "\n;     Playback audio then hangup extension\n";
+	$Vext .= "exten => _83046777777777*.,1,Answer\n";
+	$Vext .= "exten => _83046777777777*.,n,Playback(sip-silence)\n";
+	$Vext .= "exten => _83046777777777*.,n,Playback(sip-silence)\n";
+	$Vext .= "exten => _83046777777777*.,n,Playback(sip-silence)\n";
+	$Vext .= "exten => _83046777777777*.,n,NoOp(Playing \${EXTEN:15})\n";
+	$Vext .= "exten => _83046777777777*.,n,Playback(\${EXTEN:15})\n";
+	$Vext .= "exten => _83046777777777*.,n,Playback(silence)\n";
+	$Vext .= "exten => _83046777777777*.,n,Hangup()\n";
+
+	$Vext .= "\n; This is a loopback dial-around to allow for immediate answer of outbound calls\n";
 	$Vext .= "exten => _8305888888888888.,1,Answer\n";
 	$Vext .= "exten => _8305888888888888.,n,Wait(\${EXTEN:16:1})\n";
 	$Vext .= "exten => _8305888888888888.,n,Dial(\${TRUNKloop}/\${EXTEN:17},,To)\n";
@@ -2989,7 +3282,122 @@ if ( ($active_asterisk_server =~ /Y/) && ($generate_vicidial_conf =~ /Y/) && ($r
 
 		$i++;
 		}
-	##### BEGIN Generate the SIP carriers for this server_ip #####
+	##### END Generate the SIP carriers for this server_ip #####
+
+
+	##### BEGIN Generate the PJSIP_WIZ carriers for this server_ip #####
+	$stmtA = "SELECT carrier_id,carrier_name,registration_string,template_id,account_entry,globals_string,dialplan_entry,carrier_description FROM vicidial_server_carriers where server_ip IN('$server_ip','0.0.0.0') and active='Y' and protocol='PJSIP_WIZ' order by carrier_id;";
+	$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+	$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+	$sthArows=$sthA->rows;
+	$i=0;
+	while ($sthArows > $i)
+		{
+		@aryA = $sthA->fetchrow_array;
+		$carrier_id[$i]	=			$aryA[0];
+		$carrier_name[$i]	=		$aryA[1];
+		$registration_string[$i] =	$aryA[2];
+		$template_id[$i] =			$aryA[3];
+		$account_entry[$i] =		$aryA[4];
+		$globals_string[$i] =		$aryA[5];
+		$dialplan_entry[$i] =		$aryA[6];
+		$carrier_description[$i] =	$aryA[7];
+		$i++;
+		}
+	$sthA->finish();
+
+	$i=0;
+	while ($sthArows > $i)
+		{
+		$template_contents[$i]='';
+		if ( (length($template_id[$i]) > 1) && ($template_id[$i] !~ /--NONE--/) ) 
+			{
+			$stmtA = "SELECT template_contents FROM vicidial_conf_templates where template_id='$template_id[$i]';";
+			$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+			$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+			$sthBrows=$sthA->rows;
+			if ($sthBrows > 0)
+				{
+				@aryA = $sthA->fetchrow_array;
+				$template_contents[$i]	=	"$aryA[0]";
+				}
+			$sthA->finish();
+			}
+		$ext  .= "$globals_string[$i]\n";
+
+		# PJSIP doesnt use registration strings
+		# Registrion is defined in the account entry
+		# $pjsip  .= "$registration_string[$i]\n";
+
+		$Lext .= "; VICIDIAL Carrier: $carrier_id[$i] - $carrier_name[$i]\n";
+		if (length($carrier_description[$i]) > 0) {$Lext .= "; $carrier_description[$i]\n";}
+		$Lext .= "$dialplan_entry[$i]\n";
+
+		$Lpjsipw .= "; VICIDIAL Carrier: $carrier_id[$i] - $carrier_name[$i]\n";
+		if (length($carrier_description[$i]) > 0) {$Lpjsipw .= "; $carrier_description[$i]\n";}
+		$Lpjsipw .= "$account_entry[$i]\n";
+		$Lpjsipw .= "$template_contents[$i]\n";
+
+		$i++;
+		}
+	##### END Generate the PJSIP_WIZ carriers for this server_ip #####
+	
+	##### BEGIN Generate the PJSIP carriers for this server_ip #####
+	$stmtA = "SELECT carrier_id,carrier_name,registration_string,template_id,account_entry,globals_string,dialplan_entry,carrier_description FROM vicidial_server_carriers where server_ip IN('$server_ip','0.0.0.0') and active='Y' and protocol='PJSIP' order by carrier_id;";
+	$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+	$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+	$sthArows=$sthA->rows;
+	$i=0;
+	while ($sthArows > $i)
+		{
+		@aryA = $sthA->fetchrow_array;
+		$carrier_id[$i]	=			$aryA[0];
+		$carrier_name[$i]	=		$aryA[1];
+		$registration_string[$i] =	$aryA[2];
+		$template_id[$i] =			$aryA[3];
+		$account_entry[$i] =		$aryA[4];
+		$globals_string[$i] =		$aryA[5];
+		$dialplan_entry[$i] =		$aryA[6];
+		$carrier_description[$i] =	$aryA[7];
+		$i++;
+		}
+	$sthA->finish();
+
+	$i=0;
+	while ($sthArows > $i)
+		{
+		$template_contents[$i]='';
+		if ( (length($template_id[$i]) > 1) && ($template_id[$i] !~ /--NONE--/) ) 
+			{
+			$stmtA = "SELECT template_contents FROM vicidial_conf_templates where template_id='$template_id[$i]';";
+			$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+			$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+			$sthBrows=$sthA->rows;
+			if ($sthBrows > 0)
+				{
+				@aryA = $sthA->fetchrow_array;
+				$template_contents[$i]	=	"$aryA[0]";
+				}
+			$sthA->finish();
+			}
+		$ext  .= "$globals_string[$i]\n";
+
+		# PJSIP doesnt use registration strings
+		# Registrion is defined in the account entry
+		# $pjsip  .= "$registration_string[$i]\n";
+
+		$Lext .= "; VICIDIAL Carrier: $carrier_id[$i] - $carrier_name[$i]\n";
+		if (length($carrier_description[$i]) > 0) {$Lext .= "; $carrier_description[$i]\n";}
+		$Lext .= "$dialplan_entry[$i]\n";
+
+		$Lpjsip .= "; VICIDIAL Carrier: $carrier_id[$i] - $carrier_name[$i]\n";
+		if (length($carrier_description[$i]) > 0) {$Lpjsip .= "; $carrier_description[$i]\n";}
+		$Lpjsip .= "$account_entry[$i]\n";
+		$Lpjsip .= "$template_contents[$i]\n";
+
+		$i++;
+		}
+	##### END Generate the PJSIP carriers for this server_ip #####
 
 
 	$Pext .= "\n";
@@ -3330,6 +3738,199 @@ if ( ($active_asterisk_server =~ /Y/) && ($generate_vicidial_conf =~ /Y/) && ($r
 		$i++;
 		}
 	##### END Generate the SIP phone entries #####
+
+
+	##### BEGIN Generate the PJSIP phone entries #####
+	$stmtA = "SELECT extension,dialplan_number,voicemail_id,pass,template_id,conf_override,email,template_id,conf_override,outbound_cid,fullname,phone_context,phone_ring_timeout,conf_secret,delete_vm_after_email,codecs_list,codecs_with_template,voicemail_timezone,voicemail_options,voicemail_instructions,unavail_dialplan_fwd_exten,unavail_dialplan_fwd_context FROM phones where server_ip='$server_ip' and protocol='PJSIP' and active='Y' order by extension;";
+	#	print "$stmtA\n";
+	$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+	$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+	$sthArows=$sthA->rows;
+	$i=0;
+	while ($sthArows > $i)
+		{
+		@aryA = $sthA->fetchrow_array;
+		$extension[$i] =				$aryA[0];
+		$dialplan[$i] =					$aryA[1];
+		$voicemail[$i] =				$aryA[2];
+		$pass[$i] =						$aryA[3];
+		$template_id[$i] =				$aryA[4];
+		$conf_override[$i] =			$aryA[5];
+		$email[$i] =					$aryA[6];
+		$template_id[$i] =				$aryA[7];
+		$conf_override[$i] =			$aryA[8];
+		$outbound_cid[$i] =				$aryA[9];
+		$fullname[$i] =					$aryA[10];
+		$phone_context[$i] =			$aryA[11];
+		$phone_ring_timeout[$i] =		$aryA[12];
+		$conf_secret[$i] =				$aryA[13];
+		$delete_vm_after_email[$i] =	$aryA[14];
+		$codecs_list[$i] =				$aryA[15];
+		$codecs_with_template[$i] =		$aryA[16];
+		$voicemail_timezone[$i] =		$aryA[17];
+		$voicemail_options[$i] =		$aryA[18];
+		$voicemail_instructions[$i] =	$aryA[19];
+		$unavail_dialplan_fwd_exten[$i] =	$aryA[20];
+		$unavail_dialplan_fwd_context[$i] =	$aryA[21];
+		if ( (length($SSdefault_codecs) > 2) && (length($codecs_list[$i]) < 3) )
+			{$codecs_list[$i] = $SSdefault_codecs;}
+		$active_dialplan_numbers .= "'$aryA[1]',";
+
+		$i++;
+		}
+	$sthA->finish();
+
+	$i=0;
+	while ($sthArows > $i)
+		{
+		$conf_entry_written=0;
+		$template_contents[$i]='';
+		$Pcodec='';
+		if (length($codecs_list[$i]) > 2)
+			{
+			if ($codecs_list[$i] =~ /gsm/i)					{$Pcodec .= "endpoint/allow=gsm\n";}
+			if ($codecs_list[$i] =~ /ulaw|u-law/i)			{$Pcodec .= "endpoint/allow=ulaw\n";}
+			if ($codecs_list[$i] =~ /alaw|a-law/i)			{$Pcodec .= "endpoint/allow=alaw\n";}
+			if ($codecs_list[$i] =~ /g719|g\.719/i)			{$Pcodec .= "endpoint/allow=g719\n";}
+			if ($codecs_list[$i] =~ /g722|g\.722/i)			{$Pcodec .= "endpoint/allow=g722\n";}
+			if ($codecs_list[$i] =~ /g723|g\.723|g723\.1/i)	{$Pcodec .= "endpoint/allow=g723\n";}
+			if ($codecs_list[$i] =~ /g726|g\.726/i)			{$Pcodec .= "endpoint/allow=g726\n";}
+			if ($codecs_list[$i] =~ /g729|g\.729|g729a/i)	{$Pcodec .= "endpoint/allow=g729\n";}
+			if ($codecs_list[$i] =~ /ilbc/i)				{$Pcodec .= "endpoint/allow=ilbc\n";}
+			if ($codecs_list[$i] =~ /lpc10/i)				{$Pcodec .= "endpoint/allow=lpc10\n";}
+			if ($codecs_list[$i] =~ /speex/i)				{$Pcodec .= "endpoint/allow=speex\n";}
+			if ($codecs_list[$i] =~ /adpcm/i)				{$Pcodec .= "endpoint/allow=adpcm\n";}
+			if ($codecs_list[$i] =~ /opus/i)				{$Pcodec .= "endpoint/allow=opus\n";}
+			if ($codecs_list[$i] =~ /slin/i)				{$Pcodec .= "endpoint/allow=slin\n";}
+			if (length($Pcodec) > 2)
+				{$Pcodec = "endpoint/disallow=all\n$Pcodec";}
+			}
+		else
+			{
+			$Pcodec .= "endpoint/disallow=all\n";
+			$Pcodec .= "endpoint/allow=gsm\n";
+			$Pcodec .= "endpoint/allow=ulaw\n";
+			}
+		if ($DBXXX > 0) {print "PJSIP|$extension[$i]|$codecs_list[$i]|$Pcodec\n";}
+
+		### If Phone has a template defined :
+		if ( (length($template_id[$i]) > 1) && ($template_id[$i] !~ /--NONE--/) ) 
+			{
+			$stmtA = "SELECT template_contents FROM vicidial_conf_templates where template_id='$template_id[$i]';";
+			$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+			$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+			$sthBrows=$sthA->rows;
+			if ($sthBrows > 0)
+				{
+				@aryA = $sthA->fetchrow_array;
+				$template_contents[$i]	=	"$aryA[0]";
+				$template_contents[$i]  =~	s/\r//g;
+
+				$Ppjsipw .= "\n\[$extension[$i]\]\n";
+				$Ppjsipw .= "type=wizard\n";
+				$Ppjsipw .= "accepts_auth=yes\n";
+				$Ppjsipw .= "accepts_registrations=yes\n";
+				$Ppjsipw .= "inbound_auth/username=$extension[$i]\n";
+				$Ppjsipw .= "inbound_auth/password=$conf_secret[$i]\n";
+				if ( (length($fullname[$i])>0) || (length($outbound_cid[$i])>0) ) 
+					{
+					$Ppjsipw .= "endpoint/callerid=\"$fullname[$i]\" <$outbound_cid[$i]>\n";
+					}
+				$Ppjsipw .= "endpoint/mailboxes=$voicemail[$i]\n";
+				if (($codecs_with_template[$i] > 0) || (!($template_contents[$i] =~ /allow=/i)))
+					{$Ppjsipw .= "$Pcodec";}
+				$Ppjsipw .= "$template_contents[$i]\n";
+				
+				$conf_entry_written++;
+				}
+			$sthA->finish();
+			}
+			
+		### If Phone has a Conf Override defined :
+		if (length($conf_override[$i]) > 10)
+			{
+			if ($conf_entry_written < 1) 
+				{$Ppjsipw .= "\n\[$extension[$i]\]\n";}
+			$Ppjsipw .= "$conf_override[$i]\n";
+			$conf_entry_written++;
+			}
+			
+		### If Phone does not have a Conf Override or Template defined :
+		if ($conf_entry_written < 1)
+			{
+			$Ppjsipw .= "\n\[$extension[$i]\]\n";
+			$Ppjsipw .= "type=wizard\n";
+			$Ppjsipw .= "accepts_auth=yes\n";
+			$Ppjsipw .= "accepts_registrations=yes\n";
+			$Ppjsipw .= "inbound_auth/username=$extension[$i]\n";
+			$Ppjsipw .= "inbound_auth/password=$conf_secret[$i]\n";
+			$Ppjsipw .= "aor/max_contacts = 1\n";
+			$Ppjsipw .= "aor/maximum_expiration = 3600\n";
+			$Ppjsipw .= "aor/minimum_expiration = 60\n";
+			$Ppjsipw .= "aor/default_expiration = 120\n";
+			$Ppjsipw .= "aor/qualify_frequency = 15\n";
+			$Ppjsipw .= "endpoint/context=$phone_context[$i]\n";
+			if ( (length($fullname[$i])>0) || (length($outbound_cid[$i])>0) ) 
+				{
+				$Ppjsipw .= "endpoint/callerid=\"$fullname[$i]\" <$outbound_cid[$i]>\n";
+				}
+			$Ppjsipw .= "endpoint/mailboxes=$voicemail[$i]\n";
+			$Ppjsipw .= "$Pcodec";
+			$Ppjsipw .= "endpoint/dtmf_mode = rfc4733\n";
+			$Ppjsipw .= "endpoint/trust_id_inbound = no\n";
+			$Ppjsipw .= "endpoint/send_rpid = yes\n";
+			$Ppjsipw .= "endpoint/inband_progress = no\n";
+			$Ppjsipw .= "endpoint/tos_audio = ef\n";
+			$Ppjsipw .= "endpoint/language = en\n";
+			$Ppjsipw .= "endpoint/rtp_symmetric = yes\n";
+			$Ppjsipw .= "endpoint/rewrite_contact = yes\n";
+			$Ppjsipw .= "endpoint/rtp_timeout = 60\n";
+			$Ppjsipw .= "endpoint/use_ptime = yes\n";
+			$Ppjsipw .= "endpoint/moh_suggest = default\n";
+			$Ppjsipw .= "endpoint/direct_media = no\n\n";
+			}
+			
+		### Dialplan generation :
+		%ast_ver_str = parse_asterisk_version($asterisk_version);
+		if (( $ast_ver_str{major} = 1 ) && ($ast_ver_str{minor} < 6))
+			{
+			$Pext .= "exten => $dialplan[$i],1,Dial(PJSIP/$extension[$i]|$phone_ring_timeout[$i]|)\n";
+			}
+		else
+			{
+			$Pext .= "exten => $dialplan[$i],1,Dial(PJSIP/$extension[$i],$phone_ring_timeout[$i],)\n";
+			}
+		if (length($unavail_dialplan_fwd_exten[$i]) > 0) 
+			{
+			if (length($unavail_dialplan_fwd_context[$i]) < 1) 
+				{$unavail_dialplan_fwd_context[$i] = 'default';}
+			$Pext .= "exten => $dialplan[$i],2,Goto($unavail_dialplan_fwd_context[$i],$unavail_dialplan_fwd_exten[$i],1)\n";
+			}
+		else
+			{
+			if ($voicemail_instructions[$i] =~ /Y/)
+				{
+				$Pext .= "exten => $dialplan[$i],2,Goto(default,85026666666666$voicemail[$i],1)\n";
+				}
+			else
+				{
+				$Pext .= "exten => $dialplan[$i],2,Goto(default,85026666666667$voicemail[$i],1)\n";
+				}
+			}
+		if (!(( $ast_ver_str{major} = 1 ) && ($ast_ver_str{minor} < 6)))
+			{
+			$Pext .= "exten => $dialplan[$i],3,Hangup()\n";
+			}
+
+		### VM generation
+		if ($delete_vm_after_email[$i] =~ /Y/)
+			{$vm  .= "$voicemail[$i] => $pass[$i],$extension[$i] Mailbox,$email[$i],,|delete=yes|tz=$voicemail_timezone[$i]|$voicemail_options[$i]\n";}
+		else
+			{$vm  .= "$voicemail[$i] => $pass[$i],$extension[$i] Mailbox,$email[$i],,|delete=no|tz=$voicemail_timezone[$i]|$voicemail_options[$i]\n";}
+
+		$i++;
+		}
+	##### END Generate the PJSIP phone entries #####
 
 
 
@@ -3938,7 +4539,7 @@ if ( ($active_asterisk_server =~ /Y/) && ($generate_vicidial_conf =~ /Y/) && ($r
 		while ($sthArows > $i)
 			{
 			##### Get the distinct phone entries #####
-			$stmtA = "SELECT extension,pass,email,delete_vm_after_email,voicemail_timezone,voicemail_options FROM phones where active='Y' and voicemail_id='$voicemail[$i]';";
+			$stmtA = "SELECT extension,pass,email,delete_vm_after_email,voicemail_timezone,voicemail_options,fullname FROM phones where active='Y' and voicemail_id='$voicemail[$i]';";
 			#	print "$stmtA\n";
 			$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 			$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -3952,11 +4553,14 @@ if ( ($active_asterisk_server =~ /Y/) && ($generate_vicidial_conf =~ /Y/) && ($r
 				$delete_vm_after_email[$i] =	$aryA[3];
 				$voicemail_timezone[$i] =		$aryA[4];
 				$voicemail_options[$i] =		$aryA[5];
+				$fullname[$i] =					$aryA[6];
+					$fullname[$i] =~ s/,//gi;
+				if (length($fullname[$i]) < 1) {$fullname[$i] = "$extension[$i] Mailbox";}
 
 				if ($delete_vm_after_email[$i] =~ /Y/)
-					{$vm  .= "$voicemail[$i] => $pass[$i],$extension[$i] Mailbox,$email[$i],,|delete=yes|tz=$voicemail_timezone[$i]|$voicemail_options[$i]\n";}
+					{$vm  .= "$voicemail[$i] => $pass[$i],$fullname[$i],$email[$i],,|delete=yes|tz=$voicemail_timezone[$i]|$voicemail_options[$i]\n";}
 				else
-					{$vm  .= "$voicemail[$i] => $pass[$i],$extension[$i] Mailbox,$email[$i],,|delete=no|tz=$voicemail_timezone[$i]|$voicemail_options[$i]\n";}
+					{$vm  .= "$voicemail[$i] => $pass[$i],$fullname[$i],$email[$i],,|delete=no|tz=$voicemail_timezone[$i]|$voicemail_options[$i]\n";}
 				}
 			$sthA->finish();
 
@@ -3980,6 +4584,8 @@ if ( ($active_asterisk_server =~ /Y/) && ($generate_vicidial_conf =~ /Y/) && ($r
 			@aryA = $sthA->fetchrow_array;
 			$voicemail_id[$i] =				$aryA[0];
 			$fullname[$i] =					$aryA[1];
+				$fullname[$i] =~ s/,//gi;
+			if (length($fullname[$i]) < 1) {$fullname[$i] = "Mailbox $voicemail_id[$i]";}
 			$pass[$i] =						$aryA[2];
 			$email[$i] =					$aryA[3];
 			$delete_vm_after_email[$i] =	$aryA[4];
@@ -4116,6 +4722,8 @@ if ( ($active_asterisk_server =~ /Y/) && ($generate_vicidial_conf =~ /Y/) && ($r
 	open(ext, ">/etc/asterisk/BUILDextensions-vicidial.conf") || die "can't open /etc/asterisk/BUILDextensions-vicidial.conf: $!\n";
 	open(iax, ">/etc/asterisk/BUILDiax-vicidial.conf") || die "can't open /etc/asterisk/BUILDiax-vicidial.conf: $!\n";
 	open(sip, ">/etc/asterisk/BUILDsip-vicidial.conf") || die "can't open /etc/asterisk/BUILDsip-vicidial.conf: $!\n";
+	open(pjsip,">/etc/asterisk/BUILDpjsip-vicidial.conf") || die "can't open /etc/asterisk/BUILDpjsip-vicidial.conf: $!\n";
+	open(pjsipw,">/etc/asterisk/BUILDpjsip_wizard-vicidial.conf") || die "can't open /etc/asterisk/BUILDpjsip_wizard-vicidial.conf: $!\n";
 	open(vm, ">/etc/asterisk/BUILDvoicemail-vicidial.conf") || die "can't open /etc/asterisk/BUILDvoicemail-vicidial.conf: $!\n";
 	open(moh, ">/etc/asterisk/BUILDmusiconhold-vicidial.conf") || die "can't open /etc/asterisk/BUILDmusiconhold-vicidial.conf: $!\n";
 	open(mm, ">/etc/asterisk/BUILDmeetme-vicidial.conf") || die "can't open /etc/asterisk/BUILDmeetme-vicidial.conf: $!\n";
@@ -4181,6 +4789,22 @@ if ( ($active_asterisk_server =~ /Y/) && ($generate_vicidial_conf =~ /Y/) && ($r
 	print sip "$Psip\n";
 	print sip "\n; END OF FILE    Last Forced System Reload: $SSreload_timestamp\n";
 
+	print pjsip "; WARNING- THIS FILE IS AUTO-GENERATED BY VICIDIAL, ANY EDITS YOU MAKE WILL BE LOST\n";
+	print pjsip "\n; PJSIP General Settings: \n\n";
+	print pjsip "$pjsip\n";
+	print pjsip "\n; PJSIP Carrier Settings: \n\n";
+	print pjsip "$Lpjsip\n";
+	print pjsip "\n; END OF FILE    Last Forced System Reload: $SSreload_timestamp\n";
+
+	print pjsipw "; WARNING- THIS FILE IS AUTO-GENERATED BY VICIDIAL, ANY EDITS YOU MAKE WILL BE LOST\n";
+	print pjsipw "\n; PJSIP_WIZ General Settings: \n\n";
+	print pjsipw "$pjsipw\n";
+	print pjsipw "\n; PJSIP_WIZ Carrier Settings: \n\n";
+	print pjsipw "$Lpjsipw\n";
+	print pjsipw "\n; PJSIP_WIZ Phone Settings: \n\n";
+	print pjsipw "$Ppjsipw\n";
+	print pjsipw "\n; END OF FILE    Last Forced System Reload: $SSreload_timestamp\n";
+
 #	print vm "; WARNING- THIS FILE IS AUTO-GENERATED BY VICIDIAL, ANY EDITS YOU MAKE WILL BE LOST\n";
 	print vm "$vm_header_content\n";
 	print vm "$vm\n";
@@ -4197,6 +4821,8 @@ if ( ($active_asterisk_server =~ /Y/) && ($generate_vicidial_conf =~ /Y/) && ($r
 	close(ext);
 	close(iax);
 	close(sip);
+	close(pjsip);
+	close(pjsipw);
 	close(vm);
 	close(moh);
 	close(mm);
@@ -4227,6 +4853,12 @@ if ( ($active_asterisk_server =~ /Y/) && ($generate_vicidial_conf =~ /Y/) && ($r
 	if ( !-e ('/etc/asterisk/sip-vicidial.conf'))
 		{`echo -e \"; END OF FILE\n\" > /etc/asterisk/sip-vicidial.conf`;}
 
+	if ( !-e ('/etc/asterisk/pjsip-vicidial.conf'))
+		{`echo -e \"; END OF FILE\n\" > /etc/asterisk/pjsip-vicidial.conf`;}
+
+	if ( !-e ('/etc/asterisk/pjsip_wizard-vicidial.conf'))
+		{`echo -e \"; END OF FILE\n\" > /etc/asterisk/pjsip_wizard-vicidial.conf`;}
+
 	if ( !-e ('/etc/asterisk/voicemail.conf'))
 		{`echo -e \"; END OF FILE\n\" > /etc/asterisk/voicemail.conf`;}
 
@@ -4241,6 +4873,8 @@ if ( ($active_asterisk_server =~ /Y/) && ($generate_vicidial_conf =~ /Y/) && ($r
 	$extCMP = compare("/etc/asterisk/BUILDextensions-vicidial.conf","/etc/asterisk/extensions-vicidial.conf");
 	$iaxCMP = compare("/etc/asterisk/BUILDiax-vicidial.conf","/etc/asterisk/iax-vicidial.conf");
 	$sipCMP = compare("/etc/asterisk/BUILDsip-vicidial.conf","/etc/asterisk/sip-vicidial.conf");
+	$pjsipCMP = compare("/etc/asterisk/BUILDpjsip-vicidial.conf","/etc/asterisk/pjsip-vicidial.conf");
+	$pjsipwCMP = compare("/etc/asterisk/BUILDpjsip_wizard-vicidial.conf","/etc/asterisk/pjsip_wizard-vicidial.conf");
 	$vmCMP =  compare("/etc/asterisk/BUILDvoicemail-vicidial.conf","/etc/asterisk/voicemail.conf");
 	$mohCMP = compare("/etc/asterisk/BUILDmusiconhold-vicidial.conf","/etc/asterisk/musiconhold-vicidial.conf");
 	$mmCMP =  compare("/etc/asterisk/BUILDmeetme-vicidial.conf","/etc/asterisk/meetme-vicidial.conf");
@@ -4310,6 +4944,20 @@ if ( ($active_asterisk_server =~ /Y/) && ($generate_vicidial_conf =~ /Y/) && ($r
 			if ($DB) {print "sip reload\n";}
 			sleep(1);
 			}
+		if ($pjsipCMP > 0)
+			{
+			`cp -f /etc/asterisk/BUILDpjsip-vicidial.conf /etc/asterisk/pjsip-vicidial.conf`;
+			`screen -XS asterisk eval 'stuff "pjsip reload\015"'`;
+			if ($DB) {print "pjsip reload\n";}
+			sleep(1);
+			}
+		if ($pjsipwCMP > 0)
+			{
+			`cp -f /etc/asterisk/BUILDpjsip_wizard-vicidial.conf /etc/asterisk/pjsip_wizard-vicidial.conf`;
+			`screen -XS asterisk eval 'stuff "pjsip reload\015"'`;
+			if ($DB) {print "pjsip reload\n";}
+			sleep(1);
+			}
 		if ($iaxCMP > 0)
 			{
 			`cp -f /etc/asterisk/BUILDiax-vicidial.conf /etc/asterisk/iax-vicidial.conf`;
@@ -4343,10 +4991,11 @@ if ( ($active_asterisk_server =~ /Y/) && ($generate_vicidial_conf =~ /Y/) && ($r
 	`rm -f /etc/asterisk/BUILDextensions-vicidial.conf`;
 	`rm -f /etc/asterisk/BUILDiax-vicidial.conf`;
 	`rm -f /etc/asterisk/BUILDsip-vicidial.conf`;
+	`rm -f /etc/asterisk/BUILDpjsip-vicidial.conf`;
+	`rm -f /etc/asterisk/BUILDpjsip_wizard-vicidial.conf`;
 #	`rm -f /etc/asterisk/BUILDvoicemail-vicidial.conf`;
 	`rm -f /etc/asterisk/BUILDmusiconhold-vicidial.conf`;
 	`rm -f /etc/asterisk/BUILDmeetme-vicidial.conf`;
-
 	}
 ################################################################################
 #####  END Creation of auto-generated conf files
@@ -4482,12 +5131,69 @@ if ($active_asterisk_server =~ /Y/)
 
 			`$PATHhome/start_asterisk_boot.pl`;
 			}
+
+		##### Get the ara_url for this server's server_ip #####
+		$stmtA = "SELECT ara_url from servers where server_ip='$server_ip';";
+		if ($DB) {print "$stmtA\n";}
+		$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+		$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+		$sthArows=$sthA->rows;
+		if ($sthArows > 0)
+			{
+			@aryA = $sthA->fetchrow_array;
+			$ara_url = $aryA[0];
+			}
+		$sthA->finish();
+
+		# Call the ara_url
+		if ($ara_url ne '')
+			{
+			$ara_url =~ s/ /+/gi;
+			$ara_url =~ s/&/\\&/gi;
+			$launch = $PATHhome . "/AST_send_URL.pl";
+			$launch .= " --SYSLOG" if ($SYSLOG);
+			$launch .= " --lead_id=0";
+			$launch .= " --function=QM_SOCKET_SEND";
+			$launch .= " --compat_url=" . $ara_url;
+
+			system($launch . ' &');
+			}
 		}
 	}
 ################################################################################
 #####  END Confirm Asterisk is running, and if not restart it from the screen
 ################################################################################
 
+
+
+
+
+################################################################################
+#####  BEGIN Clearing old/dead agent notifications
+################################################################################
+# only run this on active voicemail server
+if ( ($active_voicemail_server =~ /$server_ip/) && ((length($active_voicemail_server)) eq (length($server_ip))) )
+	{
+	$stmtA="UPDATE vicidial_agent_notifications set notification_status='DEAD' where notification_date <= NOW()-INTERVAL 1 MINUTE and notification_status='QUEUED';";
+	$affected_rows = $dbhA->do($stmtA);
+
+	$stmtC="UPDATE vicidial_agent_notifications set notification_status='DEAD' where notification_date <= NOW()-INTERVAL 1 HOUR and notification_status='READY';";
+	$affected_rowsC = $dbhA->do($stmtC);
+
+	$stmtB="DELETE FROM vicidial_agent_notifications_queue where queue_date <= NOW()-INTERVAL 1 MINUTE;";
+	$affected_rowsB = $dbhA->do($stmtB);
+
+	if ($DB) {print "Clearing old/dead agent notifications: $affected_rows $affected_rowsB $affected_rowsC \n";}
+
+	if ( ($teodDB) && ( ($affected_rows > 0) || ($affected_rowsB > 0) || ($affected_rowsC > 0) ) )
+		{
+		$event_string = "Clearing old/dead agent notifications: $affected_rows $affected_rowsB $affected_rowsC";
+		&teod_logger;
+		}
+	}
+################################################################################
+#####  END Clearing old/dead agent notifications
+################################################################################
 
 
 
@@ -4569,9 +5275,9 @@ if ( ($active_voicemail_server =~ /$server_ip/) && ((length($active_voicemail_se
 	if ($DBX) {print "$stmtA\n";}
 	$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 	$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
-	$sthArows=$sthA->rows;
+	$sthArowsCIDG=$sthA->rows;
 	$i=0;
-	while ($sthArows > $i)
+	while ($sthArowsCIDG > $i)
 		{
 		@aryA = $sthA->fetchrow_array;
 		$cid_group_id[$i] =					$aryA[0];
@@ -4588,8 +5294,15 @@ if ( ($active_voicemail_server =~ /$server_ip/) && ((length($active_voicemail_se
 	if ($DB) {print "   CID Groups with Auto-Rotate enabled: $i\n";}
 
 	$i=0;
-	while ($sthArows > $i)
+	while ($sthArowsCIDG > $i)
 		{
+		$Rcampaign_calldate='';
+		$Rcampaign_id='';
+		$Rcampaign_calldate_epoch=0;
+		$Lcampaign_calldate='';
+		$Llist_id='';
+		$Lcampaign_calldate_epoch=0;
+
 		$stmtA = "SELECT campaign_calldate,campaign_id,UNIX_TIMESTAMP(campaign_calldate) from vicidial_campaigns where cid_group_id='$cid_group_id[$i]' order by campaign_calldate desc limit 1;";
 		if ($DBX) {print "$stmtA\n";}
 		$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
@@ -4604,13 +5317,27 @@ if ( ($active_voicemail_server =~ /$server_ip/) && ((length($active_voicemail_se
 			}
 		$sthA->finish();
 
-		if ( ($Rcampaign_calldate_epoch < $FMtarget) && (length($cid_auto_rotate_cid[$i]) >= 6 ) )
+		$stmtA = "SELECT list_lastcalldate,list_id,UNIX_TIMESTAMP(list_lastcalldate) from vicidial_lists where cid_group_id='$cid_group_id[$i]' order by list_lastcalldate desc limit 1;";
+		if ($DBX) {print "$stmtA\n";}
+		$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+		$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+		$sthArowsX=$sthA->rows;
+		if ($sthArowsX > 0)
 			{
-			if ($DB) {print "     skip CID Group rotate, no recent campaign calls: $cid_group_id[$i]|$Rcampaign_id|$Rcampaign_calldate|  ($Rcampaign_calldate_epoch <> $FMtarget)\n";}
+			@aryA = $sthA->fetchrow_array;
+			$Lcampaign_calldate =			$aryA[0];
+			$Llist_id =						$aryA[1];
+			$Lcampaign_calldate_epoch =		$aryA[2];
+			}
+		$sthA->finish();
+
+		if ( ( ($Rcampaign_calldate_epoch < $FMtarget) && ($Lcampaign_calldate_epoch < $FMtarget) ) && (length($cid_auto_rotate_cid[$i]) >= 6 ) )
+			{
+			if ($DB) {print "     skip CID Group rotate, no recent campaign/list calls: $cid_group_id[$i]|$Rcampaign_id|$Rcampaign_calldate|  ($Rcampaign_calldate_epoch <> $FMtarget)|$Llist_id|$Lcampaign_calldate|($Lcampaign_calldate_epoch < $FMtarget)\n";}
 			}
 		else
 			{
-			if ($DBX) {print "     DEBUG: CID Group rotate, recent campaign calls: $cid_group_id[$i]|$Rcampaign_id|$Rcampaign_calldate|  ($Rcampaign_calldate_epoch <> $FMtarget)\n";}
+			if ($DBX) {print "     DEBUG: CID Group rotate, recent campaign/list calls: $cid_group_id[$i]|$Rcampaign_id|$Rcampaign_calldate|  ($Rcampaign_calldate_epoch <> $FMtarget)|$Llist_id|$Lcampaign_calldate|($Lcampaign_calldate_epoch < $FMtarget)\n";}
 			$rotate_run_minutes = (($secX - $cid_last_auto_rotate_epoch[$i]) / 60);
 			if ($rotate_run_minutes < $cid_auto_rotate_minutes[$i]) 
 				{
@@ -4750,6 +5477,93 @@ if ( ($active_voicemail_server =~ /$server_ip/) && ((length($active_voicemail_se
 
 
 
+################################################################################
+#####  START latency log live agent details updates
+################################################################################
+# only run this on active voicemail server
+if ( ($active_voicemail_server =~ /$server_ip/) && ((length($active_voicemail_server)) eq (length($server_ip))) )
+	{
+	##### gather vicidial_live_agents_details #####
+	$stmtA = "SELECT user,web_ip FROM vicidial_live_agents_details where update_date > (NOW()-INTERVAL 5 MINUTE);";
+	if ($DBX) {print "$stmtA\n";}
+	$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+	$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+	$sthArows=$sthA->rows;
+	$i=0;
+	while ($sthArows > $i)
+		{
+		@aryA = $sthA->fetchrow_array;
+		$VLADuser[$i] =		$aryA[0];
+		$VLADweb_ip[$i] =	$aryA[1];
+		$i++;
+		}
+	$sthA->finish();
+
+	if ($DB) {print "   recent vicidial_live_agents_details entries to update: $i\n";}
+
+	$i=0;
+	while ($sthArows > $i)
+		{
+		$VALLmin_count_latency=0;   $VALLmin_max_latency=0;   $VALLmin_avg_latency=0;   
+		$stmtA = "SELECT count(*),max(latency),avg(latency) from vicidial_agent_latency_log where user='$VLADuser[$i]' and log_date >= (NOW()-INTERVAL 1 MINUTE);";
+		if ($DBX) {print "$stmtA\n";}
+		$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+		$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+		$sthArowsX=$sthA->rows;
+		if ($sthArowsX > 0)
+			{
+			@aryA = $sthA->fetchrow_array;
+			$VALLmin_count_latency =		$aryA[0];
+			$VALLmin_max_latency =			$aryA[1];
+			$VALLmin_avg_latency =			$aryA[2];
+			}
+		$sthA->finish();
+
+		if ($VALLmin_count_latency > 0) 
+			{
+			$VALLhour_count_latency=0;   $VALLhour_max_latency=0;   $VALLhour_avg_latency=0;   
+			$stmtA = "SELECT count(*),max(latency),avg(latency) from vicidial_agent_latency_log where user='$VLADuser[$i]' and log_date >= (NOW()-INTERVAL 60 MINUTE);";
+			if ($DBX) {print "$stmtA\n";}
+			$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+			$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+			$sthArowsX=$sthA->rows;
+			if ($sthArowsX > 0)
+				{
+				@aryA = $sthA->fetchrow_array;
+				$VALLhour_count_latency =		$aryA[0];
+				$VALLhour_max_latency =			$aryA[1];
+				$VALLhour_avg_latency =			$aryA[2];
+				}
+			$sthA->finish();
+
+			$VALLtoday_count_latency=0;   $VALLtoday_max_latency=0;   $VALLtoday_avg_latency=0;   
+			$stmtA = "SELECT count(*),max(latency),avg(latency) from vicidial_agent_latency_log where user='$VLADuser[$i]' and log_date >= \"$today_start\";";
+			if ($DBX) {print "$stmtA\n";}
+			$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+			$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+			$sthArowsX=$sthA->rows;
+			if ($sthArowsX > 0)
+				{
+				@aryA = $sthA->fetchrow_array;
+				$VALLtoday_count_latency =		$aryA[0];
+				$VALLtoday_max_latency =			$aryA[1];
+				$VALLtoday_avg_latency =			$aryA[2];
+				}
+			$sthA->finish();
+
+			$stmtA = "UPDATE vicidial_live_agents_details SET latency_min_avg='$VALLmin_avg_latency',latency_min_peak='$VALLmin_max_latency',latency_hour_avg='$VALLhour_avg_latency',latency_hour_peak='$VALLhour_max_latency',latency_today_avg='$VALLtoday_avg_latency',latency_today_peak='$VALLtoday_max_latency' where user='$VLADuser[$i]';";
+			$affected_rows = $dbhA->do($stmtA) or die  "Couldn't execute query: |$stmtA|\n";
+			if ($DBX) {print "vicidial_live_agents_details update query: |$affected_rows|$stmtA|\n";}
+			}
+		$i++;
+		}
+	}
+################################################################################
+#####  END latency log live agent details updates
+################################################################################
+
+
+
 
 ################################################################################
 #####  BEGIN  Audio Store sync
@@ -4869,7 +5683,7 @@ if ($sthBrows > 0)
 	$trigger_lines =~ s/;|\\|\"//gi;
 	$trigger_results =~ s/;|\\|\"//gi;
 
-	$stmtA="INSERT INTO vicidial_process_trigger_log SET trigger_id='$trigger_id',user='$user',trigger_time=NOW(),server_ip='$server_ip',trigger_lines='$trigger_lines',trigger_results='$trigger_results';";
+	$stmtA="INSERT INTO vicidial_process_trigger_log SET trigger_id='$trigger_id',user='$user',trigger_time=NOW(),server_ip='$server_ip',trigger_lines=\"$trigger_lines\",trigger_results=\"$trigger_results\";";
 	$Iaffected_rows = $dbhA->do($stmtA);
 	if ($DB) {print "FINISHED:   $affected_rows|$Iaffected_rows";}
 	}

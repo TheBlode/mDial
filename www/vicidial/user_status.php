@@ -1,7 +1,7 @@
 <?php
 # user_status.php
 # 
-# Copyright (C) 2017  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
+# Copyright (C) 2022  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
 #
 # CHANGES
 #
@@ -41,6 +41,8 @@
 # 170228-1623 - Changed emergency logout to hangup all agent session calls, and more logging
 # 170409-1555 - Added IP List validation code
 # 170912-1704 - Removed non-functional change-campaign feature
+# 220221-0953 - Added allow_web_debug system setting
+# 221202-1644 - Change in CIDname prefix to differentiate from other processes
 #
 
 $startMS = microtime();
@@ -57,6 +59,7 @@ require("functions.php");
 $PHP_AUTH_USER=$_SERVER['PHP_AUTH_USER'];
 $PHP_AUTH_PW=$_SERVER['PHP_AUTH_PW'];
 $PHP_SELF=$_SERVER['PHP_SELF'];
+$PHP_SELF = preg_replace('/\.php.*/i','.php',$PHP_SELF);
 if (isset($_GET["begin_date"]))				{$begin_date=$_GET["begin_date"];}
 	elseif (isset($_POST["begin_date"]))	{$begin_date=$_POST["begin_date"];}
 if (isset($_GET["end_date"]))				{$end_date=$_GET["end_date"];}
@@ -74,11 +77,24 @@ if (isset($_GET["submit"]))				{$submit=$_GET["submit"];}
 if (isset($_GET["SUBMIT"]))				{$SUBMIT=$_GET["SUBMIT"];}
 	elseif (isset($_POST["SUBMIT"]))	{$SUBMIT=$_POST["SUBMIT"];}
 
+$StarTtimE = date("U");
+$TODAY = date("Y-m-d");
+$NOW_TIME = date("Y-m-d H:i:s");
+$ip = getenv("REMOTE_ADDR");
+$check_time = ($StarTtimE - 86400);
+$date = date("r");
+$ip = getenv("REMOTE_ADDR");
+$browser = getenv("HTTP_USER_AGENT");
+if (!isset($begin_date)) {$begin_date = $TODAY;}
+if (!isset($end_date)) {$end_date = $TODAY;}
+
+$DB=preg_replace("/[^0-9a-zA-Z]/","",$DB);
+
 #############################################
 ##### START SYSTEM_SETTINGS LOOKUP #####
-$stmt = "SELECT use_non_latin,webroot_writable,outbound_autodial_active,user_territories_active,level_8_disable_add,enable_languages,language_method,allow_chats,admin_screen_colors FROM system_settings;";
+$stmt = "SELECT use_non_latin,webroot_writable,outbound_autodial_active,user_territories_active,level_8_disable_add,enable_languages,language_method,allow_chats,admin_screen_colors,allow_web_debug FROM system_settings;";
 $rslt=mysql_to_mysqli($stmt, $link);
-if ($DB) {echo "$stmt\n";}
+#if ($DB) {echo "$stmt\n";}
 $qm_conf_ct = mysqli_num_rows($rslt);
 if ($qm_conf_ct > 0)
 	{
@@ -92,28 +108,32 @@ if ($qm_conf_ct > 0)
 	$SSlanguage_method =				$row[6];
 	$SSallow_chats =					$row[7];
 	$SSadmin_screen_colors =			$row[8];
+	$SSallow_web_debug =				$row[9];
 	}
+if ($SSallow_web_debug < 1) {$DB=0;}
 ##### END SETTINGS LOOKUP #####
 ###########################################
 
-if (!isset($begin_date)) {$begin_date = $TODAY;}
-if (!isset($end_date)) {$end_date = $TODAY;}
+$stage = preg_replace('/[^-_0-9a-zA-Z]/', '', $stage);
+$begin_date = preg_replace('/[^- \:\_0-9a-zA-Z]/',"",$begin_date);
+$end_date = preg_replace('/[^- \:\_0-9a-zA-Z]/',"",$end_date);
+$submit = preg_replace('/[^-_0-9a-zA-Z]/', '', $submit);
+$SUBMIT = preg_replace('/[^-_0-9a-zA-Z]/', '', $SUBMIT);
 
 if ($non_latin < 1)
 	{
 	$PHP_AUTH_USER = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_USER);
 	$PHP_AUTH_PW = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_PW);
+	$group = preg_replace('/[^-_0-9a-zA-Z]/','',$group);
+	$user = preg_replace('/[^-_0-9a-zA-Z]/', '', $user);
 	}
 else
 	{
-	$PHP_AUTH_PW = preg_replace("/'|\"|\\\\|;/","",$PHP_AUTH_PW);
-	$PHP_AUTH_USER = preg_replace("/'|\"|\\\\|;/","",$PHP_AUTH_USER);
+	$PHP_AUTH_USER = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_USER);
+	$PHP_AUTH_PW = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_PW);
+	$group = preg_replace('/[^-_0-9\p{L}]/u','',$group);
+	$user = preg_replace('/[^-_0-9\p{L}]/u', '', $user);
 	}
-$user = preg_replace("/'|\"|\\\\|;/","",$user);
-$group = preg_replace("/'|\"|\\\\|;/","",$group);
-$stage = preg_replace("/'|\"|\\\\|;/","",$stage);
-$begin_date = preg_replace("/'|\"|\\\\|;/","",$begin_date);
-$end_date = preg_replace("/'|\"|\\\\|;/","",$end_date);
 
 
 $SSmenu_background='015B91';
@@ -152,15 +172,6 @@ $Mhead_color =	$SSstd_row5_background;
 $Mmain_bgcolor = $SSmenu_background;
 $Mhead_color =	$SSstd_row5_background;
 
-
-$StarTtimE = date("U");
-$TODAY = date("Y-m-d");
-$NOW_TIME = date("Y-m-d H:i:s");
-$ip = getenv("REMOTE_ADDR");
-$check_time = ($StarTtimE - 86400);
-$date = date("r");
-$ip = getenv("REMOTE_ADDR");
-$browser = getenv("HTTP_USER_AGENT");
 
 $stmt="SELECT selected_language from vicidial_users where user='$PHP_AUTH_USER';";
 if ($DB) {echo "|$stmt|\n";}
@@ -565,7 +576,7 @@ if ($stage == "log_agent_out")
 		$local_AMP = '@';
 		$ext_context = 'default';
 		$kick_local_channel = "$local_DEF$VLA_conf_exten$local_AMP$ext_context";
-		$queryCID = "ULGH3457$StarTtimE";
+		$queryCID = "ULUS3451$StarTtimE";
 
 		$stmtC="INSERT INTO vicidial_manager values('','','$NOW_TIME','NEW','N','$VLA_server_ip','','Originate','$queryCID','Channel: $kick_local_channel','Context: $ext_context','Exten: 8300','Priority: 1','Callerid: $queryCID','','','','$channel','$exten');";
 		if ($DB) {echo "<BR>$stmtC\n";}

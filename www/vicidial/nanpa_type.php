@@ -1,7 +1,7 @@
 <?php
 # nanpa_type.php
 # 
-# Copyright (C) 2017  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
+# Copyright (C) 2022  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
 #
 # This script is designed to work with the NANPA exchange(NPA-NXX-X) data and
 # the wireless-to-wired and wired-to-wireless number portability data from
@@ -30,10 +30,13 @@
 # 130822-1433 - First build of script
 # 140702-2251 - Added prefix phone type of V as landline
 # 170409-1531 - Added IP List validation code
+# 210618-1012 - Added CORS support
+# 220222-1917 - Added allow_web_debug system setting
 #
 
-$version = '2.14-3';
-$build = '170409-1531';
+$version = '2.14-5';
+$build = '220222-1917';
+$php_script='nanpa_type.php';
 
 $startMS = microtime();
 
@@ -52,6 +55,8 @@ if (isset($_GET["phone_number"]))				{$phone_number=$_GET["phone_number"];}
 if (isset($_GET["DB"]))							{$DB=$_GET["DB"];}
 	elseif (isset($_POST["DB"]))				{$DB=$_POST["DB"];}
 
+if (file_exists('options.php'))
+	{require('options.php');}
 
 header ("Content-type: text/html; charset=utf-8");
 header ("Cache-Control: no-cache, must-revalidate");  // HTTP/1.1
@@ -59,24 +64,34 @@ header ("Pragma: no-cache");                          // HTTP/1.0
 
 #############################################
 ##### START SYSTEM_SETTINGS LOOKUP #####
-$stmt = "SELECT pass_hash_enabled FROM system_settings;";
+$stmt = "SELECT use_non_latin,pass_hash_enabled,allow_web_debug FROM system_settings;";
 $rslt=mysqli_query($link, $stmt);
 $qm_conf_ct = mysqli_num_rows($rslt);
 if ($qm_conf_ct > 0)
 	{
 	$row=mysqli_fetch_row($rslt);
-	$SSpass_hash_enabled =		$row[0];
+	$non_latin =				$row[0];
+	$SSpass_hash_enabled =		$row[1];
+	$SSallow_web_debug =		$row[2];
 	}
+if ($SSallow_web_debug < 1) {$DB=0;}
 ##### END SETTINGS LOOKUP #####
 ###########################################
 
 $DB=preg_replace('/[^0-9]/','',$DB);
-$user = preg_replace("/'|\"|\\\\|;/","",$user);
-$pass = preg_replace("/'|\"|\\\\|;/","",$pass);
-$user=preg_replace('/[^-_0-9a-zA-Z]/','',$user);
-$pass=preg_replace('/[^-_0-9a-zA-Z]/','',$pass);
 $function = preg_replace('/[^-\_0-9a-zA-Z]/', '',$function);
 $phone_number = preg_replace('/[^\|0-9]/','',$phone_number);
+
+if ($non_latin < 1)
+	{
+	$user = preg_replace('/[^-_0-9a-zA-Z]/', '', $user);
+	$pass = preg_replace('/[^-_0-9a-zA-Z]/', '', $pass);
+	}
+else
+	{
+	$user = preg_replace('/[^-_0-9\p{L}]/u', '', $user);
+	$pass = preg_replace('/[^-_0-9\p{L}]/u', '', $pass);
+	}
 
 
 

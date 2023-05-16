@@ -1,7 +1,7 @@
 <?php
 # timeclock.php - VICIDIAL system user timeclock
 # 
-# Copyright (C) 2020  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
+# Copyright (C) 2022  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
 #
 # CHANGELOG
 # 80523-0134 - First Build 
@@ -24,10 +24,14 @@
 # 161106-2112 - Added screen colors, fixed formatting
 # 190111-0901 - Fix for PHP7
 # 201117-2117 - Changes for better compatibility with non-latin data input
+# 210616-2101 - Added optional CORS support, see options.php for details
+# 220220-0934 - Added allow_web_debug system setting
+# 220921-1702 - Added failed login reason messages
 #
 
-$version = '2.12-19';
-$build = '201117-2117';
+$version = '2.14-22';
+$build = '220921-1702';
+$php_script = 'timeclock.php';
 
 $StarTtimE = date("U");
 $NOW_TIME = date("Y-m-d H:i:s");
@@ -90,27 +94,23 @@ if (!isset($phone_pass))
 $DB=preg_replace("/[^0-9a-z]/","",$DB);
 $VD_login=preg_replace("/\'|\"|\\\\|;| /","",$VD_login);
 $VD_pass=preg_replace("/\'|\"|\\\\|;| /","",$VD_pass);
+$user=preg_replace("/\'|\"|\\\\|;| /","",$user);
+$pass=preg_replace("/\'|\"|\\\\|;| /","",$pass);
 
 require_once("dbconnect_mysqli.php");
 require_once("functions.php");
 
-#############################################
-##### START SYSTEM_SETTINGS AND USER LANGUAGE LOOKUP #####
-$VUselected_language = '';
-$stmt="SELECT user,selected_language from vicidial_users where user='$VD_login';";
-if ($DB) {echo "|$stmt|\n";}
-$rslt=mysql_to_mysqli($stmt, $link);
-	if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'00XXX',$VD_login,$server_ip,$session_name,$one_mysql_log);}
-$sl_ct = mysqli_num_rows($rslt);
-if ($sl_ct > 0)
+# if options file exists, use the override values for the above variables
+#   see the options-example.php file for more information
+if (file_exists('options.php'))
 	{
-	$row=mysqli_fetch_row($rslt);
-	$VUuser =				$row[0];
-	$VUselected_language =	$row[1];
+	require_once('options.php');
 	}
 
-$stmt = "SELECT use_non_latin,admin_home_url,admin_web_directory,enable_languages,language_method,default_language,agent_screen_colors,agent_script FROM system_settings;";
-if ($DB) {echo "$stmt\n";}
+#############################################
+##### START SYSTEM_SETTINGS AND USER LANGUAGE LOOKUP #####
+$stmt = "SELECT use_non_latin,admin_home_url,admin_web_directory,enable_languages,language_method,default_language,agent_screen_colors,agent_script,allow_web_debug FROM system_settings;";
+#if ($DB) {echo "$stmt\n";}
 $rslt=mysql_to_mysqli($stmt, $link);
 	if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'00XXX',$VD_login,$server_ip,$session_name,$one_mysql_log);}
 $qm_conf_ct = mysqli_num_rows($rslt);
@@ -125,6 +125,21 @@ if ($qm_conf_ct > 0)
 	$SSdefault_language =	$row[5];
 	$agent_screen_colors =	$row[6];
 	$SSagent_script =		$row[7];
+	$SSallow_web_debug =	$row[8];
+	}
+if ($SSallow_web_debug < 1) {$DB=0;}
+
+$VUselected_language = '';
+$stmt="SELECT user,selected_language from vicidial_users where user='$VD_login';";
+if ($DB) {echo "|$stmt|\n";}
+$rslt=mysql_to_mysqli($stmt, $link);
+	if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'00XXX',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+$sl_ct = mysqli_num_rows($rslt);
+if ($sl_ct > 0)
+	{
+	$row=mysqli_fetch_row($rslt);
+	$VUuser =				$row[0];
+	$VUselected_language =	$row[1];
 	}
 
 if (strlen($VUselected_language) < 1)
@@ -143,7 +158,7 @@ $referrer=preg_replace("/[^0-9a-zA-Z]/","",$referrer);
 if ($non_latin < 1)
 	{
 	$user=preg_replace("/[^-_0-9a-zA-Z]/","",$user);
-	$pass=preg_replace("/[^-_0-9a-zA-Z]/","",$pass);
+	$pass=preg_replace("/[^-\.\+\/\=_0-9a-zA-Z]/","",$pass);
 	$VD_login=preg_replace("/[^-_0-9a-zA-Z]/","",$VD_login);
 	$VD_pass=preg_replace("/[^-_0-9a-zA-Z]/","",$VD_pass);
 	$VD_campaign=preg_replace("/[^-_0-9a-zA-Z]/","",$VD_campaign);
@@ -152,7 +167,13 @@ if ($non_latin < 1)
 	}
 else
 	{
+	$user=preg_replace("/[^-_0-9\p{L}]/u","",$user);
+	$pass = preg_replace('/[^-\.\+\/\=_0-9\p{L}]/u','',$pass);
+	$VD_login=preg_replace("/[^-_0-9\p{L}]/u","",$VD_login);
+	$VD_pass=preg_replace("/[^-_0-9\p{L}]/u","",$VD_pass);
 	$VD_campaign=preg_replace("/[^-_0-9\p{L}]/u","",$VD_campaign);
+	$phone_login=preg_replace("/[^\,0-9\p{L}]/u","",$phone_login);
+	$phone_pass=preg_replace("/[^-_0-9\p{L}]/u","",$phone_pass);
 	}
 
 header ("Content-type: text/html; charset=utf-8");
@@ -249,6 +270,24 @@ if ( ($stage == 'login') or ($stage == 'logout') )
 		{
 		### NOT A VALID USER/PASS
 		$VDdisplayMESSAGE = _QXZ("The user and password you entered are not active in the system<BR>Please try again:");
+		if ($auth_message == 'LOCK')
+			{$VDdisplayMESSAGE = _QXZ("Too many login attempts, try again in 15 minutes")."<br />";}
+		if ($auth_message == 'ERRNETWORK')
+			{$VDdisplayMESSAGE = _QXZ("Too many network errors, please contact your administrator")."<br />";}
+		if ($auth_message == 'ERRSERVERS')
+			{$VDdisplayMESSAGE = _QXZ("No available servers, please contact your administrator")."<br />";}
+		if ($auth_message == 'ERRPHONES')
+			{$VDdisplayMESSAGE = _QXZ("No available phones, please contact your administrator")."<br />";}
+		if ($auth_message == 'ERRDUPLICATE')
+			{$VDdisplayMESSAGE = _QXZ("You are already logged in, please log out of your other session first")."<br />";}
+		if ($auth_message == 'ERRAGENTS')
+			{$VDdisplayMESSAGE = _QXZ("Too many agents logged in, please contact your administrator")."<br />";}
+		if ($auth_message == 'ERRCAMPAGENTS')
+			{$VDdisplayMESSAGE = _QXZ("Too many agents logged in to this campaign, please contact your manager")."<br />";}
+		if ($auth_message == 'ERRCASE')
+			{$VDdisplayMESSAGE = _QXZ("Login incorrect, user names are case sensitive")."<br />";}
+		if ($auth_message == 'IPBLOCK')
+			{$VDdisplayMESSAGE = _QXZ("Your IP Address is not allowed").": $ip<br />";}
 
 		echo"<HTML><HEAD>\n";
 		echo"<TITLE>"._QXZ("Agent Timeclock")."</TITLE>\n";

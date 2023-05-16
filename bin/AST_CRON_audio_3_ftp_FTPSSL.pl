@@ -52,12 +52,14 @@
 # 
 # This program assumes that recordings are saved by Asterisk as .wav
 # 
-# Copyright (C) 2020  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
+# Copyright (C) 2023  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
 #
 # 
 # 180518-0732 - First Build based upon AST_CRON_audio_3_ftp.pl script
 # 180616-2248 - Added --localdatedir option
 # 200205-1716 - Added comments for TLS Session Resumption settings
+# 221002-1602 - Added comments for optional additional FTPSSL variable: "OverridePASV"
+# 230201-0004 - Allowed for handling of stereo gateway recordings
 #
 
 ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
@@ -450,6 +452,7 @@ foreach(@FILES)
 			$SQLFILE = $FILES[$i];
 			$SQLFILE =~ s/\.gpg//gi;
 			$SQLFILE =~ s/-all\.wav|-all\.gsm|-all\.ogg|-all\.mp3//gi;
+			$SQLFILE =~ s/\.wav|\.gsm|\.ogg|\.mp3//gi;
 
 			$stmtA = "select recording_id,start_time from recording_log where filename='$SQLFILE' order by recording_id desc LIMIT 1;";
 			if($DBX){print STDERR "\n|$stmtA|\n";}
@@ -523,6 +526,7 @@ foreach(@FILES)
 					{
 					# Some versions of the FTPSSL perl module require you to hard code the encryption value: IMP_CRYPT or EXP_CRYPT
 					# $ftps = Net::FTPSSL->new("$VARFTP_host", Port => $VARFTP_port, Encryption => $VARFTP_encrypt, Debug => $FTPdb);
+					# optional additional variable (, OverridePASV => "$VARFTP_host") which will force the passive FTP hostname
 					if ( $VARFTP_encrypt eq "IMP_CRYPT" ) 
 						{
 						$ftps = Net::FTPSSL->new("$VARFTP_host", Port => $VARFTP_port, Encryption => IMP_CRYPT, Debug => $FTPdb);

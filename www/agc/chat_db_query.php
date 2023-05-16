@@ -1,7 +1,7 @@
 <?php
 # chat_db_query.php
 #
-# Copyright (C) 2020  Joe Johnson, Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
+# Copyright (C) 2022  Joe Johnson, Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
 #
 # Called by vdc_chat_display.php and vicidial_chat_agent.js.  This contains all actions taken by the
 # agent's interface when chatting with customers, other agents, and managers, through 
@@ -24,7 +24,12 @@
 # 170526-2257 - Added additional variable filtering
 # 170528-1028 - Added more variable filtering
 # 201117-2238 - Changes for better compatibility with non-latin data input
+# 210616-2055 - Added optional CORS support, see options.php for details
+# 220219-2336 - Added allow_web_debug system setting
+# 220518-2212 - Small fix for encrypted auth
 #
+
+$php_script = 'chat_db_query.php';
 
 require("dbconnect_mysqli.php");
 require("functions.php");
@@ -33,71 +38,64 @@ $NOW_TIME = date("Y-m-d H:i:s");
 $chat_background_array=array(); # Defined further down
 $style_array=array("", "italics", "bold italics");
 
-if (isset($_GET["action"]))	{$action=$_GET["action"];}
+if (isset($_GET["action"]))				{$action=$_GET["action"];}
 	elseif (isset($_POST["action"]))	{$action=$_POST["action"];}
 if (isset($_GET["DB"]))				{$DB=$_GET["DB"];}
 	elseif (isset($_POST["DB"]))	{$DB=$_POST["DB"];}
-if (isset($_GET["chat_id"]))	{$chat_id=$_GET["chat_id"];}
+if (isset($_GET["chat_id"]))			{$chat_id=$_GET["chat_id"];}
 	elseif (isset($_POST["chat_id"]))	{$chat_id=$_POST["chat_id"];}
-if (isset($_GET["chat_group_id"]))	{$chat_group_id=$_GET["chat_group_id"];}
+if (isset($_GET["chat_group_id"]))			{$chat_group_id=$_GET["chat_group_id"];}
 	elseif (isset($_POST["chat_group_id"]))	{$chat_group_id=$_POST["chat_group_id"];}
-if (isset($_GET["chat_level"]))	{$chat_level=$_GET["chat_level"];}
+if (isset($_GET["chat_level"]))				{$chat_level=$_GET["chat_level"];}
 	elseif (isset($_POST["chat_level"]))	{$chat_level=$_POST["chat_level"];}
-if (isset($_GET["chat_creator"]))	{$chat_creator=$_GET["chat_creator"];}
+if (isset($_GET["chat_creator"]))			{$chat_creator=$_GET["chat_creator"];}
 	elseif (isset($_POST["chat_creator"]))	{$chat_creator=$_POST["chat_creator"];}
-if (isset($_GET["chat_member_name"]))	{$chat_member_name=$_GET["chat_member_name"];}
+if (isset($_GET["chat_member_name"]))			{$chat_member_name=$_GET["chat_member_name"];}
 	elseif (isset($_POST["chat_member_name"]))	{$chat_member_name=$_POST["chat_member_name"];}
-if (isset($_GET["chat_message"]))	{$chat_message=$_GET["chat_message"];}
+if (isset($_GET["chat_message"]))			{$chat_message=$_GET["chat_message"];}
 	elseif (isset($_POST["chat_message"]))	{$chat_message=$_POST["chat_message"];}
-if (isset($_GET["email"]))	{$email=$_GET["email"];}
+if (isset($_GET["email"]))			{$email=$_GET["email"];}
 	elseif (isset($_POST["email"]))	{$email=$_POST["email"];}
-if (isset($_GET["lead_id"]))	{$lead_id=$_GET["lead_id"];}
+if (isset($_GET["lead_id"]))			{$lead_id=$_GET["lead_id"];}
 	elseif (isset($_POST["lead_id"]))	{$lead_id=$_POST["lead_id"];}
-if (isset($_GET["user"]))	{$user=$_GET["user"];}
+if (isset($_GET["user"]))			{$user=$_GET["user"];}
 	elseif (isset($_POST["user"]))	{$user=$_POST["user"];}
-if (isset($_GET["server_ip"]))	{$server_ip=$_GET["server_ip"];}
+if (isset($_GET["server_ip"]))			{$server_ip=$_GET["server_ip"];}
 	elseif (isset($_POST["server_ip"]))	{$server_ip=$_POST["server_ip"];}
-if (isset($_GET["user_level"]))	{$user_level=$_GET["user_level"];}
-	elseif (isset($_POST["user_level"]))	{$user_level=$_POST["user_level"];}
-if (isset($_GET["pass"]))	{$pass=$_GET["pass"];}
+if (isset($_GET["pass"]))			{$pass=$_GET["pass"];}
 	elseif (isset($_POST["pass"]))	{$pass=$_POST["pass"];}
-if (isset($_GET["first_name"]))					{$first_name=$_GET["first_name"];}
-	elseif (isset($_POST["first_name"]))		{$first_name=$_POST["first_name"];}
-if (isset($_GET["last_name"]))					{$last_name=$_GET["last_name"];}
-	elseif (isset($_POST["last_name"]))			{$last_name=$_POST["last_name"];}
-if (isset($_GET["group_id"]))					{$group_id=$_GET["group_id"];}
-	elseif (isset($_POST["group_id"]))			{$group_id=$_POST["group_id"];}
-if (isset($_GET["keepalive"]))					{$keepalive=$_GET["keepalive"];}
-	elseif (isset($_POST["keepalive"]))			{$keepalive=$_POST["keepalive"];}
-if (isset($_GET["current_message_count"]))					{$current_message_count=$_GET["current_message_count"];}
-	elseif (isset($_POST["current_message_count"]))			{$current_message_count=$_POST["current_message_count"];}
-
-if (isset($_GET["manager_chat_id"]))	{$manager_chat_id=$_GET["manager_chat_id"];}
+if (isset($_GET["group_id"]))				{$group_id=$_GET["group_id"];}
+	elseif (isset($_POST["group_id"]))		{$group_id=$_POST["group_id"];}
+if (isset($_GET["keepalive"]))				{$keepalive=$_GET["keepalive"];}
+	elseif (isset($_POST["keepalive"]))		{$keepalive=$_POST["keepalive"];}
+if (isset($_GET["current_message_count"]))				{$current_message_count=$_GET["current_message_count"];}
+	elseif (isset($_POST["current_message_count"]))		{$current_message_count=$_POST["current_message_count"];}
+if (isset($_GET["manager_chat_id"]))			{$manager_chat_id=$_GET["manager_chat_id"];}
 	elseif (isset($_POST["manager_chat_id"]))	{$manager_chat_id=$_POST["manager_chat_id"];}
-if (isset($_GET["manager_chat_subid"]))	{$manager_chat_subid=$_GET["manager_chat_subid"];}
+if (isset($_GET["manager_chat_subid"]))				{$manager_chat_subid=$_GET["manager_chat_subid"];}
 	elseif (isset($_POST["manager_chat_subid"]))	{$manager_chat_subid=$_POST["manager_chat_subid"];}
-if (isset($_GET["current_active_chat"]))	{$current_active_chat=$_GET["current_active_chat"];}
-	elseif (isset($_POST["current_active_chat"]))	{$current_active_chat=$_POST["current_active_chat"];}
-if (isset($_GET["field_name"]))	{$field_name=$_GET["field_name"];}
+if (isset($_GET["field_name"]))				{$field_name=$_GET["field_name"];}
 	elseif (isset($_POST["field_name"]))	{$field_name=$_POST["field_name"];}
-if (isset($_GET["agent_manager"]))					{$agent_manager=$_GET["agent_manager"];}
-	elseif (isset($_POST["agent_manager"]))			{$agent_manager=$_POST["agent_manager"];}
-if (isset($_GET["agent_to_add"]))					{$agent_to_add=$_GET["agent_to_add"];}
-	elseif (isset($_POST["agent_to_add"]))			{$agent_to_add=$_POST["agent_to_add"];}
+if (isset($_GET["agent_manager"]))				{$agent_manager=$_GET["agent_manager"];}
+	elseif (isset($_POST["agent_manager"]))		{$agent_manager=$_POST["agent_manager"];}
+if (isset($_GET["agent_to_add"]))				{$agent_to_add=$_GET["agent_to_add"];}
+	elseif (isset($_POST["agent_to_add"]))		{$agent_to_add=$_POST["agent_to_add"];}
 if (isset($_GET["agent_user"]))					{$agent_user=$_GET["agent_user"];}
-	elseif (isset($_POST["agent_user"]))			{$agent_user=$_POST["agent_user"];}
-if (isset($_GET["agent_override"]))					{$agent_override=$_GET["agent_override"];}
-	elseif (isset($_POST["agent_override"]))			{$agent_override=$_POST["agent_override"];}
-if (isset($_GET["hangup_override"]))					{$hangup_override=$_GET["hangup_override"];}
-	elseif (isset($_POST["hangup_override"]))			{$hangup_override=$_POST["hangup_override"];}
-if (isset($_GET["manager_message"]))					{$manager_message=$_GET["manager_message"];}
-	elseif (isset($_POST["manager_message"]))			{$manager_message=$_POST["manager_message"];}
-if (isset($_GET["ChatReloadIDNumber"]))					{$ChatReloadIDNumber=$_GET["ChatReloadIDNumber"];}
-	elseif (isset($_POST["ChatReloadIDNumber"]))			{$ChatReloadIDNumber=$_POST["ChatReloadIDNumber"];}
+	elseif (isset($_POST["agent_user"]))		{$agent_user=$_POST["agent_user"];}
+if (isset($_GET["agent_override"]))				{$agent_override=$_GET["agent_override"];}
+	elseif (isset($_POST["agent_override"]))	{$agent_override=$_POST["agent_override"];}
+if (isset($_GET["hangup_override"]))			{$hangup_override=$_GET["hangup_override"];}
+	elseif (isset($_POST["hangup_override"]))	{$hangup_override=$_POST["hangup_override"];}
+if (isset($_GET["manager_message"]))			{$manager_message=$_GET["manager_message"];}
+	elseif (isset($_POST["manager_message"]))	{$manager_message=$_POST["manager_message"];}
+if (isset($_GET["ChatReloadIDNumber"]))				{$ChatReloadIDNumber=$_GET["ChatReloadIDNumber"];}
+	elseif (isset($_POST["ChatReloadIDNumber"]))	{$ChatReloadIDNumber=$_POST["ChatReloadIDNumber"];}
 if (isset($_GET["chat_xfer_type"]))					{$chat_xfer_type=$_GET["chat_xfer_type"];}
-	elseif (isset($_POST["chat_xfer_type"]))			{$chat_xfer_type=$_POST["chat_xfer_type"];}
-if (isset($_GET["chat_xfer_value"]))					{$chat_xfer_value=$_GET["chat_xfer_value"];}
-	elseif (isset($_POST["chat_xfer_value"]))			{$chat_xfer_value=$_POST["chat_xfer_value"];}
+	elseif (isset($_POST["chat_xfer_type"]))	{$chat_xfer_type=$_POST["chat_xfer_type"];}
+if (isset($_GET["chat_xfer_value"]))			{$chat_xfer_value=$_GET["chat_xfer_value"];}
+	elseif (isset($_POST["chat_xfer_value"]))	{$chat_xfer_value=$_POST["chat_xfer_value"];}
+
+$DB=preg_replace("/[^0-9a-zA-Z]/","",$DB);
 
 if (!$user) {echo "No user, no using."; exit;}
 
@@ -111,10 +109,10 @@ $pass=preg_replace("/\'|\"|\\\\|;| /","",$pass);
 #############################################
 ##### START SYSTEM_SETTINGS LOOKUP #####
 $VUselected_language = '';
-$stmt = "SELECT use_non_latin,enable_languages,language_method,default_language,allow_chats FROM system_settings;";
+$stmt = "SELECT use_non_latin,enable_languages,language_method,default_language,allow_chats,allow_web_debug FROM system_settings;";
 $rslt=mysql_to_mysqli($stmt, $link);
         if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'00XXX',$user,$server_ip,$session_name,$one_mysql_log);}
-if ($DB) {echo "$stmt\n";}
+#if ($DB) {echo "$stmt\n";}
 $qm_conf_ct = mysqli_num_rows($rslt);
 if ($qm_conf_ct > 0)
 	{
@@ -124,12 +122,13 @@ if ($qm_conf_ct > 0)
 	$SSlanguage_method =	$row[2];
 	$SSdefault_language =	$row[3];
 	$SSallow_chats =		$row[4];
+	$SSallow_web_debug =	$row[5];
 	}
 $VUselected_language = $SSdefault_language;
+if ($SSallow_web_debug < 1) {$DB=0;}
 ##### END SETTINGS LOOKUP #####
 ###########################################
 
-$session_name = preg_replace("/\'|\"|\\\\|;/","",$session_name);
 $server_ip = preg_replace("/\'|\"|\\\\|;/","",$server_ip);
 $agent_manager = preg_replace("/\||`|&|\'|\"|\\\\|;| /","",$agent_manager);
 $agent_user = preg_replace("/\||`|&|\'|\"|\\\\|;| /","",$agent_user);
@@ -146,20 +145,30 @@ $chat_xfer_value = preg_replace("/\||`|&|\'|\"|\\\\|;| /","",$chat_xfer_value);
 $email = preg_replace("/\||`|&|\'|\"|\\\\|;| /","",$email);
 $field_name = preg_replace("/\||`|&|\'|\"|\\\\|;| /","",$field_name);
 $manager_chat_subid = preg_replace("/\||`|&|\'|\"|\\\\|;| /","",$manager_chat_subid);
+$action=preg_replace("/[^-_0-9a-zA-Z]/","",$action);
+$keepalive=preg_replace("/[^-_0-9a-zA-Z]/","",$keepalive);
+$chat_message = preg_replace("/\"|\\\\|;/","",$chat_message);
+$current_message_count=preg_replace("/[^-_0-9a-zA-Z]/","",$current_message_count);
+$agent_override = preg_replace('/[^-_0-9\p{L}]/u',"",$agent_override);
+$hangup_override = preg_replace('/[^-_0-9\p{L}]/u',"",$hangup_override);
+$ChatReloadIDNumber=preg_replace("/[^-_0-9a-zA-Z]/","",$ChatReloadIDNumber);
+$manager_message = preg_replace("/\"|\\\\|;/","",$manager_message);
 
 if ($non_latin < 1)
 	{
 	$user=preg_replace("/[^-_0-9a-zA-Z]/","",$user);
-	$pass=preg_replace("/[^-_0-9a-zA-Z]/","",$pass);
+	$pass=preg_replace("/[^-\.\+\/\=_0-9a-zA-Z]/","",$pass);
 	$chat_member_name = preg_replace('/[^- \.\,\_0-9a-zA-Z]/',"",$chat_member_name);
 	}
 else
 	{
+	$user = preg_replace('/[^-_0-9\p{L}]/u','',$user);
+	$pass = preg_replace('/[^-\.\+\/\=_0-9\p{L}]/u','',$pass);
 	$chat_member_name = preg_replace('/[^- \.\,\_0-9\p{L}]/u',"",$chat_member_name);
 	}
 
 $auth=0;
-$auth_message = user_authorization($user,$pass,'',0,0,0,0,'chat_db_query');
+$auth_message = user_authorization($user,$pass,'',0,1,0,0,'chat_db_query');
 if ($auth_message == 'GOOD')
 	{$auth=1;}
 

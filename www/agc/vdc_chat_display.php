@@ -1,7 +1,7 @@
 <?php
 # vdc_chat_display.php
 #
-# Copyright (C) 2020  Joe Johnson, Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
+# Copyright (C) 2022  Joe Johnson, Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
 #
 # This is the interface for agents to chat with customers and each other.  It's separate from the manager-to-agent 
 # chat interface out of necessity and calls the chat_db_query.php page to send information and display it.  It will
@@ -19,10 +19,15 @@
 # 170528-1001 - Added variable filtering
 # 190902-0914 - Fix for PHP 7.2
 # 201117-2207 - Changes for better compatibility with non-latin data input
+# 210616-2040 - Added optional CORS support, see options.php for details
+# 220220-0928 - Added allow_web_debug system setting
+# 220518-2211 - Small fix for encrypted auth
 #
 
 require("dbconnect_mysqli.php");
 require("functions.php");
+
+$php_script = 'vdc_chat_display.php';
 
 $MT[0]='';
 $chat_group_ids=$MT;
@@ -62,13 +67,20 @@ if (isset($_GET["clickmute"]))						{$clickmute=$_GET["clickmute"];}
 if (isset($_GET["stage"]))							{$stage=$_GET["stage"];}
 	elseif (isset($_POST["stage"]))					{$stage=$_POST["stage"];}
 
+$PHP_SELF=$_SERVER['PHP_SELF'];
+$PHP_SELF = preg_replace('/\.php.*/i','.php',$PHP_SELF);
+
+$DB=preg_replace("/[^0-9a-zA-Z]/","",$DB);
+$user=preg_replace("/\'|\"|\\\\|;| /","",$user);
+$pass=preg_replace("/\'|\"|\\\\|;| /","",$pass);
+
 #############################################
 ##### START SYSTEM_SETTINGS LOOKUP #####
 $VUselected_language = '';
-$stmt = "SELECT use_non_latin,enable_languages,language_method,default_language,allow_chats FROM system_settings;";
+$stmt = "SELECT use_non_latin,enable_languages,language_method,default_language,allow_chats,allow_web_debug FROM system_settings;";
 $rslt=mysql_to_mysqli($stmt, $link);
         if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'00XXX',$user,$server_ip,$session_name,$one_mysql_log);}
-if ($DB) {echo "$stmt\n";}
+#if ($DB) {echo "$stmt\n";}
 $qm_conf_ct = mysqli_num_rows($rslt);
 if ($qm_conf_ct > 0)
 	{
@@ -78,10 +90,19 @@ if ($qm_conf_ct > 0)
 	$SSlanguage_method =	$row[2];
 	$SSdefault_language =	$row[3];
 	$SSallow_chats =		$row[4];
+	$SSallow_web_debug =	$row[5];
 	}
 $VUselected_language = $SSdefault_language;
+if ($SSallow_web_debug < 1) {$DB=0;}
 ##### END SETTINGS LOOKUP #####
 ###########################################
+
+# if options file exists, use the override values for the above variables
+#   see the options-example.php file for more information
+if (file_exists('options.php'))
+	{
+	require_once('options.php');
+	}
 
 header ("Content-type: text/html; charset=utf-8");
 header ("Cache-Control: no-cache, must-revalidate");  // HTTP/1.1
@@ -97,14 +118,14 @@ $dial_method = preg_replace('/[^-\_0-9a-zA-Z]/','',$dial_method);
 $clickmute = preg_replace("/\'|\"|\\\\|;/","",$clickmute);
 $stage = preg_replace('/[^-\_0-9a-zA-Z]/','',$stage);
 $email_invite_lead_id = preg_replace("/\'|\"|\\\\|;/","",$email_invite_lead_id);
+$child_window = preg_replace('/[^-\_0-9a-zA-Z]/','',$child_window);
+$chat_group_ids = preg_replace("/\"|\\\\|;/","",$chat_group_ids);
 
 if ($non_latin < 1)
 	{
 	$user = preg_replace('/[^-\_0-9a-zA-Z]/','',$user);
-	$pass = preg_replace('/[^-\_0-9a-zA-Z]/','',$pass);
+	$pass=preg_replace("/[^-\.\+\/\=_0-9a-zA-Z]/","",$pass);
 	$outside_user_name = preg_replace('/[^- \_\.0-9a-zA-Z]/','',$user);
-	$chat_creator = preg_replace('/[^- \_0-9a-zA-Z]/','',$chat_creator);
-	$phone_number = preg_replace("/[^0-9]/","",$phone_number);
 	$first_name = preg_replace('/[^- \_\.0-9a-zA-Z]/','',$first_name);
 	$last_name = preg_replace('/[^- \_\.0-9a-zA-Z]/','',$last_name);
 	$campaign = preg_replace('/[^-\_0-9a-zA-Z]/','',$campaign);
@@ -112,8 +133,8 @@ if ($non_latin < 1)
 	}
 else
 	{
-	$user = preg_replace("/\'|\"|\\\\|;/","",$user);
-	$pass=preg_replace("/\'|\"|\\\\|;| /","",$pass);
+	$user = preg_replace('/[^-_0-9\p{L}]/u','',$user);
+	$pass = preg_replace('/[^-\.\+\/\=_0-9\p{L}]/u','',$pass);
 	$outside_user_name = preg_replace("/\'|\"|\\\\|;/","",$user);
 	$first_name = preg_replace('/[^- \_\.0-9\p{L}]/u','',$first_name);
 	$last_name = preg_replace('/[^- \_\.0-9\p{L}]/u','',$last_name);
@@ -134,7 +155,7 @@ if ($SSallow_chats < 1)
 	}
 
 $auth=0;
-$auth_message = user_authorization($user,$pass,'',0,0,0,0,'vdc_chat_display');
+$auth_message = user_authorization($user,$pass,'',0,1,0,0,'vdc_chat_display');
 if ($auth_message == 'GOOD')
 	{$auth=1;}
 

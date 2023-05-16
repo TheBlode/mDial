@@ -1,7 +1,7 @@
 <?php
 # dispo_change_status.php
 # 
-# Copyright (C) 2020  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
+# Copyright (C) 2022  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
 #
 # This script is designed to be used in the "Dispo URL" field of a campaign
 # or in-group. It can update the status of a lead to a new status if the lead 
@@ -25,11 +25,13 @@
 # CHANGES
 # 171127-1736 - First Build
 # 201117-2217 - Changes for better compatibility with non-latin data input
+# 210615-1035 - Default security fixes, CVE-2021-28854
+# 210616-2047 - Added optional CORS support, see options.php for details
+# 220219-2314 - Added allow_web_debug system setting
 #
 
 $api_script = 'dispo_change_status';
-
-header ("Content-type: text/html; charset=utf-8");
+$php_script = 'dispo_change_status.php';
 
 require_once("dbconnect_mysqli.php");
 require_once("functions.php");
@@ -41,7 +43,6 @@ $BR = getenv ("HTTP_USER_AGENT");
 
 $PHP_AUTH_USER=$_SERVER['PHP_AUTH_USER'];
 $PHP_AUTH_PW=$_SERVER['PHP_AUTH_PW'];
-$PHP_SELF=$_SERVER['PHP_SELF'];
 if (isset($_GET["logged_status"]))			{$logged_status=$_GET["logged_status"];}
 	elseif (isset($_POST["logged_status"]))	{$logged_status=$_POST["logged_status"];}
 if (isset($_GET["logged_count"]))			{$logged_count=$_GET["logged_count"];}
@@ -67,6 +68,7 @@ if (isset($_GET["DB"]))						{$DB=$_GET["DB"];}
 if (isset($_GET["log_to_file"]))			{$log_to_file=$_GET["log_to_file"];}
 	elseif (isset($_POST["log_to_file"]))	{$log_to_file=$_POST["log_to_file"];}
 
+$DB=preg_replace("/[^0-9a-zA-Z]/","",$DB);
 
 #$DB = '1';	# DEBUG override
 $US = '_';
@@ -90,8 +92,31 @@ if ( ($archive_search != 'Y') and ($archive_search != 'N') )
 if ( ($in_out_search != 'IN') and ($in_out_search != 'OUT') and ($in_out_search != 'BOTH') )
 	{$in_out_search = 'BOTH';}
 
+# if options file exists, use the override values for the above variables
+#   see the options-example.php file for more information
+if (file_exists('options.php'))
+	{
+	require_once('options.php');
+	}
+
+header ("Content-type: text/html; charset=utf-8");
+
 #############################################
 ##### START SYSTEM_SETTINGS AND USER LANGUAGE LOOKUP #####
+$stmt = "SELECT use_non_latin,enable_languages,language_method,allow_web_debug FROM system_settings;";
+$rslt=mysql_to_mysqli($stmt, $link);
+#if ($DB) {echo "$stmt\n";}
+$qm_conf_ct = mysqli_num_rows($rslt);
+if ($qm_conf_ct > 0)
+	{
+	$row=mysqli_fetch_row($rslt);
+	$non_latin =				$row[0];
+	$SSenable_languages =		$row[1];
+	$SSlanguage_method =		$row[2];
+	$SSallow_web_debug =		$row[3];
+	}
+if ($SSallow_web_debug < 1) {$DB=0;}
+
 $VUselected_language = '';
 $stmt="SELECT selected_language from vicidial_users where user='$user';";
 if ($DB) {echo "|$stmt|\n";}
@@ -101,18 +126,6 @@ if ($sl_ct > 0)
 	{
 	$row=mysqli_fetch_row($rslt);
 	$VUselected_language =		$row[0];
-	}
-
-$stmt = "SELECT use_non_latin,enable_languages,language_method FROM system_settings;";
-$rslt=mysql_to_mysqli($stmt, $link);
-if ($DB) {echo "$stmt\n";}
-$qm_conf_ct = mysqli_num_rows($rslt);
-if ($qm_conf_ct > 0)
-	{
-	$row=mysqli_fetch_row($rslt);
-	$non_latin =				$row[0];
-	$SSenable_languages =		$row[1];
-	$SSlanguage_method =		$row[2];
 	}
 ##### END SETTINGS LOOKUP #####
 ###########################################
@@ -127,14 +140,18 @@ $log_to_file = preg_replace('/[^0-9]/','',$log_to_file);
 if ($non_latin < 1)
 	{
 	$user=preg_replace("/[^-_0-9a-zA-Z]/","",$user);
-	$pass=preg_replace("/[^-_0-9a-zA-Z]/","",$pass);
+	$pass=preg_replace("/[^-\.\+\/\=_0-9a-zA-Z]/","",$pass);
 	$logged_status = preg_replace('/[^-_0-9a-zA-Z]/','',$logged_status);
 	$new_status = preg_replace('/[^-_0-9a-zA-Z]/','',$new_status);
+	$dispo = preg_replace('/[^-_0-9a-zA-Z]/', '', $dispo);
 	}
 else
 	{
+	$user=preg_replace("/[^-_0-9\p{L}]/u","",$user);
+	$pass = preg_replace('/[^-\.\+\/\=_0-9\p{L}]/u','',$pass);
 	$logged_status = preg_replace('/[^-_0-9\p{L}]/u','',$logged_status);
 	$new_status = preg_replace('/[^-_0-9\p{L}]/u','',$new_status);
+	$dispo = preg_replace('/[^-_0-9\p{L}]/u', '', $dispo);
 	}
 
 if ($DB>0) {echo "$lead_id|$dispo|$logged_status|$logged_count|$new_status|$days_search|$archive_search|$in_out_search|$user|$pass|$DB|$log_to_file|\n";}
@@ -290,7 +307,8 @@ else
 
 if ($log_to_file > 0)
 	{
-	$fp = fopen ("./$api_script.txt", "a");
-	fwrite ($fp, "$NOW_TIME|$k|$lead_id|$dispo|$logged_status|$logged_count($search_count)|$new_status|$days_search($days_search_date)|$archive_search|$in_out_search|$user|XXXX|$DB|$log_to_file|$MESSAGE|\n");
+	$fp = fopen ("./$api_script.txt", "w");
+#	fwrite ($fp, "$NOW_TIME|$k|$lead_id|$dispo|$logged_status|$logged_count($search_count)|$new_status|$days_search($days_search_date)|$archive_search|$in_out_search|$user|XXXX|$DB|$log_to_file|$MESSAGE|\n");
+	fwrite ($fp, "$NOW_TIME|\n");
 	fclose($fp);
 	}

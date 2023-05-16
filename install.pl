@@ -2,7 +2,7 @@
 
 # install.pl version 2.14
 #
-# Copyright (C) 2019  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
+# Copyright (C) 2023  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
 #
 
 # CHANGES
@@ -44,6 +44,12 @@
 # 160101-0907 - Changed ip_relay code to look for installed package
 # 170915-1458 - Added Asterisk 13 compability pieces
 # 190530-1511 - Added 'S' keepalive option
+# 210813-0925 - Added Asteirsk 16 option
+# 210827-0926 - Added PJSIP default conf files to Asterisk 16 install
+# 220827-2239 - Added VERM web directory
+# 220829-1434 - Added 'C' keepalive option
+# 221228-2049 - Added KhompEnabled option
+# 230117-2220 - Added --khomp-enable CLI flag
 #
 
 ############################################
@@ -81,7 +87,7 @@ $VARDB_port =	'3306';
 # default keepalive processes: 
 $VARactive_keepalives =		'1234568';
 # default Asterisk version: 
-$VARasterisk_version =		'1.4';
+$VARasterisk_version =		'13.X';
 # default recording FTP archive variables:
 $VARFTP_host = '10.0.0.4';
 $VARFTP_user = 'cron';
@@ -103,6 +109,8 @@ $VARfastagi_log_max_spare_servers = '8';
 $VARfastagi_log_max_requests =	'1000';
 $VARfastagi_log_checkfordead =	'30';
 $VARfastagi_log_checkforwait =	'60';
+# default for 3rd-party add-ons
+$VARKhompEnabled =		'0';
 
 ############################################
 
@@ -206,8 +214,9 @@ if (length($ARGV[0])>1)
 		print "     7 - AST_VDauto_dial_FILL (only for multi-server, this must only be on one server)\n";
 		print "     8 - ip_relay (used for blind agent monitoring)\n";
 		print "     9 - Timeclock auto-logout\n";
+		print "     C - ConfBridge process, (see the ConfBridge documentation for more info)\n";
 		print "     E - Email processor, (If multi-server system, this must only be on one server)\n";
-		print "     S - SIP Logger (Patched Asterisk 13 required)\n";
+		print "     S - SIP Logger (Patched Asterisk 13 or higher required)\n";
 		print "  [--asterisk_version] = set the asterisk version you want to install for\n";
 		print "  [--copy_sample_conf_files] = copies the sample conf files to /etc/asterisk/\n";
 		print "  [--web-languages] = copy language translations (WARNING! may not work on trunk installs)\n";
@@ -231,6 +240,7 @@ if (length($ARGV[0])>1)
 		print "  [--fastagi_log_checkforwait=60] = define FastAGI log check-for-wait seconds\n";
 		print "  [--build_multiserver_conf] = generates conf file examples for extensions.conf and iax.conf\n";
 		print "  [--build_phones_conf] = generates conf file examples for extensions.conf, sip.conf and iax.conf\n";
+		print "  [--khomp-enable] = build khomp-activated scripts during install\n";
 		print "\n";
 
 		exit;
@@ -616,6 +626,13 @@ if (length($ARGV[0])>1)
 		else
 			{
 			$CLIcopy_web_lang='n';
+			}
+
+		if ($args =~ /--khomp-enable/i) # khomp enable flag
+			{
+			$CLIVARKhompEnabled=1;
+			$VARKhompEnabled=1;
+			print "  CLI Khomp enabled:    YES ($CLIVARKhompEnabled|$VARKhompEnabled)\n";
 			}
 
 		if ($args =~ /--fastagi_log_min_servers=/i) # CLI defined fastagi min servers
@@ -1088,6 +1105,9 @@ if (-e "$PATHconf")
 			{$VARfastagi_log_checkfordead = $line;   $VARfastagi_log_checkfordead =~ s/.*=//gi;}
 		if ( ($line =~ /^VARfastagi_log_checkforwait/) && ($CLIVARfastagi_log_checkforwait < 1) )
 			{$VARfastagi_log_checkforwait = $line;   $VARfastagi_log_checkforwait =~ s/.*=//gi;}
+		if ( ($line =~ /^KhompEnabled/) && ($CLIVARKhompEnabled < 1) )
+			{$VARKhompEnabled = $line;   $VARKhompEnabled =~ s/.*=//gi;}
+
 		$i++;
 		}
 	}
@@ -1207,6 +1227,8 @@ else
 					{$VARfastagi_log_checkfordead = $line;   $VARfastagi_log_checkfordead =~ s/.*=//gi;}
 				if ( ($line =~ /^VARfastagi_log_checkforwait/) && ($CLIVARfastagi_log_checkforwait < 1) )
 					{$VARfastagi_log_checkforwait = $line;   $VARfastagi_log_checkforwait =~ s/.*=//gi;}
+				if ( ($line =~ /^KhompEnabled/) && ($CLIVARKhompEnabled < 1) )
+					{$VARKhompEnabled = $line;   $VARKhompEnabled =~ s/.*=//gi;}
 				$i++;
 				}
 			}
@@ -1821,8 +1843,9 @@ else
 			print " 7 - AST_VDauto_dial_FILL (only for multi-server, this must only be on one server)\n";
 			print " 8 - ip_relay (used for blind agent monitoring)\n";
 			print " 9 - Timeclock auto logout\n";
+			print " C - ConfBridge process, (see the ConfBridge documentation for more info)\n";
 			print " E - Email processor, (If multi-server system, this must only be on one server)\n";
-			print " S - SIP Logger (Patched Asterisk 13 required)\n";
+			print " S - SIP Logger (Patched Asterisk 13 or higher required)\n";
 			print "Enter active keepalives or press enter for default: [$VARactive_keepalives] ";
 			$PROMPTactive_keepalives = <STDIN>;
 			chomp($PROMPTactive_keepalives);
@@ -1850,6 +1873,7 @@ else
 			print " 1.8\n";
 			print " 11.X\n";
 			print " 13.X\n";
+			print " 16.X\n";
 			print "Enter asterisk version or press enter for default: [$VARasterisk_version] ";
 			$PROMPTasterisk_version = <STDIN>;
 			chomp($PROMPTasterisk_version);
@@ -2312,6 +2336,25 @@ else
 			}
 		##### END fastagi_log_checkforwait prompting and check  #####
 
+		##### BEGIN KhompEnabled prompting and check #####
+		$continue='NO';
+		while ($continue =~/NO/)
+			{
+			print("\nKhomp Enabled: [$VARKhompEnabled] ");
+			$PROMPTKhompEnabled = <STDIN>;
+			chomp($PROMPTKhompEnabled);
+			if (length($PROMPTKhompEnabled)>0)
+				{
+				$PROMPTKhompEnabled =~ s/ |\n|\r|\t|\/$//gi;
+				$VARKhompEnabled=$PROMPTKhompEnabled;
+				$continue='YES';
+				}
+			else
+				{
+				$continue='YES';
+				}
+			}
+		##### END KhompEnabled prompting and check  #####
 
 		print "\n";
 		print "  defined conf file:        $PATHconf\n";
@@ -2352,6 +2395,7 @@ else
 		print "  defined fastagi_log_max_requests:      $VARfastagi_log_max_requests\n";
 		print "  defined fastagi_log_checkfordead:      $VARfastagi_log_checkfordead\n";
 		print "  defined fastagi_log_checkforwait:      $VARfastagi_log_checkforwait\n";
+		print "  defined KhompEnabled:      $VARKhompEnabled\n";
 		print "\n";
 
 		print("Are these settings correct?(y/n): [y] ");
@@ -2427,8 +2471,9 @@ print conf "#  6 - FastAGI_log\n";
 print conf "#  7 - AST_VDauto_dial_FILL (only for multi-server, this must only be on one server)\n";
 print conf "#  8 - ip_relay (used for blind agent monitoring)\n";
 print conf "#  9 - Timeclock auto logout, (If multi-server system, this must only be on one server)\n";
+print conf "#  C - ConfBridge process, (see the ConfBridge documentation for more info)\n";
 print conf "#  E - Email processor, (If multi-server system, this must only be on one server)\n";
-print conf "#  S - SIP Logger (Patched Asterisk 13 required)\n";
+print conf "#  S - SIP Logger (Patched Asterisk 13 or higher required)\n";
 print conf "VARactive_keepalives => $VARactive_keepalives\n";
 print conf "\n";
 print conf "# Asterisk version VICIDIAL is installed for\n";
@@ -2460,6 +2505,9 @@ print conf "VARfastagi_log_checkforwait => $VARfastagi_log_checkforwait\n";
 print conf "\n";
 print conf "# Expected DB Schema version for this install\n";
 print conf "ExpectedDBSchema => $ExpectedDBSchema\n";
+print conf "\n";
+print conf "# 3rd-party add-ons for this install\n";
+print conf "KhompEnabled => $VARKhompEnabled\n";
 close(conf);
 
 
@@ -2535,6 +2583,15 @@ if ($WEBONLY < 1)
 	print "setting agi-bin scripts to executable...\n";
 	`chmod 0755 $PATHagi/*`;
 
+	if ( ($VARKhompEnabled eq '1') || ($VARKhompEnabled eq 'YES') ) 
+		{
+		print "Enabling Khomp in FastAGI_log.pl and agi-VDAD_ALL_outbound.agi scripts... \n";
+		`cp -f $PATHhome/FastAGI_log.pl $PATHhome/FastAGI_log-orig.pl `;
+		`cp -f $PATHagi/agi-VDAD_ALL_outbound.agi $PATHagi/agi-VDAD_ALL_outbound-orig.agi `;
+		`sed -i 's/#UC#//g' $PATHhome/FastAGI_log.pl `;
+		`sed -i 's/#UC#//g' $PATHagi/agi-VDAD_ALL_outbound.agi `;
+		}
+
 	print "Copying sounds to $PATHsounds...\n";
 	`cp -fR ./sounds/* $PATHsounds/`;
 
@@ -2567,6 +2624,7 @@ if ($NOWEB < 1)
 	if (!-e "$PATHweb/vicidial/agent_reports/")		{`mkdir -p $PATHweb/vicidial/agent_reports/`;}
 	if (!-e "$PATHweb/vicidial/server_reports/")	{`mkdir -p $PATHweb/vicidial/server_reports/`;}
 	if (!-e "$PATHweb/chat_customer/")				{`mkdir -p $PATHweb/chat_customer/`;}
+	if (!-e "$PATHweb/VERM/")						{`mkdir -p $PATHweb/VERM/`;}
 
 	print "Copying web files...\n";
 	# save custom.css if its not empty
@@ -2579,12 +2637,14 @@ if ($NOWEB < 1)
 	`cp -f ./www/vicidial/robots.txt $PATHweb/vicidial/server_reports/`;
 	if (-e "$PATHweb/agc/css/custom.css.save_user_changes") {`mv $PATHweb/agc/css/custom.css.save_user_changes $PATHweb/agc/css/custom.css`;}
 	`cp -f ./www/vicidial/robots.txt $PATHweb/chat_customer/`;
+	`cp -f ./www/vicidial/robots.txt $PATHweb/VERM/`;
 
 	print "setting web scripts to executable...\n";
 	`chmod 0777 $PATHweb/`;
 	`chmod -R 0755 $PATHweb/agc/`;
 	`chmod -R 0755 $PATHweb/vicidial/`;
 	`chmod -R 0755 $PATHweb/chat_customer/`;
+	`chmod -R 0755 $PATHweb/VERM/`;
 	`chmod 0777 $PATHweb/agc/`;
 	`chmod 0777 $PATHweb/vicidial/`;
 	`chmod 0777 $PATHweb/vicidial/ploticus/`;
@@ -2600,6 +2660,9 @@ if ($NOWEB < 1)
 	`rm -f $PATHweb/vicidial/listloader_super.pl`;
 	`rm -f $PATHweb/vicidial/listloader.pl`;
 	`chmod 0777 $PATHweb/chat_customer/`;
+	`cp -f /dev/null $PATHweb/VERM/project_auth_entries.txt`;
+	`chmod 0777 $PATHweb/VERM/project_auth_entries.txt`;
+	`chmod 0777 $PATHweb/VERM/`;
 	}
 
 if ( ($PROMPTcopy_web_lang =~ /y/i) || ($CLIcopy_web_lang =~ /y/i) )
@@ -2629,6 +2692,7 @@ if ($PATHconf !~ /\/etc\/astguiclient.conf/)
 	`sed -i 's/$PATHconfDEFAULT/$PATHconfEREG/g' $PATHweb/vicidial/listloader_rowdisplay.pl `;
 	`sed -i 's/$PATHconfDEFAULT/$PATHconfEREG/g' $PATHweb/vicidial/spreadsheet_sales_viewer.pl `;
 	`sed -i 's/$PATHconfDEFAULT/$PATHconfEREG/g' $PATHweb/chat_customer/dbconnect_mysqli.php `;
+	`sed -i 's/$PATHconfDEFAULT/$PATHconfEREG/g' $PATHweb/VERM/dbconnect_mysqli.php `;
 	}
 
 if ( ($PROMPTcopy_conf_files =~ /y/i) || ($CLIcopy_conf_files =~ /y/i) )
@@ -2659,17 +2723,30 @@ if ( ($PROMPTcopy_conf_files =~ /y/i) || ($CLIcopy_conf_files =~ /y/i) )
 				{
 				`cp -f ./docs/conf_examples/extensions.conf.sample-13 /etc/asterisk/extensions.conf`;
 				`cp -f ./docs/conf_examples/iax.conf.sample-1.4 /etc/asterisk/iax.conf`;
-				`cp -f ./docs/conf_examples/sip.conf.sample-1.4 /etc/asterisk/sip.conf`;
+				`cp -f ./docs/conf_examples/sip.conf.sample-13 /etc/asterisk/sip.conf`;
 				`cp -f ./docs/conf_examples/manager.conf.sample-13 /etc/asterisk/manager.conf`;
 				`cp -f ./docs/conf_examples/voicemail.conf.sample-1.8 /etc/asterisk/voicemail.conf`;
 				}
 			else
 				{
-				`cp -f ./docs/conf_examples/extensions.conf.sample-1.4 /etc/asterisk/extensions.conf`;
-				`cp -f ./docs/conf_examples/iax.conf.sample-1.4 /etc/asterisk/iax.conf`;
-				`cp -f ./docs/conf_examples/sip.conf.sample-1.4 /etc/asterisk/sip.conf`;
-				`cp -f ./docs/conf_examples/manager.conf.sample /etc/asterisk/manager.conf`;
-				`cp -f ./docs/conf_examples/voicemail.conf.sample /etc/asterisk/voicemail.conf`;
+				if ($VARasterisk_version =~ /^16/)
+					{
+					`cp -f ./docs/conf_examples/extensions.conf.sample-13 /etc/asterisk/extensions.conf`;
+					`cp -f ./docs/conf_examples/iax.conf.sample-1.4 /etc/asterisk/iax.conf`;
+					`cp -f ./docs/conf_examples/sip.conf.sample-13 /etc/asterisk/sip.conf`;
+					`cp -f ./docs/conf_examples/manager.conf.sample-13 /etc/asterisk/manager.conf`;
+					`cp -f ./docs/conf_examples/voicemail.conf.sample-1.8 /etc/asterisk/voicemail.conf`;
+					`cp -f ./docs/conf_examples/pjsip.conf.sample-16 /etc/asterisk/pjsip.conf`;
+					`cp -f ./docs/conf_examples/pjsip_wizard.conf.sample-16 /etc/asterisk/pjsip_wizard.conf`;
+					}
+				else
+					{
+					`cp -f ./docs/conf_examples/extensions.conf.sample-1.4 /etc/asterisk/extensions.conf`;
+					`cp -f ./docs/conf_examples/iax.conf.sample-1.4 /etc/asterisk/iax.conf`;
+					`cp -f ./docs/conf_examples/sip.conf.sample-1.4 /etc/asterisk/sip.conf`;
+					`cp -f ./docs/conf_examples/manager.conf.sample /etc/asterisk/manager.conf`;
+					`cp -f ./docs/conf_examples/voicemail.conf.sample /etc/asterisk/voicemail.conf`;
+					}
 				}
 			}
 		}

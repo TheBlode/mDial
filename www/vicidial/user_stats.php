@@ -1,7 +1,7 @@
 <?php
 # user_stats.php
 # 
-# Copyright (C) 2021  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
+# Copyright (C) 2022  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
 #
 # CHANGES
 #
@@ -64,6 +64,10 @@
 # 200702-1710 - Added ANI to INBOUND/CLOSER records for NVAuser, added secondary check to find lead ID for DIDs 
 # 210317-0058 - Changed lead-modify page links to javascript because of Chrome
 # 210319-1338 - Added HELP pop-ups for each section, added agent browser visibility log stats to agent activity section, reformatted most sections
+# 220122-1701 - Added more variable filtering
+# 220221-0916 - Added allow_web_debug system setting
+# 220310-1427 - Fix for LOGOUT/LOGIN events sharing the same timedate
+# 220916-1744 - Added reporting section for webserver/URL logins
 #
 
 $startMS = microtime();
@@ -84,6 +88,7 @@ if (file_exists('options.php'))
 $PHP_AUTH_USER=$_SERVER['PHP_AUTH_USER'];
 $PHP_AUTH_PW=$_SERVER['PHP_AUTH_PW'];
 $PHP_SELF=$_SERVER['PHP_SELF'];
+$PHP_SELF = preg_replace('/\.php.*/i','.php',$PHP_SELF);
 if (isset($_GET["did_id"]))					{$did_id=$_GET["did_id"];}
 	elseif (isset($_POST["did_id"]))		{$did_id=$_POST["did_id"];}
 if (isset($_GET["did"]))					{$did=$_GET["did"];}
@@ -113,12 +118,19 @@ if (isset($_GET["search_archived_data"]))			{$search_archived_data=$_GET["search
 if (isset($_GET["NVAuser"]))			{$NVAuser=$_GET["NVAuser"];}
 	elseif (isset($_POST["NVAuser"]))	{$NVAuser=$_POST["NVAuser"];}
 
+$DB=preg_replace("/[^0-9a-zA-Z]/","",$DB);
+
+$STARTtime = date("U");
+$TODAY = date("Y-m-d");
+
+if ( (!isset($begin_date)) or (strlen($begin_date) < 10) ) {$begin_date = $TODAY;}
+if ( (!isset($end_date)) or (strlen($end_date) < 10) ) {$end_date = $TODAY;}
 
 #############################################
 ##### START SYSTEM_SETTINGS LOOKUP #####
-$stmt = "SELECT use_non_latin,outbound_autodial_active,slave_db_server,reports_use_slave_db,user_territories_active,webroot_writable,allow_emails,level_8_disable_add,enable_languages,language_method,log_recording_access,admin_screen_colors,mute_recordings FROM system_settings;";
+$stmt = "SELECT use_non_latin,outbound_autodial_active,slave_db_server,reports_use_slave_db,user_territories_active,webroot_writable,allow_emails,level_8_disable_add,enable_languages,language_method,log_recording_access,admin_screen_colors,mute_recordings,allow_web_debug FROM system_settings;";
 $rslt=mysql_to_mysqli($stmt, $link);
-if ($DB) {$MAIN.="$stmt\n";}
+#if ($DB) {$MAIN.="$stmt\n";}
 $qm_conf_ct = mysqli_num_rows($rslt);
 if ($qm_conf_ct > 0)
 	{
@@ -136,7 +148,9 @@ if ($qm_conf_ct > 0)
 	$log_recording_access =			$row[10];
 	$SSadmin_screen_colors =		$row[11];
 	$SSmute_recordings =			$row[12];
+	$SSallow_web_debug =			$row[13];
 	}
+if ($SSallow_web_debug < 1) {$DB=0;}
 ##### END SETTINGS LOOKUP #####
 ###########################################
 
@@ -186,29 +200,33 @@ else
 	}
 #############
 
-$STARTtime = date("U");
-$TODAY = date("Y-m-d");
-
-if ( (!isset($begin_date)) or (strlen($begin_date) < 10) ) {$begin_date = $TODAY;}
-if ( (!isset($end_date)) or (strlen($end_date) < 10) ) {$end_date = $TODAY;}
+$did_id = preg_replace('/[^-\+\_0-9a-zA-Z]/',"",$did_id);
+$did = preg_replace('/[^-\+\_0-9a-zA-Z]/',"",$did);
+$begin_date = preg_replace('/[^- \:\_0-9a-zA-Z]/',"",$begin_date);
+$end_date = preg_replace('/[^- \:\_0-9a-zA-Z]/',"",$end_date);
+$file_download = preg_replace('/[^-_0-9a-zA-Z]/', '', $file_download);
+$pause_code_rpt = preg_replace('/[^-_0-9a-zA-Z]/', '', $pause_code_rpt);
+$park_rpt = preg_replace('/[^-_0-9a-zA-Z]/', '', $park_rpt);
+$search_archived_data = preg_replace('/[^-_0-9a-zA-Z]/', '', $search_archived_data);
+$submit = preg_replace('/[^-_0-9a-zA-Z]/', '', $submit);
+$SUBMIT = preg_replace('/[^-_0-9a-zA-Z]/', '', $SUBMIT);
 
 if ($non_latin < 1)
 	{
 	$PHP_AUTH_USER = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_USER);
 	$PHP_AUTH_PW = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_PW);
+	$NVAuser = preg_replace('/[^-_0-9a-zA-Z]/','',$NVAuser);
+	$user = preg_replace('/[^-_0-9a-zA-Z]/', '', $user);
+	$call_status = preg_replace('/[^-_0-9a-zA-Z]/', '', $call_status);
 	}
 else
 	{
-	$PHP_AUTH_PW = preg_replace("/'|\"|\\\\|;/","",$PHP_AUTH_PW);
-	$PHP_AUTH_USER = preg_replace("/'|\"|\\\\|;/","",$PHP_AUTH_USER);
+	$PHP_AUTH_USER = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_USER);
+	$PHP_AUTH_PW = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_PW);
+	$NVAuser = preg_replace('/[^-_0-9\p{L}]/u','',$NVAuser);
+	$user = preg_replace('/[^-_0-9\p{L}]/u', '', $user);
+	$call_status = preg_replace('/[^-_0-9\p{L}]/u', '', $call_status);
 	}
-$did_id = preg_replace("/'|\"|\\\\|;/","",$did_id);
-$did = preg_replace("/'|\"|\\\\|;/","",$did);
-$begin_date = preg_replace("/'|\"|\\\\|;/","",$begin_date);
-$end_date = preg_replace("/'|\"|\\\\|;/","",$end_date);
-$user = preg_replace("/'|\"|\\\\|;/","",$user);
-$call_status = preg_replace("/'|\"|\\\\|;/","",$call_status);
-$NVAuser = preg_replace("/'|\"|\\\\|;/","",$NVAuser);
 
 if ($call_status != "") 
 	{
@@ -772,11 +790,15 @@ else
 		$CSV_text2.="\""._QXZ("Agent Login and Logout Time")."\"\n";
 		$CSV_text2.="\"\",\""._QXZ("EVENT")."\",\""._QXZ("DATE")."\",\""._QXZ("CAMPAIGN")."\",\""._QXZ("GROUP")."\",\""._QXZ("HOURS:MM:SS")."\",\""._QXZ("SESSION")."\",\""._QXZ("SERVER")."\",\""._QXZ("PHONE")."\",\""._QXZ("COMPUTER")."\",\""._QXZ("PHONE_LOGIN")."\",\""._QXZ("PHONE_IP")."\"\n";
 
-		$stmt="SELECT event,event_epoch,event_date,campaign_id,user_group,session_id,server_ip,extension,computer_ip,phone_login,phone_ip from ".$vicidial_user_log_table." where user='" . mysqli_real_escape_string($link, $user) . "' and event_date >= '" . mysqli_real_escape_string($link, $begin_date) . " 0:00:01'  and event_date <= '" . mysqli_real_escape_string($link, $end_date) . " 23:59:59' order by event_date;";
+		$CSV_text15.="\""._QXZ("Agent Webserver and URL Login Time")."\"\n";
+		$CSV_text15.="\""._QXZ("DATE")."\",\""._QXZ("CAMPAIGN")."\",\""._QXZ("GROUP")."\",\""._QXZ("DIALER SERVER")."\",\""._QXZ("WEB SERVER")."\",\""._QXZ("LOGIN URL")."\"\n";
+
+		$stmt="SELECT event,event_epoch,event_date,campaign_id,user_group,session_id,server_ip,extension,computer_ip,phone_login,phone_ip,if(event='LOGOUT' or event='TIMEOUTLOGOUT', 1, 0) as LOGpriority, webserver, login_url from ".$vicidial_user_log_table." where user='" . mysqli_real_escape_string($link, $user) . "' and event_date >= '" . mysqli_real_escape_string($link, $begin_date) . " 0:00:01'  and event_date <= '" . mysqli_real_escape_string($link, $end_date) . " 23:59:59' order by event_date, LOGpriority asc;";
 		$rslt=mysql_to_mysqli($stmt, $link);
 		$events_to_print = mysqli_num_rows($rslt);
 
 		$total_calls=0;
+		$total_logins=0;
 		$o=0;
 		$event_start_seconds='';
 		$event_stop_seconds='';
@@ -803,8 +825,46 @@ else
 				$MAIN.="<td align=right><font size=2> $row[8] </td>\n";
 				$MAIN.="<td align=right><font size=2> $row[9] </td>\n";
 				$MAIN.="<td align=right><font size=2> $row[10] </td>\n";
+				if ($LOGuser_level==9)
+					{
+					if ($total_logins%2==0)
+						{$url_bgcolor='bgcolor="#'. $SSstd_row2_background .'"';} 
+					else
+						{$url_bgcolor='bgcolor="#'. $SSstd_row1_background .'"';}
+
+					
+					$webserver_txt="";
+					$url_txt="";
+					if ($row[12]>0)
+						{
+						$webserver_stmt="select webserver, hostname from vicidial_webservers where webserver_id='$row[12]'";
+						$webserver_rslt=mysql_to_mysqli($webserver_stmt, $link);
+						$webserver_row=mysqli_fetch_row($webserver_rslt);
+						$webserver_txt="$webserver_row[0] - $webserver_row[1]";
+						$webserver_txt=preg_replace('/^\s\-\s|\s\-\s$/', '', $webserver_txt);
+						}
+					if ($row[13]>0)
+						{
+						$login_url_stmt="select url from vicidial_urls where url_id='$row[13]'";
+						$login_url_rslt=mysql_to_mysqli($login_url_stmt, $link);
+						$login_url_row=mysqli_fetch_row($login_url_rslt);
+						$url_txt=trim("$login_url_row[0]");
+						}
+
+					$URL_MAIN.="<tr $url_bgcolor>";
+					$URL_MAIN.="<td align=right><font size=2> $row[2] </td>\n";
+					$URL_MAIN.="<td align=right><font size=2> $row[3] </td>\n";
+					$URL_MAIN.="<td align=right><font size=2> $row[4] </td>\n";
+					$URL_MAIN.="<td align=right><font size=2> $row[6] </td>\n";
+					$URL_MAIN.="<td align=right><font size=2> ".(!$webserver_txt ? "&nbsp;" : "$webserver_txt")." </td>\n";
+					$URL_MAIN.="<td align=right><font size=2> ".(!$url_txt ? "&nbsp;" : "$url_txt")." </td>\n";
+					$URL_MAIN.="</tr>\n";
+					$CSV_text15.="\"$row[2]\",\"$row[3]\",\"$row[4]\",\"$row[6]\",\"$webserver_txt\",\"$url_txt\"\n";
+					}
 				$MAIN.="</tr>\n";
 				$CSV_text2.="\"\",\"$row[0]\",$row[2]\",\"$row[3]\",\"$row[4]\",\"\",\"$row[5]\",\"$row[6]\",\"$row[7]\",\"$row[8]\",\"$row[9]\",\"$row[10]\"\n";
+
+				$total_logins++;
 				}
 			if (preg_match('/LOGOUT/', $row[0]))
 				{
@@ -856,6 +916,23 @@ else
 		$MAIN.="</TABLE></center>\n";
 
 
+		
+		##### webserver and url login records for user #####
+
+		if ($LOGuser_level==9)
+			{
+			$MAIN.="<br><br>\n";
+
+			$MAIN.="<center>\n";
+
+			$MAIN.="<FONT FACE=\"ARIAL,HELVETICA\" SIZE=3><B>"._QXZ("Agent Webserver and URL Logins").": $NWB#user_stats-agent_webserver_url_logins$NWE </FONT><FONT FACE=\"ARIAL,HELVETICA\" SIZE=2>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href='$download_link&file_download=15'>["._QXZ("DOWNLOAD")."]</a></B></FONT>\n";
+			$MAIN.="<TABLE width=800 cellspacing=0 cellpadding=1>\n";
+			$MAIN.="<tr><td align=right><font size=2> "._QXZ("DATE")."</td><td align=right><font size=2> "._QXZ("CAMPAIGN")."</td><td align=right><font size=2> "._QXZ("GROUP")."</td><td align=right><font size=2>"._QXZ("DIALER SERVER")."</td><td align=right><font size=2>"._QXZ("WEB SERVER")."</td><td align=right><font size=2>"._QXZ("LOGIN URL")."</td></tr>\n";
+
+			$MAIN.=$URL_MAIN;
+
+			$MAIN.="</TABLE></center>\n";
+			}
 
 
 
@@ -1558,7 +1635,7 @@ else
 				}
 
 			$ANI='';
-			$ANI_stmt="SELECT caller_code from call_log where uniqueid='$vicidial_id' order by event_time;";
+			$ANI_stmt="SELECT caller_code from call_log where uniqueid='$vicidial_id' order by start_time;";
 			$ANI_rslt=mysql_to_mysqli($ANI_stmt, $link);
 			$ANI_logs_to_print = mysqli_num_rows($ANI_rslt);
 			if ($ANI_logs_to_print > 0) 

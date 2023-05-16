@@ -5,7 +5,7 @@
 # This script uses the Asterisk Manager interface to update the live_channels
 # tables and verify the parked_channels table in the asterisk MySQL database
 #
-# Copyright (C) 2021  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
+# Copyright (C) 2022  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
 #
 # CHANGES
 # 170915-2110 - Initial version for Asterisk 13, based upon AST_update.pl
@@ -17,6 +17,8 @@
 # 190121-1505 - Added RA_USER_PHONE On-Hook CID to solve last RINGAGENT issues
 # 201119-2119 - Fix for time logging inserts/updates to database
 # 210315-1045 - Populate the CIDname in live_sip_channels/live_channels tables, Issue #1255
+# 210827-0930 - Added PJSIP compatibility
+# 220310-1136 - Fix for issue dealing with bad carrier 'P-Asserted-Identity' input
 #
 
 # constants
@@ -770,16 +772,17 @@ sub process_channels
 
 		$extension = $channel_ref->{'ApplicationData'};
 		$extension =~ s/^SIP\///gi; # remove "SIP/" from the beginning
+		$extension =~ s/^PJSIP\///gi; # remove "PJSIP/" from the beginning
 		$extension =~ s/-\S+$//gi; # remove everything after a -
 		$extension =~ s/\|.*//gi; # remove everything after the |
 		$extension =~ s/,.*//gi; # remove everything after the ,
 		$CIDnameSQL = $channel_ref->{'CallerIDName'};
 		$CIDnameSQL =~ s/'|"|;//gi; # remove quotes and semi-colon
 		if (length($CIDnameSQL) > 30) 
-			{$CIDnameSQL =~ substr($CIDnameSQL,0,30);}
+			{$CIDnameSQL = substr($CIDnameSQL,0,30);}
 
 		# make sure the channel is a channel type we care about
-		if ( $channel_ref->{'Channel'} =~ /^IAX2|^SIP|^Local|^DAHDI/)
+		if ( $channel_ref->{'Channel'} =~ /^IAX2|^SIP|^Local|^DAHDI|^PJSIP/)
 			{
 			# assume all channels are trunks then check if they are not
 			$line_type = 'TRUNK';			
@@ -810,16 +813,17 @@ sub process_channels
 					$counts->{'clients'}++;
 					}
 				}
-			elsif ($channel_ref->{'Channel'} =~ /^SIP/) 
+			elsif (($channel_ref->{'Channel'} =~ /^SIP/) || ($channel_ref->{'Channel'} =~ /^PJSIP/)) 
 				{
 				# clean up the channel to get the extension
 				$channel_match =~ s/-\S+$//gi;
 				$channel_match =~ s/^SIP\///gi;
+				$channel_match =~ s/^PJSIP\///gi;
 				$channel_match =~ s/\*/\\\*/gi;	
 
 				# if the channels extension is in phones
 				# and it is and SIP phone then it is a client
-				if ( ( exists ( $phones_ref->{ $channel_match } ) ) && ( $phones_ref->{ $channel_match }->{'protocol'} eq 'SIP' ) )
+				if ( ( exists ( $phones_ref->{ $channel_match } ) ) && ( ( $phones_ref->{ $channel_match }->{'protocol'} eq 'SIP' ) || ( $phones_ref->{ $channel_match }->{'protocol'} eq 'PJSIP' )) )
 					{
 					$line_type = 'CLIENT';
 					$counts->{'sip'}++;
@@ -1289,7 +1293,7 @@ sub get_phones_settings
 			$zap_phones++;
 			$zap_phone_list .= "$key|";
 			}
-		elsif ( $phones_ref->{$key}->{'protocol'} eq 'SIP' )
+		elsif (( $phones_ref->{$key}->{'protocol'} eq 'SIP' ) || ( $phones_ref->{$key}->{'protocol'} eq 'PJSIP' ))
 			{
 			$sip_phones++;
 			$sip_phone_list .= "$key|";

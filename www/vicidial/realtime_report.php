@@ -1,7 +1,7 @@
 <?php 
 # realtime_report.php
 # 
-# Copyright (C) 2021  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
+# Copyright (C) 2023  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
 #
 # live real-time stats for the VICIDIAL Auto-Dialer all servers
 #
@@ -53,12 +53,19 @@
 # 200815-0928 - Added agent-paused 10 & 15 minute indicators
 # 201107-2254 - Added optional display of parked calls stats, inbound SLA and LIMITED report type
 # 210314-2039 - Added DID Description for inbound calls
+# 211216-0846 - Added new User Group options
+# 220217-2046 - Added input variable filters
+# 220221-1514 - Added allow_web_debug system setting
+# 221105-0826 - Added webphone_settings to webphone launch data, issue #1385
+# 230308-0215 - Added option to show customer phone code
+# 230421-0106 - Added AGENTlatency display
+# 230421-1625 - Added RS_UGlatencyRESTRICT options.php setting
 #
 
 $startMS = microtime();
 
-$version = '2.14-40';
-$build = '210314-2039';
+$version = '2.14-46';
+$build = '230421-0106';
 
 header ("Content-type: text/html; charset=utf-8");
 
@@ -68,6 +75,7 @@ require("functions.php");
 $PHP_AUTH_USER=$_SERVER['PHP_AUTH_USER'];
 $PHP_AUTH_PW=$_SERVER['PHP_AUTH_PW'];
 $PHP_SELF=$_SERVER['PHP_SELF'];
+$PHP_SELF = preg_replace('/\.php.*/i','.php',$PHP_SELF);
 if (isset($_GET["server_ip"]))			{$server_ip=$_GET["server_ip"];}
 	elseif (isset($_POST["server_ip"]))	{$server_ip=$_POST["server_ip"];}
 if (isset($_GET["RR"]))					{$RR=$_GET["RR"];}
@@ -126,10 +134,14 @@ if (isset($_GET["monitor_phone"]))				{$monitor_phone=$_GET["monitor_phone"];}
 	elseif (isset($_POST["monitor_phone"]))		{$monitor_phone=$_POST["monitor_phone"];}
 if (isset($_GET["CARRIERstats"]))			{$CARRIERstats=$_GET["CARRIERstats"];}
 	elseif (isset($_POST["CARRIERstats"]))	{$CARRIERstats=$_POST["CARRIERstats"];}
+if (isset($_GET["ShowCustPhoneCode"]))			{$ShowCustPhoneCode=$_GET["ShowCustPhoneCode"];}
+	elseif (isset($_POST["ShowCustPhoneCode"]))	{$ShowCustPhoneCode=$_POST["ShowCustPhoneCode"];}
 if (isset($_GET["PRESETstats"]))			{$PRESETstats=$_GET["PRESETstats"];}
 	elseif (isset($_POST["PRESETstats"]))	{$PRESETstats=$_POST["PRESETstats"];}
 if (isset($_GET["AGENTtimeSTATS"]))				{$AGENTtimeSTATS=$_GET["AGENTtimeSTATS"];}
 	elseif (isset($_POST["AGENTtimeSTATS"]))	{$AGENTtimeSTATS=$_POST["AGENTtimeSTATS"];}
+if (isset($_GET["AGENTlatency"]))				{$AGENTlatency=$_GET["AGENTlatency"];}
+	elseif (isset($_POST["AGENTlatency"]))	{$AGENTlatency=$_POST["AGENTlatency"];}
 if (isset($_GET["INGROUPcolorOVERRIDE"]))				{$INGROUPcolorOVERRIDE=$_GET["INGROUPcolorOVERRIDE"];}
 	elseif (isset($_POST["INGROUPcolorOVERRIDE"]))	{$INGROUPcolorOVERRIDE=$_POST["INGROUPcolorOVERRIDE"];}
 if (isset($_GET["droppedOFtotal"]))				{$droppedOFtotal=$_GET["droppedOFtotal"];}
@@ -141,15 +153,16 @@ if (isset($_GET["parkSTATS"]))			{$parkSTATS=$_GET["parkSTATS"];}
 if (isset($_GET["SLAinSTATS"]))				{$SLAinSTATS=$_GET["SLAinSTATS"];}
 	elseif (isset($_POST["SLAinSTATS"]))	{$SLAinSTATS=$_POST["SLAinSTATS"];}
 
+$DB=preg_replace("/[^0-9a-zA-Z]/","",$DB);
 
 $report_name = 'Real-Time Main Report';
 $db_source = 'M';
 
 #############################################
 ##### START SYSTEM_SETTINGS LOOKUP #####
-$stmt = "SELECT use_non_latin,outbound_autodial_active,slave_db_server,reports_use_slave_db,enable_languages,language_method,agent_whisper_enabled,report_default_format,enable_pause_code_limits FROM system_settings;";
+$stmt = "SELECT use_non_latin,outbound_autodial_active,slave_db_server,reports_use_slave_db,enable_languages,language_method,agent_whisper_enabled,report_default_format,enable_pause_code_limits,allow_web_debug FROM system_settings;";
 $rslt=mysql_to_mysqli($stmt, $link);
-if ($DB) {echo "$stmt\n";}
+#if ($DB) {echo "$stmt\n";}
 $qm_conf_ct = mysqli_num_rows($rslt);
 if ($qm_conf_ct > 0)
 	{
@@ -163,7 +176,9 @@ if ($qm_conf_ct > 0)
 	$agent_whisper_enabled =		$row[6];
 	$SSreport_default_format =		$row[7];
 	$SSenable_pause_code_limits =	$row[8];
+	$SSallow_web_debug =			$row[9];
 	}
+if ($SSallow_web_debug < 1) {$DB=0;}
 ##### END SETTINGS LOOKUP #####
 ###########################################
 
@@ -268,6 +283,11 @@ if (!isset($with_inbound))
 		}
 	else {$with_inbound = $RS_with_inbound;}
 	}
+if (!isset($ShowCustPhoneCode)) 
+	{
+	if (!isset($RS_ShowCustPhoneCode)) {$ShowCustPhoneCode='0';}
+	else {$ShowCustPhoneCode = $RS_ShowCustPhoneCode;}
+	}
 if (!isset($CARRIERstats)) 
 	{
 	if (!isset($RS_CARRIERstats)) {$CARRIERstats='0';}
@@ -282,6 +302,11 @@ if (!isset($AGENTtimeSTATS))
 	{
 	if (!isset($RS_AGENTtimeSTATS)) {$AGENTtimeSTATS='0';}
 	else {$AGENTtimeSTATS = $RS_AGENTtimeSTATS;}
+	}
+if (!isset($AGENTlatency)) 
+	{
+	if (!isset($RS_AGENTlatency)) {$AGENTlatency='0';}
+	else {$AGENTlatency = $RS_AGENTlatency;}
 	}
 if (!isset($parkSTATS)) 
 	{
@@ -335,8 +360,8 @@ if ($non_latin < 1)
 	}
 else
 	{
-	$PHP_AUTH_PW = preg_replace("/'|\"|\\\\|;/","",$PHP_AUTH_PW);
-	$PHP_AUTH_USER = preg_replace("/'|\"|\\\\|;/","",$PHP_AUTH_USER);
+	$PHP_AUTH_USER = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_USER);
+	$PHP_AUTH_PW = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_PW);
 	}
 $RR = preg_replace('/[^0-9]/', '', $RR);
 $inbound = preg_replace('/[^-_0-9a-zA-Z]/', '', $inbound);
@@ -363,14 +388,27 @@ $ALLINGROUPstats = preg_replace('/[^-_0-9a-zA-Z]/', '', $ALLINGROUPstats);
 $with_inbound = preg_replace('/[^-_0-9a-zA-Z]/', '', $with_inbound);
 $monitor_active = preg_replace('/[^-_0-9a-zA-Z]/', '', $monitor_active);
 $monitor_phone = preg_replace('/[^-_0-9a-zA-Z]/', '', $monitor_phone);
+$ShowCustPhoneCode = preg_replace('/[^-_0-9a-zA-Z]/', '', $ShowCustPhoneCode);
 $CARRIERstats = preg_replace('/[^-_0-9a-zA-Z]/', '', $CARRIERstats);
 $PRESETstats = preg_replace('/[^-_0-9a-zA-Z]/', '', $PRESETstats);
 $AGENTtimeSTATS = preg_replace('/[^-_0-9a-zA-Z]/', '', $AGENTtimeSTATS);
+$AGENTlatency = preg_replace('/[^-_0-9a-zA-Z]/', '', $AGENTlatency);
 $parkSTATS = preg_replace('/[^-_0-9a-zA-Z]/', '', $parkSTATS);
 $SLAinSTATS = preg_replace('/[^-_0-9a-zA-Z]/', '', $SLAinSTATS);
 $INGROUPcolorOVERRIDE = preg_replace('/[^-_0-9a-zA-Z]/', '', $INGROUPcolorOVERRIDE);
 $droppedOFtotal = preg_replace('/[^-_0-9a-zA-Z]/', '', $droppedOFtotal);
 $report_display_type = preg_replace('/[^-_0-9a-zA-Z]/', '', $report_display_type);
+$mobile_device = preg_replace('/[^-_0-9a-zA-Z]/', '', $mobile_device);
+$RTajax = preg_replace('/[^-_0-9a-zA-Z]/', '', $RTajax);
+$RTpass = preg_replace('/[^-_0-9a-zA-Z]/', '', $RTpass);
+$RTuser = preg_replace('/[^-_0-9a-zA-Z]/', '', $RTuser);
+$server_ip = preg_replace('/[^-\._0-9a-zA-Z]/', '', $server_ip);
+$SUBMIT = preg_replace('/[^-_0-9a-zA-Z]/', '', $SUBMIT);
+$submit = preg_replace('/[^-_0-9a-zA-Z]/', '', $submit);
+
+# Variables filtered further down in the code
+# $user_group_filter
+# $ingroup_filter
 
 $stmt="SELECT selected_language from vicidial_users where user='$PHP_AUTH_USER';";
 if ($DB) {echo "|$stmt|\n";}
@@ -554,14 +592,17 @@ if ($auth)
 	$LOGmodify_contacts			=$row[81];
 	$LOGmodify_same_user_level	=$row[82];
 
-	$stmt="SELECT allowed_campaigns,allowed_reports,admin_viewable_groups,admin_viewable_call_times from vicidial_user_groups where user_group='$LOGuser_group';";
+	$stmt="SELECT allowed_campaigns,allowed_reports,admin_viewable_groups,admin_viewable_call_times,reports_header_override,admin_home_url from vicidial_user_groups where user_group='$LOGuser_group';";
 	$rslt=mysql_to_mysqli($stmt, $link);
 	$row=mysqli_fetch_row($rslt);
 	$LOGallowed_campaigns =			$row[0];
 	$LOGallowed_reports =			$row[1];
 	$LOGadmin_viewable_groups =		$row[2];
 	$LOGadmin_viewable_call_times =	$row[3];
-	
+	$LOGreports_header_override	=	$row[4];
+	$LOGadmin_home_url =			$row[5];
+	if (strlen($LOGadmin_home_url) > 5) {$SSadmin_home_url = $LOGadmin_home_url;}
+
 	$LOGadmin_viewable_groupsSQL='';
 	$valLOGadmin_viewable_groupsSQL='';
 	$vmLOGadmin_viewable_groupsSQL='';
@@ -577,6 +618,19 @@ if ($auth)
 	else 
 		{$admin_viewable_groupsALL=1;}
 
+	$RS_UGlatencyALLOWED=0;
+	if (strlen($RS_UGlatencyRESTRICT) > 0)
+		{
+		$latencyUGary = preg_split('/\|/',$RS_UGlatencyRESTRICT);
+
+		foreach( $latencyUGary as $lineUGR )
+			{
+			if ($lineUGR == $LOGuser_group)
+				{$RS_UGlatencyALLOWED++;}
+			}
+		}
+	else
+		{$RS_UGlatencyALLOWED=1;}
 	}
 
 #  and (preg_match("/MONITOR|BARGE|HIJACK|WHISPER/",$monitor_active) ) )
@@ -655,7 +709,7 @@ $group_string='|';
 $group_ct = count($groups);
 while($i < $group_ct)
 	{
-	$groups[$i] = preg_replace('/[^-_0-9a-zA-Z]/', '', $groups[$i]);
+	$groups[$i] = preg_replace('/[^-_0-9\p{L}]/u', '', $groups[$i]);
 	if ( (preg_match("/ $groups[$i] /",$regexLOGallowed_campaigns)) or (preg_match("/ALL-/",$LOGallowed_campaigns)) )
 		{
 		$group_string .= "$groups[$i]|";
@@ -672,7 +726,7 @@ $user_group_string='|';
 $user_group_ct = count($user_group_filter);
 while($i < $user_group_ct)
 	{
-	$user_group_filter[$i] = preg_replace('/[^-_0-9a-zA-Z]/', '', $user_group_filter[$i]);
+	$user_group_filter[$i] = preg_replace('/[^-_0-9\p{L}]/u', '', $user_group_filter[$i]);
 #	if ( (preg_match("/ $user_group_filter[$i] /",$regexLOGallowed_campaigns)) or (preg_match("/ALL-/",$LOGallowed_campaigns)) )
 #		{
 		$user_group_string .= "$user_group_filter[$i]|";
@@ -689,7 +743,7 @@ $ingroup_string='|';
 $ingroup_ct = count($ingroup_filter);
 while($i < $ingroup_ct)
 	{
-	$ingroup_filter[$i] = preg_replace('/[^-_0-9a-zA-Z]/', '', $ingroup_filter[$i]);
+	$ingroup_filter[$i] = preg_replace('/[^-_0-9\p{L}]/u', '', $ingroup_filter[$i]);
 	$ingroup_string .= "$ingroup_filter[$i]|";
 	$ingroup_SQL .= "'$ingroup_filter[$i]',";
 	$usergroupQS .= "&ingroup_filter[]=$ingroup_filter[$i]";
@@ -1009,6 +1063,16 @@ $select_list .= ">"._QXZ("SLA 2 ONLY")."</option>";
 $select_list .= "</SELECT></TD></TR>";
 
 $select_list .= "<TR><TD align=right>";
+$select_list .= _QXZ("Show Cust. Phone Code").":  </TD><TD align=left><SELECT SIZE=1 NAME=ShowCustPhoneCode ID=ShowCustPhoneCode>";
+$select_list .= "<option value='0'";
+	if ($ShowCustPhoneCode < 1) {$select_list .= " selected";} 
+$select_list .= ">"._QXZ("NO")."</option>";
+$select_list .= "<option value='1'";
+	if ($ShowCustPhoneCode=='1') {$select_list .= " selected";} 
+$select_list .= ">"._QXZ("YES")."</option>";
+$select_list .= "</SELECT></TD></TR>";
+
+$select_list .= "<TR><TD align=right>";
 $select_list .= _QXZ("Show Carrier Stats").":  </TD><TD align=left><SELECT SIZE=1 NAME=CARRIERstats ID=CARRIERstats>";
 $select_list .= "<option value='0'";
 	if ($CARRIERstats < 1) {$select_list .= " selected";} 
@@ -1055,6 +1119,28 @@ $select_list .= "<option value='1'";
 	if ($AGENTtimeSTATS=='1') {$select_list .= " selected";} 
 $select_list .= ">"._QXZ("YES")."</option>";
 $select_list .= "</SELECT></TD></TR>";
+
+$select_list .= "<TR><TD align=right>";
+if ($RS_UGlatencyALLOWED > 0)
+	{
+	$select_list .= _QXZ("Agent Latency").":  </TD><TD align=left><SELECT SIZE=1 NAME=AGENTlatency ID=AGENTlatency>";
+	$select_list .= "<option value='0'";
+		if ($AGENTlatency < 1) {$select_list .= " selected";} 
+	$select_list .= ">"._QXZ("NO")."</option>";
+	$select_list .= "<option value='1'";
+		if ($AGENTlatency=='1') {$select_list .= " selected";} 
+	$select_list .= ">"._QXZ("YES")."</option>";
+	$select_list .= "<option value='2'";
+		if ($AGENTlatency=='2') {$select_list .= " selected";} 
+	$select_list .= ">"._QXZ("ALL")."</option>";
+	$select_list .= "<option value='3'";
+		if ($AGENTlatency=='3') {$select_list .= " selected";} 
+	$select_list .= ">"._QXZ("DAY")."</option>";
+	$select_list .= "<option value='4'";
+		if ($AGENTlatency=='4') {$select_list .= " selected";} 
+	$select_list .= ">"._QXZ("NOW")."</option>";
+	$select_list .= "</SELECT></TD></TR>";
+	}
 
 $select_list .= "<TR><TD align=right>";
 $select_list .= _QXZ("Parked Call Stats").":  </TD><TD align=left><SELECT SIZE=1 NAME=parkSTATS ID=parkSTATS>";
@@ -1123,7 +1209,7 @@ $open_list = '<TABLE WIDTH=250 CELLPADDING=0 CELLSPACING=0 BGCOLOR=\'#D9E6FE\'><
 ##### BEGIN code for embedded webphone for monitoring #####
 if (strlen($monitor_phone)>1)
 	{
-	$stmt="SELECT extension,dialplan_number,server_ip,login,pass,protocol,conf_secret,is_webphone,use_external_server_ip,codecs_list,webphone_dialpad,outbound_cid,webphone_auto_answer from phones where login='$monitor_phone' and active = 'Y';";
+	$stmt="SELECT extension,dialplan_number,server_ip,login,pass,protocol,conf_secret,is_webphone,use_external_server_ip,codecs_list,webphone_dialpad,outbound_cid,webphone_auto_answer,webphone_settings from phones where login='$monitor_phone' and active = 'Y';";
 	if ($DB) {echo "|$stmt|\n";}
 	$rslt=mysql_to_mysqli($stmt, $link);
 	$Mph_ct = mysqli_num_rows($rslt);
@@ -1143,6 +1229,7 @@ if (strlen($monitor_phone)>1)
 		$webphone_dialpad =			$row[10];
 		$outbound_cid =				$row[11];
 		$webphone_auto_answer =		$row[12];
+		$webphone_settings = 		$row[13];
 
 		if ($is_webphone == 'Y')
 			{
@@ -1200,6 +1287,39 @@ if (strlen($monitor_phone)>1)
 					$system_key = $row[0];
 					}
 				}
+
+		$webphone_settings_scrubbed = '';
+		if (strlen($webphone_settings) > 0) 
+			{
+			$stmt="SELECT container_entry FROM vicidial_settings_containers WHERE container_id='$webphone_settings';";
+			$rslt=mysql_to_mysqli($stmt, $link);
+			if (mysqli_num_rows($rslt) > 0)
+				{
+				$row=mysqli_fetch_row($rslt);
+				$webphone_settings_entry = $row[0];
+
+				### scrub unnecessary characters from the settings container
+				$webphone_settings_lines = preg_split('/\r\n|\r|\n/',$webphone_settings_entry);
+
+				foreach( $webphone_settings_lines as $line )
+					{
+					# remove comments
+					if ( strpos($line, '#') === 0 ) 
+						{
+						$line = substr($line, 0, strpos($line, '#'));
+						}
+
+					# remove whitespace outside double quotes
+					$line = preg_replace('~"[^"]*"(*SKIP)(*F)|\s+~',"",$line);
+
+					# remove blank lines
+					if ($line != '')
+						{
+						$webphone_settings_scrubbed = $webphone_settings_scrubbed . $line . '\n';
+						}
+					}
+				}
+			}
 		#	echo "<!-- debug: $webphone_dialpad|$webphone_dialpad_override|$monitor_phone|$extension -->";
 			if ( ($webphone_dialpad_override != 'DISABLED') and (strlen($webphone_dialpad_override) > 0) )
 				{$webphone_dialpad = $webphone_dialpad_override;}
@@ -1210,6 +1330,7 @@ if (strlen($monitor_phone)>1)
 			if ($webphone_dialpad == 'TOGGLE_OFF') {$webphone_options .= "--DIALPAD_OFF_TOGGLE";}
 			if ($webphone_auto_answer == 'Y') {$webphone_options .= "--AUTOANSWER_Y";}
 			if ($webphone_auto_answer == 'N') {$webphone_options .= "--AUTOANSWER_N";}
+			if (strlen($webphone_settings_scrubbed) > 0) {$webphone_options .= "--SETTINGS$webphone_settings_scrubbed";}
 			if (strlen($web_socket_url) > 5) {$webphone_options .= "--WEBSOCKETURL$web_socket_url";}
 			if ($DB > 0) {echo "<!-- debug: SOCKET:$web_socket_url|VERSION:$asterisk_version| -->";}
 
@@ -1295,9 +1416,11 @@ var monitor_phone = '<?php echo $monitor_phone ?>';
 var ALLINGROUPstats = '<?php echo $ALLINGROUPstats ?>';
 var DROPINGROUPstats = '<?php echo $DROPINGROUPstats ?>';
 var NOLEADSalert = '<?php echo $NOLEADSalert ?>';
+var ShowCustPhoneCode = '<?php echo $ShowCustPhoneCode ?>';
 var CARRIERstats = '<?php echo $CARRIERstats ?>';
 var PRESETstats = '<?php echo $PRESETstats ?>';
 var AGENTtimeSTATS = '<?php echo $AGENTtimeSTATS ?>';
+var AGENTlatency = '<?php echo $AGENTlatency ?>';
 var parkSTATS = '<?php echo $parkSTATS ?>';
 var SLAinSTATS = '<?php echo $SLAinSTATS ?>';
 var INGROUPcolorOVERRIDE = '<?php echo $INGROUPcolorOVERRIDE; ?>';
@@ -1592,7 +1715,7 @@ function gather_realtime_content()
 		}
 	if (xmlhttp) 
 		{
-		RTupdate_query = "RTajax=1&DB=" + DB + "" + groupQS + usergroupQS + ingroupQS + "&adastats=" + adastats + "&SIPmonitorLINK=" + SIPmonitorLINK + "&IAXmonitorLINK=" + IAXmonitorLINK + "&usergroup=" + usergroup + "&UGdisplay=" + UGdisplay + "&UidORname=" + UidORname + "&orderby=" + orderby + "&SERVdisplay=" + SERVdisplay + "&CALLSdisplay=" + CALLSdisplay + "&PHONEdisplay=" + PHONEdisplay + "&CUSTPHONEdisplay=" + CUSTPHONEdisplay + "&CUSTINFOdisplay=" + CUSTINFOdisplay + "&with_inbound=" + with_inbound + "&monitor_active=" + monitor_active + "&monitor_phone=" + monitor_phone + "&ALLINGROUPstats=" + ALLINGROUPstats + "&DROPINGROUPstats=" + DROPINGROUPstats + "&NOLEADSalert=" + NOLEADSalert + "&CARRIERstats=" + CARRIERstats + "&PRESETstats=" + PRESETstats + "&AGENTtimeSTATS=" + AGENTtimeSTATS + "&parkSTATS=" + parkSTATS + "&SLAinSTATS=" + SLAinSTATS + "&INGROUPcolorOVERRIDE=" + INGROUPcolorOVERRIDE + "&droppedOFtotal=" + droppedOFtotal + "&report_display_type=" + report_display_type + "";
+		RTupdate_query = "RTajax=1&DB=" + DB + "" + groupQS + usergroupQS + ingroupQS + "&adastats=" + adastats + "&SIPmonitorLINK=" + SIPmonitorLINK + "&IAXmonitorLINK=" + IAXmonitorLINK + "&usergroup=" + usergroup + "&UGdisplay=" + UGdisplay + "&UidORname=" + UidORname + "&orderby=" + orderby + "&SERVdisplay=" + SERVdisplay + "&CALLSdisplay=" + CALLSdisplay + "&PHONEdisplay=" + PHONEdisplay + "&CUSTPHONEdisplay=" + CUSTPHONEdisplay + "&CUSTINFOdisplay=" + CUSTINFOdisplay + "&with_inbound=" + with_inbound + "&monitor_active=" + monitor_active + "&monitor_phone=" + monitor_phone + "&ALLINGROUPstats=" + ALLINGROUPstats + "&DROPINGROUPstats=" + DROPINGROUPstats + "&NOLEADSalert=" + NOLEADSalert + "&ShowCustPhoneCode=" + ShowCustPhoneCode + "&CARRIERstats=" + CARRIERstats + "&PRESETstats=" + PRESETstats + "&AGENTtimeSTATS=" + AGENTtimeSTATS + "&AGENTlatency=" + AGENTlatency + "&parkSTATS=" + parkSTATS + "&SLAinSTATS=" + SLAinSTATS + "&INGROUPcolorOVERRIDE=" + INGROUPcolorOVERRIDE + "&droppedOFtotal=" + droppedOFtotal + "&report_display_type=" + report_display_type + "";
 
 		xmlhttp.open('POST', 'AST_timeonVDADall.php'); 
 		xmlhttp.setRequestHeader('Content-Type','application/x-www-form-urlencoded; charset=UTF-8');
@@ -1731,6 +1854,8 @@ function update_variables(task_option,task_choice,force_reload)
 		DROPINGROUPstats = DROPINGROUPstatsFORM[DROPINGROUPstatsFORM.selectedIndex].value;
 		var NOLEADSalertFORM = document.getElementById('NOLEADSalert');
 		NOLEADSalert = NOLEADSalertFORM[NOLEADSalertFORM.selectedIndex].value;
+		var ShowCustPhoneCodeFORM = document.getElementById('ShowCustPhoneCode');
+		ShowCustPhoneCode = ShowCustPhoneCodeFORM[ShowCustPhoneCodeFORM.selectedIndex].value;
 		var CARRIERstatsFORM = document.getElementById('CARRIERstats');
 		CARRIERstats = CARRIERstatsFORM[CARRIERstatsFORM.selectedIndex].value;
 		<?php
@@ -1746,6 +1871,15 @@ function update_variables(task_option,task_choice,force_reload)
 		?>
 		var AGENTtimeSTATSFORM = document.getElementById('AGENTtimeSTATS');
 		AGENTtimeSTATS = AGENTtimeSTATSFORM[AGENTtimeSTATSFORM.selectedIndex].value;
+		<?php
+		if ($RS_UGlatencyALLOWED > 0)
+			{
+			?>
+		var AGENTlatencyFORM = document.getElementById('AGENTlatency');
+		AGENTlatency = AGENTlatencyFORM[AGENTlatencyFORM.selectedIndex].value;
+			<?php
+			}
+		?>
 		var parkSTATSFORM = document.getElementById('parkSTATS');
 		parkSTATS = parkSTATSFORM[parkSTATSFORM.selectedIndex].value;
 		var SLAinSTATSFORM = document.getElementById('SLAinSTATS');
@@ -1814,7 +1948,7 @@ function update_variables(task_option,task_choice,force_reload)
 		// force a reload if the phone is changed
 		if ( (temp_monitor_phone != monitor_phone) || (force_reload=='YES') )
 			{
-			reload_url = PHP_SELF + "?RR=" + RR + "&DB=" + DB + "" + groupQS + usergroupQS + ingroupQS + "&adastats=" + adastats + "&SIPmonitorLINK=" + SIPmonitorLINK + "&IAXmonitorLINK=" + IAXmonitorLINK + "&usergroup=" + usergroup + "&UGdisplay=" + UGdisplay + "&UidORname=" + UidORname + "&orderby=" + orderby + "&SERVdisplay=" + SERVdisplay + "&CALLSdisplay=" + CALLSdisplay + "&PHONEdisplay=" + PHONEdisplay + "&CUSTPHONEdisplay=" + CUSTPHONEdisplay + "&with_inbound=" + with_inbound + "&monitor_active=" + monitor_active + "&monitor_phone=" + temp_monitor_phone + "&ALLINGROUPstats=" + ALLINGROUPstats + "&DROPINGROUPstats=" + DROPINGROUPstats + "&NOLEADSalert=" + NOLEADSalert + "&CARRIERstats=" + CARRIERstats + "&PRESETstats=" + PRESETstats + "&AGENTtimeSTATS=" + AGENTtimeSTATS + "&parkSTATS=" + parkSTATS + "&SLAinSTATS=" + SLAinSTATS + "&INGROUPcolorOVERRIDE=" + INGROUPcolorOVERRIDE + "&droppedOFtotal=" + droppedOFtotal + "&report_display_type=" + report_display_type + "";
+			reload_url = PHP_SELF + "?RR=" + RR + "&DB=" + DB + "" + groupQS + usergroupQS + ingroupQS + "&adastats=" + adastats + "&SIPmonitorLINK=" + SIPmonitorLINK + "&IAXmonitorLINK=" + IAXmonitorLINK + "&usergroup=" + usergroup + "&UGdisplay=" + UGdisplay + "&UidORname=" + UidORname + "&orderby=" + orderby + "&SERVdisplay=" + SERVdisplay + "&CALLSdisplay=" + CALLSdisplay + "&PHONEdisplay=" + PHONEdisplay + "&CUSTPHONEdisplay=" + CUSTPHONEdisplay + "&with_inbound=" + with_inbound + "&monitor_active=" + monitor_active + "&monitor_phone=" + temp_monitor_phone + "&ALLINGROUPstats=" + ALLINGROUPstats + "&DROPINGROUPstats=" + DROPINGROUPstats + "&NOLEADSalert=" + NOLEADSalert + "&ShowCustPhoneCode=" + ShowCustPhoneCode + "&CARRIERstats=" + CARRIERstats + "&PRESETstats=" + PRESETstats + "&AGENTtimeSTATS=" + AGENTtimeSTATS + "&AGENTlatency=" + AGENTlatency + "&parkSTATS=" + parkSTATS + "&SLAinSTATS=" + SLAinSTATS + "&INGROUPcolorOVERRIDE=" + INGROUPcolorOVERRIDE + "&droppedOFtotal=" + droppedOFtotal + "&report_display_type=" + report_display_type + "";
 
 		//	alert('|' + temp_monitor_phone + '|' + monitor_phone + '|\n' + reload_url);
 			window.location.href = reload_url;
@@ -1917,7 +2051,7 @@ function update_variables(task_option,task_choice,force_reload)
 	.realtime_img_text {font-family:HELVETICA; font-size:11; color:white; font-weight:bold;}
 	.realtime_table {width: 960px; max-width: 960px; }
 	.realtime_calls_table {width: 860px; max-width: 860px; }
-	.realtime_settings_table {width: 700px; max-width: 700px; }
+	.realtime_settings_table {width: 780px; max-width: 780px; }
 
 <?php
 	$stmt="select group_id,group_color from vicidial_inbound_groups;";

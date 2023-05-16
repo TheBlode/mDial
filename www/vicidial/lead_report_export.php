@@ -5,7 +5,7 @@
 # vicidial_log and/or vicidial_closer_log information by status, list_id and 
 # date range. downloads to a flat text file that is tab delimited
 #
-# Copyright (C) 2021  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
+# Copyright (C) 2022  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
 #
 # CHANGES
 #
@@ -35,9 +35,13 @@
 # 190610-2036 - Fixed admin hide phone issue
 # 190926-0926 - Fixes for PHP7
 # 210302-0839 - Added exclude_call_log_data option
+# 210911-1906 - Fix for --ALL-- selection user-group permission issue
+# 220228-1917 - Added allow_web_debug system setting
 #
 
 $startMS = microtime();
+
+$vlcs[0]='';
 
 require("dbconnect_mysqli.php");
 require("functions.php");
@@ -45,6 +49,7 @@ require("functions.php");
 $PHP_AUTH_USER=$_SERVER['PHP_AUTH_USER'];
 $PHP_AUTH_PW=$_SERVER['PHP_AUTH_PW'];
 $PHP_SELF=$_SERVER['PHP_SELF'];
+$PHP_SELF = preg_replace('/\.php.*/i','.php',$PHP_SELF);
 if (isset($_GET["query_date"]))				{$query_date=$_GET["query_date"];}
 	elseif (isset($_POST["query_date"]))	{$query_date=$_POST["query_date"];}
 if (isset($_GET["date_field"]))				{$date_field=$_GET["date_field"];}
@@ -96,7 +101,19 @@ if (isset($_GET["VLC_enabled"]))			{$VLC_enabled=$_GET["VLC_enabled"];}
 if (isset($_GET["exclude_call_log_data"]))			{$exclude_call_log_data=$_GET["exclude_call_log_data"];}
 	elseif (isset($_POST["exclude_call_log_data"]))	{$exclude_call_log_data=$_POST["exclude_call_log_data"];}
 
+$DB=preg_replace("/[^0-9a-zA-Z]/","",$DB);
 
+$US='_';
+$MT[0]='';
+$ip = getenv("REMOTE_ADDR");
+$NOW_DATE = date("Y-m-d");
+$NOW_TIME = date("Y-m-d H:i:s");
+$FILE_TIME = date("Ymd-His");
+$STARTtime = date("U");
+if (!isset($group)) {$group = array();}
+if (!isset($dids)) {$dids = array();}
+if (!isset($query_date)) {$query_date = $NOW_DATE;}
+if (!isset($end_date)) {$end_date = $NOW_DATE;}
 if (strlen($shift)<2) {$shift='ALL';}
 
 $report_name = 'Export Leads Report';
@@ -105,9 +122,9 @@ $file_exported=0;
 
 #############################################
 ##### START SYSTEM_SETTINGS LOOKUP #####
-$stmt = "SELECT use_non_latin,outbound_autodial_active,slave_db_server,reports_use_slave_db,custom_fields_enabled,enable_languages,language_method,active_modules FROM system_settings;";
+$stmt = "SELECT use_non_latin,outbound_autodial_active,slave_db_server,reports_use_slave_db,custom_fields_enabled,enable_languages,language_method,active_modules,allow_web_debug FROM system_settings;";
 $rslt=mysql_to_mysqli($stmt, $link);
-if ($DB) {echo "$stmt\n";}
+#if ($DB) {echo "$stmt\n";}
 $qm_conf_ct = mysqli_num_rows($rslt);
 if ($qm_conf_ct > 0)
 	{
@@ -120,9 +137,49 @@ if ($qm_conf_ct > 0)
 	$SSenable_languages =			$row[5];
 	$SSlanguage_method =			$row[6];
 	$active_modules =				$row[7];
+	$SSallow_web_debug =			$row[8];
 	}
+if ($SSallow_web_debug < 1) {$DB=0;}
 ##### END SETTINGS LOOKUP #####
 ###########################################
+
+$query_date = preg_replace('/[^- \:\_0-9a-zA-Z]/', '', $query_date);
+$end_date = preg_replace('/[^- \:\_0-9a-zA-Z]/', '', $end_date);
+$date_field = preg_replace('/[^-\.\_0-9a-zA-Z]/', '', $date_field);
+$submit = preg_replace('/[^-_0-9a-zA-Z]/', '', $submit);
+$SUBMIT = preg_replace('/[^-_0-9a-zA-Z]/', '', $SUBMIT);
+$did_filter = preg_replace('/[^-_0-9a-zA-Z]/', '', $did_filter);
+$vlc_filter = preg_replace('/[^-_0-9a-zA-Z]/', '', $vlc_filter);
+$run_export = preg_replace('/[^-_0-9a-zA-Z]/', '', $run_export);
+$header_row = preg_replace('/[^-_0-9a-zA-Z]/', '', $header_row);
+$rec_fields = preg_replace('/[^-_0-9a-zA-Z]/', '', $rec_fields);
+$custom_fields = preg_replace('/[^-_0-9a-zA-Z]/', '', $custom_fields);
+$call_notes = preg_replace('/[^-_0-9a-zA-Z]/', '', $call_notes);
+$export_fields = preg_replace('/[^-_0-9a-zA-Z]/', '', $export_fields);
+$search_archived_data = preg_replace('/[^-_0-9a-zA-Z]/', '', $search_archived_data);
+$vicidial_list_archive_only = preg_replace('/[^-_0-9a-zA-Z]/', '', $vicidial_list_archive_only);
+$VLC_enabled = preg_replace('/[^-_0-9a-zA-Z]/', '', $VLC_enabled);
+$exclude_call_log_data = preg_replace('/[^-_0-9a-zA-Z]/', '', $exclude_call_log_data);
+
+# Variables filtered further down in the code
+# $campaign
+# $group
+# $user_group
+# $list_id
+# $status
+# $dids
+# $vlcs
+
+if ($non_latin < 1)
+	{
+	$PHP_AUTH_USER = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_USER);
+	$PHP_AUTH_PW = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_PW);
+	}
+else
+	{
+	$PHP_AUTH_USER = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_USER);
+	$PHP_AUTH_PW = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_PW);
+	}
 
 ### ARCHIVED DATA CHECK CONFIGURATION
 $archives_available="N";
@@ -164,17 +221,6 @@ else
 	$vicidial_cpd_log_table="vicidial_cpd_log";
 	}
 #############
-
-if ($non_latin < 1)
-	{
-	$PHP_AUTH_USER = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_USER);
-	$PHP_AUTH_PW = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_PW);
-	}
-else
-	{
-	$PHP_AUTH_PW = preg_replace("/'|\"|\\\\|;/","",$PHP_AUTH_PW);
-	$PHP_AUTH_USER = preg_replace("/'|\"|\\\\|;/","",$PHP_AUTH_USER);
-	}
 
 $stmt="SELECT selected_language from vicidial_users where user='$PHP_AUTH_USER';";
 if ($DB) {echo "|$stmt|\n";}
@@ -299,7 +345,7 @@ else
 	$webserver_id = mysqli_insert_id($link);
 	}
 
-$stmt="INSERT INTO vicidial_report_log set event_date=NOW(), user='$PHP_AUTH_USER', ip_address='$LOGip', report_name='$report_name', browser='$LOGbrowser', referer='$LOGhttp_referer', notes='$LOGserver_name:$LOGserver_port $LOGscript_name |$campaign[0], $query_date, $end_date|', url='$LOGfull_url', webserver='$webserver_id';";
+$stmt="INSERT INTO vicidial_report_log set event_date=NOW(), user='$PHP_AUTH_USER', ip_address='$LOGip', report_name='$report_name', browser='$LOGbrowser', referer='$LOGhttp_referer', notes='$LOGserver_name:$LOGserver_port $LOGscript_name |$query_date, $end_date|', url='$LOGfull_url', webserver='$webserver_id';";
 if ($DB) {echo "|$stmt|\n";}
 $rslt=mysql_to_mysqli($stmt, $link);
 $report_log_id = mysqli_insert_id($link);
@@ -365,17 +411,6 @@ if ( (!preg_match('/\-\-ALL\-\-/i', $LOGadmin_viewable_call_times)) and (strlen(
 ##### START RUN THE EXPORT AND OUTPUT FLAT DATA FILE #####
 if ($run_export > 0)
 	{
-	$US='_';
-	$MT[0]='';
-	$ip = getenv("REMOTE_ADDR");
-	$NOW_DATE = date("Y-m-d");
-	$NOW_TIME = date("Y-m-d H:i:s");
-	$FILE_TIME = date("Ymd-His");
-	$STARTtime = date("U");
-	if (!isset($group)) {$group = array();}
-	if (!isset($dids)) {$dids = array();}
-	if (!isset($query_date)) {$query_date = $NOW_DATE;}
-	if (!isset($end_date)) {$end_date = $NOW_DATE;}
 	if ($date_field=="entry_date") {
 		$date_field = "vi.entry_date";
 		$export_fields = "EXTENDED"; # Since entry_date only appears when the EXTENDED export option is selected, EXTENDED will automatically be used when entry_date is selected as the date field.
@@ -398,14 +433,33 @@ if ($run_export > 0)
 	$list_string='|';
 	$status_string='|';
 	$did_string='|';
+	# Get campaigns for "ALL"
+	$stmt="select campaign_id from vicidial_campaigns $whereLOGallowed_campaignsSQL order by campaign_id;";
+	$rslt=mysql_to_mysqli($stmt, $link);
+	if ($DB) {echo "$stmt\n";}
+	$ALL_available_campaigns = mysqli_num_rows($rslt);
+	$h=0;
+	$ALL_campaign_SQL="";
+	while ($h < $ALL_available_campaigns)
+		{
+		$row=mysqli_fetch_row($rslt);
+		$ALL_campaign_SQL .= "'$row[0]',";
+		$h++;
+		}
 
 	$i=0;
 	while($i < $campaign_ct)
 		{
+		$campaign[$i] = preg_replace('/[^-_0-9\p{L}]/u', '', $campaign[$i]);
 		if ( (preg_match("/ $campaign[$i] /",$regexLOGallowed_campaigns)) or (preg_match("/-ALL/",$LOGallowed_campaigns)) )
 			{
 			$campaign_string .= "$campaign[$i]|";
 			$campaign_SQL .= "'$campaign[$i]',";
+			}
+		# Need this for next few lines
+		if (preg_match("/\-\-ALL\-\-/",$campaign[$i]) && !preg_match("/\-\-ALL\-\-/",$campaign_string))
+			{
+			$campaign_string .= "$campaign[$i]|";
 			}
 		$i++;
 		}
@@ -416,7 +470,8 @@ if ($run_export > 0)
 		}
 	else if ( preg_match('/\-\-ALL\-\-/',$campaign_string) )
 		{
-		$campaign_SQL = "";
+		$campaign_SQL = preg_replace('/,$/i', '',$ALL_campaign_SQL);
+		$campaign_SQL = "and vl.campaign_id IN($campaign_SQL)";
 		$RUNcampaign=$campaign_ct;
 		}
 	else
@@ -426,9 +481,25 @@ if ($run_export > 0)
 		$RUNcampaign++;
 		}
 
+
+	# Get inbound groups for "ALL"
+	$stmt="select group_id from vicidial_inbound_groups $whereLOGadmin_viewable_groupsSQL order by group_id;";
+	$rslt=mysql_to_mysqli($stmt, $link);
+	if ($DB) {echo "$stmt\n";}
+	$ALL_available_groups = mysqli_num_rows($rslt);
+	$h=0;
+	$ALL_group_SQL="";
+	while($h < $ALL_available_groups)
+		{
+		$row=mysqli_fetch_row($rslt);
+		$ALL_group_SQL .= "'$row[0]',";
+		$h++;
+		}
+	
 	$i=0;
 	while($i < $group_ct)
 		{
+		$group[$i] = preg_replace('/[^-_0-9\p{L}]/u', '', $group[$i]);
 		$group_string .= "$group[$i]|";
 		$group_SQL .= "'$group[$i]',";
 		$i++;
@@ -441,14 +512,24 @@ if ($run_export > 0)
 		}
 	else
 		{
-		$group_SQL = preg_replace('/,$/i', '',$group_SQL);
-		$group_SQL = "and vl.campaign_id IN($group_SQL)";
-		$RUNgroup++;
+		if ( (preg_match("/\-\-ALL\-\-/",$group_string) ) or ($group_ct < 1) )
+			{
+			$group_SQL = preg_replace('/,$/i', '',$ALL_group_SQL);
+			$group_SQL = "and vl.campaign_id IN($group_SQL)";
+			$RUNgroup++;
+			}
+		else
+			{
+			$group_SQL = preg_replace('/,$/i', '',$group_SQL);
+			$group_SQL = "and vl.campaign_id IN($group_SQL)";
+			$RUNgroup++;
+			}
 		}
 
 	$i=0;
 	while($i < $did_ct)
 		{
+		$dids[$i] = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $dids[$i]);
 		$did_string .= "$dids[$i]|";
 		$did_SQL .= "'$dids[$i]',";
 		$i++;
@@ -470,6 +551,7 @@ if ($run_export > 0)
 	$i=0;
 	while($i < $vlc_ct)
 		{
+		$vlcs[$i] = preg_replace('/[^-_0-9\p{L}]/u', '', $vlcs[$i]);
 		$vlc_string .= "$vlcs[$i]|";
 		$vlc_SQL .= "'$vlcs[$i]',";
 		$i++;
@@ -487,17 +569,33 @@ if ($run_export > 0)
 		$RUNvlc++;
 		}
 	if ( ($vlc_filter=="NO") or ($VLC_enabled != 'Y') ) {$vlc_SQL=""; $RUNvlc=0;}
+	
+	# Get user groups for "ALL"
+	$stmt="select user_group from vicidial_user_groups $whereLOGadmin_viewable_groupsSQL order by user_group;";
+	$rslt=mysql_to_mysqli($stmt, $link);
+	if ($DB) {echo "$stmt\n";}
+	$ALL_available_user_groups = mysqli_num_rows($rslt);
+	$h=0;
+	$ALL_user_group_SQL="";
+	while ($h < $ALL_available_user_groups)
+		{
+		$row=mysqli_fetch_row($rslt);
+		$ALL_user_group_SQL .= "'$row[0]',";
+		$h++;
+		}
 
 	$i=0;
 	while($i < $user_group_ct)
 		{
+		$user_group[$i] = preg_replace('/[^-_0-9\p{L}]/u', '', $user_group[$i]);
 		$user_group_string .= "$user_group[$i]|";
 		$user_group_SQL .= "'$user_group[$i]',";
 		$i++;
 		}
 	if ( (preg_match('/\-\-ALL\-\-/',$user_group_string) ) or ($user_group_ct < 1) )
 		{
-		$user_group_SQL = "";
+		$user_group_SQL = preg_replace('/,$/i', '',$ALL_user_group_SQL);
+		$user_group_SQL = "and (vl.user_group IN($user_group_SQL) or vl.user_group is null)";
 		}
 	else
 		{
@@ -505,16 +603,34 @@ if ($run_export > 0)
 		$user_group_SQL = "and vl.user_group IN($user_group_SQL)";
 		}
 
+
+
+	# Get lists for "ALL"
+	$stmt="select list_id from vicidial_lists $whereLOGallowed_campaignsSQL order by list_id;";
+	$rslt=mysql_to_mysqli($stmt, $link);
+	if ($DB) {echo "$stmt\n";}
+	$ALL_available_lists = mysqli_num_rows($rslt);
+	$h=0;
+	$ALL_list_SQL="";
+	while ($h < $ALL_available_lists)
+		{
+		$row=mysqli_fetch_row($rslt);
+		$ALL_list_SQL .= "'$row[0]',";
+		$h++;
+		}
+
 	$i=0;
 	while($i < $list_ct)
 		{
+		$list_id[$i] = preg_replace('/[^-_0-9\p{L}]/u', '', $list_id[$i]);
 		$list_string .= "$list_id[$i]|";
 		$list_SQL .= "'$list_id[$i]',";
 		$i++;
 		}
 	if ( (preg_match('/\-\-ALL\-\-/',$list_string) ) or ($list_ct < 1) )
 		{
-		$list_SQL = "";
+		$list_SQL = preg_replace('/,$/i', '',$ALL_list_SQL);
+		$list_SQL = "and vl.list_id IN($list_SQL)";
 		}
 	else
 		{
@@ -522,16 +638,46 @@ if ($run_export > 0)
 		$list_SQL = "and vi.list_id IN($list_SQL)";
 		}
 
+
+
+	$stmt="select status from vicidial_statuses order by status;";
+	$rslt=mysql_to_mysqli($stmt, $link);
+	if ($DB) {echo "$stmt\n";}
+	$ALL_available_statuses = mysqli_num_rows($rslt);
+	$h=0;
+	$ALL_status_SQL="";
+	while ($h < $ALL_available_statuses)
+		{
+		$row=mysqli_fetch_row($rslt);
+		$ALL_status_SQL .= "'$row[0]',";
+		$h++;
+		}
+
+	$stmt="select distinct status from vicidial_campaign_statuses $whereLOGallowed_campaignsSQL order by status;";
+	$rslt=mysql_to_mysqli($stmt, $link);
+	if ($DB) {echo "$stmt\n";}
+	$ALL_available_Cstatuses = mysqli_num_rows($rslt);
+	$j=0;
+	while ($j < $ALL_available_Cstatuses)
+		{
+		$row=mysqli_fetch_row($rslt);
+		$ALL_status_SQL .= "'$row[0]',";
+		$j++;
+		}
+
+
 	$i=0;
 	while($i < $status_ct)
 		{
+		$status[$i] = preg_replace('/[^-_0-9\p{L}]/u', '', $status[$i]);
 		$status_string .= "$status[$i]|";
 		$status_SQL .= "'$status[$i]',";
 		$i++;
 		}
 	if ( (preg_match('/\-\-ALL\-\-/',$status_string) ) or ($status_ct < 1) )
 		{
-		$status_SQL = "";
+		$status_SQL = preg_replace('/,$/i', '',$ALL_status_SQL);
+		$status_SQL = "and vi.status IN($status_SQL)";
 		}
 	else
 		{
@@ -1232,13 +1378,6 @@ if ($run_export > 0)
 
 else
 	{
-	$NOW_DATE = date("Y-m-d");
-	$NOW_TIME = date("Y-m-d H:i:s");
-	$STARTtime = date("U");
-	if (!isset($group)) {$group = array();}
-	if (!isset($dids)) {$dids = array();}
-	if (!isset($query_date)) {$query_date = $NOW_DATE;}
-	if (!isset($end_date)) {$end_date = $NOW_DATE;}
 	if ($date_field=="entry_date") {
 		$date_field = "vi.entry_date";
 		$export_fields = "EXTENDED"; # Since entry_date only appears when the EXTENDED export option is selected, EXTENDED will automatically be used when entry_date is selected as the date field.
@@ -1436,6 +1575,7 @@ else
 	echo "<HTML><HEAD>\n";
 
 	echo "<script language=\"JavaScript\" src=\"calendar_db.js\"></script>\n";
+	echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"vicidial_stylesheet.php\">\n";
 	echo "<script language=\"JavaScript\" src=\"help.js\"></script>\n";
 	echo "<link rel=\"stylesheet\" href=\"calendar.css\">\n";
 	echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"vicidial_stylesheet.php\">\n";
@@ -1469,7 +1609,7 @@ else
 	require("admin_header.php");
 
 	echo "<CENTER><BR>\n";
-	echo "<FONT SIZE=3 FACE=\"Arial,Helvetica\"><B>"._QXZ("Export Leads Report")."</B></FONT><BR>\n";
+	echo "<FONT SIZE=3 FACE=\"Arial,Helvetica\"><B>"._QXZ("Export Leads Report")."</B></FONT> $NWB#lead_export_report$NWE<BR>\n";
 	echo "<FONT SIZE=2 FACE=\"Arial,Helvetica\">"._QXZ("This report pulls lead information for calls dialed in the selected date range. A lead is only exported once no matter how many calls were handled. The current lead status is used.")."</FONT><BR><BR>\n";
 	echo "<FORM ACTION=\"$PHP_SELF\" METHOD=GET name=vicidial_report id=vicidial_report>\n";
 	echo "<INPUT TYPE=HIDDEN NAME=DB VALUE=\"$DB\">";
@@ -1514,7 +1654,6 @@ else
 	echo "<B>"._QXZ("Date Field").":</B> $NWB#lead_export_report-date_field$NWE<BR>\n";
 	echo "<select size=1 name=date_field><option selected value=\"call_date\">"._QXZ("Call date")."</option><option value=\"entry_date\">"._QXZ("Entry date")."</option></select>\n";
 
-	
 	echo "<BR><BR>\n";
 
 	echo "<B>"._QXZ("Header Row").":</B> $NWB#lead_export_report-header_row$NWE<BR>\n";
