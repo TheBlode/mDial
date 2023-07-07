@@ -1,7 +1,7 @@
 <?php
 # vdc_chat_display.php
 #
-# Copyright (C) 2022  Joe Johnson, Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
+# Copyright (C) 2023  Joe Johnson, Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
 #
 # This is the interface for agents to chat with customers and each other.  It's separate from the manager-to-agent 
 # chat interface out of necessity and calls the chat_db_query.php page to send information and display it.  It will
@@ -22,6 +22,7 @@
 # 210616-2040 - Added optional CORS support, see options.php for details
 # 220220-0928 - Added allow_web_debug system setting
 # 220518-2211 - Small fix for encrypted auth
+# 230518-2002 - Added customer_chat_refresh_seconds options.php setting, and message display
 #
 
 require("dbconnect_mysqli.php");
@@ -120,6 +121,9 @@ $stage = preg_replace('/[^-\_0-9a-zA-Z]/','',$stage);
 $email_invite_lead_id = preg_replace("/\'|\"|\\\\|;/","",$email_invite_lead_id);
 $child_window = preg_replace('/[^-\_0-9a-zA-Z]/','',$child_window);
 $chat_group_ids = preg_replace("/\"|\\\\|;/","",$chat_group_ids);
+$customer_chat_refresh_seconds=preg_replace("/[^0-9\.]/", "", $customer_chat_refresh_seconds);
+if (!$customer_chat_refresh_seconds) {$customer_chat_refresh_seconds=1;}
+$customer_chat_refresh_milliseconds = $customer_chat_refresh_seconds*1000;
 
 if ($non_latin < 1)
 	{
@@ -650,7 +654,7 @@ function StartRefresh() {
 		}
 	else 
 		{
-		rInt=window.setInterval(function() {RefreshLiveChatWindow()}, 1000);
+		rInt=window.setInterval(function() {RefreshLiveChatWindow()}, <?php echo $customer_chat_refresh_milliseconds; ?>);
 		}
 }
 
@@ -876,6 +880,9 @@ if($child_window) {
 </tr>
 <tr>
 	<td align='center'>
+<?php
+echo ($customer_chat_refresh_seconds!=1 ? "<center><font class='chat_timestamp bold' color='red'>** "._QXZ("Messages are on a")." ".$customer_chat_refresh_seconds."-"._QXZ("second delay")." **</font></center>" : "");
+?>
 	<span id="ChatConsoleSpan" name="ChatConsoleSpan" style="display: block;">
 	<table width='400' align='center' border='0' cellpadding='0' cellspacing='0'>
 		<tr>

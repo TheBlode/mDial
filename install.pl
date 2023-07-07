@@ -50,6 +50,7 @@
 # 220829-1434 - Added 'C' keepalive option
 # 221228-2049 - Added KhompEnabled option
 # 230117-2220 - Added --khomp-enable CLI flag
+# 230508-0809 - Added Asterisk 18 compatibility
 #
 
 ############################################
@@ -2741,11 +2742,24 @@ if ( ($PROMPTcopy_conf_files =~ /y/i) || ($CLIcopy_conf_files =~ /y/i) )
 					}
 				else
 					{
-					`cp -f ./docs/conf_examples/extensions.conf.sample-1.4 /etc/asterisk/extensions.conf`;
-					`cp -f ./docs/conf_examples/iax.conf.sample-1.4 /etc/asterisk/iax.conf`;
-					`cp -f ./docs/conf_examples/sip.conf.sample-1.4 /etc/asterisk/sip.conf`;
-					`cp -f ./docs/conf_examples/manager.conf.sample /etc/asterisk/manager.conf`;
-					`cp -f ./docs/conf_examples/voicemail.conf.sample /etc/asterisk/voicemail.conf`;
+					if ($VARasterisk_version =~ /^18|^20/)
+						{
+						`cp -f ./docs/conf_examples/extensions.conf.sample-18 /etc/asterisk/extensions.conf`;
+						`cp -f ./docs/conf_examples/iax.conf.sample-1.4 /etc/asterisk/iax.conf`;
+						`cp -f ./docs/conf_examples/sip.conf.sample-13 /etc/asterisk/sip.conf`;
+						`cp -f ./docs/conf_examples/manager.conf.sample-13 /etc/asterisk/manager.conf`;
+						`cp -f ./docs/conf_examples/voicemail.conf.sample-1.8 /etc/asterisk/voicemail.conf`;
+						`cp -f ./docs/conf_examples/pjsip.conf.sample-16 /etc/asterisk/pjsip.conf`;
+						`cp -f ./docs/conf_examples/pjsip_wizard.conf.sample-16 /etc/asterisk/pjsip_wizard.conf`;
+						}
+					else
+						{
+						`cp -f ./docs/conf_examples/extensions.conf.sample-1.4 /etc/asterisk/extensions.conf`;
+						`cp -f ./docs/conf_examples/iax.conf.sample-1.4 /etc/asterisk/iax.conf`;
+						`cp -f ./docs/conf_examples/sip.conf.sample-1.4 /etc/asterisk/sip.conf`;
+						`cp -f ./docs/conf_examples/manager.conf.sample /etc/asterisk/manager.conf`;
+						`cp -f ./docs/conf_examples/voicemail.conf.sample /etc/asterisk/voicemail.conf`;
+						}
 					}
 				}
 			}
