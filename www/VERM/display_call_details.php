@@ -36,22 +36,32 @@
 $PHP_AUTH_USER=$_SERVER['PHP_AUTH_USER'];
 $PHP_AUTH_PW=$_SERVER['PHP_AUTH_PW'];
 $PHP_SELF=$_SERVER['PHP_SELF'];
-$PHP_SELF = preg_replace('/\.php.*/i','.php',$PHP_SELF);
+$PHP_SELF = preg_replace('/\.php.*/i', '.php', $PHP_SELF);
 require("dbconnect_mysqli.php");
 require("functions.php");
 require("VERM_global_vars.inc");
-if (isset($_GET["detail_id"]))            {$detail_id=$_GET["detail_id"];}
-    elseif (isset($_POST["detail_id"]))    {$detail_id=$_POST["detail_id"];}
-if (isset($_GET["call_type"]))            {$call_type=$_GET["call_type"];}
-    elseif (isset($_POST["call_type"]))    {$call_type=$_POST["call_type"];}
-if (isset($_GET["detail_span_height"]))            {$detail_span_height=$_GET["detail_span_height"];}
-    elseif (isset($_POST["detail_span_height"]))    {$detail_span_height=$_POST["detail_span_height"];}
+if (isset($_GET["detail_id"])) {
+    $detail_id=$_GET["detail_id"];
+} elseif (isset($_POST["detail_id"])) {
+    $detail_id=$_POST["detail_id"];
+}
+if (isset($_GET["call_type"])) {
+    $call_type=$_GET["call_type"];
+} elseif (isset($_POST["call_type"])) {
+    $call_type=$_POST["call_type"];
+}
+if (isset($_GET["detail_span_height"])) {
+    $detail_span_height=$_GET["detail_span_height"];
+} elseif (isset($_POST["detail_span_height"])) {
+    $detail_span_height=$_POST["detail_span_height"];
+}
 $stmt = "SELECT use_non_latin,outbound_autodial_active,slave_db_server,reports_use_slave_db,enable_languages,language_method,agent_whisper_enabled,report_default_format,enable_pause_code_limits,allow_web_debug,admin_screen_colors,admin_web_directory,log_recording_access FROM system_settings;";
 $rslt=mysql_to_mysqli($stmt, $link);
-if ($DB) {echo "$stmt\n";}
+if ($DB) {
+    echo "$stmt\n";
+}
 $qm_conf_ct = mysqli_num_rows($rslt);
-if ($qm_conf_ct > 0)
-    {
+if ($qm_conf_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $non_latin =                    $row[0];
     $outbound_autodial_active =        $row[1];
@@ -66,56 +76,57 @@ if ($qm_conf_ct > 0)
     $SSadmin_screen_colors =        $row[10];
     $SSadmin_web_directory =        $row[11];
     $log_recording_access =            $row[12];
-    }
-if ($SSallow_web_debug < 1) {$DB=0;}
-if (!$detail_id) {echo "Beat it."; die;}
-if (!$detail_span_height) {$detail_span_height="70";}
+}
+if ($SSallow_web_debug < 1) {
+    $DB=0;
+}
+if (!$detail_id) {
+    echo "Beat it.";
+    die;
+}
+if (!$detail_span_height) {
+    $detail_span_height="70";
+}
 $detail_span_height-=15; # account for headers;
-$detail_id = preg_replace('/[^0-9\.\|]/','',$detail_id);
-$detail_span_height = preg_replace('/[^0-9]/','',$detail_span_height);
-if ($non_latin < 1)
-    {
-    $call_type = preg_replace('/[^a-zA-Z]/','',$call_type);
-    }
-else
-    {
-    $call_type = preg_replace('/[^\p{L}]/u','',$call_type);
-    }
+$detail_id = preg_replace('/[^0-9\.\|]/', '', $detail_id);
+$detail_span_height = preg_replace('/[^0-9]/', '', $detail_span_height);
+if ($non_latin < 1) {
+    $call_type = preg_replace('/[^a-zA-Z]/', '', $call_type);
+} else {
+    $call_type = preg_replace('/[^\p{L}]/u', '', $call_type);
+}
 $NWB = "<IMG SRC=\"help.png\" onClick=\"FillAndShowHelpDiv(event, '";
 $NWE = "')\" WIDTH=20 HEIGHT=20 BORDER=0 ALT=\"HELP\" ALIGN=TOP>";
 $lookup_data=explode("|", $detail_id);
 $uniqueid=$lookup_data[0];
 $closecallid=$lookup_data[1];
-if (!$closecallid)
-    {
+if (!$closecallid) {
     $stmt="select date_format(call_date, '%m/%d - %H:%i:%s') as call_date, phone_number, campaign_id, 0 as ivr, '0' as wait, length_in_sec as duration, '1' as queue_position, CAST(term_reason AS CHAR) as term_reason, user, '1' as attempts, status, uniqueid, 0 as moh_events, '00:00:00' as moh_duration, '' as ivr_duration, '' as ivr_path, '' as dnis, '' as url, '' as tag, '0' as feat, '0' as vars, '' as feature_codes, '' as variables, 0 as xfercallid, 'O' as direction, lead_id from vicidial_log where uniqueid='$uniqueid'";
     $vicidial_id=$uniqueid;
-    }
-else
-    {
+} else {
     $stmt="select date_format(call_date, '%m/%d - %H:%i:%s') as call_date, phone_number, campaign_id, 0 as ivr, queue_seconds as wait, length_in_sec-queue_seconds as duration, queue_position, CAST(term_reason AS CHAR) as term_reason, user, '1' as attempts, status, uniqueid, 0 as moh_events, '00:00:00' as moh_duration, '' as ivr_duration, '' as ivr_path, '' as dnis, '' as url, '' as tag, '0' as feat, '0' as vars, '' as feature_codes, '' as variables, xfercallid, 'I' as direction, lead_id from vicidial_closer_log where uniqueid='$uniqueid' and closecallid='$closecallid'";
     $vicidial_id=$closecallid;
-    }
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 $row=mysqli_fetch_array($rslt);
 $asterisk_call_id=GetCallerCode($uniqueid);
 $ivr_events=0;
-if ($row["xfercallid"]==0 || $call_type=="ivr") # Possible origin call, need to lookup IVR (may add additional clause to do this on inbound calls only)
-    {
+if ($row["xfercallid"]==0 || $call_type=="ivr") { # Possible origin call, need to lookup IVR (may add additional clause to do this on inbound calls only)
     $ivr_info_array=GetIVRInfo($uniqueid, $row["call_date"]);
-        $ivr_duration=$ivr_info_array[1];
-        $ivr_path=$ivr_info_array[2];
-        $row["call_date"]=$ivr_info_array[3];
-        $ivr_HTML=$ivr_info_array[4];
-        $ivr_events=$ivr_info_array[5];
-    }
+    $ivr_duration=$ivr_info_array[1];
+    $ivr_path=$ivr_info_array[2];
+    $row["call_date"]=$ivr_info_array[3];
+    $ivr_HTML=$ivr_info_array[4];
+    $ivr_events=$ivr_info_array[5];
+}
 $dnis=GetDNIS($uniqueid);
 $recording_array=GetRecording($vicidial_id);
-if ($log_recording_access<1) 
-    {$recording_link="<a href='$recording_array[1]'>$recording_array[0]</a>";}
-else
-    {$recording_link = "<a href=\"recording_log_redirect.php?recording_id=$recording_array[2]&lead_id=$row[lead_id]&search_archived_data=$search_archived_data\" target=\"_blank\">$recording_array[0]</a>";}
- echo "<table border=0 width='100%' bgcolor='#FFF'><tr>";
+if ($log_recording_access<1) {
+    $recording_link="<a href='$recording_array[1]'>$recording_array[0]</a>";
+} else {
+    $recording_link = "<a href=\"recording_log_redirect.php?recording_id=$recording_array[2]&lead_id=$row[lead_id]&search_archived_data=$search_archived_data\" target=\"_blank\">$recording_array[0]</a>";
+}
+echo "<table border=0 width='100%' bgcolor='#FFF'><tr>";
 echo "<td align='left'>";
 echo "<h2 class='rpt_header'>"._QXZ("Call Detail").":</h2>";
 echo "</td>";
@@ -150,7 +161,7 @@ echo $ivr_HTML;
 echo "</span>\n";
 echo "</td></tr></table>";
 function GetCallerCode($uniqueid)
-    {
+{
     global $link, $DB;
     $caller_code="";
     $cc_stmt="select caller_code from vicidial_log_extended where uniqueid='$uniqueid'";
@@ -158,9 +169,9 @@ function GetCallerCode($uniqueid)
     $cc_row=mysqli_fetch_array($cc_rslt);
     $caller_code=$cc_row[0];
     return $caller_code;
-    }
+}
 function GetIVRInfo($uniqueid, $actual_start_time)
-    {
+{
     global $link, $DB;
     $ivr_path="";
     $ivr_length=0;
@@ -172,32 +183,34 @@ function GetIVRInfo($uniqueid, $actual_start_time)
     $ivr_paths=array(); # 0 - total calls, 1 - total time, 2 - min time, 3 - max time
     $ivr_counts=array();
     $ivr_event="START";
-    while ($ivr_row=mysqli_fetch_array($ivr_rslt))
-        {
-        if(!$prev_time) {$prev_time=$ivr_row[5];}
-        if(!$ivr_start_time) 
-            {
+    while ($ivr_row=mysqli_fetch_array($ivr_rslt)) {
+        if(!$prev_time) {
+            $prev_time=$ivr_row[5];
+        }
+        if(!$ivr_start_time) {
             $actual_start_time=$ivr_row[1];
             $ivr_start_time=$ivr_row[5];
-            }
+        }
         $ivr_path.=$ivr_row["comment_b"].",";
         $ivr_duration=$ivr_row[5]-$ivr_start_time;
         $ivr_interval_duration=$ivr_row[5]-$prev_time;
         $ivr_interval_duration_fmt=($ivr_interval_duration>=3600 ? intval(floor($ivr_interval_duration/3600)).date(":i:s", $ivr_interval_duration) : intval(date("i", $ivr_interval_duration)).":".date("s", $ivr_interval_duration));
         $ivr_length+=$ivr_duration;
         $prev_time=$ivr_row[5];
-        if(preg_match('/\>/', $ivr_row["comment_d"])) {$ivr_event="Option: $ivr_row[comment_b]";}
+        if(preg_match('/\>/', $ivr_row["comment_d"])) {
+            $ivr_event="Option: $ivr_row[comment_b]";
+        }
         $ivr_span_HTML.="<tr><th>".substr($ivr_row["start_time"], -8)."</th><th>$ivr_interval_duration_fmt</th><th>$ivr_event</th><th>&nbsp;</th><th>".$ivr_row["comment_b"]."</th></tr>";
         $ivr_event="";
-        }
+    }
     $ivr_path=preg_replace('/,$/', '', $ivr_path);
     $ivr_duration_fmt=($ivr_duration>=3600 ? floor($ivr_duration/3600).":" : "").gmdate("i:s", $ivr_duration);
     $ivr_length_fmt=($ivr_length>=3600 ? floor($ivr_length/3600).":" : "").gmdate("i:s", $ivr_length);
     $ivr_span_events=mysqli_num_rows($ivr_rslt);
     return array("$ivr_length_fmt", "$ivr_duration_fmt", "$ivr_path", "$actual_start_time", "$ivr_span_HTML", "$ivr_span_events");
-    }
+}
 function GetDNIS($uniqueid)
-    {
+{
     global $link, $DB, $did_id_info, $did_pattern_info;
     $did_str="";
     $did_stmt="select extension, did_id from vicidial_did_log where uniqueid in ('$uniqueid')";
@@ -205,14 +218,14 @@ function GetDNIS($uniqueid)
     $did_row=mysqli_fetch_array($did_rslt);
     $did_str=$did_row["extension"]." - ".$did_id_info["$did_row[did_id]"];
     return $did_str;
-    }
+}
 function GetRecording($vicidial_id)
-    {
+{
     global $link, $DB;
     $rec_str="";
     $rec_stmt="select filename, location, recording_id from recording_log where vicidial_id='$vicidial_id'";
     $rec_rslt=mysqli_query($link, $rec_stmt);
     $rec_row=mysqli_fetch_array($rec_rslt);
     return array("$rec_row[filename]", "$rec_row[location]", "$rec_row[recording_id]");
-    }
+}
 ?>

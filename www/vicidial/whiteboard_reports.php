@@ -35,59 +35,116 @@
 <?php
 require("dbconnect_mysqli.php");
 require("functions.php");
-if (file_exists('options.php'))
-    {
+if (file_exists('options.php')) {
     require('options.php');
-    }
+}
 $PHP_AUTH_USER=$_SERVER['PHP_AUTH_USER'];
 $PHP_AUTH_PW=$_SERVER['PHP_AUTH_PW'];
 $PHP_SELF=$_SERVER['PHP_SELF'];
-$PHP_SELF = preg_replace('/\.php.*/i','.php',$PHP_SELF);
-if (isset($_GET["DB"]))                {$DB=$_GET["DB"];}
-    elseif (isset($_POST["DB"]))    {$DB=$_POST["DB"];}
-if (isset($_GET["query_date"]))                {$query_date=$_GET["query_date"];}
-    elseif (isset($_POST["query_date"]))    {$query_date=$_POST["query_date"];}
-if (isset($_GET["query_time"]))                {$query_time=$_GET["query_time"];}
-    elseif (isset($_POST["query_time"]))    {$query_time=$_POST["query_time"];}
-if (isset($_GET["end_date"]))                {$end_date=$_GET["end_date"];}
-    elseif (isset($_POST["end_date"]))        {$end_date=$_POST["end_date"];}
-if (isset($_GET["end_time"]))                {$end_time=$_GET["end_time"];}
-    elseif (isset($_POST["end_time"]))        {$end_time=$_POST["end_time"];}
-if (isset($_GET["hourly_display"]))                {$hourly_display=$_GET["hourly_display"];}
-    elseif (isset($_POST["hourly_display"]))    {$hourly_display=$_POST["hourly_display"];}
-if (isset($_GET["commission_rates"]))            {$commission_rates=$_GET["commission_rates"];}
-    elseif (isset($_POST["commission_rates"]))    {$commission_rates=$_POST["commission_rates"];}
-if (isset($_GET["campaigns"]))                {$campaigns=$_GET["campaigns"];}
-    elseif (isset($_POST["campaigns"]))        {$campaigns=$_POST["campaigns"];}
-if (isset($_GET["users"]))                    {$users=$_GET["users"];}
-    elseif (isset($_POST["users"]))            {$users=$_POST["users"];}
-if (isset($_GET["user_groups"]))            {$user_groups=$_GET["user_groups"];}
-    elseif (isset($_POST["user_groups"]))    {$user_groups=$_POST["user_groups"];}
-if (isset($_GET["groups"]))                    {$groups=$_GET["groups"];}
-    elseif (isset($_POST["groups"]))        {$groups=$_POST["groups"];}
-if (isset($_GET["dids"]))                    {$dids=$_GET["dids"];}
-    elseif (isset($_POST["dids"]))            {$dids=$_POST["dids"];}
-if (isset($_GET["status_flags"]))            {$status_flags=$_GET["status_flags"];}
-    elseif (isset($_POST["status_flags"]))    {$status_flags=$_POST["status_flags"];}
-if (isset($_GET["target_gross"]))            {$target_gross=$_GET["target_gross"];}
-    elseif (isset($_POST["target_gross"]))    {$target_gross=$_POST["target_gross"];}
-if (isset($_GET["target_per_agent"]))            {$target_per_agent=$_GET["target_per_agent"];}
-    elseif (isset($_POST["target_per_agent"]))    {$target_per_agent=$_POST["target_per_agent"];}
-if (isset($_GET["target_per_team"]))            {$target_per_team=$_GET["target_per_team"];}
-    elseif (isset($_POST["target_per_team"]))    {$target_per_team=$_POST["target_per_team"];}
-if (isset($_GET["rpt_type"]))                    {$rpt_type=$_GET["rpt_type"];}
-    elseif (isset($_POST["rpt_type"]))            {$rpt_type=$_POST["rpt_type"];}
-$DB=preg_replace("/[^0-9a-zA-Z]/","",$DB);
-if (!$query_date) {$query_date=date("Y-m-d");}
-if (!$query_time) {$query_time="08:00:00";}
-if (!$end_date) {$end_date=date("Y-m-d");}
-if (!$end_time) {$end_time=date("H:i:00");}
+$PHP_SELF = preg_replace('/\.php.*/i', '.php', $PHP_SELF);
+if (isset($_GET["DB"])) {
+    $DB=$_GET["DB"];
+} elseif (isset($_POST["DB"])) {
+    $DB=$_POST["DB"];
+}
+if (isset($_GET["query_date"])) {
+    $query_date=$_GET["query_date"];
+} elseif (isset($_POST["query_date"])) {
+    $query_date=$_POST["query_date"];
+}
+if (isset($_GET["query_time"])) {
+    $query_time=$_GET["query_time"];
+} elseif (isset($_POST["query_time"])) {
+    $query_time=$_POST["query_time"];
+}
+if (isset($_GET["end_date"])) {
+    $end_date=$_GET["end_date"];
+} elseif (isset($_POST["end_date"])) {
+    $end_date=$_POST["end_date"];
+}
+if (isset($_GET["end_time"])) {
+    $end_time=$_GET["end_time"];
+} elseif (isset($_POST["end_time"])) {
+    $end_time=$_POST["end_time"];
+}
+if (isset($_GET["hourly_display"])) {
+    $hourly_display=$_GET["hourly_display"];
+} elseif (isset($_POST["hourly_display"])) {
+    $hourly_display=$_POST["hourly_display"];
+}
+if (isset($_GET["commission_rates"])) {
+    $commission_rates=$_GET["commission_rates"];
+} elseif (isset($_POST["commission_rates"])) {
+    $commission_rates=$_POST["commission_rates"];
+}
+if (isset($_GET["campaigns"])) {
+    $campaigns=$_GET["campaigns"];
+} elseif (isset($_POST["campaigns"])) {
+    $campaigns=$_POST["campaigns"];
+}
+if (isset($_GET["users"])) {
+    $users=$_GET["users"];
+} elseif (isset($_POST["users"])) {
+    $users=$_POST["users"];
+}
+if (isset($_GET["user_groups"])) {
+    $user_groups=$_GET["user_groups"];
+} elseif (isset($_POST["user_groups"])) {
+    $user_groups=$_POST["user_groups"];
+}
+if (isset($_GET["groups"])) {
+    $groups=$_GET["groups"];
+} elseif (isset($_POST["groups"])) {
+    $groups=$_POST["groups"];
+}
+if (isset($_GET["dids"])) {
+    $dids=$_GET["dids"];
+} elseif (isset($_POST["dids"])) {
+    $dids=$_POST["dids"];
+}
+if (isset($_GET["status_flags"])) {
+    $status_flags=$_GET["status_flags"];
+} elseif (isset($_POST["status_flags"])) {
+    $status_flags=$_POST["status_flags"];
+}
+if (isset($_GET["target_gross"])) {
+    $target_gross=$_GET["target_gross"];
+} elseif (isset($_POST["target_gross"])) {
+    $target_gross=$_POST["target_gross"];
+}
+if (isset($_GET["target_per_agent"])) {
+    $target_per_agent=$_GET["target_per_agent"];
+} elseif (isset($_POST["target_per_agent"])) {
+    $target_per_agent=$_POST["target_per_agent"];
+}
+if (isset($_GET["target_per_team"])) {
+    $target_per_team=$_GET["target_per_team"];
+} elseif (isset($_POST["target_per_team"])) {
+    $target_per_team=$_POST["target_per_team"];
+}
+if (isset($_GET["rpt_type"])) {
+    $rpt_type=$_GET["rpt_type"];
+} elseif (isset($_POST["rpt_type"])) {
+    $rpt_type=$_POST["rpt_type"];
+}
+$DB=preg_replace("/[^0-9a-zA-Z]/", "", $DB);
+if (!$query_date) {
+    $query_date=date("Y-m-d");
+}
+if (!$query_time) {
+    $query_time="08:00:00";
+}
+if (!$end_date) {
+    $end_date=date("Y-m-d");
+}
+if (!$end_time) {
+    $end_time=date("H:i:00");
+}
 $report_name="Real-Time Whiteboard Report";
 $stmt = "SELECT use_non_latin,outbound_autodial_active,slave_db_server,reports_use_slave_db,enable_languages,language_method,admin_screen_colors,allow_web_debug FROM system_settings;";
 $rslt=mysql_to_mysqli($stmt, $link);
 $qm_conf_ct = mysqli_num_rows($rslt);
-if ($qm_conf_ct > 0)
-    {
+if ($qm_conf_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $non_latin =                    $row[0];
     $outbound_autodial_active =        $row[1];
@@ -97,8 +154,10 @@ if ($qm_conf_ct > 0)
     $SSlanguage_method =            $row[5];
     $admin_screen_colors =            $row[6];
     $SSallow_web_debug =            $row[7];
-    }
-if ($SSallow_web_debug < 1) {$DB=0;}
+}
+if ($SSallow_web_debug < 1) {
+    $DB=0;
+}
 $query_date=preg_replace("/[^0-9\-]/", "", $query_date);
 $end_date=preg_replace("/[^0-9\-]/", "", $end_date);
 $query_time=preg_replace("/[^0-9\:]/", "", $query_time);
@@ -108,91 +167,84 @@ $hourly_display=preg_replace("/[^0-9]/", "", $hourly_display);
 $target_gross=preg_replace("/[^0-9]/", "", $target_gross);
 $target_per_agent=preg_replace("/[^0-9]/", "", $target_per_agent);
 $target_per_team=preg_replace("/[^0-9]/", "", $target_per_team);
-$commission_rates = preg_replace('/[^-\._0-9\p{L}]/u',"",$commission_rates);
-$campaigns=preg_replace('/[^-_0-9\p{L}]/u','',$campaigns);
-$users=preg_replace('/[^-_0-9\p{L}]/u','',$users);
-$user_groups=preg_replace('/[^-_0-9\p{L}]/u','',$user_groups);
-$groups=preg_replace('/[^-_0-9\p{L}]/u','',$groups);
-$dids=preg_replace('/[^-_0-9\p{L}]/u','',$dids);
-$status_flags=preg_replace('/[^-_0-9\p{L}]/u','',$status_flags);
-if ($non_latin < 1)
-    {
+$commission_rates = preg_replace('/[^-\._0-9\p{L}]/u', "", $commission_rates);
+$campaigns=preg_replace('/[^-_0-9\p{L}]/u', '', $campaigns);
+$users=preg_replace('/[^-_0-9\p{L}]/u', '', $users);
+$user_groups=preg_replace('/[^-_0-9\p{L}]/u', '', $user_groups);
+$groups=preg_replace('/[^-_0-9\p{L}]/u', '', $groups);
+$dids=preg_replace('/[^-_0-9\p{L}]/u', '', $dids);
+$status_flags=preg_replace('/[^-_0-9\p{L}]/u', '', $status_flags);
+if ($non_latin < 1) {
     $PHP_AUTH_USER = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_USER);
-    $PHP_AUTH_PW=preg_replace("/[^-\.\+\/\=_0-9a-zA-Z]/","",$PHP_AUTH_PW);
-    }
-else
-    {
+    $PHP_AUTH_PW=preg_replace("/[^-\.\+\/\=_0-9a-zA-Z]/", "", $PHP_AUTH_PW);
+} else {
     $PHP_AUTH_USER = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_USER);
-    $PHP_AUTH_PW = preg_replace('/[^-\.\+\/\=_0-9\p{L}]/u','',$PHP_AUTH_PW);
-    }
+    $PHP_AUTH_PW = preg_replace('/[^-\.\+\/\=_0-9\p{L}]/u', '', $PHP_AUTH_PW);
+}
 $auth=0;
 $reports_auth=0;
 $admin_auth=0;
-$auth_message = user_authorization($PHP_AUTH_USER,$PHP_AUTH_PW,'REPORTS',1,0);
-if ($auth_message == 'GOOD')
-    {$auth=1;}
-if ($auth > 0)
-    {
+$auth_message = user_authorization($PHP_AUTH_USER, $PHP_AUTH_PW, 'REPORTS', 1, 0);
+if ($auth_message == 'GOOD') {
+    $auth=1;
+}
+if ($auth > 0) {
     $stmt="SELECT count(*) from vicidial_users where user='$PHP_AUTH_USER' and user_level > 7 and view_reports='1';";
-    if ($DB) {echo "|$stmt|\n";}
+    if ($DB) {
+        echo "|$stmt|\n";
+    }
     $rslt=mysql_to_mysqli($stmt, $link);
     $row=mysqli_fetch_row($rslt);
     $admin_auth=$row[0];
     $stmt="SELECT count(*) from vicidial_users where user='$PHP_AUTH_USER' and user_level > 6 and view_reports='1';";
-    if ($DB) {echo "|$stmt|\n";}
+    if ($DB) {
+        echo "|$stmt|\n";
+    }
     $rslt=mysql_to_mysqli($stmt, $link);
     $row=mysqli_fetch_row($rslt);
     $reports_auth=$row[0];
-    if ($reports_auth < 1)
-        {
+    if ($reports_auth < 1) {
         $VDdisplayMESSAGE = _QXZ("You are not allowed to view reports");
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
-    if ( ($reports_auth > 0) and ($admin_auth < 1) )
-        {
+    }
+    if (($reports_auth > 0) and ($admin_auth < 1)) {
         $ADD=999999;
         $reports_only_user=1;
-        }
     }
-else
-    {
+} else {
     $VDdisplayMESSAGE = _QXZ("Login incorrect, please try again");
-    if ($auth_message == 'LOCK')
-        {
+    if ($auth_message == 'LOCK') {
         $VDdisplayMESSAGE = _QXZ("Too many login attempts, try again in 15 minutes");
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
-    if ($auth_message == 'IPBLOCK')
-        {
+    }
+    if ($auth_message == 'IPBLOCK') {
         $VDdisplayMESSAGE = _QXZ("Your IP Address is not allowed") . ": $ip";
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
+    }
     Header("WWW-Authenticate: Basic realm=\"CONTACT-CENTER-ADMIN\"");
     Header("HTTP/1.0 401 Unauthorized");
     echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$PHP_AUTH_PW|$auth_message|\n";
     exit;
-    }
-if ( (strlen($slave_db_server)>5) and (preg_match("/$report_name/",$reports_use_slave_db)) )
-    {
+}
+if ((strlen($slave_db_server)>5) and (preg_match("/$report_name/", $reports_use_slave_db))) {
     mysqli_close($link);
     $use_slave_server=1;
     $db_source = 'S';
     require("dbconnect_mysqli.php");
     $MAIN.="<!-- Using slave server $slave_db_server $db_source -->\n";
-    }
-if ($hourly_display) 
-    {    
+}
+if ($hourly_display) {
     $query_date=date("Y-m-d", date("U")-(3600*$hourly_display));
     $query_time=date("H:i:00", date("U")-(3600*$hourly_display));
     $end_date=date("Y-m-d");
     $end_time=date("H:i:00");
-    } 
+}
 $rpt_string="";
 $exclude_statuses=array("INCALL", "DISPO", "QUEUE", "DONEM");
 $exc_status_SQL=" and status not in ('".implode("','", $exclude_statuses)."') ";
@@ -245,7 +297,9 @@ if (preg_match("/status_performance/", $rpt_type)) {
     $sale_stmt="SELECT distinct status from vicidial_statuses where sale='Y' $status_SQL $exc_status_SQL UNION SELECT distinct status from vicidial_campaign_statuses where sale='Y' $campaign_id_SQL $status_SQL $exc_status_SQL";
     $sale_rslt=mysql_to_mysqli($sale_stmt, $link);
     $sale_dispos=array();
-    if ($DB) {$rpt_string.=$sale_stmt."<BR>\n";}
+    if ($DB) {
+        $rpt_string.=$sale_stmt."<BR>\n";
+    }
     while($sale_row=mysqli_fetch_row($sale_rslt)) {
         array_push($sale_dispos, $sale_row[0]);
     }
@@ -254,13 +308,21 @@ if (preg_match("/status_performance/", $rpt_type)) {
     $outbound_max_time_stmt="SELECT if(min(call_date) is null, 0, min(call_date)), if(max(call_date) is null, 0, max(call_date)) From vicidial_log where call_date>='$query_date $query_time' and call_date<='$end_date $end_time' $campaign_id_SQL $user_SQL $status_SQL $exc_status_SQL";
     $rslt=mysql_to_mysqli($outbound_max_time_stmt, $link);
     $row=mysqli_fetch_row($rslt);
-    if ($row[0]>0) {$shift_start=$row[0];}
-    if ($row[1]>0) {$shift_end=$row[1];}
+    if ($row[0]>0) {
+        $shift_start=$row[0];
+    }
+    if ($row[1]>0) {
+        $shift_end=$row[1];
+    }
     $inbound_max_time_stmt="SELECT if(min(call_date) is null, 0, min(call_date)), if(max(call_date) is null, 0, max(call_date)) From vicidial_closer_log where call_date>='$query_date $query_time' and call_date<='$end_date $end_time' $group_SQL $user_SQL $status_SQL $exc_status_SQL";
     $rslt=mysql_to_mysqli($inbound_max_time_stmt, $link);
     $row=mysqli_fetch_row($rslt);
-    if ($row[0]>0 && preg_replace("/[^0-9]/", "", $row[0])<preg_replace("/[^0-9]/", "", $shift_start)) {$shift_start=$row[0];}
-    if (preg_replace("/[^0-9]/", "", $row[1])>preg_replace("/[^0-9]/", "", $shift_end)) {$shift_end=$row[1];}
+    if ($row[0]>0 && preg_replace("/[^0-9]/", "", $row[0])<preg_replace("/[^0-9]/", "", $shift_start)) {
+        $shift_start=$row[0];
+    }
+    if (preg_replace("/[^0-9]/", "", $row[1])>preg_replace("/[^0-9]/", "", $shift_end)) {
+        $shift_end=$row[1];
+    }
     $time_stmt="SELECT TIMESTAMPDIFF(SECOND,'$shift_start','$shift_end')";
     $time_rslt=mysql_to_mysqli($time_stmt, $link);
     $time_row=mysqli_fetch_row($time_rslt);
@@ -290,7 +352,7 @@ if (preg_match("/status_performance/", $rpt_type)) {
     }
     foreach($status_counts as $key => $val) {
         $kstatus_counts[]=array('status' => $key, 'counts' => $val[0], 'sales' => $val[1], 'dead' => $val[2]);
-    }        
+    }
     foreach ($kstatus_counts as $key2 => $row2) {
         $status_ary[$key2]  = $row2['status'];
         $counts_ary[$key2]  = $row2['counts'];
@@ -361,16 +423,20 @@ if (preg_match("/(agent|team)_performance/", $rpt_type)) {
     $sale_stmt="SELECT distinct status from vicidial_statuses where sale='Y' $status_SQL $exc_status_SQL UNION SELECT distinct status from vicidial_campaign_statuses where sale='Y' $campaign_id_SQL $status_SQL $exc_status_SQL";
     $sale_rslt=mysql_to_mysqli($sale_stmt, $link);
     $sale_dispos=array();
-    if ($DB) {$rpt_string.=$sale_stmt."<BR>\n";}
+    if ($DB) {
+        $rpt_string.=$sale_stmt."<BR>\n";
+    }
     while($sale_row=mysqli_fetch_row($sale_rslt)) {
         array_push($sale_dispos, $sale_row[0]);
     }
     if (preg_match("/agent_performance/", $rpt_type)) {
         $stmt="SELECT user, status, sum(pause_sec+wait_sec+talk_sec+dispo_sec), count(*) from vicidial_agent_log where event_time>='$query_date $query_time' and event_time<='$end_date $end_time' $campaign_id_SQL $user_SQL $user_group_SQL $status_SQL $exc_status_SQL group by user, status order by user, status";
-    } else if (preg_match("/team_performance/", $rpt_type)) {
+    } elseif (preg_match("/team_performance/", $rpt_type)) {
         $stmt="SELECT user_group, status, sum(pause_sec+wait_sec+talk_sec+dispo_sec), count(*) from vicidial_agent_log where event_time>='$query_date $query_time' and event_time<='$end_date $end_time' $campaign_id_SQL $user_SQL $user_group_SQL $status_SQL $exc_status_SQL group by user_group, status order by user_group, status";
     }
-    if ($DB) {$rpt_string.=$stmt."<BR>\n";}
+    if ($DB) {
+        $rpt_string.=$stmt."<BR>\n";
+    }
     $agent_counts=array();
     $rslt=mysql_to_mysqli($stmt, $link);
     while ($row=mysqli_fetch_row($rslt)) {
@@ -396,7 +462,9 @@ if (preg_match("/(agent|team)_performance/", $rpt_type)) {
             while ($user_row=mysqli_fetch_row($user_rslt)) {
                 $full_name=$user_row[0];
             }
-            if (!$full_name) {$full_name="N/A";}
+            if (!$full_name) {
+                $full_name="N/A";
+            }
             $val[0]+=0;
             $val[1]+=0;
             $total_calls+=$val[0];
@@ -409,7 +477,7 @@ if (preg_match("/(agent|team)_performance/", $rpt_type)) {
     }
 }
 if (preg_match("/floor_performance/", $rpt_type)) {
-    if ($hourly_display) {    
+    if ($hourly_display) {
         $query_date=date("Y-m-d", date("U")-(3600*$hourly_display));
         $query_time=date("H:i:00", date("U")-(3600*$hourly_display));
         $start_epoch=date("U")-(3600*$hourly_display);
@@ -457,9 +525,12 @@ if (preg_match("/floor_performance/", $rpt_type)) {
         array_push($sale_dispos, $sale_row[0]);
     }
     $stmt="SELECT substr(event_time+INTERVAL (pause_sec+wait_sec+talk_sec+dispo_sec) SECOND, 1, 16) as call_end_time_min, status, count(*) from vicidial_agent_log where event_time>='$query_date $query_time' and event_time<='$end_date $end_time' $campaign_id_SQL $user_SQL $user_group_SQL $status_SQL $exc_status_SQL group by call_end_time_min, status order by call_end_time_min, status";
-    if ($DB) {$rpt_string.=$stmt."<BR>\n";}
+    if ($DB) {
+        $rpt_string.=$stmt."<BR>\n";
+    }
     $rslt=mysql_to_mysqli($stmt, $link);
-    $total_calls=0; $total_sales=0;
+    $total_calls=0;
+    $total_sales=0;
     while ($row=mysqli_fetch_row($rslt)) {
         $key=$row[0];
         $status=$row[1];
@@ -481,19 +552,23 @@ if (preg_match("/floor_performance/", $rpt_type)) {
         $prev_calls=0;
         $prev_sales=0;
         foreach($call_counts as $key => $val) {
-                $mins++;
-                $shift_duration=$mins*60;
-                $hours=$mins/60;
-                $val[0]+=0;
-                $val[1]+=0;
-                if ($val[2]==0) {$val[2]=$prev_calls;}
-                if ($val[3]==0) {$val[3]=$prev_sales;}
-                $conv=sprintf("%.2f", (100*MathZDC($val[3],$val[2])));
-                $cph=sprintf("%.2f", ($val[2]/$hours));
-                $sph=sprintf("%.2f", ($val[3]/$hours));
-                $rpt_string.="$key||$val[0]|$val[1]|$shift_duration|$conv|$cph|$sph|$val[2]|$val[3]\n";
-                $prev_calls=$val[2];
-                $prev_sales=$val[3];
+            $mins++;
+            $shift_duration=$mins*60;
+            $hours=$mins/60;
+            $val[0]+=0;
+            $val[1]+=0;
+            if ($val[2]==0) {
+                $val[2]=$prev_calls;
+            }
+            if ($val[3]==0) {
+                $val[3]=$prev_sales;
+            }
+            $conv=sprintf("%.2f", (100*MathZDC($val[3], $val[2])));
+            $cph=sprintf("%.2f", ($val[2]/$hours));
+            $sph=sprintf("%.2f", ($val[3]/$hours));
+            $rpt_string.="$key||$val[0]|$val[1]|$shift_duration|$conv|$cph|$sph|$val[2]|$val[3]\n";
+            $prev_calls=$val[2];
+            $prev_sales=$val[3];
         }
     }
 }
@@ -539,7 +614,9 @@ if (preg_match("/(did|ingroup)_performance/", $rpt_type)) {
     }
     if (in_array("--ALL--", $campaigns) || $campaign_id_SQL!="") {
         $ingrp_stmt="SELECT closer_campaigns from vicidial_campaigns where active='Y' $campaign_id_SQL";
-        if ($DB) {$rpt_string.=$ingrp_stmt."<BR>\n";}
+        if ($DB) {
+            $rpt_string.=$ingrp_stmt."<BR>\n";
+        }
         $ingrp_rslt=mysql_to_mysqli($ingrp_stmt, $link);
         while ($ingrp_row=mysqli_fetch_row($ingrp_rslt)) {
             $ingrp_row[0]=preg_replace("/ -$/", "", $ingrp_row[0]);
@@ -553,7 +630,9 @@ if (preg_match("/(did|ingroup)_performance/", $rpt_type)) {
     if (preg_match("/did_performance/", $rpt_type)) {
         if (in_array("--ALL--", $groups) || $user_group_SQL!="") {
             $did_stmt="SELECT did_id from vicidial_inbound_dids where did_route='IN_GROUP' $ingroup_SQL";
-            if ($DB) {$rpt_string.=$did_stmt."<BR>\n";}
+            if ($DB) {
+                $rpt_string.=$did_stmt."<BR>\n";
+            }
             $did_rslt=mysql_to_mysqli($did_stmt, $link);
             while ($did_row=mysqli_fetch_row($did_rslt)) {
                 array_push($dids, $did_row[0]);
@@ -570,10 +649,12 @@ if (preg_match("/(did|ingroup)_performance/", $rpt_type)) {
     }
     if (preg_match("/did_performance/", $rpt_type)) {
         $stmt="SELECT vid.did_pattern, vcl.status, sum(vcl.length_in_sec-vcl.queue_seconds) as call_length, count(*) From vicidial_closer_log vcl, vicidial_did_log vdl, vicidial_inbound_dids vid where vcl.call_date>='$query_date $query_time' and vcl.call_date<='$end_date $end_time' and vcl.uniqueid=vdl.uniqueid and vdl.did_id=vid.did_id $did_SQL $status_SQL $exc_status_SQL group by did_pattern, did_description, status order by did_pattern, status";
-    } else if (preg_match("/ingroup_performance/", $rpt_type)) {
+    } elseif (preg_match("/ingroup_performance/", $rpt_type)) {
         $stmt="SELECT campaign_id, status, sum(length_in_sec-queue_seconds), count(*) from vicidial_closer_log where call_date>='$query_date $query_time' and call_date<='$end_date $end_time' $group_SQL $status_SQL $exc_status_SQL group by campaign_id, status order by campaign_id, status";
     }
-    if ($DB) {$rpt_string.=$stmt."<BR>\n";}
+    if ($DB) {
+        $rpt_string.=$stmt."<BR>\n";
+    }
     $inbound_counts=array();
     $rslt=mysql_to_mysqli($stmt, $link);
     while ($row=mysqli_fetch_row($rslt)) {
@@ -585,7 +666,8 @@ if (preg_match("/(did|ingroup)_performance/", $rpt_type)) {
         }
         $inbound_counts["$row[0]"][2]+=$row[2];
     }
-    $total_calls=0; $total_sales=0;
+    $total_calls=0;
+    $total_sales=0;
     if (count($inbound_counts)==0) {
         $rpt_string=_QXZ("REPORT RETURNED NO RESULTS");
     } else {
@@ -599,7 +681,9 @@ if (preg_match("/(did|ingroup)_performance/", $rpt_type)) {
             while ($user_row=mysqli_fetch_row($user_rslt)) {
                 $full_name=$user_row[0];
             }
-            if (!$full_name) {$full_name="N/A";}
+            if (!$full_name) {
+                $full_name="N/A";
+            }
             $val[0]+=0;
             $val[1]+=0;
             $total_calls+=$val[0];
@@ -644,7 +728,9 @@ if ($rpt_type=="floor_performance_hourly") {
     }
     $stmt="SELECT substr(event_time+INTERVAL (pause_sec+wait_sec+talk_sec+dispo_sec) SECOND, 1, 13) as call_end_time_hour, count(*) from vicidial_agent_log where event_time>='$query_date $query_time' and event_time<='$end_date $end_time' and status in ('".implode("','", $sale_dispos)."')  $campaign_id_SQL $status_SQL $exc_status_SQL group by call_end_time_hour order by call_end_time_hour";
     $rpt_string.="$stmt\n";
-    if ($DB) {$rpt_string.=$stmt."<BR>\n";}
+    if ($DB) {
+        $rpt_string.=$stmt."<BR>\n";
+    }
     $rslt=mysql_to_mysqli($stmt, $link);
     $cumulative_sale_counts=array();
     $total_sales=0;
@@ -658,8 +744,12 @@ if ($rpt_type=="floor_performance_hourly") {
     while($start_unix<=$end_unix) {
         $array_date=date("Y-m-d H", $start_unix);
         $cumulative_hours_array["$array_date"]=0;
-        if ($cumulative_sale_counts["$array_date"]>0) {$total_sales=$cumulative_sale_counts["$array_date"];}
-        if ($start_unix<=date("U")) {$cumulative_hours_array["$array_date"]=$total_sales;}
+        if ($cumulative_sale_counts["$array_date"]>0) {
+            $total_sales=$cumulative_sale_counts["$array_date"];
+        }
+        if ($start_unix<=date("U")) {
+            $cumulative_hours_array["$array_date"]=$total_sales;
+        }
         $start_unix+=3600;
     }
     if (count($cumulative_hours_array)==0) {
@@ -670,5 +760,5 @@ if ($rpt_type=="floor_performance_hourly") {
         }
     }
 }
-    echo trim($rpt_string);
+echo trim($rpt_string);
 ?>

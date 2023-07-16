@@ -39,37 +39,49 @@ $linkAST=mysqli_connect("1.1.1.1", "cron", "1234", "asterisk");
 $PHP_AUTH_USER=$_SERVER['PHP_AUTH_USER'];
 $PHP_AUTH_PW=$_SERVER['PHP_AUTH_PW'];
 $PHP_SELF=$_SERVER['PHP_SELF'];
-$PHP_SELF = preg_replace('/\.php.*/i','.php',$PHP_SELF);
-if (isset($_GET["phone"]))                {$phone=$_GET["phone"];}
-    elseif (isset($_POST["phone"]))        {$phone=$_POST["phone"];}
-if (isset($_GET["format"]))                {$format=$_GET["format"];}
-    elseif (isset($_POST["format"]))    {$format=$_POST["format"];}
-if (isset($_GET["auth"]))                {$auth=$_GET["auth"];}
-    elseif (isset($_POST["auth"]))        {$auth=$_POST["auth"];}
-if (isset($_GET["DB"]))                    {$DB=$_GET["DB"];}
-    elseif (isset($_POST["DB"]))        {$DB=$_POST["DB"];}
-$DB = preg_replace('/[^0-9]/','',$DB);
+$PHP_SELF = preg_replace('/\.php.*/i', '.php', $PHP_SELF);
+if (isset($_GET["phone"])) {
+    $phone=$_GET["phone"];
+} elseif (isset($_POST["phone"])) {
+    $phone=$_POST["phone"];
+}
+if (isset($_GET["format"])) {
+    $format=$_GET["format"];
+} elseif (isset($_POST["format"])) {
+    $format=$_POST["format"];
+}
+if (isset($_GET["auth"])) {
+    $auth=$_GET["auth"];
+} elseif (isset($_POST["auth"])) {
+    $auth=$_POST["auth"];
+}
+if (isset($_GET["DB"])) {
+    $DB=$_GET["DB"];
+} elseif (isset($_POST["DB"])) {
+    $DB=$_POST["DB"];
+}
+$DB = preg_replace('/[^0-9]/', '', $DB);
 $DB=0; # disable $DB, it's not used in this script
-$phone = preg_replace("/\<|\>|\'|\"|\\\\|;/","",$phone);
-$format = preg_replace("/\<|\>|\'|\"|\\\\|;/","",$format);
-$auth = preg_replace("/\<|\>|\'|\"|\\\\|;/","",$auth);
+$phone = preg_replace("/\<|\>|\'|\"|\\\\|;/", "", $phone);
+$format = preg_replace("/\<|\>|\'|\"|\\\\|;/", "", $format);
+$auth = preg_replace("/\<|\>|\'|\"|\\\\|;/", "", $auth);
 $US='_';
-if(preg_match("/VDC1234593JH654398722/i",$auth))
-    {$nothing=1;}
-else
-    {
+if(preg_match("/VDC1234593JH654398722/i", $auth)) {
+    $nothing=1;
+} else {
     echo "auth code: |$auth|\n";
     exit;
-    }
-$fp = fopen ("/usr/local/apache2/htdocs/vicidial/auth_entries.txt", "w");
+}
+$fp = fopen("/usr/local/apache2/htdocs/vicidial/auth_entries.txt", "w");
 $date = date("r");
 $ip = getenv("REMOTE_ADDR");
 $browser = getenv("HTTP_USER_AGENT");
-fwrite ($fp, "AUTH|VDC   |$date|\n");
+fwrite($fp, "AUTH|VDC   |$date|\n");
 fclose($fp);
-if (strlen($format)<3) {$format='WAV';}
-if ( (strlen($phone)<10) or (strlen($phone)>10) ) 
-    {
+if (strlen($format)<3) {
+    $format='WAV';
+}
+if ((strlen($phone)<10) or (strlen($phone)>10)) {
     echo "<html>\n";
     echo "<head>\n";
     echo "<title>Recording ID Lookup: </title>\n";
@@ -79,33 +91,28 @@ if ( (strlen($phone)<10) or (strlen($phone)>10) )
     echo "You need to use only a 10-digit phone number<BR>\n";
     echo "recording_lookup_DIRECT.php?format=WAV&phone=7275551212&auth=VDC1234593JH654398722\n<BR>";
     exit;
-    }
-else
-    {
+} else {
     $stmt="select recording_id,filename,location,start_time from recording_log where filename LIKE \"%$phone%\" order by recording_id desc LIMIT 1;";
     $rslt=mysql_to_mysqli($stmt, $linkAST);
     $logs_to_print = mysqli_num_rows($rslt);
     $u=0;
-    if ($logs_to_print)
-        {
+    if ($logs_to_print) {
         $row=mysqli_fetch_row($rslt);
-        $recording_id = $row[0]; 
+        $recording_id = $row[0];
         $filename =        $row[1];
         $location =        $row[2];
         $start_time =    $row[3];
-        $AUDname =    explode("/",$location);
+        $AUDname =    explode("/", $location);
         $AUDnamect =    (count($AUDname)) - 1;
-        preg_replace('/10\.10\.10\.16/i', "10.10.10.16",$AUDname[$AUDnamect]);
+        preg_replace('/10\.10\.10\.16/i', "10.10.10.16", $AUDname[$AUDnamect]);
         $fileGSM=$AUDname[$AUDnamect];
         $locationGSM=$location;
-        $fileGSM = preg_replace('/\.wav/i', ".gsm",$fileGSM);
-        if (!preg_match('/gsm/i',$locationGSM))
-            {
-            $locationGSM = preg_replace('/10\.10\.10\.16/i', "10.10.10.16/GSM",$locationGSM);
-            $locationGSM = preg_replace('/\.wav/i', ".gsm",$locationGSM);
-            }
-        if ($format == 'WAV')
-            {
+        $fileGSM = preg_replace('/\.wav/i', ".gsm", $fileGSM);
+        if (!preg_match('/gsm/i', $locationGSM)) {
+            $locationGSM = preg_replace('/10\.10\.10\.16/i', "10.10.10.16/GSM", $locationGSM);
+            $locationGSM = preg_replace('/\.wav/i', ".gsm", $locationGSM);
+        }
+        if ($format == 'WAV') {
             exec("/usr/local/apache2/htdocs/vicidial/wget --output-document=/usr/local/apache2/htdocs/vicidial/temp/$AUDname[$AUDnamect] $location\n");
             $AUDIOfile = "/usr/local/apache2/htdocs/vicidial/temp/$AUDname[$AUDnamect]";
             $AUDIOfilename = "$AUDname[$AUDnamect]";
@@ -115,9 +122,8 @@ else
             header("Content-Disposition: attachment; filename=\"$AUDIOfilename\"");
             // The PDF source is in original.pdf
             readfile($AUDIOfile);
-            }
-        if ($format == 'GSM')
-            {
+        }
+        if ($format == 'GSM') {
             passthru("/usr/local/apache2/htdocs/vicidial/wget --output-document=/usr/local/apache2/htdocs/vicidial/temp/$fileGSM $locationGSM\n");
             $AUDIOfile = "/usr/local/apache2/htdocs/vicidial/temp/$fileGSM";
             $AUDIOfilename = "$fileGSM";
@@ -127,11 +133,9 @@ else
             header("Content-Disposition: attachment; filename=\"$AUDIOfilename\"");
             // The PDF source is in original.pdf
             readfile($AUDIOfile);
-            }
         }
-    else
-        {
+    } else {
         echo "ERROR:        $phone|$format\n";
-        }
     }
+}
 ?>

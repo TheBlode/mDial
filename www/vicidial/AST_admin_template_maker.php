@@ -35,52 +35,102 @@
 <?php
 require("dbconnect_mysqli.php");
 require("functions.php");
-if (isset($_GET["DB"]))                    {$DB=$_GET["DB"];}
-    elseif (isset($_POST["DB"]))        {$DB=$_POST["DB"];}
-if (isset($_GET["standard_fields_layout"]))                {$standard_fields_layout=$_GET["standard_fields_layout"];}
-    elseif (isset($_POST["standard_fields_layout"]))    {$standard_fields_layout=$_POST["standard_fields_layout"];}
-if (isset($_GET["custom_fields_layout"]))                {$custom_fields_layout=$_GET["custom_fields_layout"];}
-    elseif (isset($_POST["custom_fields_layout"]))        {$custom_fields_layout=$_POST["custom_fields_layout"];}
-if (isset($_GET["template_id"]))                {$template_id=$_GET["template_id"];}
-    elseif (isset($_POST["template_id"]))        {$template_id=$_POST["template_id"];}
-if (isset($_GET["template_name"]))                {$template_name=$_GET["template_name"];}
-    elseif (isset($_POST["template_name"]))        {$template_name=$_POST["template_name"];}
-if (isset($_GET["template_description"]))                {$template_description=$_GET["template_description"];}
-    elseif (isset($_POST["template_description"]))        {$template_description=$_POST["template_description"];}
-if (isset($_GET["file_format"]))                {$file_format=$_GET["file_format"];}
-    elseif (isset($_POST["file_format"]))        {$file_format=$_POST["file_format"];}
-if (isset($_GET["file_delimiter"]))                {$file_delimiter=$_GET["file_delimiter"];}
-    elseif (isset($_POST["file_delimiter"]))        {$file_delimiter=$_POST["file_delimiter"];}
-if (isset($_GET["template_list_id"]))                {$template_list_id=$_GET["template_list_id"];}
-    elseif (isset($_POST["template_list_id"]))        {$template_list_id=$_POST["template_list_id"];}
-if (isset($_GET["template_statuses"]))                {$template_statuses=$_GET["template_statuses"];}
-    elseif (isset($_POST["template_statuses"]))        {$template_statuses=$_POST["template_statuses"];}
-if (isset($_GET["standard_fields_layout"]))                {$standard_fields_layout=$_GET["standard_fields_layout"];}
-    elseif (isset($_POST["standard_fields_layout"]))    {$standard_fields_layout=$_POST["standard_fields_layout"];}
-if (isset($_GET["custom_fields_layout"]))                {$custom_fields_layout=$_GET["custom_fields_layout"];}
-    elseif (isset($_POST["custom_fields_layout"]))        {$custom_fields_layout=$_POST["custom_fields_layout"];}
-if (isset($_GET["submit_template"]))                {$submit_template=$_GET["submit_template"];}
-    elseif (isset($_POST["submit_template"]))        {$submit_template=$_POST["submit_template"];}
-if (isset($_GET["submit_edited_template"]))                {$submit_edited_template=$_GET["submit_edited_template"];}
-    elseif (isset($_POST["submit_edited_template"]))        {$submit_edited_template=$_POST["submit_edited_template"];}
-if (isset($_GET["edit_standard_fields_layout"]))            {$edit_standard_fields_layout=$_GET["edit_standard_fields_layout"];}
-    elseif (isset($_POST["edit_standard_fields_layout"]))    {$edit_standard_fields_layout=$_POST["edit_standard_fields_layout"];}
-if (isset($_GET["edit_custom_fields_layout"]))                {$edit_custom_fields_layout=$_GET["edit_custom_fields_layout"];}
-    elseif (isset($_POST["edit_custom_fields_layout"]))        {$edit_custom_fields_layout=$_POST["edit_custom_fields_layout"];}
-if (isset($_GET["delete_template"]))                {$delete_template=$_GET["delete_template"];}
-    elseif (isset($_POST["delete_template"]))        {$delete_template=$_POST["delete_template"];}
+if (isset($_GET["DB"])) {
+    $DB=$_GET["DB"];
+} elseif (isset($_POST["DB"])) {
+    $DB=$_POST["DB"];
+}
+if (isset($_GET["standard_fields_layout"])) {
+    $standard_fields_layout=$_GET["standard_fields_layout"];
+} elseif (isset($_POST["standard_fields_layout"])) {
+    $standard_fields_layout=$_POST["standard_fields_layout"];
+}
+if (isset($_GET["custom_fields_layout"])) {
+    $custom_fields_layout=$_GET["custom_fields_layout"];
+} elseif (isset($_POST["custom_fields_layout"])) {
+    $custom_fields_layout=$_POST["custom_fields_layout"];
+}
+if (isset($_GET["template_id"])) {
+    $template_id=$_GET["template_id"];
+} elseif (isset($_POST["template_id"])) {
+    $template_id=$_POST["template_id"];
+}
+if (isset($_GET["template_name"])) {
+    $template_name=$_GET["template_name"];
+} elseif (isset($_POST["template_name"])) {
+    $template_name=$_POST["template_name"];
+}
+if (isset($_GET["template_description"])) {
+    $template_description=$_GET["template_description"];
+} elseif (isset($_POST["template_description"])) {
+    $template_description=$_POST["template_description"];
+}
+if (isset($_GET["file_format"])) {
+    $file_format=$_GET["file_format"];
+} elseif (isset($_POST["file_format"])) {
+    $file_format=$_POST["file_format"];
+}
+if (isset($_GET["file_delimiter"])) {
+    $file_delimiter=$_GET["file_delimiter"];
+} elseif (isset($_POST["file_delimiter"])) {
+    $file_delimiter=$_POST["file_delimiter"];
+}
+if (isset($_GET["template_list_id"])) {
+    $template_list_id=$_GET["template_list_id"];
+} elseif (isset($_POST["template_list_id"])) {
+    $template_list_id=$_POST["template_list_id"];
+}
+if (isset($_GET["template_statuses"])) {
+    $template_statuses=$_GET["template_statuses"];
+} elseif (isset($_POST["template_statuses"])) {
+    $template_statuses=$_POST["template_statuses"];
+}
+if (isset($_GET["standard_fields_layout"])) {
+    $standard_fields_layout=$_GET["standard_fields_layout"];
+} elseif (isset($_POST["standard_fields_layout"])) {
+    $standard_fields_layout=$_POST["standard_fields_layout"];
+}
+if (isset($_GET["custom_fields_layout"])) {
+    $custom_fields_layout=$_GET["custom_fields_layout"];
+} elseif (isset($_POST["custom_fields_layout"])) {
+    $custom_fields_layout=$_POST["custom_fields_layout"];
+}
+if (isset($_GET["submit_template"])) {
+    $submit_template=$_GET["submit_template"];
+} elseif (isset($_POST["submit_template"])) {
+    $submit_template=$_POST["submit_template"];
+}
+if (isset($_GET["submit_edited_template"])) {
+    $submit_edited_template=$_GET["submit_edited_template"];
+} elseif (isset($_POST["submit_edited_template"])) {
+    $submit_edited_template=$_POST["submit_edited_template"];
+}
+if (isset($_GET["edit_standard_fields_layout"])) {
+    $edit_standard_fields_layout=$_GET["edit_standard_fields_layout"];
+} elseif (isset($_POST["edit_standard_fields_layout"])) {
+    $edit_standard_fields_layout=$_POST["edit_standard_fields_layout"];
+}
+if (isset($_GET["edit_custom_fields_layout"])) {
+    $edit_custom_fields_layout=$_GET["edit_custom_fields_layout"];
+} elseif (isset($_POST["edit_custom_fields_layout"])) {
+    $edit_custom_fields_layout=$_POST["edit_custom_fields_layout"];
+}
+if (isset($_GET["delete_template"])) {
+    $delete_template=$_GET["delete_template"];
+} elseif (isset($_POST["delete_template"])) {
+    $delete_template=$_POST["delete_template"];
+}
 $PHP_AUTH_USER=$_SERVER['PHP_AUTH_USER'];
 $PHP_AUTH_PW=$_SERVER['PHP_AUTH_PW'];
 $PHP_SELF=$_SERVER['PHP_SELF'];
-$PHP_SELF = preg_replace('/\.php.*/i','.php',$PHP_SELF);
-$DB=preg_replace("/[^0-9a-zA-Z]/","",$DB);
+$PHP_SELF = preg_replace('/\.php.*/i', '.php', $PHP_SELF);
+$DB=preg_replace("/[^0-9a-zA-Z]/", "", $DB);
 $vicidial_listloader_fields = '|vendor_lead_code|source_id|phone_code|phone_number|title|first_name|middle_initial|last_name|address1|address2|address3|city|state|province|postal_code|country_code|gender|date_of_birth|alt_phone|email|security_phrase|comments|rank|owner|';
 $US='_';
 $stmt = "SELECT use_non_latin,admin_web_directory,custom_fields_enabled,webroot_writable,enable_languages,language_method,admin_screen_colors,allow_web_debug FROM system_settings;";
 $rslt=mysql_to_mysqli($stmt, $link);
 $qm_conf_ct = mysqli_num_rows($rslt);
-if ($qm_conf_ct > 0)
-    {
+if ($qm_conf_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $non_latin =                $row[0];
     $admin_web_directory =        $row[1];
@@ -90,146 +140,136 @@ if ($qm_conf_ct > 0)
     $SSlanguage_method =        $row[5];
     $SSadmin_screen_colors =    $row[6];
     $SSallow_web_debug =        $row[7];
-    }
-if ($SSallow_web_debug < 1) {$DB=0;}
-$list_id_override = preg_replace('/[^0-9]/','',$list_id_override);
-$template_list_id = preg_replace('/[^0-9]/','',$template_list_id);
-$template_id = preg_replace("/\<|\>|'|\"|\\\\|;/","",$template_id);
-$template_name = preg_replace("/\<|\>|'|\"|\\\\|;/","",$template_name);
-$template_description = preg_replace("/\<|\>|'|\"|\\\\|;/","",$template_description);
-$standard_fields_layout = preg_replace("/\<|\>|'|\"|\\\\|;/","",$standard_fields_layout);
-$custom_table = preg_replace("/\<|\>|'|\"|\\\\|;/","",$custom_table);
-$custom_fields_layout = preg_replace("/\<|\>|'|\"|\\\\|;/","",$custom_fields_layout);
-$edit_standard_fields_layout = preg_replace("/\<|\>|'|\"|\\\\|;/","",$edit_standard_fields_layout);
-$edit_custom_fields_layout = preg_replace("/\<|\>|'|\"|\\\\|;/","",$edit_custom_fields_layout);
+}
+if ($SSallow_web_debug < 1) {
+    $DB=0;
+}
+$list_id_override = preg_replace('/[^0-9]/', '', $list_id_override);
+$template_list_id = preg_replace('/[^0-9]/', '', $template_list_id);
+$template_id = preg_replace("/\<|\>|'|\"|\\\\|;/", "", $template_id);
+$template_name = preg_replace("/\<|\>|'|\"|\\\\|;/", "", $template_name);
+$template_description = preg_replace("/\<|\>|'|\"|\\\\|;/", "", $template_description);
+$standard_fields_layout = preg_replace("/\<|\>|'|\"|\\\\|;/", "", $standard_fields_layout);
+$custom_table = preg_replace("/\<|\>|'|\"|\\\\|;/", "", $custom_table);
+$custom_fields_layout = preg_replace("/\<|\>|'|\"|\\\\|;/", "", $custom_fields_layout);
+$edit_standard_fields_layout = preg_replace("/\<|\>|'|\"|\\\\|;/", "", $edit_standard_fields_layout);
+$edit_custom_fields_layout = preg_replace("/\<|\>|'|\"|\\\\|;/", "", $edit_custom_fields_layout);
 $delete_template = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $delete_template);
 $submit_template = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $submit_template);
 $submit_edited_template = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $submit_edited_template);
-$file_format = preg_replace("/\<|\>|\'|\"|\\\\|;/",'',$file_format);
-$file_delimiter = preg_replace("/\<|\>|\'|\"|\\\\|;/",'',$file_delimiter);
-if ($non_latin < 1)
-    {
+$file_format = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $file_format);
+$file_delimiter = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $file_delimiter);
+if ($non_latin < 1) {
     $PHP_AUTH_USER = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_USER);
     $PHP_AUTH_PW = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_PW);
-    }
-else
-    {
+} else {
     $PHP_AUTH_USER = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_USER);
     $PHP_AUTH_PW = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_PW);
-    }
-if ($submit_edited_template)
-    {
+}
+if ($submit_edited_template) {
     $upd_stmt="update vicidial_custom_leadloader_templates set template_name='$template_name', template_description='$template_description', standard_variables='$edit_standard_fields_layout', custom_variables='$edit_custom_fields_layout' where template_id='$template_id' limit 1";
     $upd_rslt=mysql_to_mysqli($upd_stmt, $link);
-    if (mysqli_affected_rows($link)>0) 
-        {
+    if (mysqli_affected_rows($link)>0) {
         $success_msg=_QXZ("TEMPLATE UPDATED");
-        if (!$edit_custom_fields_layout) 
-            {
+        if (!$edit_custom_fields_layout) {
             $success_msg.="<BR/>**"._QXZ("NO CUSTOM FIELDS ASSIGNED")."**";
-            }
         }
-    else 
-        {
+    } else {
         $errno = mysqli_errno($link);
-        if ($errno > 0)
-            {$error = mysqli_error($link);}
-        $error_msg=_QXZ("TEMPLATE UPDATE FAILED")."<br>\n$errno - $error<br>\n[$upd_stmt]";
+        if ($errno > 0) {
+            $error = mysqli_error($link);
         }
+        $error_msg=_QXZ("TEMPLATE UPDATE FAILED")."<br>\n$errno - $error<br>\n[$upd_stmt]";
     }
+}
 $STARTtime = date("U");
 $TODAY = date("Y-m-d");
 $NOW_TIME = date("Y-m-d H:i:s");
 $FILE_datetime = $STARTtime;
 $stmt="SELECT selected_language from vicidial_users where user='$PHP_AUTH_USER';";
-if ($DB) {echo "|$stmt|\n";}
+if ($DB) {
+    echo "|$stmt|\n";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 $sl_ct = mysqli_num_rows($rslt);
-if ($sl_ct > 0)
-    {
+if ($sl_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $VUselected_language =        $row[0];
-    }
+}
 $auth=0;
-$auth_message = user_authorization($PHP_AUTH_USER,$PHP_AUTH_PW,'',1,0);
-if ($auth_message == 'GOOD')
-    {$auth=1;}
-if ($auth < 1)
-    {
+$auth_message = user_authorization($PHP_AUTH_USER, $PHP_AUTH_PW, '', 1, 0);
+if ($auth_message == 'GOOD') {
+    $auth=1;
+}
+if ($auth < 1) {
     $VDdisplayMESSAGE = _QXZ("Login incorrect, please try again");
-    if ($auth_message == 'LOCK')
-        {
+    if ($auth_message == 'LOCK') {
         $VDdisplayMESSAGE = _QXZ("Too many login attempts, try again in 15 minutes");
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
-    if ($auth_message == 'IPBLOCK')
-        {
+    }
+    if ($auth_message == 'IPBLOCK') {
         $VDdisplayMESSAGE = _QXZ("Your IP Address is not allowed") . ": $ip";
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
+    }
     Header("WWW-Authenticate: Basic realm=\"CONTACT-CENTER-ADMIN\"");
     Header("HTTP/1.0 401 Unauthorized");
     echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$PHP_AUTH_PW|$auth_message|\n";
     exit;
-    }
+}
 $stmt="SELECT load_leads,user_group from vicidial_users where user='$PHP_AUTH_USER';";
 $rslt=mysql_to_mysqli($stmt, $link);
 $row=mysqli_fetch_row($rslt);
 $LOGload_leads =    $row[0];
 $LOGuser_group =    $row[1];
-if ($LOGload_leads < 1)
-    {
-    Header ("Content-type: text/html; charset=utf-8");
+if ($LOGload_leads < 1) {
+    Header("Content-type: text/html; charset=utf-8");
     echo "You do not have permissions to load leads: |$PHP_AUTH_USER|\n";
     exit;
-    }
-header ("Content-type: text/html; charset=utf-8");
-header ("Cache-Control: no-cache, must-revalidate");  // HTTP/1.1
-header ("Pragma: no-cache");                          // HTTP/1.0
-if ($submit_template==_QXZ("SUBMIT TEMPLATE") && $template_id && $template_name && $template_list_id && $standard_fields_layout) 
-    {
+}
+header("Content-type: text/html; charset=utf-8");
+header("Cache-Control: no-cache, must-revalidate");  // HTTP/1.1
+header("Pragma: no-cache");                          // HTTP/1.0
+if ($submit_template==_QXZ("SUBMIT TEMPLATE") && $template_id && $template_name && $template_list_id && $standard_fields_layout) {
     $status_str="";
     $status_count=count($template_statuses);
-    for ($q=0; $q<count($template_statuses); $q++) 
-        {
-        $template_statuses[$q] = preg_replace("/\<|\>|\'|\"|\\\\|;/",'',$template_statuses[$q]);
+    for ($q=0; $q<count($template_statuses); $q++) {
+        $template_statuses[$q] = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $template_statuses[$q]);
         echo "<!-- $template_statuses[$q] //-->\n";
         $status_str.="$template_statuses[$q]|";
-        }
+    }
     echo "<!-- $status_str //-->";
     $status_str=preg_replace('/\|$/', '', $status_str);
-    if (preg_match('/\-\-ALL\-\-/', $status_str)) {$status_str="";}
+    if (preg_match('/\-\-ALL\-\-/', $status_str)) {
+        $status_str="";
+    }
     $custom_table="custom_".$template_list_id;
     $ins_stmt="INSERT INTO vicidial_custom_leadloader_templates(template_id, template_name, template_description, list_id, standard_variables, custom_table, custom_variables, template_statuses) values('$template_id', '$template_name', '$template_description', '$template_list_id', '$standard_fields_layout', '$custom_table', '$custom_fields_layout', '$status_str')";
     $ins_rslt=mysql_to_mysqli($ins_stmt, $link);
     echo "<!-- $ins_stmt //-->";
-    if (mysqli_affected_rows($link)>0) 
-        {
+    if (mysqli_affected_rows($link)>0) {
         $success_msg=_QXZ("NEW TEMPLATE CREATED SUCCESSFULLY");
-        if (!$custom_fields_layout) 
-            {
+        if (!$custom_fields_layout) {
             $success_msg.="<BR/>**"._QXZ("NO CUSTOM FIELDS ASSIGNED")."**";
-            }
         }
-    else 
-        {
+    } else {
         $errno = mysqli_errno($link);
-        if ($errno > 0)
-            {$error = mysqli_error($link);}
-        $error_msg=_QXZ("TEMPLATE CREATION FAILED")."<br>\n$errno - $error<br>\n[$ins_stmt]";
+        if ($errno > 0) {
+            $error = mysqli_error($link);
         }
+        $error_msg=_QXZ("TEMPLATE CREATION FAILED")."<br>\n$errno - $error<br>\n[$ins_stmt]";
     }
-else if ( ($delete_template == _QXZ("DELETE TEMPLATE")) and (strlen($template_id) > 0) ) 
-    {
+} elseif (($delete_template == _QXZ("DELETE TEMPLATE")) and (strlen($template_id) > 0)) {
     $delete_stmt="delete from vicidial_custom_leadloader_templates where template_id='$template_id'";
     $delete_rslt=mysql_to_mysqli($delete_stmt, $link);
-    }
+}
 $stmt="SELECT allowed_campaigns,allowed_reports,admin_viewable_groups,admin_viewable_call_times from vicidial_user_groups where user_group='$LOGuser_group';";
-if ($DB) {echo "|$stmt|\n";}
+if ($DB) {
+    echo "|$stmt|\n";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 $row=mysqli_fetch_row($rslt);
 $LOGallowed_campaigns =            $row[0];
@@ -239,21 +279,23 @@ $LOGadmin_viewable_call_times =    $row[3];
 $camp_lists='';
 $LOGallowed_campaignsSQL='';
 $whereLOGallowed_campaignsSQL='';
-if (!preg_match('/\-ALL/i', $LOGallowed_campaigns))
-    {
-    $rawLOGallowed_campaignsSQL = preg_replace("/ -/",'',$LOGallowed_campaigns);
-    $rawLOGallowed_campaignsSQL = preg_replace("/ /","','",$rawLOGallowed_campaignsSQL);
+if (!preg_match('/\-ALL/i', $LOGallowed_campaigns)) {
+    $rawLOGallowed_campaignsSQL = preg_replace("/ -/", '', $LOGallowed_campaigns);
+    $rawLOGallowed_campaignsSQL = preg_replace("/ /", "','", $rawLOGallowed_campaignsSQL);
     $LOGallowed_campaignsSQL = "and campaign_id IN('$rawLOGallowed_campaignsSQL')";
     $whereLOGallowed_campaignsSQL = "where campaign_id IN('$rawLOGallowed_campaignsSQL')";
-    }
+}
 $regexLOGallowed_campaigns = " $LOGallowed_campaigns ";
 $script_name = getenv("SCRIPT_NAME");
 $server_name = getenv("SERVER_NAME");
 $server_port = getenv("SERVER_PORT");
-if (preg_match("/443/i",$server_port)) {$HTTPprotocol = 'https://';}
-else {$HTTPprotocol = 'http://';}
+if (preg_match("/443/i", $server_port)) {
+    $HTTPprotocol = 'https://';
+} else {
+    $HTTPprotocol = 'http://';
+}
 $admDIR = "$HTTPprotocol$server_name$script_name";
-$admDIR = preg_replace('/AST_admin_template_maker\.php/i', '',$admDIR);
+$admDIR = preg_replace('/AST_admin_template_maker\.php/i', '', $admDIR);
 $admDIR = "/vicidial/";
 $admSCR = 'admin.php';
 $NWB = "<IMG SRC=\"help.png\" onClick=\"FillAndShowHelpDiv(event, '";
@@ -447,20 +489,24 @@ function checkEditedForm(form_name) {
 </script>
 </script>
 <?php
-function macfontfix($fontsize) 
-    {
+function macfontfix($fontsize)
+{
     $browser = getenv("HTTP_USER_AGENT");
     $pctype = explode("(", $browser);
-    if (preg_match('/Mac/',$pctype[1])) 
-        {
+    if (preg_match('/Mac/', $pctype[1])) {
         /* Browser is a Mac.  If not Netscape 6, raise fonts */
         $blownbrowser = explode('/', $browser);
         $ver = explode(' ', $blownbrowser[1]);
         $ver = $ver[0];
-        if ($ver >= 5.0) return $fontsize; else return ($fontsize+2);
-        } 
-    else return $fontsize;    /* Browser is not a Mac - don't touch fonts */
-    }
+        if ($ver >= 5.0) {
+            return $fontsize;
+        } else {
+            return ($fontsize+2);
+        }
+    } else {
+        return $fontsize;
+    }    /* Browser is not a Mac - don't touch fonts */
+}
 echo "<style type=\"text/css\">\n
 <!--\n
 .title {  font-family: Arial, Helvetica, sans-serif; font-size: ".macfontfix(18)."pt}\n
@@ -494,18 +540,16 @@ require("admin_header.php");
 <tr><td align="center" bgcolor="#<?php echo $SSstd_row4_background; ?>">
 <table border=0 cellpadding=15 cellspacing=0 width="90%" align="center" bgcolor="#<?php echo $SSframe_background; ?>">
 <?php
-if ($error_msg) 
-    {
+if ($error_msg) {
     echo "<tr bgcolor='#990000'>";
     echo "<th colspan='2'><font color='#FFFFFF'>$error_msg</font></th>";
     echo "</tr>";
-    }
-if ($success_msg) 
-    {
+}
+if ($success_msg) {
     echo "<tr bgcolor='#009900'>";
     echo "<th colspan='2'><font color='#FFFFFF'>$success_msg</font></th>";
     echo "</tr>";
-    }
+}
 ?>
     <tr>
         <th width="50%"><font class="standard_bold"><?php echo _QXZ("Create a new template"); ?></font></th>
@@ -521,7 +565,11 @@ if ($success_msg)
 $template_stmt="SELECT template_id, template_name FROM vicidial_custom_leadloader_templates WHERE list_id IN (SELECT list_id FROM vicidial_lists $whereLOGallowed_campaignsSQL) ORDER BY template_id asc;";
 $template_rslt=mysql_to_mysqli($template_stmt, $link);
 if (mysqli_num_rows($template_rslt)>0) {
-    if ($update_template) {echo "<option value='$update_template' selected>$update_template</option>\n";} else {echo "<option value='' selected>--"._QXZ("Choose an existing template")."--</option>\n";}
+    if ($update_template) {
+        echo "<option value='$update_template' selected>$update_template</option>\n";
+    } else {
+        echo "<option value='' selected>--"._QXZ("Choose an existing template")."--</option>\n";
+    }
     while ($template_row=mysqli_fetch_array($template_rslt)) {
         echo "<option value='$template_row[template_id]'>$template_row[template_id] - $template_row[template_name]</option>\n";
     }
@@ -587,16 +635,15 @@ if (mysqli_num_rows($template_rslt)>0) {
             <option value=''>--<?php echo _QXZ("Select a list below"); ?>--</option>
             <?php
             $stmt="SELECT list_id, list_name from vicidial_lists $whereLOGallowed_campaignsSQL order by list_id;";
-            $rslt=mysql_to_mysqli($stmt, $link);
-            $num_rows = mysqli_num_rows($rslt);
-            $count=0;
-            while ( $num_rows > $count ) 
-                {
-                $row = mysqli_fetch_row($rslt);
-                echo "\t\t\t<option value='$row[0]'>$row[0] - $row[1]</option>\n";
-                $count++;
-                }
-            ?>
+$rslt=mysql_to_mysqli($stmt, $link);
+$num_rows = mysqli_num_rows($rslt);
+$count=0;
+while ($num_rows > $count) {
+    $row = mysqli_fetch_row($rslt);
+    echo "\t\t\t<option value='$row[0]'>$row[0] - $row[1]</option>\n";
+    $count++;
+}
+?>
             </select></font><?php echo "$NWB#template_maker-list_id$NWE"; ?>
         </td>
     </tr>
@@ -607,17 +654,16 @@ if (mysqli_num_rows($template_rslt)>0) {
             <select id='template_statuses' name='template_statuses[]' size=5 multiple>
             <option value='--ALL--' selected>--<?php echo _QXZ("ALL DISPOSITIONS"); ?>--</option>
             <?php
-            $stmt="SELECT status, status_name from vicidial_statuses order by status;";
-            $rslt=mysql_to_mysqli($stmt, $link);
-            $num_rows = mysqli_num_rows($rslt);
-            $count=0;
-            while ( $num_rows > $count ) 
-                {
-                $row = mysqli_fetch_row($rslt);
-                echo "\t\t\t<option value='$row[0]'>$row[0] - $row[1]</option>\n";
-                $count++;
-                }
-            ?>
+$stmt="SELECT status, status_name from vicidial_statuses order by status;";
+$rslt=mysql_to_mysqli($stmt, $link);
+$num_rows = mysqli_num_rows($rslt);
+$count=0;
+while ($num_rows > $count) {
+    $row = mysqli_fetch_row($rslt);
+    echo "\t\t\t<option value='$row[0]'>$row[0] - $row[1]</option>\n";
+    $count++;
+}
+?>
             </select></font><?php echo "$NWB#template_maker-list_id$NWE"; ?>
         </span>
         </td>

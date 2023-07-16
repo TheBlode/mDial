@@ -40,51 +40,103 @@ require("functions.php");
 $PHP_AUTH_USER=$_SERVER['PHP_AUTH_USER'];
 $PHP_AUTH_PW=$_SERVER['PHP_AUTH_PW'];
 $PHP_SELF=$_SERVER['PHP_SELF'];
-$PHP_SELF = preg_replace('/\.php.*/i','.php',$PHP_SELF);
-if (isset($_GET["DB"]))                            {$DB=$_GET["DB"];}
-    elseif (isset($_POST["DB"]))                {$DB=$_POST["DB"];}
-if (isset($_GET["action"]))                        {$action=$_GET["action"];}
-    elseif (isset($_POST["action"]))            {$action=$_POST["action"];}
-if (isset($_GET["servers"]))                    {$servers=$_GET["servers"];}
-    elseif (isset($_POST["servers"]))            {$servers=$_POST["servers"];}
-if (isset($_GET["phones"]))                        {$phones=$_GET["phones"];}
-    elseif (isset($_POST["phones"]))            {$phones=$_POST["phones"];}
-if (isset($_GET["conf_secret"]))                {$conf_secret=$_GET["conf_secret"];}
-    elseif (isset($_POST["conf_secret"]))        {$conf_secret=$_POST["conf_secret"];}
-if (isset($_GET["pass"]))                        {$pass=$_GET["pass"];}
-    elseif (isset($_POST["pass"]))                {$pass=$_POST["pass"];}
-if (isset($_GET["alias_option"]))                {$alias_option=$_GET["alias_option"];}
-    elseif (isset($_POST["alias_option"]))        {$alias_option=$_POST["alias_option"];}
-if (isset($_GET["protocol"]))                    {$protocol=$_GET["protocol"];}
-    elseif (isset($_POST["protocol"]))            {$protocol=$_POST["protocol"];}
-if (isset($_GET["local_gmt"]))                    {$local_gmt=$_GET["local_gmt"];}
-    elseif (isset($_POST["local_gmt"]))            {$local_gmt=$_POST["local_gmt"];}
-if (isset($_GET["alias_suffix"]))                {$alias_suffix=$_GET["alias_suffix"];}
-    elseif (isset($_POST["alias_suffix"]))        {$alias_suffix=$_POST["alias_suffix"];}
-if (isset($_GET["SUBMIT"]))                        {$SUBMIT=$_GET["SUBMIT"];}
-    elseif (isset($_POST["SUBMIT"]))            {$SUBMIT=$_POST["SUBMIT"];}
-if (isset($_GET["is_webphone"]))                {$is_webphone=$_GET["is_webphone"];}
-    elseif (isset($_POST["is_webphone"]))        {$is_webphone=$_POST["is_webphone"];}
-if (isset($_GET["webphone_dialpad"]))            {$webphone_dialpad=$_GET["webphone_dialpad"];}
-    elseif (isset($_POST["webphone_dialpad"]))    {$webphone_dialpad=$_POST["webphone_dialpad"];}
-if (isset($_GET["webphone_auto_answer"]))            {$webphone_auto_answer=$_GET["webphone_auto_answer"];}
-    elseif (isset($_POST["webphone_auto_answer"]))    {$webphone_auto_answer=$_POST["webphone_auto_answer"];}
-if (isset($_GET["use_external_server_ip"]))            {$use_external_server_ip=$_GET["use_external_server_ip"];}
-    elseif (isset($_POST["use_external_server_ip"])){$use_external_server_ip=$_POST["use_external_server_ip"];}
-if (isset($_GET["phone_context"]))                {$phone_context=$_GET["phone_context"];}
-    elseif (isset($_POST["phone_context"]))        {$phone_context=$_POST["phone_context"];}
-if (isset($_GET["template_id"]))                {$template_id=$_GET["template_id"];}
-    elseif (isset($_POST["template_id"]))        {$template_id=$_POST["template_id"];}
-if (strlen($action) < 2)
-    {$action = 'BLANK';}
-if (strlen($DB) < 1)
-    {$DB=0;}
-$DB=preg_replace("/[^0-9a-zA-Z]/","",$DB);
+$PHP_SELF = preg_replace('/\.php.*/i', '.php', $PHP_SELF);
+if (isset($_GET["DB"])) {
+    $DB=$_GET["DB"];
+} elseif (isset($_POST["DB"])) {
+    $DB=$_POST["DB"];
+}
+if (isset($_GET["action"])) {
+    $action=$_GET["action"];
+} elseif (isset($_POST["action"])) {
+    $action=$_POST["action"];
+}
+if (isset($_GET["servers"])) {
+    $servers=$_GET["servers"];
+} elseif (isset($_POST["servers"])) {
+    $servers=$_POST["servers"];
+}
+if (isset($_GET["phones"])) {
+    $phones=$_GET["phones"];
+} elseif (isset($_POST["phones"])) {
+    $phones=$_POST["phones"];
+}
+if (isset($_GET["conf_secret"])) {
+    $conf_secret=$_GET["conf_secret"];
+} elseif (isset($_POST["conf_secret"])) {
+    $conf_secret=$_POST["conf_secret"];
+}
+if (isset($_GET["pass"])) {
+    $pass=$_GET["pass"];
+} elseif (isset($_POST["pass"])) {
+    $pass=$_POST["pass"];
+}
+if (isset($_GET["alias_option"])) {
+    $alias_option=$_GET["alias_option"];
+} elseif (isset($_POST["alias_option"])) {
+    $alias_option=$_POST["alias_option"];
+}
+if (isset($_GET["protocol"])) {
+    $protocol=$_GET["protocol"];
+} elseif (isset($_POST["protocol"])) {
+    $protocol=$_POST["protocol"];
+}
+if (isset($_GET["local_gmt"])) {
+    $local_gmt=$_GET["local_gmt"];
+} elseif (isset($_POST["local_gmt"])) {
+    $local_gmt=$_POST["local_gmt"];
+}
+if (isset($_GET["alias_suffix"])) {
+    $alias_suffix=$_GET["alias_suffix"];
+} elseif (isset($_POST["alias_suffix"])) {
+    $alias_suffix=$_POST["alias_suffix"];
+}
+if (isset($_GET["SUBMIT"])) {
+    $SUBMIT=$_GET["SUBMIT"];
+} elseif (isset($_POST["SUBMIT"])) {
+    $SUBMIT=$_POST["SUBMIT"];
+}
+if (isset($_GET["is_webphone"])) {
+    $is_webphone=$_GET["is_webphone"];
+} elseif (isset($_POST["is_webphone"])) {
+    $is_webphone=$_POST["is_webphone"];
+}
+if (isset($_GET["webphone_dialpad"])) {
+    $webphone_dialpad=$_GET["webphone_dialpad"];
+} elseif (isset($_POST["webphone_dialpad"])) {
+    $webphone_dialpad=$_POST["webphone_dialpad"];
+}
+if (isset($_GET["webphone_auto_answer"])) {
+    $webphone_auto_answer=$_GET["webphone_auto_answer"];
+} elseif (isset($_POST["webphone_auto_answer"])) {
+    $webphone_auto_answer=$_POST["webphone_auto_answer"];
+}
+if (isset($_GET["use_external_server_ip"])) {
+    $use_external_server_ip=$_GET["use_external_server_ip"];
+} elseif (isset($_POST["use_external_server_ip"])) {
+    $use_external_server_ip=$_POST["use_external_server_ip"];
+}
+if (isset($_GET["phone_context"])) {
+    $phone_context=$_GET["phone_context"];
+} elseif (isset($_POST["phone_context"])) {
+    $phone_context=$_POST["phone_context"];
+}
+if (isset($_GET["template_id"])) {
+    $template_id=$_GET["template_id"];
+} elseif (isset($_POST["template_id"])) {
+    $template_id=$_POST["template_id"];
+}
+if (strlen($action) < 2) {
+    $action = 'BLANK';
+}
+if (strlen($DB) < 1) {
+    $DB=0;
+}
+$DB=preg_replace("/[^0-9a-zA-Z]/", "", $DB);
 $stmt = "SELECT use_non_latin,webroot_writable,enable_languages,language_method,admin_screen_colors,campaign_cid_areacodes_enabled,sounds_central_control_active,contacts_enabled,enable_auto_reports,allowed_sip_stacks,allow_web_debug FROM system_settings;";
 $rslt=mysql_to_mysqli($stmt, $link);
 $ss_conf_ct = mysqli_num_rows($rslt);
-if ($ss_conf_ct > 0)
-    {
+if ($ss_conf_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $non_latin =                        $row[0];
     $webroot_writable =                    $row[1];
@@ -97,100 +149,97 @@ if ($ss_conf_ct > 0)
     $SSenable_auto_reports =            $row[8];
     $SSallowed_sip_stacks =                $row[9];
     $SSallow_web_debug =                $row[10];
-    }
-if ($SSallow_web_debug < 1) {$DB=0;}
+}
+if ($SSallow_web_debug < 1) {
+    $DB=0;
+}
 $STARTtime = date("U");
 $TODAY = date("Y-m-d");
 $NOW_TIME = date("Y-m-d H:i:s");
 $date = date("r");
 $ip = getenv("REMOTE_ADDR");
 $browser = getenv("HTTP_USER_AGENT");
-$servers = preg_replace("/'|\"|\\\\|;/","",$servers);
-$phones = preg_replace("/'|\"|\\\\|;/","",$phones);
-$action = preg_replace("/[^-_0-9a-zA-Z]/", "",$action);
-$alias_option = preg_replace("/[^-_0-9a-zA-Z]/", "",$alias_option);
-$protocol = preg_replace("/[^-_0-9a-zA-Z]/", "",$protocol);
-$local_gmt = preg_replace("/[^- \.\,\_0-9a-zA-Z]/","",$local_gmt);
-$is_webphone = preg_replace("/[^-_0-9a-zA-Z]/", "",$is_webphone);
-$webphone_dialpad = preg_replace("/[^-_0-9a-zA-Z]/", "",$webphone_dialpad);
-$webphone_auto_answer = preg_replace("/[^NY]/","",$webphone_auto_answer);
-$use_external_server_ip = preg_replace("/[^NY]/","",$use_external_server_ip);
-$SUBMIT = preg_replace("/[^-_0-9a-zA-Z]/", "",$SUBMIT);
-if ($non_latin < 1)
-    {
-    $PHP_AUTH_USER = preg_replace("/[^-_0-9a-zA-Z]/", "",$PHP_AUTH_USER);
-    $PHP_AUTH_PW = preg_replace("/[^-_0-9a-zA-Z]/", "",$PHP_AUTH_PW);
-    $conf_secret = preg_replace("/[^-_0-9a-zA-Z]/", "",$conf_secret);
-    $pass = preg_replace("/[^-_0-9a-zA-Z]/", "",$pass);
-    $alias_suffix = preg_replace("/[^0-9a-zA-Z]/","",$alias_suffix);
-    $phone_context = preg_replace("/[^-\_0-9a-zA-Z]/","",$phone_context);
-    $template_id = preg_replace('/[^-_0-9a-zA-Z]/','',$template_id);
-    }    # end of non_latin
-else
-    {
+$servers = preg_replace("/'|\"|\\\\|;/", "", $servers);
+$phones = preg_replace("/'|\"|\\\\|;/", "", $phones);
+$action = preg_replace("/[^-_0-9a-zA-Z]/", "", $action);
+$alias_option = preg_replace("/[^-_0-9a-zA-Z]/", "", $alias_option);
+$protocol = preg_replace("/[^-_0-9a-zA-Z]/", "", $protocol);
+$local_gmt = preg_replace("/[^- \.\,\_0-9a-zA-Z]/", "", $local_gmt);
+$is_webphone = preg_replace("/[^-_0-9a-zA-Z]/", "", $is_webphone);
+$webphone_dialpad = preg_replace("/[^-_0-9a-zA-Z]/", "", $webphone_dialpad);
+$webphone_auto_answer = preg_replace("/[^NY]/", "", $webphone_auto_answer);
+$use_external_server_ip = preg_replace("/[^NY]/", "", $use_external_server_ip);
+$SUBMIT = preg_replace("/[^-_0-9a-zA-Z]/", "", $SUBMIT);
+if ($non_latin < 1) {
+    $PHP_AUTH_USER = preg_replace("/[^-_0-9a-zA-Z]/", "", $PHP_AUTH_USER);
+    $PHP_AUTH_PW = preg_replace("/[^-_0-9a-zA-Z]/", "", $PHP_AUTH_PW);
+    $conf_secret = preg_replace("/[^-_0-9a-zA-Z]/", "", $conf_secret);
+    $pass = preg_replace("/[^-_0-9a-zA-Z]/", "", $pass);
+    $alias_suffix = preg_replace("/[^0-9a-zA-Z]/", "", $alias_suffix);
+    $phone_context = preg_replace("/[^-\_0-9a-zA-Z]/", "", $phone_context);
+    $template_id = preg_replace('/[^-_0-9a-zA-Z]/', '', $template_id);
+}    # end of non_latin
+else {
     $PHP_AUTH_USER = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_USER);
     $PHP_AUTH_PW = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_PW);
-    $conf_secret = preg_replace("/[^-_0-9\p{L}]/u", "",$conf_secret);
-    $pass = preg_replace("/[^-_0-9\p{L}]/u", "",$pass);
-    $alias_suffix = preg_replace("/[^0-9\p{L}]/u","",$alias_suffix);
-    $phone_context = preg_replace("/[^-\_0-9\p{L}]/u","",$phone_context);
-    $template_id = preg_replace('/[^-_0-9\p{L}]/u','',$template_id);
-    }
+    $conf_secret = preg_replace("/[^-_0-9\p{L}]/u", "", $conf_secret);
+    $pass = preg_replace("/[^-_0-9\p{L}]/u", "", $pass);
+    $alias_suffix = preg_replace("/[^0-9\p{L}]/u", "", $alias_suffix);
+    $phone_context = preg_replace("/[^-\_0-9\p{L}]/u", "", $phone_context);
+    $template_id = preg_replace('/[^-_0-9\p{L}]/u', '', $template_id);
+}
 $user = $PHP_AUTH_USER;
 $stmt="SELECT selected_language from vicidial_users where user='$PHP_AUTH_USER';";
-if ($DB) {echo "|$stmt|\n";}
+if ($DB) {
+    echo "|$stmt|\n";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 $sl_ct = mysqli_num_rows($rslt);
-if ($sl_ct > 0)
-    {
+if ($sl_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $VUselected_language =        $row[0];
-    }
+}
 $auth=0;
-$auth_message = user_authorization($PHP_AUTH_USER,$PHP_AUTH_PW,'',1,0);
-if ( ($auth_message == 'GOOD') or ($auth_message == '2FA') )
-    {
+$auth_message = user_authorization($PHP_AUTH_USER, $PHP_AUTH_PW, '', 1, 0);
+if (($auth_message == 'GOOD') or ($auth_message == '2FA')) {
     $auth=1;
-    if ($auth_message == '2FA')
-        {
-        header ("Content-type: text/html; charset=utf-8");
+    if ($auth_message == '2FA') {
+        header("Content-type: text/html; charset=utf-8");
         echo _QXZ("Your session is expired").". <a href=\"admin.php\">"._QXZ("Click here to log in")."</a>.\n";
         exit;
-        }
     }
-if ($auth < 1)
-    {
+}
+if ($auth < 1) {
     $VDdisplayMESSAGE = _QXZ("Login incorrect, please try again");
-    if ($auth_message == 'LOCK')
-        {
+    if ($auth_message == 'LOCK') {
         $VDdisplayMESSAGE = _QXZ("Too many login attempts, try again in 15 minutes");
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
-    if ($auth_message == 'IPBLOCK')
-        {
+    }
+    if ($auth_message == 'IPBLOCK') {
         $VDdisplayMESSAGE = _QXZ("Your IP Address is not allowed") . ": $ip";
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
+    }
     Header("WWW-Authenticate: Basic realm=\"CONTACT-CENTER-ADMIN\"");
     Header("HTTP/1.0 401 Unauthorized");
     echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$PHP_AUTH_PW|$auth_message|\n";
     exit;
-    }
+}
 $rights_stmt = "SELECT ast_delete_phones from vicidial_users where user='$PHP_AUTH_USER';";
-if ($DB) {echo "|$stmt|\n";}
+if ($DB) {
+    echo "|$stmt|\n";
+}
 $rights_rslt=mysql_to_mysqli($rights_stmt, $link);
 $rights_row=mysqli_fetch_row($rights_rslt);
 $ast_delete_phones =        $rights_row[0];
-if ( $ast_delete_phones < 1 )
-    {
-    header ("Content-type: text/html; charset=utf-8");
+if ($ast_delete_phones < 1) {
+    header("Content-type: text/html; charset=utf-8");
     echo _QXZ("You do not have permissions to manage phones")."\n";
     exit;
-    }
+}
 $stmt="SELECT full_name,ast_delete_phones,ast_admin_access,user_level,user_group from vicidial_users where user='$PHP_AUTH_USER';";
 $rslt=mysql_to_mysqli($stmt, $link);
 $row=mysqli_fetch_row($rslt);
@@ -200,7 +249,9 @@ $LOGast_admin_access =        $row[2];
 $LOGuser_level =            $row[3];
 $LOGuser_group =            $row[4];
 $stmt="SELECT allowed_campaigns,allowed_reports,admin_viewable_groups,admin_viewable_call_times from vicidial_user_groups where user_group='$LOGuser_group';";
-if ($DB) {$DBout .= "|$stmt|\n";}
+if ($DB) {
+    $DBout .= "|$stmt|\n";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 $row=mysqli_fetch_row($rslt);
 $LOGallowed_campaigns =            $row[0];
@@ -209,13 +260,12 @@ $LOGadmin_viewable_groups =        $row[2];
 $LOGadmin_viewable_call_times =    $row[3];
 $LOGadmin_viewable_groupsSQL='';
 $whereLOGadmin_viewable_groupsSQL='';
-if ( (!preg_match('/\-\-ALL\-\-/i',$LOGadmin_viewable_groups)) and (strlen($LOGadmin_viewable_groups) > 3) )
-    {
-    $rawLOGadmin_viewable_groupsSQL = preg_replace("/ -/",'',$LOGadmin_viewable_groups);
-    $rawLOGadmin_viewable_groupsSQL = preg_replace("/ /","','",$rawLOGadmin_viewable_groupsSQL);
+if ((!preg_match('/\-\-ALL\-\-/i', $LOGadmin_viewable_groups)) and (strlen($LOGadmin_viewable_groups) > 3)) {
+    $rawLOGadmin_viewable_groupsSQL = preg_replace("/ -/", '', $LOGadmin_viewable_groups);
+    $rawLOGadmin_viewable_groupsSQL = preg_replace("/ /", "','", $rawLOGadmin_viewable_groupsSQL);
     $LOGadmin_viewable_groupsSQL = "and user_group IN('---ALL---','$rawLOGadmin_viewable_groupsSQL')";
     $whereLOGadmin_viewable_groupsSQL = "where user_group IN('---ALL---','$rawLOGadmin_viewable_groupsSQL')";
-    }
+}
 ?>
 <html>
 <head>
@@ -224,9 +274,8 @@ if ( (!preg_match('/\-\-ALL\-\-/i',$LOGadmin_viewable_groups)) and (strlen($LOGa
 <div id='HelpDisplayDiv' class='help_info' style='display:none;'></div>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
 <title><?php echo _QXZ("ADMINISTRATION: Phones Bulk Insert"); ?>
-<?php 
-if ($action == "HELP")
-    {
+<?php
+if ($action == "HELP") {
     ?>
     </title>
     </head>
@@ -297,7 +346,7 @@ if ($action == "HELP")
     </HTML>
     <?php
     exit;
-    }
+}
 $ADD =                    '999998';
 $hh =                    'admin';
 $LOGast_admin_access =    '1';
@@ -315,14 +364,12 @@ $admin_font =        'BLACK';
 $admin_color =        '#E6E6E6';
 $subcamp_color =    '#C6C6C6';
 require("admin_header.php");
-if ( ($LOGast_admin_access < 1) or ($LOGuser_level < 8) )
-    {
+if (($LOGast_admin_access < 1) or ($LOGuser_level < 8)) {
     echo _QXZ("You are not authorized to view this section")."\n";
     exit;
-    }
-if ($DB > 0)
-{
-echo "$DB,$action,$servers,$phones,$conf_secret,$pass,$alias_option,$protocol,$logal_gmt,$alias_suffix\n<BR>";
+}
+if ($DB > 0) {
+    echo "$DB,$action,$servers,$phones,$conf_secret,$pass,$alias_option,$protocol,$logal_gmt,$alias_suffix\n<BR>";
 }
 $NWB = "<IMG SRC=\"help.png\" onClick=\"FillAndShowHelpDiv(event, '";
 $NWE = "')\" WIDTH=20 HEIGHT=20 BORDER=0 ALT=\"HELP\" ALIGN=TOP>";
@@ -336,14 +383,14 @@ $SSstd_row5_background='A3C3D6';
 $SSalt_row1_background='BDFFBD';
 $SSalt_row2_background='99FF99';
 $SSalt_row3_background='CCFFCC';
-if ($SSadmin_screen_colors != 'default')
-    {
+if ($SSadmin_screen_colors != 'default') {
     $stmt = "SELECT menu_background,frame_background,std_row1_background,std_row2_background,std_row3_background,std_row4_background,std_row5_background,alt_row1_background,alt_row2_background,alt_row3_background FROM vicidial_screen_colors where colors_id='$SSadmin_screen_colors';";
     $rslt=mysql_to_mysqli($stmt, $link);
-    if ($DB) {echo "$stmt\n";}
+    if ($DB) {
+        echo "$stmt\n";
+    }
     $colors_ct = mysqli_num_rows($rslt);
-    if ($colors_ct > 0)
-        {
+    if ($colors_ct > 0) {
         $row=mysqli_fetch_row($rslt);
         $SSmenu_background =        $row[0];
         $SSframe_background =        $row[1];
@@ -355,10 +402,9 @@ if ($SSadmin_screen_colors != 'default')
         $SSalt_row1_background =    $row[7];
         $SSalt_row2_background =    $row[8];
         $SSalt_row3_background =    $row[9];
-        }
     }
-if ($action == "BLANK")
-    {
+}
+if ($action == "BLANK") {
     echo "<TABLE><TR><TD>\n";
     echo "<FONT FACE=\"ARIAL,HELVETICA\" COLOR=BLACK SIZE=2>";
     echo "<br>"._QXZ("Add Multi-Server Phones Form")."<form action=$PHP_SELF method=POST>\n";
@@ -375,8 +421,12 @@ if ($action == "BLANK")
     echo "</select> $NWB#admin_phones_bulk_insert-create_alias$NWE </td></tr>\n";
     echo "<tr bgcolor=#".$SSstd_row4_background."><td align=right>"._QXZ("Alias Suffix").": </td><td align=left><input type=text name=alias_suffix size=2 maxlength=4> $NWB#admin_phones_bulk_insert-alias_suffix$NWE </td></tr>\n";
     echo "<tr bgcolor=#".$SSstd_row4_background."><td align=right>"._QXZ("Client Protocol").": </td><td align=left><select size=1 name=protocol>";
-    if ( ($SSallowed_sip_stacks == 'SIP') or ($SSallowed_sip_stacks == 'SIP_and_PJSIP') ) {echo "<option>SIP</option>";}
-    if ( ($SSallowed_sip_stacks == 'PJSIP') or ($SSallowed_sip_stacks == 'SIP_and_PJSIP') ) {echo "<option>PJSIP</option>";}
+    if (($SSallowed_sip_stacks == 'SIP') or ($SSallowed_sip_stacks == 'SIP_and_PJSIP')) {
+        echo "<option>SIP</option>";
+    }
+    if (($SSallowed_sip_stacks == 'PJSIP') or ($SSallowed_sip_stacks == 'SIP_and_PJSIP')) {
+        echo "<option>PJSIP</option>";
+    }
     echo "<option>Zap</option>";
     echo "<option>IAX2</option>";
     echo "<option value='EXTERNAL'>"._QXZ("EXTERNAL")."</option>";
@@ -393,123 +443,222 @@ if ($action == "BLANK")
     $templates_to_print = mysqli_num_rows($rslt);
     $templates_list='<option value=\'\' SELECTED>--'._QXZ("NONE").'--</option>';
     $o=0;
-    while ($templates_to_print > $o) 
-        {
+    while ($templates_to_print > $o) {
         $rowx=mysqli_fetch_row($rslt);
         $templates_list .= "<option value=\"$rowx[0]\">$rowx[0] - $rowx[1]</option>\n";
         $o++;
-        }
+    }
     echo "$templates_list";
     echo "</select>$NWB#admin_phones_bulk_insert-template_id$NWE</td></tr>\n";
     echo "<tr bgcolor=#".$SSstd_row4_background."><td align=center colspan=2><INPUT TYPE=SUBMIT NAME=SUBMIT VALUE='"._QXZ("SUBMIT")."'></td></tr>\n";
     echo "<tr bgcolor=#".$SSstd_row4_background."><td align=center colspan=2>"._QXZ("NOTE: Submitting this form will NOT trigger a conf file rebuild")."</td></tr>\n";
     echo "</TABLE></center>\n";
     echo "</TD></TR></TABLE>\n";
-    }
-if ($action == "ADD_PHONES_SUBMIT")
-    {
+}
+if ($action == "ADD_PHONES_SUBMIT") {
     $phones_inserted=0;
     $phone_alias_inserted=0;
-    if (strlen($phones) > 2)
-        {
-        $PN = explode("\n",$phones);
+    if (strlen($phones) > 2) {
+        $PN = explode("\n", $phones);
         $PNct = count($PN);
-        if (strlen($servers) > 6)
-            {
-            $SN = explode("\n",$servers);
+        if (strlen($servers) > 6) {
+            $SN = explode("\n", $servers);
             $SNct = count($SN);
             $s=0;
-            while ($s < $SNct)
-                {
-                $SN[$s] = preg_replace('/\n|\r|\t| /','',$SN[$s]);
+            while ($s < $SNct) {
+                $SN[$s] = preg_replace('/\n|\r|\t| /', '', $SN[$s]);
                 $server_exists=0;
                 $stmt="SELECT count(*) from servers where server_ip='$SN[$s]';";
-                if ($DB>0) {echo "$stmt";}
+                if ($DB>0) {
+                    echo "$stmt";
+                }
                 $rslt=mysql_to_mysqli($stmt, $link);
                 $servercount_to_print = mysqli_num_rows($rslt);
-                if ($servercount_to_print > 0) 
-                    {
+                if ($servercount_to_print > 0) {
                     $rowx=mysqli_fetch_row($rslt);
                     $server_exists =    $rowx[0];
-                    }
-                if ($server_exists > 0)
-                    {
+                }
+                if ($server_exists > 0) {
                     $p=0;
-                    while ($p < $PNct)
-                        {
-                        $PN[$p] = preg_replace('/\n|\r|\t| /','',$PN[$p]);
+                    while ($p < $PNct) {
+                        $PN[$p] = preg_replace('/\n|\r|\t| /', '', $PN[$p]);
                         $phone_exists=0;
                         $stmt="SELECT count(*) from phones where server_ip='$SN[$s]' and extension='$PN[$p]';";
-                        if ($DB>0) {echo "$stmt";}
+                        if ($DB>0) {
+                            echo "$stmt";
+                        }
                         $rslt=mysql_to_mysqli($stmt, $link);
                         $phonecount_to_print = mysqli_num_rows($rslt);
-                        if ($phonecount_to_print > 0) 
-                            {
+                        if ($phonecount_to_print > 0) {
                             $rowx=mysqli_fetch_row($rslt);
                             $phone_exists =    $rowx[0];
+                        }
+                        if (($phone_exists < 1) and (strlen($PN[$p]) > 1)) {
+                            if ($s < 1) {
+                                $dialplan_prefix='';
+                                $login_suffix = 'a';
+                            } else {
+                                $dialplan_prefix = $s;
                             }
-                        if ( ($phone_exists < 1) and (strlen($PN[$p]) > 1) )
-                            {
-                            if ($s < 1) {$dialplan_prefix='';   $login_suffix = 'a';}
-                            else {$dialplan_prefix = $s;}
-                            if ($s == '1') {$login_suffix = 'b';}
-                            if ($s == '2') {$login_suffix = 'c';}
-                            if ($s == '3') {$login_suffix = 'd';}
-                            if ($s == '4') {$login_suffix = 'e';}
-                            if ($s == '5') {$login_suffix = 'f';}
-                            if ($s == '6') {$login_suffix = 'g';}
-                            if ($s == '7') {$login_suffix = 'h';}
-                            if ($s == '8') {$login_suffix = 'i';}
-                            if ($s == '9') {$login_suffix = 'j';}
-                            if ($s == '10') {$login_suffix = 'k';}
-                            if ($s == '11') {$login_suffix = 'l';}
-                            if ($s == '12') {$login_suffix = 'm';}
-                            if ($s == '13') {$login_suffix = 'n';}
-                            if ($s == '14') {$login_suffix = 'o';}
-                            if ($s == '15') {$login_suffix = 'p';}
-                            if ($s == '16') {$login_suffix = 'q';}
-                            if ($s == '17') {$login_suffix = 'r';}
-                            if ($s == '18') {$login_suffix = 's';}
-                            if ($s == '19') {$login_suffix = 't';}
-                            if ($s == '20') {$login_suffix = 'u';}
-                            if ($s == '21') {$login_suffix = 'v';}
-                            if ($s == '22') {$login_suffix = 'w';}
-                            if ($s == '23') {$login_suffix = 'x';}
-                            if ($s == '24') {$login_suffix = 'y';}
-                            if ($s == '25') {$login_suffix = 'z';}
-                            if ($s == '26') {$login_suffix = 'aa';}
-                            if ($s == '27') {$login_suffix = 'ab';}
-                            if ($s == '28') {$login_suffix = 'ac';}
-                            if ($s == '29') {$login_suffix = 'ad';}
-                            if ($s == '30') {$login_suffix = 'ae';}
-                            if ($s == '31') {$login_suffix = 'af';}
-                            if ($s == '32') {$login_suffix = 'ag';}
-                            if ($s == '33') {$login_suffix = 'ah';}
-                            if ($s == '34') {$login_suffix = 'ai';}
-                            if ($s == '35') {$login_suffix = 'aj';}
-                            if ($s == '36') {$login_suffix = 'ak';}
-                            if ($s == '37') {$login_suffix = 'al';}
-                            if ($s == '38') {$login_suffix = 'am';}
-                            if ($s == '39') {$login_suffix = 'an';}
-                            if ($s == '40') {$login_suffix = 'ao';}
-                            if ($s == '41') {$login_suffix = 'ap';}
-                            if ($s == '42') {$login_suffix = 'aq';}
-                            if ($s == '43') {$login_suffix = 'ar';}
-                            if ($s == '44') {$login_suffix = 'as';}
-                            if ($s == '45') {$login_suffix = 'at';}
-                            if ($s == '46') {$login_suffix = 'au';}
-                            if ($s == '47') {$login_suffix = 'av';}
-                            if ($s == '48') {$login_suffix = 'aw';}
-                            if ($s >= 49) {$login_suffix = 'ax';}
+                            if ($s == '1') {
+                                $login_suffix = 'b';
+                            }
+                            if ($s == '2') {
+                                $login_suffix = 'c';
+                            }
+                            if ($s == '3') {
+                                $login_suffix = 'd';
+                            }
+                            if ($s == '4') {
+                                $login_suffix = 'e';
+                            }
+                            if ($s == '5') {
+                                $login_suffix = 'f';
+                            }
+                            if ($s == '6') {
+                                $login_suffix = 'g';
+                            }
+                            if ($s == '7') {
+                                $login_suffix = 'h';
+                            }
+                            if ($s == '8') {
+                                $login_suffix = 'i';
+                            }
+                            if ($s == '9') {
+                                $login_suffix = 'j';
+                            }
+                            if ($s == '10') {
+                                $login_suffix = 'k';
+                            }
+                            if ($s == '11') {
+                                $login_suffix = 'l';
+                            }
+                            if ($s == '12') {
+                                $login_suffix = 'm';
+                            }
+                            if ($s == '13') {
+                                $login_suffix = 'n';
+                            }
+                            if ($s == '14') {
+                                $login_suffix = 'o';
+                            }
+                            if ($s == '15') {
+                                $login_suffix = 'p';
+                            }
+                            if ($s == '16') {
+                                $login_suffix = 'q';
+                            }
+                            if ($s == '17') {
+                                $login_suffix = 'r';
+                            }
+                            if ($s == '18') {
+                                $login_suffix = 's';
+                            }
+                            if ($s == '19') {
+                                $login_suffix = 't';
+                            }
+                            if ($s == '20') {
+                                $login_suffix = 'u';
+                            }
+                            if ($s == '21') {
+                                $login_suffix = 'v';
+                            }
+                            if ($s == '22') {
+                                $login_suffix = 'w';
+                            }
+                            if ($s == '23') {
+                                $login_suffix = 'x';
+                            }
+                            if ($s == '24') {
+                                $login_suffix = 'y';
+                            }
+                            if ($s == '25') {
+                                $login_suffix = 'z';
+                            }
+                            if ($s == '26') {
+                                $login_suffix = 'aa';
+                            }
+                            if ($s == '27') {
+                                $login_suffix = 'ab';
+                            }
+                            if ($s == '28') {
+                                $login_suffix = 'ac';
+                            }
+                            if ($s == '29') {
+                                $login_suffix = 'ad';
+                            }
+                            if ($s == '30') {
+                                $login_suffix = 'ae';
+                            }
+                            if ($s == '31') {
+                                $login_suffix = 'af';
+                            }
+                            if ($s == '32') {
+                                $login_suffix = 'ag';
+                            }
+                            if ($s == '33') {
+                                $login_suffix = 'ah';
+                            }
+                            if ($s == '34') {
+                                $login_suffix = 'ai';
+                            }
+                            if ($s == '35') {
+                                $login_suffix = 'aj';
+                            }
+                            if ($s == '36') {
+                                $login_suffix = 'ak';
+                            }
+                            if ($s == '37') {
+                                $login_suffix = 'al';
+                            }
+                            if ($s == '38') {
+                                $login_suffix = 'am';
+                            }
+                            if ($s == '39') {
+                                $login_suffix = 'an';
+                            }
+                            if ($s == '40') {
+                                $login_suffix = 'ao';
+                            }
+                            if ($s == '41') {
+                                $login_suffix = 'ap';
+                            }
+                            if ($s == '42') {
+                                $login_suffix = 'aq';
+                            }
+                            if ($s == '43') {
+                                $login_suffix = 'ar';
+                            }
+                            if ($s == '44') {
+                                $login_suffix = 'as';
+                            }
+                            if ($s == '45') {
+                                $login_suffix = 'at';
+                            }
+                            if ($s == '46') {
+                                $login_suffix = 'au';
+                            }
+                            if ($s == '47') {
+                                $login_suffix = 'av';
+                            }
+                            if ($s == '48') {
+                                $login_suffix = 'aw';
+                            }
+                            if ($s >= 49) {
+                                $login_suffix = 'ax';
+                            }
                             $extension =        $PN[$p];
-                            if ( ($protocol == 'SIP') or ($protocol == 'PJSIP') or ($protocol == 'IAX2') )
-                                {$dialplan_number =    "$dialplan_prefix$PN[$p]";}
-                            else
-                                {$dialplan_number =    "$PN[$p]";}
-                            if (strlen($phone_context) < 1)
-                                {$phone_context = 'default';}
+                            if (($protocol == 'SIP') or ($protocol == 'PJSIP') or ($protocol == 'IAX2')) {
+                                $dialplan_number =    "$dialplan_prefix$PN[$p]";
+                            } else {
+                                $dialplan_number =    "$PN[$p]";
+                            }
+                            if (strlen($phone_context) < 1) {
+                                $phone_context = 'default';
+                            }
                             $dialplan_number = preg_replace('/\D/', '', $dialplan_number);
-                            $voicemail_id =        $PN[$p];    $voicemail_id = preg_replace('/\D/', '', $voicemail_id);
+                            $voicemail_id =        $PN[$p];
+                            $voicemail_id = preg_replace('/\D/', '', $voicemail_id);
                             $phone_server_ip =    $SN[$s];
                             $login =            "$PN[$p]$login_suffix";
                             $phone_type =        "CCagent";
@@ -517,67 +666,66 @@ if ($action == "ADD_PHONES_SUBMIT")
                             $stmt = "INSERT INTO phones (extension,dialplan_number,voicemail_id,server_ip,login,pass,status,active,phone_type,fullname,protocol,local_gmt,outbound_cid,conf_secret,is_webphone,webphone_dialpad,webphone_auto_answer,use_external_server_ip,phone_context,template_id) values('$extension','$dialplan_number','$voicemail_id','$phone_server_ip','$login','$pass','ACTIVE','Y','$phone_type','$fullname','$protocol','$local_gmt','0000000000','$conf_secret','$is_webphone','$webphone_dialpad','$webphone_auto_answer','$use_external_server_ip','$phone_context','$template_id');";
                             $rslt=mysql_to_mysqli($stmt, $link);
                             $affected_rows = mysqli_affected_rows($link);
-                            if ($DB > 0) {echo "$s|$p|$SN[$s]|$PN[$p]|$affected_rows|$stmt\n<BR>";}
-                            if ($affected_rows > 0)
-                                {
+                            if ($DB > 0) {
+                                echo "$s|$p|$SN[$s]|$PN[$p]|$affected_rows|$stmt\n<BR>";
+                            }
+                            if ($affected_rows > 0) {
                                 $phone_alias_entry[$p] .= "$login,";
                                 $SQL_log = "$stmt|";
-                                $SQL_log = preg_replace('/;/','',$SQL_log);
+                                $SQL_log = preg_replace('/;/', '', $SQL_log);
                                 $SQL_log = addslashes($SQL_log);
                                 $stmt="INSERT INTO vicidial_admin_log set event_date='$SQLdate', user='$PHP_AUTH_USER', ip_address='$ip', event_section='PHONES', event_type='ADD', record_id='$PN[$p]', event_code='ADMIN BULK ADD PHONE', event_sql=\"$SQL_log\", event_notes='$SN[$s]|$PN[$p]';";
                                 $rslt=mysql_to_mysqli($stmt, $link);
                                 $phones_inserted++;
-                                }
-                            else
-                                {echo _QXZ("ERROR: Problem inserting phone").":  $affected_rows|$stmt\n<BR>";}
+                            } else {
+                                echo _QXZ("ERROR: Problem inserting phone").":  $affected_rows|$stmt\n<BR>";
                             }
-                        else
-                            {echo _QXZ("ERROR: Phone already exists").":  $SN[$s]|$PN[$p]|$phone_exists\n<BR>";}
-                        $p++;
+                        } else {
+                            echo _QXZ("ERROR: Phone already exists").":  $SN[$s]|$PN[$p]|$phone_exists\n<BR>";
                         }
+                        $p++;
                     }
-                else
-                    {echo _QXZ("ERROR: Server does not exist").": $SN[$s]|$server_exists\n<BR>";}
-                $s++;
+                } else {
+                    echo _QXZ("ERROR: Server does not exist").": $SN[$s]|$server_exists\n<BR>";
                 }
-            if ( ($phones_inserted > 0) and ($alias_option == 'YES') )
-                {
+                $s++;
+            }
+            if (($phones_inserted > 0) and ($alias_option == 'YES')) {
                 $p=0;
-                while ($p < $PNct)
-                    {
-                    if ( (strlen($phone_alias_entry[$p]) > 1) and (strlen($PN[$p]) > 1) )
-                        {
-                        $phone_alias_entry[$p] = preg_replace('/,$/','',$phone_alias_entry[$p]);
+                while ($p < $PNct) {
+                    if ((strlen($phone_alias_entry[$p]) > 1) and (strlen($PN[$p]) > 1)) {
+                        $phone_alias_entry[$p] = preg_replace('/,$/', '', $phone_alias_entry[$p]);
                         $stmt="INSERT INTO phones_alias (alias_id,alias_name,logins_list) values('$PN[$p]$alias_suffix','$PN[$p]','$phone_alias_entry[$p]');";
                         $rslt=mysql_to_mysqli($stmt, $link);
                         $affected_rows = mysqli_affected_rows($link);
-                        if ($DB > 0) {echo "$p|$phone_alias_entry[$p]|$PN[$p]|$affected_rows|$stmt\n<BR>";}
-                        if ($affected_rows > 0)
-                            {
+                        if ($DB > 0) {
+                            echo "$p|$phone_alias_entry[$p]|$PN[$p]|$affected_rows|$stmt\n<BR>";
+                        }
+                        if ($affected_rows > 0) {
                             $SQL_log = "$stmt|";
-                            $SQL_log = preg_replace('/;/','',$SQL_log);
+                            $SQL_log = preg_replace('/;/', '', $SQL_log);
                             $SQL_log = addslashes($SQL_log);
                             $stmt="INSERT INTO vicidial_admin_log set event_date='$SQLdate', user='$PHP_AUTH_USER', ip_address='$ip', event_section='PHONEALIASES', event_type='ADD', record_id='$alias_id', event_code='ADMIN ADD BULK PHONE ALIAS', event_sql=\"$SQL_log\", event_notes='';";
                             $rslt=mysql_to_mysqli($stmt, $link);
                             $phone_alias_inserted++;
-                            }
-                        else
-                            {echo _QXZ("ERROR: Problem inserting phone alias").":  $affected_rows|$stmt\n<BR>";}
+                        } else {
+                            echo _QXZ("ERROR: Problem inserting phone alias").":  $affected_rows|$stmt\n<BR>";
                         }
-                    $p++;
                     }
+                    $p++;
                 }
+            }
             echo _QXZ("Phones Inserted").":: $phones_inserted\n<BR>";
             echo _QXZ("Phones Aliases Inserted").":: $phone_alias_inserted\n<BR>";
             echo _QXZ("You now need to manually trigger a conf file rebuild from the System Settings screen").":\n<BR>";
             echo "<BR><a href=\"$PHP_SELF\">Start Over</a><BR>\n";
-            }
-        else
-            {echo _QXZ("ERROR: You must enter servers").":: $servers\n<BR>";}
+        } else {
+            echo _QXZ("ERROR: You must enter servers").":: $servers\n<BR>";
         }
-    else
-        {echo _QXZ("ERROR: You must enter extensions").":: $phones\n<BR>";}
+    } else {
+        echo _QXZ("ERROR: You must enter extensions").":: $phones\n<BR>";
     }
+}
 $ENDtime = date("U");
 $RUNtime = ($ENDtime - $STARTtime);
 echo "\n\n\n<br><br><br>\n<font size=1> "._QXZ("runtime").":: $RUNtime "._QXZ("seconds").": &nbsp; &nbsp; &nbsp; &nbsp; "._QXZ("Version").": $admin_version &nbsp; &nbsp; "._QXZ("Build").": $build</font>";

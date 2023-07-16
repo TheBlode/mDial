@@ -39,124 +39,150 @@ $php_script = 'astguiclient.php';
 $astguiclient_disabled = '1';
 require_once("dbconnect_mysqli.php");
 require_once("functions.php");
-if (isset($_GET["user"]))                    {$user=$_GET["user"];}
-    elseif (isset($_POST["user"]))            {$user=$_POST["user"];}
-if (isset($_GET["pass"]))                    {$pass=$_GET["pass"];}
-    elseif (isset($_POST["pass"]))            {$pass=$_POST["pass"];}
-if (isset($_GET["phone_login"]))            {$phone_login=$_GET["phone_login"];}
-    elseif (isset($_POST["phone_login"]))    {$phone_login=$_POST["phone_login"];}
-if (isset($_GET["phone_pass"]))                {$phone_pass=$_GET["phone_pass"];}
-    elseif (isset($_POST["phone_pass"]))    {$phone_pass=$_POST["phone_pass"];}
-if (isset($_GET["relogin"]))                {$relogin=$_GET["relogin"];}
-    elseif (isset($_POST["relogin"]))        {$relogin=$_POST["relogin"];}
-    if (!isset($phone_login)) 
-        {
-        if (isset($_GET["pl"]))                {$phone_login=$_GET["pl"];}
-                elseif (isset($_POST["pl"]))   {$phone_login=$_POST["pl"];}
-        }
-    if (!isset($phone_pass))
-        {
-        if (isset($_GET["pp"]))                {$phone_pass=$_GET["pp"];}
-                elseif (isset($_POST["pp"]))   {$phone_pass=$_POST["pp"];}
-        }
+if (isset($_GET["user"])) {
+    $user=$_GET["user"];
+} elseif (isset($_POST["user"])) {
+    $user=$_POST["user"];
+}
+if (isset($_GET["pass"])) {
+    $pass=$_GET["pass"];
+} elseif (isset($_POST["pass"])) {
+    $pass=$_POST["pass"];
+}
+if (isset($_GET["phone_login"])) {
+    $phone_login=$_GET["phone_login"];
+} elseif (isset($_POST["phone_login"])) {
+    $phone_login=$_POST["phone_login"];
+}
+if (isset($_GET["phone_pass"])) {
+    $phone_pass=$_GET["phone_pass"];
+} elseif (isset($_POST["phone_pass"])) {
+    $phone_pass=$_POST["phone_pass"];
+}
+if (isset($_GET["relogin"])) {
+    $relogin=$_GET["relogin"];
+} elseif (isset($_POST["relogin"])) {
+    $relogin=$_POST["relogin"];
+}
+if (!isset($phone_login)) {
+    if (isset($_GET["pl"])) {
+        $phone_login=$_GET["pl"];
+    } elseif (isset($_POST["pl"])) {
+        $phone_login=$_POST["pl"];
+    }
+}
+if (!isset($phone_pass)) {
+    if (isset($_GET["pp"])) {
+        $phone_pass=$_GET["pp"];
+    } elseif (isset($_POST["pp"])) {
+        $phone_pass=$_POST["pp"];
+    }
+}
 $forever_stop=0;
 $user_abb = "$user$user$user$user";
-while ( (strlen($user_abb) > 4) and ($forever_stop < 200) )
-    {$user_abb = preg_replace("/^./","",$user_abb);   $forever_stop++;}
-$DB=preg_replace("/[^0-9a-z]/","",$DB);
-$phone_login=preg_replace("/[^-_0-9a-zA-Z]/","",$phone_login);
-$phone_pass=preg_replace("/[^-_0-9a-zA-Z]/","",$phone_pass);
-$user=preg_replace("/\'|\"|\\\\|;| /","",$user);
-$pass=preg_replace("/\'|\"|\\\\|;| /","",$pass);
-$relogin=preg_replace("/[^-_0-9a-zA-Z]/","",$relogin);
-if (file_exists('options.php'))
-    {
+while ((strlen($user_abb) > 4) and ($forever_stop < 200)) {
+    $user_abb = preg_replace("/^./", "", $user_abb);
+    $forever_stop++;
+}
+$DB=preg_replace("/[^0-9a-z]/", "", $DB);
+$phone_login=preg_replace("/[^-_0-9a-zA-Z]/", "", $phone_login);
+$phone_pass=preg_replace("/[^-_0-9a-zA-Z]/", "", $phone_pass);
+$user=preg_replace("/\'|\"|\\\\|;| /", "", $user);
+$pass=preg_replace("/\'|\"|\\\\|;| /", "", $pass);
+$relogin=preg_replace("/[^-_0-9a-zA-Z]/", "", $relogin);
+if (file_exists('options.php')) {
     require_once('options.php');
-    }
-if ($astguiclient_disabled > 0)
-    {
+}
+if ($astguiclient_disabled > 0) {
     echo "astguiclient is disabled on this system\n";
     exit;
-    }
+}
 $stmt = "SELECT use_non_latin,enable_languages,language_method,default_language,allow_web_debug FROM system_settings;";
 $rslt=mysql_to_mysqli($stmt, $link);
-    if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'00XXX',$user,$server_ip,$session_name,$one_mysql_log);}
+if ($mel > 0) {
+    mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '00XXX', $user, $server_ip, $session_name, $one_mysql_log);
+}
 $qm_conf_ct = mysqli_num_rows($rslt);
-if ($qm_conf_ct > 0)
-    {
+if ($qm_conf_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $non_latin =                $row[0];
     $SSenable_languages =        $row[1];
     $SSlanguage_method =        $row[2];
     $SSdefault_language =        $row[3];
     $SSallow_web_debug =        $row[4];
-    }
-if ($SSallow_web_debug < 1) {$DB=0;}
+}
+if ($SSallow_web_debug < 1) {
+    $DB=0;
+}
 $VUselected_language = '';
 $stmt="SELECT selected_language from vicidial_users where user='$user';";
-if ($DB) {echo "|$stmt|\n";}
+if ($DB) {
+    echo "|$stmt|\n";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
-    if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'00XXX',$user,$server_ip,$session_name,$one_mysql_log);}
+if ($mel > 0) {
+    mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '00XXX', $user, $server_ip, $session_name, $one_mysql_log);
+}
 $sl_ct = mysqli_num_rows($rslt);
-if ($sl_ct > 0)
-    {
+if ($sl_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $VUselected_language =        $row[0];
-    }
-if (strlen($VUselected_language) < 1)
-    {$VUselected_language = $SSdefault_language;}
-if ($non_latin < 1)
-    {
-    $user=preg_replace("/[^-_0-9a-zA-Z]/","",$user);
-    $pass=preg_replace("/[^-_0-9a-zA-Z]/","",$pass);
-    }
-else
-    {
-    $user = preg_replace('/[^-_0-9\p{L}]/u','',$user);
-    $pass = preg_replace('/[^-_0-9\p{L}]/u','',$pass);
-    }
-if ($force_logout)
-    {
-    if( (strlen($_SERVER['user'])>0) or (strlen($_SERVER['pass'])>0) )
-        {
+}
+if (strlen($VUselected_language) < 1) {
+    $VUselected_language = $SSdefault_language;
+}
+if ($non_latin < 1) {
+    $user=preg_replace("/[^-_0-9a-zA-Z]/", "", $user);
+    $pass=preg_replace("/[^-_0-9a-zA-Z]/", "", $pass);
+} else {
+    $user = preg_replace('/[^-_0-9\p{L}]/u', '', $user);
+    $pass = preg_replace('/[^-_0-9\p{L}]/u', '', $pass);
+}
+if ($force_logout) {
+    if((strlen($_SERVER['user'])>0) or (strlen($_SERVER['pass'])>0)) {
         Header("WWW-Authenticate: Basic realm=\"VICI-PROJECTS\"");
         Header("HTTP/1.0 401 Unauthorized");
-        }
+    }
     echo _QXZ("You have now logged out. Thank you")."\n";
     exit;
-    }
+}
 $StarTtime = date("U");
 $NOW_TIME = date("Y-m-d H:i:s");
 $FILE_TIME = date("Ymd-His");
-$month_old = mktime(0, 0, 0, date("m"), date("d")-7,  date("Y"));
-$past_month_date = date("Y-m-d H:i:s",$month_old);
+$month_old = mktime(0, 0, 0, date("m"), date("d")-7, date("Y"));
+$past_month_date = date("Y-m-d H:i:s", $month_old);
 $auth=0;
-$auth_message = user_authorization($user,$pass,'',1,0,1,0,'astguiclient');
-if (preg_match("/^GOOD/",$auth_message))
-    {
+$auth_message = user_authorization($user, $pass, '', 1, 0, 1, 0, 'astguiclient');
+if (preg_match("/^GOOD/", $auth_message)) {
     $auth=1;
-    $pass_hash = preg_replace("/GOOD\|/",'',$auth_message);
-    }
+    $pass_hash = preg_replace("/GOOD\|/", '', $auth_message);
+}
 $US='_';
 $CL=':';
-if ($WeBRooTWritablE > 0)
-    {$fp = fopen ("./astguiclient_auth_entries.txt", "w");}
+if ($WeBRooTWritablE > 0) {
+    $fp = fopen("./astguiclient_auth_entries.txt", "w");
+}
 $date = date("r");
 $ip = getenv("REMOTE_ADDR");
 $browser = getenv("HTTP_USER_AGENT");
 $script_name = getenv("SCRIPT_NAME");
 $server_name = getenv("SERVER_NAME");
 $server_port = getenv("SERVER_PORT");
-if (preg_match("/443/i",$server_port)) {$HTTPprotocol = 'https://';}
-  else {$HTTPprotocol = 'http://';}
-if (($server_port == '80') or ($server_port == '443') ) {$server_port='';}
-else {$server_port = "$CL$server_port";}
+if (preg_match("/443/i", $server_port)) {
+    $HTTPprotocol = 'https://';
+} else {
+    $HTTPprotocol = 'http://';
+}
+if (($server_port == '80') or ($server_port == '443')) {
+    $server_port='';
+} else {
+    $server_port = "$CL$server_port";
+}
 $agcPAGE = "$HTTPprotocol$server_name$server_port$script_name";
 $agcDIR = $agcPAGE;
-$agcDIR = preg_replace('/astguiclient\.php/i','',$agcDIR);
-if( (strlen($user)<2) or (strlen($pass)<2) or (!$auth) or ($relogin == 'YES') )
-    {
-    header ("Content-type: text/html; charset=utf-8");
+$agcDIR = preg_replace('/astguiclient\.php/i', '', $agcDIR);
+if((strlen($user)<2) or (strlen($pass)<2) or (!$auth) or ($relogin == 'YES')) {
+    header("Content-type: text/html; charset=utf-8");
     echo "<title>"._QXZ("astGUIclient web client: Login")."</title>\n";
     echo "</head>\n";
     echo "<BODY BGCOLOR=WHITE MARGINHEIGHT=0 MARGINWIDTH=0>\n";
@@ -185,75 +211,30 @@ if( (strlen($user)<2) or (strlen($pass)<2) or (!$auth) or ($relogin == 'YES') )
     echo "</body>\n\n";
     echo "</html>\n\n";
     exit;
-    }
-else
-    {
-    if($auth>0)
-        {
+} else {
+    if($auth>0) {
         $stmt="SELECT full_name,user_level from vicidial_users where user='$user' and active='Y';";
         $rslt=mysql_to_mysqli($stmt, $link);
         $row=mysqli_fetch_row($rslt);
         $LOGfullname=$row[0];
-        if ($WeBRooTWritablE > 0)
-            {
-            fwrite ($fp, "VICIDIAL|GOOD|$date|\n");
+        if ($WeBRooTWritablE > 0) {
+            fwrite($fp, "VICIDIAL|GOOD|$date|\n");
             fclose($fp);
-            }
         }
-    else
-        {
-        if ($WeBRooTWritablE > 0)
-            {
-            fwrite ($fp, "VICIDIAL|FAIL|$date|\n");
+    } else {
+        if ($WeBRooTWritablE > 0) {
+            fwrite($fp, "VICIDIAL|FAIL|$date|\n");
             fclose($fp);
-            }
         }
     }
-header ("Content-type: text/html; charset=utf-8");
-header ("Cache-Control: no-cache, must-revalidate");  // HTTP/1.1
-header ("Pragma: no-cache");                          // HTTP/1.0
+}
+header("Content-type: text/html; charset=utf-8");
+header("Cache-Control: no-cache, must-revalidate");  // HTTP/1.1
+header("Pragma: no-cache");                          // HTTP/1.0
 echo "<html>\n";
 echo "<head>\n";
 echo "<!-- VERSION: $version     BUILD: $build      ADD: $ADD-->\n";
-if ( (strlen($phone_login)<2) or (strlen($phone_pass)<2) )
-{
-echo "<title>"._QXZ("astGUIclient web client: Phone Login")."</title>\n";
-echo "</head>\n";
-echo "<BODY BGCOLOR=WHITE MARGINHEIGHT=0 MARGINWIDTH=0>\n";
-echo "<TABLE><TR><TD></TD>\n";
-echo "<!-- INTERNATIONALIZATION-LINKS-PLACEHOLDER-AGC -->\n";
-echo "</TR></TABLE>\n";
-echo "<FORM ACTION=\"$agcPAGE\" METHOD=POST>\n";
-echo "<INPUT TYPE=HIDDEN NAME=DB VALUE=\"$DB\">\n";
-echo "<INPUT TYPE=HIDDEN NAME=user VALUE=\"$user\">\n";
-echo "<INPUT TYPE=HIDDEN NAME=pass VALUE=\"$pass\">\n";
-echo "<BR><BR><BR><CENTER><TABLE WIDTH=360 CELLPADDING=0 CELLSPACING=0 BGCOLOR=\"#CCC2E0\"><TR BGCOLOR=WHITE>";
-echo "<TD ALIGN=LEFT VALIGN=BOTTOM><IMG SRC=\"./images/"._QXZ("agc_tab_astguiclient.gif")."\" BORDER=0></TD>";
-echo "<TD ALIGN=CENTER VALIGN=MIDDLE> "._QXZ("Phone Login")." </TD>";
-echo "</TR>\n";
-echo "<TR><TD ALIGN=LEFT COLSPAN=2><font size=1> &nbsp; </TD></TR>\n";
-echo "<TR><TD ALIGN=RIGHT>"._QXZ("Phone Login:")." </TD>";
-echo "<TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=phone_login SIZE=10 MAXLENGTH=20 VALUE=\"$phone_login\"></TD></TR>\n";
-echo "<TR><TD ALIGN=RIGHT>"._QXZ("Phone Password:")."  </TD>";
-echo "<TD ALIGN=LEFT><INPUT TYPE=PASSWORD NAME=phone_pass SIZE=10 MAXLENGTH=20 VALUE=\"$phone_pass\"></TD></TR>\n";
-echo "<TR><TD ALIGN=CENTER COLSPAN=2><INPUT TYPE=SUBMIT NAME=SUBMIT VALUE="._QXZ("SUBMIT")."></TD></TR>\n";
-echo "<TR><TD ALIGN=LEFT COLSPAN=2><font size=1><BR>"._QXZ("VERSION:")." $version &nbsp; &nbsp; &nbsp; "._QXZ("BUILD:")." $build</TD></TR>\n";
-echo "</TABLE>\n";
-echo "</FORM>\n\n";
-echo "</body>\n\n";
-echo "</html>\n\n";
-exit;
-}
-else
-{
-$authphone=0;
-$stmt="SELECT count(*) from phones where login='$phone_login' and pass='$phone_pass' and active = 'Y';";
-if ($DB) {echo "|$stmt|\n";}
-$rslt=mysql_to_mysqli($stmt, $link);
-$row=mysqli_fetch_row($rslt);
-$authphone=$row[0];
-if (!$authphone)
-    {
+if ((strlen($phone_login)<2) or (strlen($phone_pass)<2)) {
     echo "<title>"._QXZ("astGUIclient web client: Phone Login")."</title>\n";
     echo "</head>\n";
     echo "<BODY BGCOLOR=WHITE MARGINHEIGHT=0 MARGINWIDTH=0>\n";
@@ -268,143 +249,186 @@ if (!$authphone)
     echo "<TD ALIGN=LEFT VALIGN=BOTTOM><IMG SRC=\"./images/"._QXZ("agc_tab_astguiclient.gif")."\" BORDER=0></TD>";
     echo "<TD ALIGN=CENTER VALIGN=MIDDLE> "._QXZ("Phone Login")." </TD>";
     echo "</TR>\n";
-    echo "<TR><TD ALIGN=CENTER COLSPAN=2><font size=1> &nbsp; <BR><FONT SIZE=3>"._QXZ("Sorry, your phone login and password are not active in this system, please try again:")." <BR> &nbsp; </TD></TR>\n";
-    echo "<TR><TD ALIGN=RIGHT>"._QXZ("Phone Login:")."</TD>";
+    echo "<TR><TD ALIGN=LEFT COLSPAN=2><font size=1> &nbsp; </TD></TR>\n";
+    echo "<TR><TD ALIGN=RIGHT>"._QXZ("Phone Login:")." </TD>";
     echo "<TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=phone_login SIZE=10 MAXLENGTH=20 VALUE=\"$phone_login\"></TD></TR>\n";
     echo "<TR><TD ALIGN=RIGHT>"._QXZ("Phone Password:")."  </TD>";
     echo "<TD ALIGN=LEFT><INPUT TYPE=PASSWORD NAME=phone_pass SIZE=10 MAXLENGTH=20 VALUE=\"$phone_pass\"></TD></TR>\n";
     echo "<TR><TD ALIGN=CENTER COLSPAN=2><INPUT TYPE=SUBMIT NAME=SUBMIT VALUE="._QXZ("SUBMIT")."></TD></TR>\n";
-    echo "<TR><TD ALIGN=LEFT COLSPAN=2><font size=1><BR>"._QXZ("VERSION: %1s BUILD: %2s",0,'',$version,$build)."</TD></TR>\n";
+    echo "<TR><TD ALIGN=LEFT COLSPAN=2><font size=1><BR>"._QXZ("VERSION:")." $version &nbsp; &nbsp; &nbsp; "._QXZ("BUILD:")." $build</TD></TR>\n";
     echo "</TABLE>\n";
     echo "</FORM>\n\n";
     echo "</body>\n\n";
     echo "</html>\n\n";
     exit;
+} else {
+    $authphone=0;
+    $stmt="SELECT count(*) from phones where login='$phone_login' and pass='$phone_pass' and active = 'Y';";
+    if ($DB) {
+        echo "|$stmt|\n";
     }
-else
-    {
-    echo "<title>"._QXZ("astGUIclient web client")."</title>\n";
-    $stmt="SELECT extension,dialplan_number,voicemail_id,phone_ip,computer_ip,server_ip,login,pass,status,active,phone_type,fullname,company,picture,messages,old_messages,protocol,local_gmt,ASTmgrUSERNAME,ASTmgrSECRET,login_user,login_pass,login_campaign,park_on_extension,conf_on_extension,VICIDIAL_park_on_extension,VICIDIAL_park_on_filename,monitor_prefix,recording_exten,voicemail_exten,voicemail_dump_exten,ext_context,dtmf_send_extension,call_out_number_group,client_browser,install_directory,local_web_callerID_URL,VICIDIAL_web_URL,AGI_call_logging_enabled,user_switching_enabled,conferencing_enabled,admin_hangup_enabled,admin_hijack_enabled,admin_monitor_enabled,call_parking_enabled,updater_check_enabled,AFLogging_enabled,QUEUE_ACTION_enabled,CallerID_popup_enabled,voicemail_button_enabled,enable_fast_refresh,fast_refresh_rate,enable_persistant_mysql,auto_dial_next_number,VDstop_rec_after_each_call,DBX_server,DBX_database,DBX_user,DBX_pass,DBX_port,DBY_server,DBY_database,DBY_user,DBY_pass,DBY_port,outbound_cid,enable_sipsak_messages,email,template_id,conf_override,phone_context,phone_ring_timeout,conf_secret from phones where login='$phone_login' and pass='$phone_pass' and active = 'Y';";
-    if ($DB) {echo "|$stmt|\n";}
     $rslt=mysql_to_mysqli($stmt, $link);
     $row=mysqli_fetch_row($rslt);
-    $extension=$row[0];
-    $dialplan_number=$row[1];
-    $voicemail_id=$row[2];
-    $phone_ip=$row[3];
-    $computer_ip=$row[4];
-    $server_ip=$row[5];
-    $phone_login=$row[6];
-    $phone_pass=$row[7];
-    $status=$row[8];
-    $active=$row[9];
-    $phone_type=$row[10];
-    $fullname=$row[11];
-    $company=$row[12];
-    $picture=$row[13];
-    $messages=$row[14];
-    $old_messages=$row[15];
-    $protocol=$row[16];
-    $local_gmt=$row[17];
-    $ASTmgrUSERNAME=$row[18];
-    $ASTmgrSECRET=$row[19];
-    $login_user=$row[20];
-    $login_pass=$row[21];
-    $login_campaign=$row[22];
-    $park_on_extension=$row[23];
-    $conf_on_extension=$row[24];
-    $VICIDiaL_park_on_extension=$row[25];
-    $VICIDiaL_park_on_filename=$row[26];
-    $monitor_prefix=$row[27];
-    $recording_exten=$row[28];
-    $voicemail_exten=$row[29];
-    $voicemail_dump_exten=$row[30];
-    $ext_context=$row[31];
-    $dtmf_send_extension=$row[32];
-    $call_out_number_group=$row[33];
-    $client_browser=$row[34];
-    $install_directory=$row[35];
-    $local_web_callerID_URL=$row[36];
-    $VICIDiaL_web_URL=$row[37];
-    $AGI_call_logging_enabled=$row[38];
-    $user_switching_enabled=$row[39];
-    $conferencing_enabled=$row[40];
-    $admin_hangup_enabled=$row[41];
-    $admin_hijack_enabled=$row[42];
-    $admin_monitor_enabled=$row[43];
-    $call_parking_enabled=$row[44];
-    $updater_check_enabled=$row[45];
-    $AFLogging_enabled=$row[46];
-    $QUEUE_ACTION_enabled=$row[47];
-    $CaLLerID_popup_enabled=$row[48];
-    $voicemail_button_enabled=$row[49];
-    $enable_fast_refresh=$row[50];
-    $fast_refresh_rate=$row[51];
-    $enable_persistant_mysql=$row[52];
-    $auto_dial_next_number=$row[53];
-    $VDstop_rec_after_each_call=$row[54];
-    $DBX_server=$row[55];
-    $DBX_database=$row[56];
-    $DBX_user=$row[57];
-    $DBX_pass=$row[58];
-    $DBX_port=$row[59];
-    $outbound_cid=$row[65];
-    $local_web_callerID_URL_enc = rawurlencode($local_web_callerID_URL);
-    $session_ext = preg_replace("/[^a-z0-9]/i", "", $extension);
-    if (strlen($session_ext) > 10) {$session_ext = substr($session_ext, 0, 10);}
-    $session_rand = (rand(1,9999999) + 10000000);
-    $session_name = "$StarTtime$US$session_ext$session_rand";
-    $stmt="DELETE from web_client_sessions where start_time < '$past_month_date' and extension='$extension' and server_ip = '$server_ip' and program = 'agc';";
-    if ($DB) {echo "|$stmt|\n";}
-    $rslt=mysql_to_mysqli($stmt, $link);
-    $stmt="INSERT INTO web_client_sessions values('$extension','$server_ip','agc','$NOW_TIME','$session_name');";
-    if ($DB) {echo "|$stmt|\n";}
-    $rslt=mysql_to_mysqli($stmt, $link);
-    $stmt="SELECT count(*) from phone_favorites where extension='$extension' and server_ip = '$server_ip';";
-    if ($DB) {echo "|$stmt|\n";}
-    $rslt=mysql_to_mysqli($stmt, $link);
-    $row=mysqli_fetch_row($rslt);
-    $favorites_present=$row[0];
-    if ($favorites_present > 0)
-        {
-        $stmt="SELECT extensions_list from phone_favorites where extension='$extension' and server_ip = '$server_ip';";
-        if ($DB) {echo "|$stmt|\n";}
+    $authphone=$row[0];
+    if (!$authphone) {
+        echo "<title>"._QXZ("astGUIclient web client: Phone Login")."</title>\n";
+        echo "</head>\n";
+        echo "<BODY BGCOLOR=WHITE MARGINHEIGHT=0 MARGINWIDTH=0>\n";
+        echo "<TABLE><TR><TD></TD>\n";
+        echo "<!-- INTERNATIONALIZATION-LINKS-PLACEHOLDER-AGC -->\n";
+        echo "</TR></TABLE>\n";
+        echo "<FORM ACTION=\"$agcPAGE\" METHOD=POST>\n";
+        echo "<INPUT TYPE=HIDDEN NAME=DB VALUE=\"$DB\">\n";
+        echo "<INPUT TYPE=HIDDEN NAME=user VALUE=\"$user\">\n";
+        echo "<INPUT TYPE=HIDDEN NAME=pass VALUE=\"$pass\">\n";
+        echo "<BR><BR><BR><CENTER><TABLE WIDTH=360 CELLPADDING=0 CELLSPACING=0 BGCOLOR=\"#CCC2E0\"><TR BGCOLOR=WHITE>";
+        echo "<TD ALIGN=LEFT VALIGN=BOTTOM><IMG SRC=\"./images/"._QXZ("agc_tab_astguiclient.gif")."\" BORDER=0></TD>";
+        echo "<TD ALIGN=CENTER VALIGN=MIDDLE> "._QXZ("Phone Login")." </TD>";
+        echo "</TR>\n";
+        echo "<TR><TD ALIGN=CENTER COLSPAN=2><font size=1> &nbsp; <BR><FONT SIZE=3>"._QXZ("Sorry, your phone login and password are not active in this system, please try again:")." <BR> &nbsp; </TD></TR>\n";
+        echo "<TR><TD ALIGN=RIGHT>"._QXZ("Phone Login:")."</TD>";
+        echo "<TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=phone_login SIZE=10 MAXLENGTH=20 VALUE=\"$phone_login\"></TD></TR>\n";
+        echo "<TR><TD ALIGN=RIGHT>"._QXZ("Phone Password:")."  </TD>";
+        echo "<TD ALIGN=LEFT><INPUT TYPE=PASSWORD NAME=phone_pass SIZE=10 MAXLENGTH=20 VALUE=\"$phone_pass\"></TD></TR>\n";
+        echo "<TR><TD ALIGN=CENTER COLSPAN=2><INPUT TYPE=SUBMIT NAME=SUBMIT VALUE="._QXZ("SUBMIT")."></TD></TR>\n";
+        echo "<TR><TD ALIGN=LEFT COLSPAN=2><font size=1><BR>"._QXZ("VERSION: %1s BUILD: %2s", 0, '', $version, $build)."</TD></TR>\n";
+        echo "</TABLE>\n";
+        echo "</FORM>\n\n";
+        echo "</body>\n\n";
+        echo "</html>\n\n";
+        exit;
+    } else {
+        echo "<title>"._QXZ("astGUIclient web client")."</title>\n";
+        $stmt="SELECT extension,dialplan_number,voicemail_id,phone_ip,computer_ip,server_ip,login,pass,status,active,phone_type,fullname,company,picture,messages,old_messages,protocol,local_gmt,ASTmgrUSERNAME,ASTmgrSECRET,login_user,login_pass,login_campaign,park_on_extension,conf_on_extension,VICIDIAL_park_on_extension,VICIDIAL_park_on_filename,monitor_prefix,recording_exten,voicemail_exten,voicemail_dump_exten,ext_context,dtmf_send_extension,call_out_number_group,client_browser,install_directory,local_web_callerID_URL,VICIDIAL_web_URL,AGI_call_logging_enabled,user_switching_enabled,conferencing_enabled,admin_hangup_enabled,admin_hijack_enabled,admin_monitor_enabled,call_parking_enabled,updater_check_enabled,AFLogging_enabled,QUEUE_ACTION_enabled,CallerID_popup_enabled,voicemail_button_enabled,enable_fast_refresh,fast_refresh_rate,enable_persistant_mysql,auto_dial_next_number,VDstop_rec_after_each_call,DBX_server,DBX_database,DBX_user,DBX_pass,DBX_port,DBY_server,DBY_database,DBY_user,DBY_pass,DBY_port,outbound_cid,enable_sipsak_messages,email,template_id,conf_override,phone_context,phone_ring_timeout,conf_secret from phones where login='$phone_login' and pass='$phone_pass' and active = 'Y';";
+        if ($DB) {
+            echo "|$stmt|\n";
+        }
         $rslt=mysql_to_mysqli($stmt, $link);
         $row=mysqli_fetch_row($rslt);
-        $favorites_list=$row[0];
-        $h=0;
-        $favorites_listX = preg_replace("/\'/i",'',$favorites_list);
-        $favorites = explode(',',$favorites_listX);
-        $favorites_count = count($favorites);
-        $favorites_listX='';
-        $o=0;
-        while ($favorites_count > $o) 
-            {
-            $stmt="SELECT fullname,protocol from phones where extension = '$favorites[$o]' and server_ip='$server_ip';";
-            $rslt=mysql_to_mysqli($stmt, $link);
-            $rowx=mysqli_fetch_row($rslt);
-            $favorites_names[$o] =    $rowx[0];
-            $favorites_listX .= "$rowx[1]/$favorites[$o],";
-            $o++;
-            }
-        echo "<!-- |$favorites_list| -->\n";
-        echo "<!-- |$favorites_listX| -->\n";
+        $extension=$row[0];
+        $dialplan_number=$row[1];
+        $voicemail_id=$row[2];
+        $phone_ip=$row[3];
+        $computer_ip=$row[4];
+        $server_ip=$row[5];
+        $phone_login=$row[6];
+        $phone_pass=$row[7];
+        $status=$row[8];
+        $active=$row[9];
+        $phone_type=$row[10];
+        $fullname=$row[11];
+        $company=$row[12];
+        $picture=$row[13];
+        $messages=$row[14];
+        $old_messages=$row[15];
+        $protocol=$row[16];
+        $local_gmt=$row[17];
+        $ASTmgrUSERNAME=$row[18];
+        $ASTmgrSECRET=$row[19];
+        $login_user=$row[20];
+        $login_pass=$row[21];
+        $login_campaign=$row[22];
+        $park_on_extension=$row[23];
+        $conf_on_extension=$row[24];
+        $VICIDiaL_park_on_extension=$row[25];
+        $VICIDiaL_park_on_filename=$row[26];
+        $monitor_prefix=$row[27];
+        $recording_exten=$row[28];
+        $voicemail_exten=$row[29];
+        $voicemail_dump_exten=$row[30];
+        $ext_context=$row[31];
+        $dtmf_send_extension=$row[32];
+        $call_out_number_group=$row[33];
+        $client_browser=$row[34];
+        $install_directory=$row[35];
+        $local_web_callerID_URL=$row[36];
+        $VICIDiaL_web_URL=$row[37];
+        $AGI_call_logging_enabled=$row[38];
+        $user_switching_enabled=$row[39];
+        $conferencing_enabled=$row[40];
+        $admin_hangup_enabled=$row[41];
+        $admin_hijack_enabled=$row[42];
+        $admin_monitor_enabled=$row[43];
+        $call_parking_enabled=$row[44];
+        $updater_check_enabled=$row[45];
+        $AFLogging_enabled=$row[46];
+        $QUEUE_ACTION_enabled=$row[47];
+        $CaLLerID_popup_enabled=$row[48];
+        $voicemail_button_enabled=$row[49];
+        $enable_fast_refresh=$row[50];
+        $fast_refresh_rate=$row[51];
+        $enable_persistant_mysql=$row[52];
+        $auto_dial_next_number=$row[53];
+        $VDstop_rec_after_each_call=$row[54];
+        $DBX_server=$row[55];
+        $DBX_database=$row[56];
+        $DBX_user=$row[57];
+        $DBX_pass=$row[58];
+        $DBX_port=$row[59];
+        $outbound_cid=$row[65];
+        $local_web_callerID_URL_enc = rawurlencode($local_web_callerID_URL);
+        $session_ext = preg_replace("/[^a-z0-9]/i", "", $extension);
+        if (strlen($session_ext) > 10) {
+            $session_ext = substr($session_ext, 0, 10);
         }
-    else
-        {
-        echo "<!-- No Extension Favorites Present -->\n";
+        $session_rand = (rand(1, 9999999) + 10000000);
+        $session_name = "$StarTtime$US$session_ext$session_rand";
+        $stmt="DELETE from web_client_sessions where start_time < '$past_month_date' and extension='$extension' and server_ip = '$server_ip' and program = 'agc';";
+        if ($DB) {
+            echo "|$stmt|\n";
         }
-    $stmt="SELECT extension,fullname from phones where server_ip = '$server_ip';";
-    if ($DB) {echo "|$stmt|\n";}
-    $rslt=mysql_to_mysqli($stmt, $link);
-    $exten_ct = mysqli_num_rows($rslt);
-    $favlistCT=0;
-    $nofavlistCT=0;
-    while ($favlistCT < $exten_ct)
-        {
+        $rslt=mysql_to_mysqli($stmt, $link);
+        $stmt="INSERT INTO web_client_sessions values('$extension','$server_ip','agc','$NOW_TIME','$session_name');";
+        if ($DB) {
+            echo "|$stmt|\n";
+        }
+        $rslt=mysql_to_mysqli($stmt, $link);
+        $stmt="SELECT count(*) from phone_favorites where extension='$extension' and server_ip = '$server_ip';";
+        if ($DB) {
+            echo "|$stmt|\n";
+        }
+        $rslt=mysql_to_mysqli($stmt, $link);
         $row=mysqli_fetch_row($rslt);
-        $favlist[$favlistCT]= "$row[0] - $row[1]";
-        $favlistCT++;
+        $favorites_present=$row[0];
+        if ($favorites_present > 0) {
+            $stmt="SELECT extensions_list from phone_favorites where extension='$extension' and server_ip = '$server_ip';";
+            if ($DB) {
+                echo "|$stmt|\n";
+            }
+            $rslt=mysql_to_mysqli($stmt, $link);
+            $row=mysqli_fetch_row($rslt);
+            $favorites_list=$row[0];
+            $h=0;
+            $favorites_listX = preg_replace("/\'/i", '', $favorites_list);
+            $favorites = explode(',', $favorites_listX);
+            $favorites_count = count($favorites);
+            $favorites_listX='';
+            $o=0;
+            while ($favorites_count > $o) {
+                $stmt="SELECT fullname,protocol from phones where extension = '$favorites[$o]' and server_ip='$server_ip';";
+                $rslt=mysql_to_mysqli($stmt, $link);
+                $rowx=mysqli_fetch_row($rslt);
+                $favorites_names[$o] =    $rowx[0];
+                $favorites_listX .= "$rowx[1]/$favorites[$o],";
+                $o++;
+            }
+            echo "<!-- |$favorites_list| -->\n";
+            echo "<!-- |$favorites_listX| -->\n";
+        } else {
+            echo "<!-- No Extension Favorites Present -->\n";
+        }
+        $stmt="SELECT extension,fullname from phones where server_ip = '$server_ip';";
+        if ($DB) {
+            echo "|$stmt|\n";
+        }
+        $rslt=mysql_to_mysqli($stmt, $link);
+        $exten_ct = mysqli_num_rows($rslt);
+        $favlistCT=0;
+        $nofavlistCT=0;
+        while ($favlistCT < $exten_ct) {
+            $row=mysqli_fetch_row($rslt);
+            $favlist[$favlistCT]= "$row[0] - $row[1]";
+            $favlistCT++;
         }
     }
 }
@@ -432,8 +456,11 @@ else
     var protocol = '<?php echo $protocol ?>';
     var server_ip = '<?php echo $server_ip ?>';
 <?php
-if ($enable_fast_refresh < 1) {echo "var refresh_interval = 1000;\n";}
-    else {echo "\tvar refresh_interval = $fast_refresh_rate;\n";}
+if ($enable_fast_refresh < 1) {
+    echo "var refresh_interval = 1000;\n";
+} else {
+    echo "\tvar refresh_interval = $fast_refresh_rate;\n";
+}
 ?>
     var user_abb = '<?php echo $user_abb ?>';
     var voicemail_id = '<?php echo $voicemail_id ?>';
@@ -482,7 +509,11 @@ if ($enable_fast_refresh < 1) {echo "var refresh_interval = 1000;\n";}
     var admin_monitor_enabled = '<?php echo $admin_monitor_enabled ?>';
     var XfeR_channel = '';
     var user = '<?php echo $user ?>';
-    var pass = '<?php if (strlen($pass_hash)>12) {echo $pass_hash;} else {echo $pass;} ?>';
+    var pass = '<?php if (strlen($pass_hash)>12) {
+        echo $pass_hash;
+    } else {
+        echo $pass;
+    } ?>';
     var orig_pass = '<?php echo $pass ?>';
     var pass_hash = '<?php echo $pass_hash ?>';
     var phone_login = '<?php echo $phone_login ?>';
@@ -511,22 +542,20 @@ if ($enable_fast_refresh < 1) {echo "var refresh_interval = 1000;\n";}
     var favorites_list = "<?php echo $favorites_list ?>";
     var favorites_listEDIT = "<?php echo $favorites_list ?>";
     <?php $h=0;
-    while ($favorites_count > $h)
-    {
+while ($favorites_count > $h) {
     echo "favorites['$h'] = \"$favorites[$h]\";\n";
     echo "favorites_names['$h'] = \"$favorites_names[$h]\";\n";
     echo "favorites_busy['$h'] = \"0\";\n";
     echo "favoritesEDIT['$h'] = \"$favorites[$h]\";\n";
     echo "favorites_namesEDIT['$h'] = \"$favorites_names[$h]\";\n";
     $h++;
-    }
-     $h=0;
-    while ($favlistCT > $h)
-    {
+}
+$h=0;
+while ($favlistCT > $h) {
     echo "favlist['$h'] = \"$favlist[$h]\";\n";
     $h++;
-    }
-    ?>
+}
+?>
 // ################################################################################
 // ACTIVE EXTENSIONS LIST REFRESH FUNCTIONS
     function refresh_activeext()
@@ -2603,7 +2632,7 @@ echo "</head>\n";
 <TR VALIGN=TOP ALIGN=LEFT><TD COLSPAN=5 VALIGN=TOP ALIGN=LEFT>
 <INPUT TYPE=HIDDEN NAME=extension>
 <font class="body_text">
-<?php    echo _QXZ("Welcome %1s, you are logged into this phone: %2s - %3s/%4s on %5s",0,'',$LOGfullname,$fullname,$protocol,$extension,$server_ip)." &nbsp; <a href=\"#\" onclick=\"LogouT();return false;\">"._QXZ("LOGOUT")."</a><BR>\n"; ?>
+<?php    echo _QXZ("Welcome %1s, you are logged into this phone: %2s - %3s/%4s on %5s", 0, '', $LOGfullname, $fullname, $protocol, $extension, $server_ip)." &nbsp; <a href=\"#\" onclick=\"LogouT();return false;\">"._QXZ("LOGOUT")."</a><BR>\n"; ?>
 </TD></TR>
 <TR VALIGN=TOP ALIGN=LEFT>
 <TD><A HREF="#" onclick="MainPanelToFront();"><IMG SRC="./images/<?php echo _QXZ("agc_tab_main.gif") ?>" ALT="Main Panel" WIDTH=83 HEIGHT=30 BORDER=0></A></TD>
@@ -2680,20 +2709,18 @@ echo "</head>\n";
 <tr><td align=center><div class="scroll_log" id="outboundcallsspan"></div></td></tr>
 <tr><td align=center><font face="Arial,Helvetica"><B><?php echo _QXZ("INBOUND CALLS:"); ?></B></font></td></tr>
 <tr><td align=center><div class="scroll_log" id="inboundcallsspan"></div></td></tr>
-<tr><td align=left><font face="Arial,Helvetica" size=1><?php echo _QXZ("astGUIclient web-client VERSION: %1s BUILD: %2s",0,'',$version,$build); ?></font></td></tr>
+<tr><td align=left><font face="Arial,Helvetica" size=1><?php echo _QXZ("astGUIclient web-client VERSION: %1s BUILD: %2s", 0, '', $version, $build); ?></font></td></tr>
 </TABLE>
 <span style="position:absolute;left:640px;top:0px;z-index:33;" id="FavoriteSBox">
     <table border=0 bgcolor="#DDDDFF" width=200 height=400 cellpadding=2 ALIGN=TOP><TR><TD align=center><span id="FavoriteSContent"><font class="sh_text"> <?php echo _QXZ("FAVORITES"); ?></font><font class="sb_text"> &nbsp; &nbsp; &nbsp; <a href="#" onclick="favorites_editor('BuilD');return false;"> <?php echo _QXZ("edit"); ?></a></span></TD></TR>
 <?php
     $h=0;
-    while ($favorites_count > $h)
-    {
-        if (strlen($favorites[$h])>1)
-        {
+while ($favorites_count > $h) {
+    if (strlen($favorites[$h])>1) {
         echo "<TR id=\"$favorites[$h]\" bgcolor=\"#90EE90\"><TD> <A HREF=\"#\" onclick=\"mainxfer_send_originate('DiaL','','$favorites[$h]');return false;\"><font class=\"sb_text\">$favorites[$h] - $favorites_names[$h]</font></A> </TD></TR>\n";
-        }
-    $h++;
     }
+    $h++;
+}
 ?>
     <TR HEIGHT=100%><TD HEIGHT=100%><span id="FavoriteSContentXtrA"> &nbsp; </span></TD></TR>
     </TABLE>
@@ -2748,5 +2775,5 @@ echo "</head>\n";
 </body>
 </html>
 <?php
-exit; 
+exit;
 ?>

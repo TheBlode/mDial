@@ -106,7 +106,7 @@ table.widget_contents
     }
 table.shaded
     {
-    background-color: #<? echo $SSalt_row2_background; ?>;
+    background-color: #<?php echo $SSalt_row2_background; ?>;
     }
 tr.widget_cell_title_bar
     {

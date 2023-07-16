@@ -38,8 +38,7 @@ require("functions.php");
 $stmt = "SELECT use_non_latin,enable_queuemetrics_logging,enable_vtiger_integration,qc_features_active,outbound_autodial_active,sounds_central_control_active,enable_second_webform,user_territories_active,custom_fields_enabled,admin_web_directory,webphone_url,first_login_trigger,hosted_settings,default_phone_registration_password,default_phone_login_password,default_server_password,test_campaign_calls,active_voicemail_server,voicemail_timezones,default_voicemail_timezone,default_local_gmt,campaign_cid_areacodes_enabled,pllb_grouping_limit,did_ra_extensions_enabled,expanded_list_stats,contacts_enabled,alt_log_server_ip,alt_log_dbname,alt_log_login,alt_log_pass,tables_use_alt_log_db,call_menu_qualify_enabled,admin_list_counts,allow_voicemail_greeting,svn_revision,allow_emails,level_8_disable_add,pass_key,pass_hash_enabled,disable_auto_dial,country_code_list_stats,enable_languages,language_method,enable_third_webform,allow_chats,allow_web_debug FROM system_settings;";
 $rslt=mysql_to_mysqli($stmt, $link);
 $qm_conf_ct = mysqli_num_rows($rslt);
-if ($qm_conf_ct > 0)
-    {
+if ($qm_conf_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $non_latin =                            $row[0];
     $SSenable_queuemetrics_logging =        $row[1];
@@ -87,92 +86,91 @@ if ($qm_conf_ct > 0)
     $SSenable_third_webform =                $row[43];
     $SSallow_chats =                        $row[44];
     $SSallow_web_debug =                    $row[45];
-    }
-if ($SSallow_web_debug < 1) {$DB=0;}
+}
+if ($SSallow_web_debug < 1) {
+    $DB=0;
+}
 $PHP_AUTH_USER=$_SERVER['PHP_AUTH_USER'];
 $PHP_AUTH_PW=$_SERVER['PHP_AUTH_PW'];
-if ($non_latin < 1)
-    {
-    $PHP_AUTH_PW = preg_replace('/[^-_0-9a-zA-Z]/','',$PHP_AUTH_PW);
-    $PHP_AUTH_USER = preg_replace('/[^-_0-9a-zA-Z]/','',$PHP_AUTH_USER);
-    }
-else
-    {
+if ($non_latin < 1) {
+    $PHP_AUTH_PW = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_PW);
+    $PHP_AUTH_USER = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_USER);
+} else {
     $PHP_AUTH_USER = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_USER);
     $PHP_AUTH_PW = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_PW);
-    }
+}
 $stmt="SELECT selected_language from vicidial_users where user='$PHP_AUTH_USER';";
-if ($DB) {echo "|$stmt|\n";}
+if ($DB) {
+    echo "|$stmt|\n";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 $sl_ct = mysqli_num_rows($rslt);
-if ($sl_ct > 0)
-    {
+if ($sl_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $VUselected_language =        $row[0];
-    }
+}
 $user_auth=0;
 $auth=0;
 $reports_auth=0;
 $qc_auth=0;
-$auth_message = user_authorization($PHP_AUTH_USER,$PHP_AUTH_PW,'QC',1,0);
-if ($auth_message == 'GOOD')
-    {$user_auth=1;}
-if ($user_auth > 0)
-    {
+$auth_message = user_authorization($PHP_AUTH_USER, $PHP_AUTH_PW, 'QC', 1, 0);
+if ($auth_message == 'GOOD') {
+    $user_auth=1;
+}
+if ($user_auth > 0) {
     $stmt="SELECT count(*) from vicidial_users where user='$PHP_AUTH_USER' and user_level > 7;";
-    if ($DB) {echo "|$stmt|\n";}
+    if ($DB) {
+        echo "|$stmt|\n";
+    }
     $rslt=mysql_to_mysqli($stmt, $link);
     $row=mysqli_fetch_row($rslt);
     $auth=$row[0];
     $stmt="SELECT count(*) from vicidial_users where user='$PHP_AUTH_USER' and user_level > 6 and view_reports='1';";
-    if ($DB) {echo "|$stmt|\n";}
+    if ($DB) {
+        echo "|$stmt|\n";
+    }
     $rslt=mysql_to_mysqli($stmt, $link);
     $row=mysqli_fetch_row($rslt);
     $reports_auth=$row[0];
     $stmt="SELECT count(*) from vicidial_users where user='$PHP_AUTH_USER' and user_level > 1 and qc_enabled='1';";
-    if ($DB) {echo "|$stmt|\n";}
+    if ($DB) {
+        echo "|$stmt|\n";
+    }
     $rslt=mysql_to_mysqli($stmt, $link);
     $row=mysqli_fetch_row($rslt);
     $qc_auth=$row[0];
     $reports_only_user=0;
     $qc_only_user=0;
-    if ( ($reports_auth > 0) and ($auth < 1) )
-        {
+    if (($reports_auth > 0) and ($auth < 1)) {
         $ADD=999999;
         $reports_only_user=1;
-        }
-    if ( ($qc_auth > 0) and ($reports_auth < 1) and ($auth < 1) )
-        {
-        if ( ($ADD != '881') and ($ADD != '100000000000000') )
-            {
-            $ADD=100000000000000;
-            }
-        $qc_only_user=1;
-        }
-    if ( ($qc_auth < 1) and ($reports_auth < 1) and ($auth < 1) )
-        {
-        $VDdisplayMESSAGE = "You do not have permission to be here";
-        Header ("Content-type: text/html; charset=utf-8");
-        echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
-        exit;
-        }
     }
-else
-    {
-    $VDdisplayMESSAGE = "Login incorrect, please try again";
-    if ($auth_message == 'LOCK')
-        {
-        $VDdisplayMESSAGE = "Too many login attempts, try again in 15 minutes";
-        Header ("Content-type: text/html; charset=utf-8");
+    if (($qc_auth > 0) and ($reports_auth < 1) and ($auth < 1)) {
+        if (($ADD != '881') and ($ADD != '100000000000000')) {
+            $ADD=100000000000000;
+        }
+        $qc_only_user=1;
+    }
+    if (($qc_auth < 1) and ($reports_auth < 1) and ($auth < 1)) {
+        $VDdisplayMESSAGE = "You do not have permission to be here";
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
+    }
+} else {
+    $VDdisplayMESSAGE = "Login incorrect, please try again";
+    if ($auth_message == 'LOCK') {
+        $VDdisplayMESSAGE = "Too many login attempts, try again in 15 minutes";
+        Header("Content-type: text/html; charset=utf-8");
+        echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
+        exit;
+    }
     Header("WWW-Authenticate: Basic realm=\"CONTACT-CENTER-ADMIN\"");
     Header("HTTP/1.0 401 Unauthorized");
     echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$PHP_AUTH_PW|$auth_message|\n";
     exit;
-    }
-header ("Content-type: text/html; charset=utf-8");
+}
+header("Content-type: text/html; charset=utf-8");
 echo "</title>\n";
 echo "</head>\n";
 echo "<BODY BGCOLOR=white marginheight=0 marginwidth=0 leftmargin=0 topmargin=0>\n";
@@ -280,14 +278,13 @@ echo "<TABLE WIDTH=98% BGCOLOR=#E6E6E6 cellpadding=2 cellspacing=0><TR><TD ALIGN
 <BR>
 <B><?php echo _QXZ("Agent Transfers"); ?> -</B><?php echo _QXZ("This option can prevent an agent from opening the transfer - conference session in the agent screen. If this is disabled, the agent cannot third party call or blind transfer any calls."); ?>
 <?php
-if ($SSoutbound_autodial_active > 0)
-    {
+if ($SSoutbound_autodial_active > 0) {
     ?>
     <BR>
     <A NAME="users-closer_default_blended">
     <BR>
     <B><?php echo _QXZ("Closer Default Blended"); ?> -</B><?php echo _QXZ("This option simply defaults the Blended checkbox on a CLOSER login screen.");
-    }
+}
 ?>
 <BR>
 <A NAME="users-user_choose_language">
@@ -398,24 +395,22 @@ if ($SSoutbound_autodial_active > 0)
 <BR>
 <B><?php echo _QXZ("Delete Remote Agents"); ?> -</B><?php echo _QXZ("This option if set to 1 allows the user to delete remote agents from the system."); ?>
 <?php
-if ($SSoutbound_autodial_active > 0)
-    {
+if ($SSoutbound_autodial_active > 0) {
     ?>
     <BR>
     <A NAME="users-load_leads">
     <BR>
     <B><?php echo _QXZ("Load Leads"); ?> -</B><?php echo _QXZ("This option if set to 1 allows the user to load lead lists into the list table by way of the web based lead loader."); ?>
     <?php
-    }
-if ($SScustom_fields_enabled > 0)
-    {
+}
+if ($SScustom_fields_enabled > 0) {
     ?>
     <BR>
     <A NAME="users-custom_fields_modify">
     <BR>
     <B><?php echo _QXZ("Custom Fields Modify"); ?> -</B><?php echo _QXZ("This option if set to 1 allows the user to modify custom list fields."); ?>
     <?php
-    }
+}
 ?>
 <BR>
 <A NAME="users-campaign_detail">
@@ -444,28 +439,26 @@ if ($SScustom_fields_enabled > 0)
 <BR>
 <B><?php echo _QXZ("You are not allowed to set this user setting higher than the current system setting. "); ?></B>
 <?php
-if ($SSallow_emails>0)
-    {
-?>
+if ($SSallow_emails>0) {
+    ?>
 <BR>
 <A NAME="users-modify_email_accounts">
 <BR>
 <B><?php echo _QXZ("Modify Email Accounts"); ?> -</B><?php echo _QXZ("This option if set to 1 allows the user to modify email accounts in the email account management page.");
-    }
+}
 ?>
 <BR>
 <A NAME="users-change_agent_campaign">
 <BR>
 <B><?php echo _QXZ("Change Agent Campaign"); ?> -</B><?php echo _QXZ("This option if set to 1 allows the user to alter the campaign that an agent is logged into while they are logged into it."); ?>
 <?php
-if ($SSoutbound_autodial_active > 0)
-    {
+if ($SSoutbound_autodial_active > 0) {
     ?>
     <BR>
     <A NAME="users-delete_filters">
     <BR>
     <B><?php echo _QXZ("Delete Filters"); ?> -</B><?php echo _QXZ("This option allows the user to be able to delete lead filters from the system.");
-    }
+}
 ?>
 <BR>
 <A NAME="users-delete_call_times">
@@ -487,8 +480,7 @@ if ($SSoutbound_autodial_active > 0)
 <A NAME="users-access_recordings">
 <BR>
 <B><?php echo _QXZ("Access Recordings"); ?> -</B><?php echo _QXZ("This option allows the user to have access to call recordings.");
-if ($SSqc_features_active > 0)
-    {
+if ($SSqc_features_active > 0) {
     ?>
     <BR>
     <A NAME="users-qc_enabled">
@@ -516,8 +508,8 @@ if ($SSqc_features_active > 0)
     <BR>
     <A NAME="users-qc_commit">
     <BR>
-    <B><?php echo _QXZ("QC Record Commit"); ?> -</B><?php echo _QXZ("This option allows the agent to specify that a record has been committed in QC. It can no longer be modified by anyone."); 
-    }
+    <B><?php echo _QXZ("QC Record Commit"); ?> -</B><?php echo _QXZ("This option allows the agent to specify that a record has been committed in QC. It can no longer be modified by anyone.");
+}
 ?>
 <BR>
 <A NAME="users-add_timeclock_log">
@@ -660,26 +652,24 @@ if ($SSqc_features_active > 0)
 <A NAME="campaigns-allow_closers">
 <BR>
 <B><?php echo _QXZ("Allow Closers"); ?> -</B>
-<?php 
+<?php
 echo _QXZ("This is where you can set whether the users of this campaign will have the option to send the call to a closer.");
-if ($SSallow_emails > 0) 
-        {
-?>
+if ($SSallow_emails > 0) {
+    ?>
     <BR>
     <A NAME="campaigns-allow_emails">
     <BR>
     <B><?php echo _QXZ("Allow Emails"); ?> -</B><?php echo _QXZ("This is where you can set whether the users of this campaign will be able to receive inbound emails in addition to phone calls."); ?>
 <?php
-        }
-if ($SSallow_chats > 0) 
-        {
-?>
+}
+if ($SSallow_chats > 0) {
+    ?>
     <BR>
     <A NAME="campaigns-allow_chats">
     <BR>
     <B><?php echo _QXZ("Allow Chats"); ?> -</B><?php echo _QXZ("This is where you can set whether the users of this campaign will be able to conduct chats in addition to receive phone calls."); ?>
 <?php
-        }
+}
 ?>
 <BR>
 <A NAME="campaigns-default_xfer_group">
@@ -693,8 +683,7 @@ if ($SSallow_chats > 0)
 <A NAME="campaigns-xfer_groups">
 <BR>
 <B><?php echo _QXZ("Allowed Transfer Groups"); ?> -</B><?php echo _QXZ("With these checkbox listings you can select the groups that agents in this campaign can transfer calls to. Allow Closers must be enabled for this option to show up.");
-if ($SSoutbound_autodial_active > 0)
-    {
+if ($SSoutbound_autodial_active > 0) {
     ?>
     <BR>
     <A NAME="campaigns-campaign_allow_inbound">
@@ -969,14 +958,13 @@ if ($SSoutbound_autodial_active > 0)
     <A NAME="campaigns-owner_populate">
     <BR>
     <B><?php echo _QXZ("Owner Populate"); ?> -</B><?php echo _QXZ("If this is enabled and the owner field of the lead is blank, the owner field for the lead will populate with the user ID of the agent that handles the call first. Default is DISABLED.");
-    if ($SSuser_territories_active > 0)
-        {
+    if ($SSuser_territories_active > 0) {
         ?>
         <BR>
         <A NAME="campaigns-agent_select_territories">
         <BR>
         <B><?php echo _QXZ("Agent Select Territories"); ?> -</B><?php echo _QXZ("If this option is enabled and the agent belongs to at least one territory, the agent will have the option of selecting territories to dial leads from. The agent will see a list of available territories upon login and they will have the ability to go back to that territory list when paused to change their territories. For this function to work the Owner Only Dialing option must be set to TERRITORY and User Territories must be enabled in the System Settings.");
-        }
+    }
     ?>
     <BR>
     <A NAME="campaigns-list_order_mix">
@@ -1095,7 +1083,7 @@ if ($SSoutbound_autodial_active > 0)
     <A NAME="campaigns-survey_recording">
     <BR>
     <B><?php echo _QXZ("Survey Recording"); ?> -</B><?php echo _QXZ("If enabled, this will start recording when the call is answered. Only recommended if the method is not set to transfer to an agent. Default is N for disabled. If set to Y_WITH_AMD even answering machine detected message calls will be recorded.");
-    }
+}
 ?>
 <BR>
 <A NAME="campaigns-next_agent_call">
@@ -1533,8 +1521,7 @@ if ($SSoutbound_autodial_active > 0)
 <A NAME="campaigns-agent_clipboard_copy">
 <BR>
 <B><?php echo _QXZ("Agent Screen Clipboard Copy"); ?> -</B><?php echo _QXZ("THIS FEATURE IS CURRENTLY ONLY ENABLED FOR INTERNET EXPLORER. This feature allows you to select a field that will be copied to the computer clipboard of the agent computer upon a call being sent to an agent. Common uses for this are to allow for easy pasting of account numbers or phone numbers into legacy client applications on the agent computer.");
-if ($SSqc_features_active > 0)
-    {
+if ($SSqc_features_active > 0) {
     ?>
     <BR>
     <A NAME="campaigns-qc_enabled">
@@ -1564,7 +1551,7 @@ if ($SSqc_features_active > 0)
     <A NAME="campaigns-qc_script">
     <BR>
     <B><?php echo _QXZ("QC Script"); ?> -</B><?php echo _QXZ("This is the script that can be used by QC agents in the SCRIPT tab in the QC screen.");
-    }
+}
 ?>
 <BR>
 <A NAME="campaigns-vtiger_search_category">
@@ -2453,8 +2440,7 @@ if ($SSqc_features_active > 0)
 <A NAME="inbound_groups-ingroup_rec_filename">
 <BR>
 <B><?php echo _QXZ("In-Group Recording Filename"); ?> -</B><?php echo _QXZ("This field will override the Campaign Recording Filenaming Scheme unless it is set to NONE. The allowed variables are CAMPAIGN INGROUP CUSTPHONE FULLDATE TINYDATE EPOCH AGENT VENDORLEADCODE LEADID CALLID RECID. If your dialers have --POST recording processing enabled, you can also use POSTVLC POSTSP POSTARRD3 POSTSTATUS. These POST options will alter the recording file name after the call has been finished and will replace the post variable with the value from the default fields. The default is FULLDATE_AGENT and would look like this 20051020-103108_6666. Another example is CAMPAIGN_TINYDATE_CUSTPHONE which would look like this TESTCAMP_51020103108_3125551212. The resulting filename must be less than 90 characters in length. Default is NONE.");
-if ($SSqc_features_active > 0)
-    {
+if ($SSqc_features_active > 0) {
     ?>
     <BR>
     <A NAME="inbound_groups-qc_enabled">
@@ -2484,7 +2470,7 @@ if ($SSqc_features_active > 0)
     <A NAME="inbound_groups-qc_script">
     <BR>
     <B><?php echo _QXZ("QC Script"); ?> -</B><?php echo _QXZ("This is the script that can be used by QC agents in the SCRIPT tab in the QC screen.");
-    }
+}
 ?>
 <BR>
 <A NAME="inbound_groups-hold_recall_xfer_group">
@@ -2969,8 +2955,7 @@ if ($SSqc_features_active > 0)
 <A NAME="campaign_statuses">
 <BR>
 <B><?php echo _QXZ("Through the use of custom campaign statuses, you can have statuses that only exist for a specific campaign. The Status must be 1-8 characters in length, the description must be 2-30 characters in length and Selectable defines whether it shows up in the system as a disposition. The human_answered field is used when calculating the drop percentage, or abandon rate. Setting human_answered to Y will use this status when counting the human-answered calls. The Category option allows you to group several statuses into a category that can be used for statistical analysis. There are also 7 additional settings that will define the kind of status: sale, dnc, customer contact, not interested, unworkable, scheduled callback, completed. The MIN SEC and MAX SEC fields for each status will determine whether an agent can select that status at the end of their call based upon the length of the call. If the call is 10 seconds and the MIN SEC for a status is set to 20 seconds, then the agent will not be able to select that status. Also, if a call is 40 seconds and the MAX SEC for a status is set to 30 seconds, then the agent will not be able to select that status.")."</B>";
-if ($SSoutbound_autodial_active > 0)
-    {
+if ($SSoutbound_autodial_active > 0) {
     ?>
     <BR><BR><BR><BR>
     <B><FONT SIZE=3>CAMPAIGN_HOTKEYS <?php echo _QXZ("TABLE"); ?></FONT></B><BR><BR>
@@ -2988,7 +2973,7 @@ if ($SSoutbound_autodial_active > 0)
     <BR>
     <B><?php echo _QXZ("If the Auto Alt-Number Dialing field is set, then the leads that are dispositioned under these auto alt dial statuses will have their alt_phone and-or address3 fields dialed after any of these no-answer statuses are set."); ?></B>
     <?php
-    }
+}
 ?>
 <BR><BR><BR><BR>
 <B><FONT SIZE=3><?php echo _QXZ("AGENT PAUSE CODES"); ?></FONT></B><BR><BR>
@@ -3088,8 +3073,7 @@ if ($SSoutbound_autodial_active > 0)
 <BR>
 <B><?php echo _QXZ("Allowed Call Times"); ?> -</B><?php echo _QXZ("This is a selectable list of Call Times to which members of this user group can use in campaigns, in-groups and call menus. The --ALL-- option allows the users in this group to use all call times in the system."); ?>
 <?php
-if (strlen($SSwebphone_url) > 5)
-    {
+if (strlen($SSwebphone_url) > 5) {
     ?>
     <BR>
     <A NAME="user_groups-webphone_url_override">
@@ -3108,9 +3092,8 @@ if (strlen($SSwebphone_url) > 5)
     <BR>
     <B><?php echo _QXZ("Webphone Layout Override"); ?> - </B><?php echo _QXZ("For the WebRTC phone, this setting will allow you to use an alternate layout for all users within this user group, overriding whatever is set in the phone webphone layout field. Default is blank."); ?>
     <?php
-    }
-if ($SSqc_features_active > 0)
-    {
+}
+if ($SSqc_features_active > 0) {
     ?>
     <BR>
     <A NAME="user_groups-qc_allowed_campaigns">
@@ -3121,7 +3104,7 @@ if ($SSqc_features_active > 0)
     <BR>
     <B><?php echo _QXZ("QC Allowed Inbound Groups"); ?> -</B><?php echo _QXZ("This is a selectable list of Inbound Groups which members of this user group will be able to QC. The ALL-GROUPS option allows the users in this user group to QC any inbound group on the system."); ?>
     <?php
-    }
+}
 ?>
 <BR><BR><BR><BR>
 <B><FONT SIZE=3><?php echo _QXZ("SCRIPTS TABLE"); ?></FONT></B><BR><BR>
@@ -3155,8 +3138,7 @@ if ($SSqc_features_active > 0)
 <A NAME="scripts-script_color">
 <BR>
 <B><?php echo _QXZ("Script Color"); ?> -</B><?php echo _QXZ("This determines the background color of the script as displayed in the agent screen. default is white.");
-if ($SSoutbound_autodial_active > 0)
-    {
+if ($SSoutbound_autodial_active > 0) {
     ?>
     <BR><BR><BR><BR>
     <B><FONT SIZE=3>LEAD_FILTERS <?php echo _QXZ("TABLE"); ?></FONT></B><BR><BR>
@@ -3176,7 +3158,7 @@ if ($SSoutbound_autodial_active > 0)
     <BR>
     <A NAME="lead_filters-lead_filter_sql">
     <B><?php echo _QXZ("Filter SQL"); ?> -</B><?php echo _QXZ("This is where you place the SQL query fragment that you want to filter by. do not begin or end with an AND, that will be added by the hopper cron script automatically. an example SQL query that would work here is- called_count > 4 and called_count < 8 -.");
-    }
+}
 ?>
 <BR><BR><BR><BR>
 <B><FONT SIZE=3><?php echo _QXZ("CALL TIMES TABLE"); ?></FONT></B><BR><BR>
@@ -3342,8 +3324,7 @@ if ($SSoutbound_autodial_active > 0)
 <BR>
 <B><?php echo _QXZ("Voicemail Options"); ?> -</B><?php echo _QXZ("This optional setting allows you to define additional voicemail settings. It is recommended that you leave this blank unless you know what you are doing."); ?>
 <?php
-if ($SSoutbound_autodial_active > 0)
-    {
+if ($SSoutbound_autodial_active > 0) {
     ?>
     <BR><BR><BR><BR>
     <B><FONT SIZE=3><?php echo _QXZ("LIST LOADER FUNCTIONALITY"); ?></FONT></B><BR><BR>
@@ -3396,7 +3377,7 @@ if ($SSoutbound_autodial_active > 0)
     <B><?php echo _QXZ("State Abbreviation Lookup"); ?> -</B><?php echo _QXZ("If your lead file has state names spelled out and you would like to load them into the state field as their two-character abbreviations, this feature will look up the abbreviation from the internal database. Default is DISABLED."); ?>
     <BR><BR><BR><BR>
     <?php
-    }
+}
 ?>
 <B><FONT SIZE=3><?php echo _QXZ("PHONES TABLE"); ?></FONT></B><BR><BR>
 <A NAME="phones-extension">
@@ -4103,8 +4084,7 @@ if ($SSoutbound_autodial_active > 0)
 <A NAME="conferences-server_ip">
 <BR>
 <B><?php echo _QXZ("Server IP"); ?> -</B><?php echo _QXZ("The menu where you select the Asterisk server that this conference will be on.");
-if ($SSoutbound_autodial_active > 0)
-    {
+if ($SSoutbound_autodial_active > 0) {
     ?>
     <BR><BR><BR><BR>
     <B><FONT SIZE=3>SERVER_TRUNKS <?php echo _QXZ("TABLE"); ?></FONT></B><BR><BR>
@@ -4112,7 +4092,7 @@ if ($SSoutbound_autodial_active > 0)
     <BR>
     <B><?php echo _QXZ("Server Trunks allows you to restrict the outgoing lines that are used on this server for campaign dialing on a per-campaign basis. You have the option to reserve a specific number of lines to be used by only one campaign as well as allowing that campaign to run over its reserved lines into whatever lines remain open, as long at the total lines used by the system on this server is less than the Max Trunks setting. Not having any of these records will allow the campaign that dials the line first to have as many lines as it can get under the Max Trunks setting."); ?></B>
     <?php
-    }
+}
 ?>
 <BR><BR><BR><BR>
 <B><FONT SIZE=3>SYSTEM_SETTINGS <?php echo _QXZ("TABLE"); ?></FONT></B><BR><BR>
@@ -4907,9 +4887,8 @@ FR_SPAC 00 00 00 00 00 - <?php echo _QXZ("France space separated phone number");
 <B><?php echo _QXZ("Through the use of system status categories, you can group together statuses to allow for statistical analysis on a group of statuses. The Category ID must be 2-20 characters in length with no spaces, the name must be 2-50 characters in length, the description is optional and TimeonVDAD Display defines whether that status will be one of the upto 4 statuses that can be calculated and displayed on the Time On VDAD Real-Time report.</B> The Sale Category and Dead Lead Category are both used by the List Suggestion system when analyzing list statistics."); ?>
 <BR><BR><BR><BR>
 <?php
-if ($SSallow_emails>0)
-    {
-?>
+if ($SSallow_emails>0) {
+    ?>
 <B><FONT SIZE=3><?php echo _QXZ("EMAIL ACCOUNTS"); ?></FONT></B><BR><BR>
 <A NAME="email_accounts">
 <BR>
@@ -5030,8 +5009,7 @@ if ($SSallow_emails>0)
 <BR>
 <B><?php echo _QXZ("These statistics are cached totals that are stored throughout each day in real-time through back-end processes. For inbound calls, the total calls per in-group are calculated for each call that enters the process that calculates. For the whole system counts, the totals are generated from log entries as well as other in-group and campaign totals. These totals may not add up due to the settings that you have in your system as well as when the call is hung up."); ?></B>
 <?php
-if ($SSqc_features_active > 0)
-    {
+if ($SSqc_features_active > 0) {
     ?>
     <BR><BR><BR><BR>
     <B><FONT SIZE=3><?php echo _QXZ("QC STATUS CODES"); ?></FONT></B><BR><BR>
@@ -5039,7 +5017,7 @@ if ($SSqc_features_active > 0)
     <BR>
     <B><?php echo _QXZ("The Quality Control"); ?> -</B> <?php echo _QXZ("QC function has its own set of status codes separate from those within the call handling functions of the system. QC status codes must be between 2 and 8 characters in length and contain no special characters like a space or colon. The QC status code description must be between 2 and 30 characters in length. For these functions to work, you must have QC enabled in the System Settings."); ?>
     <?php
-    }
+}
 ?>
 <BR><BR><BR><BR>
 <B><FONT SIZE=3><?php echo _QXZ("Reports"); ?></FONT></B><BR><BR>

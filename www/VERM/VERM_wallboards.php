@@ -34,22 +34,26 @@
 ?>
 <?php
 $startMS = microtime();
-header ("Content-type: text/html; charset=utf-8");
+header("Content-type: text/html; charset=utf-8");
 require("dbconnect_mysqli.php");
 require("functions.php");
 require("VERM_options.php"); # Get $VERM_default_report_queue from here
 $PHP_AUTH_USER=$_SERVER['PHP_AUTH_USER'];
 $PHP_AUTH_PW=$_SERVER['PHP_AUTH_PW'];
 $PHP_SELF=$_SERVER['PHP_SELF'];
-$PHP_SELF = preg_replace('/\.php.*/i','.php',$PHP_SELF);
-if (isset($_GET["DB"]))            {$DB=$_GET["DB"];}
-    elseif (isset($_POST["DB"]))    {$DB=$_POST["DB"];}
+$PHP_SELF = preg_replace('/\.php.*/i', '.php', $PHP_SELF);
+if (isset($_GET["DB"])) {
+    $DB=$_GET["DB"];
+} elseif (isset($_POST["DB"])) {
+    $DB=$_POST["DB"];
+}
 $stmt = "SELECT use_non_latin,outbound_autodial_active,slave_db_server,reports_use_slave_db,enable_languages,language_method,agent_whisper_enabled,report_default_format,enable_pause_code_limits,allow_web_debug,admin_screen_colors,admin_web_directory FROM system_settings;";
 $rslt=mysql_to_mysqli($stmt, $link);
-if ($DB) {echo "$stmt\n";}
+if ($DB) {
+    echo "$stmt\n";
+}
 $qm_conf_ct = mysqli_num_rows($rslt);
-if ($qm_conf_ct > 0)
-    {
+if ($qm_conf_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $non_latin =                    $row[0];
     $outbound_autodial_active =        $row[1];
@@ -63,91 +67,88 @@ if ($qm_conf_ct > 0)
     $SSallow_web_debug =            $row[9];
     $SSadmin_screen_colors =        $row[10];
     $SSadmin_web_directory =        $row[11];
-    }
-if ($SSallow_web_debug < 1) {$DB=0;}
+}
+if ($SSallow_web_debug < 1) {
+    $DB=0;
+}
 require("../$SSadmin_web_directory/screen_colors.php");
-if ($non_latin < 1)
-    {
+if ($non_latin < 1) {
     $PHP_AUTH_USER = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_USER);
     $PHP_AUTH_PW = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_PW);
-    }
-else
-    {
+} else {
     $PHP_AUTH_USER = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_USER);
     $PHP_AUTH_PW = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_PW);
-    }
+}
 $stmt="SELECT selected_language from vicidial_users where user='$PHP_AUTH_USER';";
-if ($DB) {echo "|$stmt|\n";}
+if ($DB) {
+    echo "|$stmt|\n";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 $sl_ct = mysqli_num_rows($rslt);
-if ($sl_ct > 0)
-    {
+if ($sl_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $VUselected_language =        $row[0];
-    }
+}
 $auth=0;
 $reports_auth=0;
 $admin_auth=0;
-$auth_message = user_authorization($PHP_AUTH_USER,$PHP_AUTH_PW,'REPORTS',1,0);
-if ( ($auth_message == 'GOOD') or ($auth_message == '2FA') )
-    {
+$auth_message = user_authorization($PHP_AUTH_USER, $PHP_AUTH_PW, 'REPORTS', 1, 0);
+if (($auth_message == 'GOOD') or ($auth_message == '2FA')) {
     $auth=1;
-    if ($auth_message == '2FA')
-        {
-        header ("Content-type: text/html; charset=utf-8");
+    if ($auth_message == '2FA') {
+        header("Content-type: text/html; charset=utf-8");
         echo _QXZ("Your session is expired").". <a href=\"/".$SSadmin_web_directory."/admin.php\">"._QXZ("Click here to log in")."</a>.\n";
         exit;
-        }
     }
-if ($auth > 0)
-    {
+}
+if ($auth > 0) {
     $stmt="SELECT count(*) from vicidial_users where user='$PHP_AUTH_USER' and user_level > 7 and view_reports='1';";
-    if ($DB) {echo "|$stmt|\n";}
+    if ($DB) {
+        echo "|$stmt|\n";
+    }
     $rslt=mysql_to_mysqli($stmt, $link);
     $row=mysqli_fetch_row($rslt);
     $admin_auth=$row[0];
     $stmt="SELECT count(*) from vicidial_users where user='$PHP_AUTH_USER' and user_level > 6 and view_reports='1';";
-    if ($DB) {echo "|$stmt|\n";}
+    if ($DB) {
+        echo "|$stmt|\n";
+    }
     $rslt=mysql_to_mysqli($stmt, $link);
     $row=mysqli_fetch_row($rslt);
     $reports_auth=$row[0];
-    if ($reports_auth < 1)
-        {
+    if ($reports_auth < 1) {
         $VDdisplayMESSAGE = _QXZ("You are not allowed to view reports");
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
-    if ( ($reports_auth > 0) and ($admin_auth < 1) )
-        {
+    }
+    if (($reports_auth > 0) and ($admin_auth < 1)) {
         $ADD=999999;
         $reports_only_user=1;
-        }
     }
-else
-    {
+} else {
     $VDdisplayMESSAGE = _QXZ("Login incorrect, please try again");
-    if ($auth_message == 'LOCK')
-        {
+    if ($auth_message == 'LOCK') {
         $VDdisplayMESSAGE = _QXZ("Too many login attempts, try again in 15 minutes");
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
-    if ($auth_message == 'IPBLOCK')
-        {
+    }
+    if ($auth_message == 'IPBLOCK') {
         $VDdisplayMESSAGE = _QXZ("Your IP Address is not allowed") . ": $ip";
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
+    }
     Header("WWW-Authenticate: Basic realm=\"CONTACT-CENTER-ADMIN\"");
     Header("HTTP/1.0 401 Unauthorized");
     echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$PHP_AUTH_PW|$auth_message|\n";
     exit;
-    }
+}
 $stmt="SELECT user_group from vicidial_users where user='$PHP_AUTH_USER';";
-if ($DB) {$MAIN.="|$stmt|\n";}
+if ($DB) {
+    $MAIN.="|$stmt|\n";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 $row=mysqli_fetch_row($rslt);
 $LOGuser_group =            $row[0];
@@ -156,59 +157,71 @@ $rslt=mysql_to_mysqli($stmt, $link);
 $row=mysqli_fetch_row($rslt);
 $LOGallowed_queue_groups =        $row[0];
 $LOGallowed_queue_groupsSQL='';
-if ( (!preg_match('/\-ALL\-GROUPS\-/i',$LOGallowed_queue_groups)) and (strlen($LOGallowed_queue_groups) > 3) )
-    {
-    $rawLOGallowed_queue_groupsSQL = preg_replace("/ \-/",'',$LOGallowed_queue_groups);
-    $rawLOGallowed_queue_groupsSQL = preg_replace("/ /","','",$rawLOGallowed_queue_groupsSQL);
+if ((!preg_match('/\-ALL\-GROUPS\-/i', $LOGallowed_queue_groups)) and (strlen($LOGallowed_queue_groups) > 3)) {
+    $rawLOGallowed_queue_groupsSQL = preg_replace("/ \-/", '', $LOGallowed_queue_groups);
+    $rawLOGallowed_queue_groupsSQL = preg_replace("/ /", "','", $rawLOGallowed_queue_groupsSQL);
     $LOGallowed_queue_groupsSQL = "and queue_group IN('---ALL---','$rawLOGallowed_queue_groupsSQL')";
     $whereLOGallowed_queue_groupsSQL = "where queue_group IN('---ALL---','$rawLOGallowed_queue_groupsSQL')";
-    }
-else 
-    {$admin_viewable_groupsALL=1;}
+} else {
+    $admin_viewable_groupsALL=1;
+}
 $stmt="select * from vicidial_queue_groups where active='Y' $LOGallowed_queue_groupsSQL order by queue_group, queue_group_name;";
 $rslt=mysql_to_mysqli($stmt, $link);
 $queue_dropdown_array=array();
-while ($row=mysqli_fetch_array($rslt))
-    {
+while ($row=mysqli_fetch_array($rslt)) {
     $queue_dropdown_array["$row[queue_group]"]=$row["queue_group_name"];
-    }    
-if (isset($_GET["widget_type"]))            {$widget_type=$_GET["widget_type"];}
-    elseif (isset($_POST["widget_type"]))    {$widget_type=$_POST["widget_type"];}
-if (isset($_GET["widget_id"]))            {$widget_id=$_GET["widget_id"];}
-    elseif (isset($_POST["widget_id"]))    {$widget_id=$_POST["widget_id"];}
-if (isset($_GET["wallboard_report_id"]))            {$wallboard_report_id=$_GET["wallboard_report_id"];}
-    elseif (isset($_POST["wallboard_report_id"]))    {$wallboard_report_id=$_POST["wallboard_report_id"];}
-if (isset($_GET["vicidial_queue_group"]))            {$vicidial_queue_group=$_GET["vicidial_queue_group"];}
-    elseif (isset($_POST["vicidial_queue_group"]))    {$vicidial_queue_group=$_POST["vicidial_queue_group"];}
-if ($non_latin < 1)
-    {
-    $widget_type=preg_replace('/[^-_0-9a-zA-Z]/','',$widget_type);
-    $widget_id=preg_replace('/[^-_0-9a-zA-Z]/','',$widget_id);
-    $wallboard_report_id=preg_replace('/[^-_0-9a-zA-Z]/','',$wallboard_report_id);
-    $vicidial_queue_group=preg_replace('/[^-_0-9a-zA-Z]/','',$vicidial_queue_group);
-    }
-else
-    {
-    $widget_type=preg_replace('/[^-_0-9\p{L}]/u','',$widget_type);
-    $widget_id=preg_replace('/[^-_0-9\p{L}]/u','',$widget_id);
-    $wallboard_report_id=preg_replace('/[^-_0-9\p{L}]/u','',$wallboard_report_id);
-    $vicidial_queue_group=preg_replace('/[^-_0-9\p{L}]/u','',$vicidial_queue_group);
-    }
-if (!$vicidial_queue_group) {$vicidial_queue_group=$VERM_default_report_queue;}
-if (!$wallboard_report_id) {$wallboard_report_id="AGENTS_AND_QUEUES";}
+}
+if (isset($_GET["widget_type"])) {
+    $widget_type=$_GET["widget_type"];
+} elseif (isset($_POST["widget_type"])) {
+    $widget_type=$_POST["widget_type"];
+}
+if (isset($_GET["widget_id"])) {
+    $widget_id=$_GET["widget_id"];
+} elseif (isset($_POST["widget_id"])) {
+    $widget_id=$_POST["widget_id"];
+}
+if (isset($_GET["wallboard_report_id"])) {
+    $wallboard_report_id=$_GET["wallboard_report_id"];
+} elseif (isset($_POST["wallboard_report_id"])) {
+    $wallboard_report_id=$_POST["wallboard_report_id"];
+}
+if (isset($_GET["vicidial_queue_group"])) {
+    $vicidial_queue_group=$_GET["vicidial_queue_group"];
+} elseif (isset($_POST["vicidial_queue_group"])) {
+    $vicidial_queue_group=$_POST["vicidial_queue_group"];
+}
+if ($non_latin < 1) {
+    $widget_type=preg_replace('/[^-_0-9a-zA-Z]/', '', $widget_type);
+    $widget_id=preg_replace('/[^-_0-9a-zA-Z]/', '', $widget_id);
+    $wallboard_report_id=preg_replace('/[^-_0-9a-zA-Z]/', '', $wallboard_report_id);
+    $vicidial_queue_group=preg_replace('/[^-_0-9a-zA-Z]/', '', $vicidial_queue_group);
+} else {
+    $widget_type=preg_replace('/[^-_0-9\p{L}]/u', '', $widget_type);
+    $widget_id=preg_replace('/[^-_0-9\p{L}]/u', '', $widget_id);
+    $wallboard_report_id=preg_replace('/[^-_0-9\p{L}]/u', '', $wallboard_report_id);
+    $vicidial_queue_group=preg_replace('/[^-_0-9\p{L}]/u', '', $vicidial_queue_group);
+}
+if (!$vicidial_queue_group) {
+    $vicidial_queue_group=$VERM_default_report_queue;
+}
+if (!$wallboard_report_id) {
+    $wallboard_report_id="AGENTS_AND_QUEUES";
+}
 $queue_dropdown_array["$vicidial_queue_group"]="$vicidial_queue_group";
-if ($VERM_default_outb_widget_queue && !$queue_dropdown_array["$VERM_default_outb_widget_queue"]) 
-    {$queue_dropdown_array["$VERM_default_outb_widget_queue"]="$VERM_default_outb_widget_queue";}
-if ($VERM_default_inb_widget_queue1 && !$queue_dropdown_array["$VERM_default_inb_widget_queue1"]) 
-    {$queue_dropdown_array["$VERM_default_inb_widget_queue1"]="$VERM_default_inb_widget_queue1";}
-if ($VERM_default_inb_widget_queue2 && !$queue_dropdown_array["$VERM_default_inb_widget_queue2"]) 
-    {$queue_dropdown_array["$VERM_default_inb_widget_queue2"]="$VERM_default_inb_widget_queue2";}
-if ($vicidial_queue_group)
-    {
+if ($VERM_default_outb_widget_queue && !$queue_dropdown_array["$VERM_default_outb_widget_queue"]) {
+    $queue_dropdown_array["$VERM_default_outb_widget_queue"]="$VERM_default_outb_widget_queue";
+}
+if ($VERM_default_inb_widget_queue1 && !$queue_dropdown_array["$VERM_default_inb_widget_queue1"]) {
+    $queue_dropdown_array["$VERM_default_inb_widget_queue1"]="$VERM_default_inb_widget_queue1";
+}
+if ($VERM_default_inb_widget_queue2 && !$queue_dropdown_array["$VERM_default_inb_widget_queue2"]) {
+    $queue_dropdown_array["$VERM_default_inb_widget_queue2"]="$VERM_default_inb_widget_queue2";
+}
+if ($vicidial_queue_group) {
     $vqg_stmt="select included_campaigns, included_inbound_groups, queue_group_name from vicidial_queue_groups where queue_group='$vicidial_queue_group'";
     $vqg_rslt=mysql_to_mysqli($vqg_stmt, $link);
-    if(mysqli_num_rows($vqg_rslt)>0)
-        {
+    if(mysqli_num_rows($vqg_rslt)>0) {
         $vqg_row=mysqli_fetch_array($vqg_rslt);
         $queue_group_name=$vqg_row["queue_group_name"];
         $included_campaigns=trim(preg_replace('/\s\-$/', '', $vqg_row["included_campaigns"]));
@@ -220,8 +233,8 @@ if ($vicidial_queue_group)
         $included_inbound_groups_ct=count($included_inbound_groups_array);
         $included_inbound_groups_clause="and group_id in ('".preg_replace('/\s/', "', '", $included_inbound_groups)."')";
         $where_included_inbound_groups_clause="where group_id in ('".preg_replace('/\s/', "', '", $included_inbound_groups)."')";
-        }
     }
+}
 /* Commenting this out - unnecessary
 $campaign_id_stmt="select campaign_id, campaign_name from vicidial_campaigns where campaign_id is not null $included_campaigns_clause order by campaign_name"; # $LOGallowed_campaignsSQL, removed for now per Matt's assurances
 $campaign_id_rslt=mysql_to_mysqli($campaign_id_stmt, $link);
@@ -265,11 +278,11 @@ $wallboard_views[0]=array(
     "data_refresh_rate" => 10,
     "columns" => 8
 );
- $wallboard_views[1]=array(
-    "view_name" => "Agents",
-    "view_id" => "agents",
-    "data_refresh_rate" => 10,
-    "columns" => 7
+$wallboard_views[1]=array(
+   "view_name" => "Agents",
+   "view_id" => "agents",
+   "data_refresh_rate" => 10,
+   "columns" => 7
 );
 $view_widgets=array(
 );
@@ -333,13 +346,13 @@ $view_widgets["queues"][6]=array(
     "widget_order" => 7,
     "widget_is_row" => "N"
 );
- $view_widgets["queues"][7]=array(
-    "widget_id" => "queues_widget_7",
-    "widget_type" => "OFFERED_CALLS",
-    "widget_width" => 1,
-    "widget_title" => substr(_QXZ("Offered Calls"), 0, 20),
-    "widget_order" => 8,
-    "widget_is_row" => "N"
+$view_widgets["queues"][7]=array(
+   "widget_id" => "queues_widget_7",
+   "widget_type" => "OFFERED_CALLS",
+   "widget_width" => 1,
+   "widget_title" => substr(_QXZ("Offered Calls"), 0, 20),
+   "widget_order" => 8,
+   "widget_is_row" => "N"
 );
 $view_widgets["queues"][8]=array(
     "widget_id" => "queues_widget_8",
@@ -465,11 +478,10 @@ echo "var ViewCount=".count($wallboard_views).";\n";
 echo "var rpt_color=\"#".$SSalt_row2_background."\";\n";
 $JS_view_names_array="var view_names=[";
 $JS_data_refresh_array="var data_refresh_rates=[";
-for ($v=0; $v<count($wallboard_views); $v++)
-    {
-    $JS_view_names_array.="'".$wallboard_views[$v]["view_name"]."', ";    
-    $JS_data_refresh_array.="".$wallboard_views[$v]["data_refresh_rate"].", ";    
-    }
+for ($v=0; $v<count($wallboard_views); $v++) {
+    $JS_view_names_array.="'".$wallboard_views[$v]["view_name"]."', ";
+    $JS_data_refresh_array.="".$wallboard_views[$v]["data_refresh_rate"].", ";
+}
 $JS_view_names_array=preg_replace('/, $/', '', $JS_view_names_array);
 $JS_data_refresh_array=preg_replace('/, $/', '', $JS_data_refresh_array);
 $JS_view_names_array.="];\n";
@@ -483,40 +495,29 @@ $JS_widget_scales_array="var all_widget_scales=[";
 $JS_draw_graphs="";
 $JS_update_graphs="";
 $j=0;
-foreach($view_widgets as $view => $widgets)
-    {
-    for ($i=0; $i<count($widgets); $i++)
-        {
+foreach($view_widgets as $view => $widgets) {
+    for ($i=0; $i<count($widgets); $i++) {
         $JS_widget_ids_array.="'".$widgets[$i]["widget_id"]."', ";
         $JS_widget_types_array.="'".$widgets[$i]["widget_type"]."', ";
         $JS_widget_data_array.="'0', ";
         $JS_widget_scales_array.="'0', ";
         $widget_id=$widgets[$i]["widget_id"];
         $knob_ct=0;
-        if (in_array($widgets[$i]["widget_type"], $circle_widgets_array) || in_array($widgets[$i]["widget_type"], $mixed_widgets_array))
-            {
-            for ($v=0; $v<count($wallboard_views); $v++)
-                {
-                if ($wallboard_views[$v]["view_id"]==$view)
-                    {
+        if (in_array($widgets[$i]["widget_type"], $circle_widgets_array) || in_array($widgets[$i]["widget_type"], $mixed_widgets_array)) {
+            for ($v=0; $v<count($wallboard_views); $v++) {
+                if ($wallboard_views[$v]["view_id"]==$view) {
                     $columns=$wallboard_views[$v]["columns"];
-                    }
                 }
-            if (in_array($widgets[$i]["widget_type"], $circle_widgets_array))
-                {
-                if (preg_match('/PCT/', $widgets[$i]["widget_type"]))
-                    {
+            }
+            if (in_array($widgets[$i]["widget_type"], $circle_widgets_array)) {
+                if (preg_match('/PCT/', $widgets[$i]["widget_type"])) {
                     echo "\nvar ".$widget_id."_knob = pureknob.createKnob(Math.round(TotalKnobScreenWidthLarge/$columns), Math.round(TotalKnobScreenWidthLarge/$columns), 'percent');\n";
-                    }
-                else
-                    {
+                } else {
                     echo "\nvar ".$widget_id."_knob = pureknob.createKnob(Math.round(TotalKnobScreenWidthLarge/$columns), Math.round(TotalKnobScreenWidthLarge/$columns));\n";
-                    }
                 }
-            else
-                {
+            } else {
                 echo "var ".$widget_id."_knob = pureknob.createKnob(Math.round(TotalKnobScreenWidthSmall/$columns), Math.round(TotalKnobScreenWidthSmall/$columns));\n";
-                }
+            }
             echo $widget_id."_knob.setProperty('angleStart', -1 * Math.PI);\n";
             echo $widget_id."_knob.setProperty('angleEnd', 1 * Math.PI);\n";
             echo $widget_id."_knob.setProperty('angleOffset', 0.5 * Math.PI);\n";
@@ -527,35 +528,33 @@ foreach($view_widgets as $view => $widgets)
             echo $widget_id."_knob.setProperty('valMax', 100);\n";
             echo "// IMPORTANT !!!\n";
             echo "var ".$widget_id."_knob_dataIndex=$j;\n\n";
-            if ($widgets[$i]["widget_type"]=="SLA_LEVEL_PCT" || $widgets[$i]["widget_type"]=="N_ANSWERED_CALLS" || $widgets[$i]["widget_type"]=="N_AGENTS_ON_CALL" || $widgets[$i]["widget_type"]=="AGENTS_READY" || $widgets[$i]["widget_type"]=="N_WAITING_CALLS")
-                {
+            if ($widgets[$i]["widget_type"]=="SLA_LEVEL_PCT" || $widgets[$i]["widget_type"]=="N_ANSWERED_CALLS" || $widgets[$i]["widget_type"]=="N_AGENTS_ON_CALL" || $widgets[$i]["widget_type"]=="AGENTS_READY" || $widgets[$i]["widget_type"]=="N_WAITING_CALLS") {
                 $JS_draw_graphs.="var node".$j." = ".$widget_id."_knob.node();\n";
                 $JS_draw_graphs.="var elem1 = document.getElementById('".$widget_id."');\n";
                 $JS_draw_graphs.="elem1.appendChild(node".$j.");\n\n";
                 $JS_update_graphs.="\tif (all_widget_data[$j]<0) {document.getElementById('$widget_id').innerHTML=\"<div class='centered_text' style='text-overflow: ellipsis;'><font class='wallboard_large_text bold centered_text'>N/A</font></div>\";}\n";
                 $JS_update_graphs.="\t else {";
-                if (!preg_match('/PCT/', $widgets[$i]["widget_type"]))
-                    {$JS_update_graphs.=$widget_id."_knob.setProperty('valMax', all_widget_scales[$j]);";}
-                $JS_update_graphs.=$widget_id."_knob.setValue(all_widget_data[$j]);}\n"; #  console.log('Updating graph ".$widgets[$i]["widget_type"]." to:'+all_widget_data[$j]+' scale '+all_widget_scales[$j]);
+                if (!preg_match('/PCT/', $widgets[$i]["widget_type"])) {
+                    $JS_update_graphs.=$widget_id."_knob.setProperty('valMax', all_widget_scales[$j]);";
                 }
-            else
-                {
-                if ($widgets[$i]["widget_type"]=="LIVE_QUEUE_INFO")
-                    {
+                $JS_update_graphs.=$widget_id."_knob.setValue(all_widget_data[$j]);}\n"; #  console.log('Updating graph ".$widgets[$i]["widget_type"]." to:'+all_widget_data[$j]+' scale '+all_widget_scales[$j]);
+            } else {
+                if ($widgets[$i]["widget_type"]=="LIVE_QUEUE_INFO") {
                     $JS_draw_graphs.="var node".$j." = ".$widget_id."_knob.node();\n";
                     $JS_draw_graphs.="var elem1 = document.getElementById('".$widget_id."_graph');\n";
                     $JS_draw_graphs.="elem1.appendChild(node".$j.");\n\n";
                     $JS_update_graphs.="\tif (all_widget_data[$j]<0) {document.getElementById('".$widget_id."_graph').innerHTML=\"<div class='centered_text' style='text-overflow: ellipsis;'><font class='wallboard_large_text bold centered_text'><BR>N/A<BR><BR></font></div>\";}\n";
                     $JS_update_graphs.="\t else {";
-                    if (!preg_match('/PCT/', $widgets[$i]["widget_type"]))
-                        {$JS_update_graphs.=$widget_id."_knob.setProperty('valMax', all_widget_scales[$j]);";}
-                    $JS_update_graphs.=$widget_id."_knob.setValue(all_widget_data[$j]);}\n"; #  console.log('Updating graph ".$widgets[$i]["widget_type"]." to:'+all_widget_data[$j]+' scale '+all_widget_scales[$j]);
+                    if (!preg_match('/PCT/', $widgets[$i]["widget_type"])) {
+                        $JS_update_graphs.=$widget_id."_knob.setProperty('valMax', all_widget_scales[$j]);";
                     }
+                    $JS_update_graphs.=$widget_id."_knob.setValue(all_widget_data[$j]);}\n"; #  console.log('Updating graph ".$widgets[$i]["widget_type"]." to:'+all_widget_data[$j]+' scale '+all_widget_scales[$j]);
                 }
             }
-        $j++;
         }
+        $j++;
     }
+}
 $JS_widget_ids_array=preg_replace('/, $/', '', $JS_widget_ids_array);
 $JS_widget_types_array=preg_replace('/, $/', '', $JS_widget_types_array);
 $JS_widget_data_array=preg_replace('/, $/', '', $JS_widget_data_array);
@@ -1083,17 +1082,16 @@ function ToggleVisibility(span_name) {
     <td align='left' style="width:50vw" class='wallboard_title_cell'>&nbsp;&nbsp;&nbsp;
         <?php
         echo "$queue_group_name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-        for ($i=0; $i<$report_views; $i++) 
-            {
-            echo "<input type='radio' name='view_toggler' id='toggler_view_".$i."' class='view_button' onClick=\"GoToView($i, 'stop refreshing')\"".($i==0 ? " checked" : "").">&nbsp;";
-            }
-        echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='button' id='wallboard_play_pause' class='stop_button' onClick='StopStart(this.className)' value='&#9632;'>";
-        ?>
+for ($i=0; $i<$report_views; $i++) {
+    echo "<input type='radio' name='view_toggler' id='toggler_view_".$i."' class='view_button' onClick=\"GoToView($i, 'stop refreshing')\"".($i==0 ? " checked" : "").">&nbsp;";
+}
+echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='button' id='wallboard_play_pause' class='stop_button' onClick='StopStart(this.className)' value='&#9632;'>";
+?>
     </td>
     <td align='right' style="width:50vw">
     <?php
     echo "$report_name - <span id='displayed_view_name' style='position:relative'>$current_page</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a class='header_link' href='VERM_admin.php'>[X]</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-    ?>
+?>
     </td>
 </tr>
 <tr>
@@ -1101,29 +1099,31 @@ function ToggleVisibility(span_name) {
 <!-- ALL VIEWS/PAGES GO HERE //-->
 <?php
 $settings_HTML="";
-for ($v=0; $v<count($wallboard_views); $v++)
-    {
-    if ($v==0) {$vdisplay="block"; $zIndex="1";} else {$vdisplay="none"; $zIndex="0";}
+for ($v=0; $v<count($wallboard_views); $v++) {
+    if ($v==0) {
+        $vdisplay="block";
+        $zIndex="1";
+    } else {
+        $vdisplay="none";
+        $zIndex="0";
+    }
     echo "<span id='wallboard_view_".$v."' style='display:".$vdisplay.";z-index:".$zIndex."'>\n";
     $table_width=100;
     echo "<table style='width:".$table_width."vw' border='0'>";
     echo "<tr height='1'>";
     $total_width=0;
-    $columns=$wallboard_views[$v]["columns"]; 
-    for ($p=1; $p<=$columns; $p++)
-        {
+    $columns=$wallboard_views[$v]["columns"];
+    for ($p=1; $p<=$columns; $p++) {
         $current_column_width=round($table_width*$p/$columns)-$total_width;
         echo "<td style='width:".$current_column_width."vw'></td>\n";
         $total_width+=$current_column_width;
-        }
+    }
     echo "</tr>\n";
     $view_id=$wallboard_views[$v]["view_id"];
-    if ($view_widgets["$view_id"])
-        {
+    if ($view_widgets["$view_id"]) {
         $current_cell_position=0;
         $ins_stmts="<!--\n";
-        foreach($view_widgets["$view_id"] as $widget_index => $widget_params)
-            {
+        foreach($view_widgets["$view_id"] as $widget_index => $widget_params) {
             $widget_id=$widget_params["widget_id"];
             $widget_width=$widget_params["widget_width"];
             $widget_type=$widget_params["widget_type"];
@@ -1133,29 +1133,32 @@ for ($v=0; $v<count($wallboard_views); $v++)
             $widget_rowspan=$widget_params["widget_rowspan"];
             $widget_order=$widget_params["widget_order"];
             $widget_sla_level=$widget_params["widget_sla_level"];
-            if (!$widget_rowspan) {$widget_rowspan=1;}
+            if (!$widget_rowspan) {
+                $widget_rowspan=1;
+            }
             $ins_stmts.="INSERT INTO wallboard_widgets(widget_id, view_id, widget_width, widget_type, widget_title, widget_is_row, widget_queue, widget_rowspan, widget_sla_level, widget_colors, widget_colors2, widget_order) VALUES ('$widget_id', '$view_id', '$widget_width', '$widget_type', '$widget_title', '$widget_is_row', '$widget_queue', '$widget_rowspan', '$widget_sla_level', '$widget_colors', '$widget_colors2', '$widget_order');\n";
-            if (!$widget_title) {$widget_title="&nbsp;";}
-            if ($widget_is_row=="Y") 
-                {
+            if (!$widget_title) {
+                $widget_title="&nbsp;";
+            }
+            if ($widget_is_row=="Y") {
                 $widget_width=$columns;
                 $widget_height=($widget_rowspan*200)."px";
-                }
-            else
-                {
+            } else {
                 $widget_height="200px";
-                }
-            if ($widget_width>$columns) {$widget_width=$columns;} # Just in case.
-            if ($current_cell_position+$widget_width>$columns)
-                {
-                if($current_cell_position<$columns)
-                    {
+            }
+            if ($widget_width>$columns) {
+                $widget_width=$columns;
+            } # Just in case.
+            if ($current_cell_position+$widget_width>$columns) {
+                if($current_cell_position<$columns) {
                     echo "<td colspan='".($columns-$current_cell_position)."'>&nbsp;</td>\n";
-                    }
+                }
                 echo "</tr>\n";
                 $current_cell_position=0;
-                }
-            if ($current_cell_position==0) {echo "<tr>";}
+            }
+            if ($current_cell_position==0) {
+                echo "<tr>";
+            }
             echo "<td class='widget_cell' colspan='".$widget_width."' style='height:".$widget_height."'>";
             echo "<table class='widget_contents".(preg_match('/^OFFERED_CALLS$|^LONGEST_WAIT$|^LOST_CALLS$|^ANSWERED_CALLS$/', $widget_type) ? " shaded" : "")." topalign' width='100%' height='100%' border='0'>";
             echo "    <tr class='widget_cell_title_bar' height='20'>\n";
@@ -1164,16 +1167,13 @@ for ($v=0; $v<count($wallboard_views); $v++)
             echo "    </tr>\n";
             echo "    <tr>";
             echo "        <td id='".$widget_id."' class='widget_contents".(preg_match('/^LIVE_CALLS$|^LIVE_AGENTS$/', $widget_type) ? " topalign" : "")."' colspan='2'>";
-            if (preg_match('/^LIVE_AGENT_INFO$|^LIVE_QUEUE_INFO$|^AVG_QUEUE_INFO$/', $widget_type))
-                {
+            if (preg_match('/^LIVE_AGENT_INFO$|^LIVE_QUEUE_INFO$|^AVG_QUEUE_INFO$/', $widget_type)) {
                 echo "<div id='".$widget_id."_title' class='centered_text' style='text-overflow: ellipsis;'><font class='wallboard_small_text centered_text'>$widget_queue</font></div>\n";
                 echo "<div id='".$widget_id."_graph' class='centered_text'></div>";
                 echo "<div id='".$widget_id."_footer' class='centered_text'></div>";
-                }
-            else
-                {
+            } else {
                 echo "&nbsp;";
-                }
+            }
             echo "        </td>";
             echo "    </tr>\n";
             echo "</table>";
@@ -1198,15 +1198,13 @@ for ($v=0; $v<count($wallboard_views); $v++)
                 $settings_HTML.="</tr>\n";
                 }
             */
-            if ($widget_type=="TEXT")
-                {
+            if ($widget_type=="TEXT") {
                 $settings_HTML.="<tr>\n";
                 $settings_HTML.="<td align='right' class='widget_settings_cell'>"._QXZ("Text")."</td>\n";
                 $settings_HTML.="<td align='left' class='widget_settings_cell'><input type='text' name='".$widget_id."_settings_text' id='".$widget_id."_settings_text' size='15' class='widget_settings_form_field' value='$widget_title'></td>\n";
                 $settings_HTML.="</tr>\n";
-                }
-            if (preg_match('/^OFFERED_CALLS$|^LONGEST_WAIT$|^LOST_CALLS$|^ANSWERED_CALLS$|^N_WAITING_CALLS$|^LOST_CALLS_GRAPH$|^N_ANSWERED_CALLS$|^N_OFFERED_CALLS$|^N_LONGEST_WAIT$|^N_AGENTS_ON_CALL$|^LOST_PCT$|^ANSWERED_PCT$|^AGENTS_READY$|^SLA_LEVEL_PCT$|^LIVE_QUEUE_INFO$|^AVG_QUEUE_INFO$/', $widget_type))
-                {
+            }
+            if (preg_match('/^OFFERED_CALLS$|^LONGEST_WAIT$|^LOST_CALLS$|^ANSWERED_CALLS$|^N_WAITING_CALLS$|^LOST_CALLS_GRAPH$|^N_ANSWERED_CALLS$|^N_OFFERED_CALLS$|^N_LONGEST_WAIT$|^N_AGENTS_ON_CALL$|^LOST_PCT$|^ANSWERED_PCT$|^AGENTS_READY$|^SLA_LEVEL_PCT$|^LIVE_QUEUE_INFO$|^AVG_QUEUE_INFO$/', $widget_type)) {
                 $settings_HTML.="<tr>\n";
                 $settings_HTML.="<td align='right' class='widget_settings_cell'>"._QXZ("Yellow alarm")."</td>\n";
                 $settings_HTML.="<td align='left' class='widget_settings_cell'><input type='text' name='".$widget_id."_settings_yellow_alarm' id='".$widget_id."_settings_yellow_alarm' size='15' class='widget_settings_form_field'></td>\n";
@@ -1225,9 +1223,8 @@ for ($v=0; $v<count($wallboard_views); $v++)
                 $settings_HTML.="<input type='hidden' name='".$widget_id."_settings_color' id='".$widget_id."_settings_color'>";
                 $settings_HTML.="</td>\n";
                 $settings_HTML.="</tr>\n";
-                }
-            if(preg_match('/^LIVE_QUEUE_INFO$/', $widget_type))
-                {
+            }
+            if(preg_match('/^LIVE_QUEUE_INFO$/', $widget_type)) {
                 $settings_HTML.="<tr>\n";
                 $settings_HTML.="<td align='right' class='widget_settings_cell'>"._QXZ("2nd COLOR")."</td>\n";
                 $settings_HTML.="<td align='left'><input type='button' class='color_swatch_button' style='background-color:#".$SSstd_row1_background."' onClick=\"javascript:document.getElementById('".$widget_id."_settings_color2').value='$SSstd_row1_background'\">&nbsp;";
@@ -1238,9 +1235,8 @@ for ($v=0; $v<count($wallboard_views); $v++)
                 $settings_HTML.="<input type='hidden' name='".$widget_id."_settings_color2' id='".$widget_id."_settings_color2'>";
                 $settings_HTML.="</td>\n";
                 $settings_HTML.="</tr>\n";
-                }
-            if(preg_match('/^LIVE_AGENTS$/', $widget_type)) # |^LIVE_CALLS$|^LIVE_QUEUES$
-                {
+            }
+            if(preg_match('/^LIVE_AGENTS$/', $widget_type)) { # |^LIVE_CALLS$|^LIVE_QUEUES$
                 $settings_HTML.="<tr>\n";
                 $settings_HTML.="<td align='right' class='widget_settings_cell'>"._QXZ("Pause yellow alarm")."</td>\n";
                 $settings_HTML.="<td align='left' class='widget_settings_cell'><input type='text' name='".$widget_id."_settings_pause_yellow_alarm' id='".$widget_id."_settings_pause_yellow_alarm' size='15' class='widget_settings_form_field'></td>\n";
@@ -1257,9 +1253,8 @@ for ($v=0; $v<count($wallboard_views); $v++)
                 $settings_HTML.="<td align='right' class='widget_settings_cell'>"._QXZ("Call red alarm")."</td>\n";
                 $settings_HTML.="<td align='left' class='widget_settings_cell'><input type='text' name='".$widget_id."_settings_call_red_alarm' id='".$widget_id."_settings_call_red_alarm' size='15' class='widget_settings_form_field'></td>\n";
                 $settings_HTML.="</tr>\n";
-                }
-            if(preg_match('/^LIVE_CALLS$/', $widget_type)) # |^LIVE_CALLS$|^LIVE_QUEUES$
-                {
+            }
+            if(preg_match('/^LIVE_CALLS$/', $widget_type)) { # |^LIVE_CALLS$|^LIVE_QUEUES$
                 $settings_HTML.="<tr>\n";
                 $settings_HTML.="<td align='right' class='widget_settings_cell'>"._QXZ("Wait yellow alarm")."</td>\n";
                 $settings_HTML.="<td align='left' class='widget_settings_cell'><input type='text' name='".$widget_id."_settings_wait_yellow_alarm' id='".$widget_id."_settings_wait_yellow_alarm' size='15' class='widget_settings_form_field'></td>\n";
@@ -1276,9 +1271,8 @@ for ($v=0; $v<count($wallboard_views); $v++)
                 $settings_HTML.="<td align='right' class='widget_settings_cell'>"._QXZ("Call red alarm")."</td>\n";
                 $settings_HTML.="<td align='left' class='widget_settings_cell'><input type='text' name='".$widget_id."_settings_call_red_alarm' id='".$widget_id."_settings_call_red_alarm' size='15' class='widget_settings_form_field'></td>\n";
                 $settings_HTML.="</tr>\n";
-                }
-            if(preg_match('/^LIVE_QUEUES$/', $widget_type)) # |^LIVE_CALLS$|^LIVE_QUEUES$
-                {
+            }
+            if(preg_match('/^LIVE_QUEUES$/', $widget_type)) { # |^LIVE_CALLS$|^LIVE_QUEUES$
                 $settings_HTML.="<tr>\n";
                 $settings_HTML.="<td align='right' class='widget_settings_cell'>"._QXZ("Agents on queue yellow alarm")."</td>\n";
                 $settings_HTML.="<td align='left' class='widget_settings_cell'><input type='text' name='".$widget_id."_settings_agents_on_queue_yellow_alarm' id='".$widget_id."_settings_agents_on_queue_yellow_alarm' size='15' class='widget_settings_form_field'></td>\n";
@@ -1340,33 +1334,37 @@ for ($v=0; $v<count($wallboard_views); $v++)
                 $settings_HTML.="<td align='right' class='widget_settings_cell'>"._QXZ("Outbound agents red alarm")."</td>\n";
                 $settings_HTML.="<td align='left' class='widget_settings_cell'><input type='text' name='".$widget_id."_settings_outbound_agents_red_alarm' id='".$widget_id."_settings_outbound_agents_red_alarm' size='15' class='widget_settings_form_field'></td>\n";
                 $settings_HTML.="</tr>\n";
-                }
-            if (preg_match('/^LIVE_QUEUE_INFO$|^AVG_QUEUE_INFO$/', $widget_type)) 
-                {
+            }
+            if (preg_match('/^LIVE_QUEUE_INFO$|^AVG_QUEUE_INFO$/', $widget_type)) {
                 $settings_HTML.="<tr>\n";
                 $settings_HTML.="<td align='right' class='widget_settings_cell'>"._QXZ("Queue").":</td>\n";
                 $settings_HTML.="<td align='left' class='widget_settings_cell'><select name='".$widget_id."_settings_queue' id='".$widget_id."_settings_queue' class='widget_settings_form_field'>\n";
-                foreach ($queue_dropdown_array as $queue_id => $queue_name)
-                    {
-                    if ($widget_queue==$queue_id) {$selected="selected";} else {$selected="";}
-                    $settings_HTML.="<option value='$queue_id'$selected>$queue_name</option>\n";
+                foreach ($queue_dropdown_array as $queue_id => $queue_name) {
+                    if ($widget_queue==$queue_id) {
+                        $selected="selected";
+                    } else {
+                        $selected="";
                     }
+                    $settings_HTML.="<option value='$queue_id'$selected>$queue_name</option>\n";
+                }
                 $settings_HTML.="</select></td>\n";
                 $settings_HTML.="</tr>\n";
-                }
-            if (preg_match('/^LIVE_AGENT_INFO$/', $widget_type)) 
-                {
+            }
+            if (preg_match('/^LIVE_AGENT_INFO$/', $widget_type)) {
                 $settings_HTML.="<tr>\n";
                 $settings_HTML.="<td align='right' class='widget_settings_cell'>"._QXZ("Queue").":</td>\n";
                 $settings_HTML.="<td align='left' class='widget_settings_cell'><select name='".$widget_id."_settings_agent' id='".$widget_id."_settings_agent' class='widget_settings_form_field'>\n";
-                foreach ($all_viewable_agents as $agent_id => $agent_name)
-                    {
-                    if ($widget_agent==$agent_id) {$selected="selected";} else {$selected="";}
-                    $settings_HTML.="<option value='$agent_id'$selected>$agent_name</option>\n";
+                foreach ($all_viewable_agents as $agent_id => $agent_name) {
+                    if ($widget_agent==$agent_id) {
+                        $selected="selected";
+                    } else {
+                        $selected="";
                     }
+                    $settings_HTML.="<option value='$agent_id'$selected>$agent_name</option>\n";
+                }
                 $settings_HTML.="</select></td>\n";
                 $settings_HTML.="</tr>\n";
-                }
+            }
             $settings_HTML.="<tr>\n";
             $settings_HTML.="<th colspan='2'><input class='widget_form_button' type='button' value='"._QXZ("SAVE")."' onClick=\"UpdateWidgetSettings('".$widget_id."_FORM')\">&nbsp;&nbsp;<input class='widget_form_button' type='button' value='"._QXZ("CLOSE")."' onClick=\"javascript:document.getElementById('".$widget_id."_settings_window').style='none'\"></th>\n";
             $settings_HTML.="</tr>\n";
@@ -1374,19 +1372,18 @@ for ($v=0; $v<count($wallboard_views); $v++)
             $settings_HTML.="</form>";
             $settings_HTML.="</div>\n";
             $current_cell_position+=$widget_width;
-            }
+        }
         $ins_stmts.="//-->\n";
-        while($current_cell_position<$columns)
-            {
+        while($current_cell_position<$columns) {
             echo "<td class='nothing'>&nbsp;</td>";
             $current_cell_position++;
-            }
-        echo "</tr>";
         }
-    echo "</table>\n";
-echo $ins_stmts;
-    echo "</span>\n";
+        echo "</tr>";
     }
+    echo "</table>\n";
+    echo $ins_stmts;
+    echo "</span>\n";
+}
 ?>
     </td>
 </tr>

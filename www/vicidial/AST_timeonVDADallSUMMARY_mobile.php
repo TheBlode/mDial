@@ -32,44 +32,74 @@
 # * Bug reports, feature requests and patches welcome!
 # * ======================================== */
 ?>
-<?php 
+<?php
 require("dbconnect_mysqli.php");
 require("functions.php");
 $PHP_AUTH_USER=$_SERVER['PHP_AUTH_USER'];
 $PHP_AUTH_PW=$_SERVER['PHP_AUTH_PW'];
 $PHP_SELF=$_SERVER['PHP_SELF'];
-$PHP_SELF = preg_replace('/\.php.*/i','.php',$PHP_SELF);
-if (isset($_GET["RR"]))                    {$RR=$_GET["RR"];}
-    elseif (isset($_POST["RR"]))        {$RR=$_POST["RR"];}
-if (isset($_GET["DB"]))                    {$DB=$_GET["DB"];}
-    elseif (isset($_POST["DB"]))        {$DB=$_POST["DB"];}
-if (isset($_GET["adastats"]))            {$adastats=$_GET["adastats"];}
-    elseif (isset($_POST["adastats"]))    {$adastats=$_POST["adastats"];}
-if (isset($_GET["types"]))                {$types=$_GET["types"];}
-    elseif (isset($_POST["types"]))        {$types=$_POST["types"];}
-if (isset($_GET["current_displayed_report"]))            {$current_displayed_report=$_GET["current_displayed_report"];}
-    elseif (isset($_POST["current_displayed_report"]))    {$current_displayed_report=$_POST["current_displayed_report"];}
-if (isset($_GET["submit"]))                {$submit=$_GET["submit"];}
-    elseif (isset($_POST["submit"]))    {$submit=$_POST["submit"];}
-if (isset($_GET["SUBMIT"]))                {$SUBMIT=$_GET["SUBMIT"];}
-    elseif (isset($_POST["SUBMIT"]))    {$SUBMIT=$_POST["SUBMIT"];}
-if (isset($_GET["file_download"]))            {$file_download=$_GET["file_download"];}
-    elseif (isset($_POST["file_download"]))    {$file_download=$_POST["file_download"];}
-if (isset($_GET["browser_dimension"]))    {$browser_dimension=$_GET["browser_dimension"];}
-    elseif (isset($_POST["browser_dimension"]))    {$browser_dimension=$_POST["browser_dimension"];}
-$DB=preg_replace("/[^0-9a-zA-Z]/","",$DB);
+$PHP_SELF = preg_replace('/\.php.*/i', '.php', $PHP_SELF);
+if (isset($_GET["RR"])) {
+    $RR=$_GET["RR"];
+} elseif (isset($_POST["RR"])) {
+    $RR=$_POST["RR"];
+}
+if (isset($_GET["DB"])) {
+    $DB=$_GET["DB"];
+} elseif (isset($_POST["DB"])) {
+    $DB=$_POST["DB"];
+}
+if (isset($_GET["adastats"])) {
+    $adastats=$_GET["adastats"];
+} elseif (isset($_POST["adastats"])) {
+    $adastats=$_POST["adastats"];
+}
+if (isset($_GET["types"])) {
+    $types=$_GET["types"];
+} elseif (isset($_POST["types"])) {
+    $types=$_POST["types"];
+}
+if (isset($_GET["current_displayed_report"])) {
+    $current_displayed_report=$_GET["current_displayed_report"];
+} elseif (isset($_POST["current_displayed_report"])) {
+    $current_displayed_report=$_POST["current_displayed_report"];
+}
+if (isset($_GET["submit"])) {
+    $submit=$_GET["submit"];
+} elseif (isset($_POST["submit"])) {
+    $submit=$_POST["submit"];
+}
+if (isset($_GET["SUBMIT"])) {
+    $SUBMIT=$_GET["SUBMIT"];
+} elseif (isset($_POST["SUBMIT"])) {
+    $SUBMIT=$_POST["SUBMIT"];
+}
+if (isset($_GET["file_download"])) {
+    $file_download=$_GET["file_download"];
+} elseif (isset($_POST["file_download"])) {
+    $file_download=$_POST["file_download"];
+}
+if (isset($_GET["browser_dimension"])) {
+    $browser_dimension=$_GET["browser_dimension"];
+} elseif (isset($_POST["browser_dimension"])) {
+    $browser_dimension=$_POST["browser_dimension"];
+}
+$DB=preg_replace("/[^0-9a-zA-Z]/", "", $DB);
 $NOW_TIME = date("Y-m-d H:i:s");
 $STARTtime = date("U");
-if (!isset($browser_dimension))    {$browser_dimension=800;}
-if (!isset($types))            {$types='LIST ALL CAMPAIGNS';}
+if (!isset($browser_dimension)) {
+    $browser_dimension=800;
+}
+if (!isset($types)) {
+    $types='LIST ALL CAMPAIGNS';
+}
 $cell_dimension=floor($browser_dimension/10);
 $report_name = 'Real-Time Campaign Summary';
 $db_source = 'M';
 $stmt = "SELECT use_non_latin,outbound_autodial_active,slave_db_server,reports_use_slave_db,enable_languages,language_method,allow_web_debug FROM system_settings;";
 $rslt=mysql_to_mysqli($stmt, $link);
 $qm_conf_ct = mysqli_num_rows($rslt);
-if ($qm_conf_ct > 0)
-    {
+if ($qm_conf_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $non_latin =                    $row[0];
     $outbound_autodial_active =        $row[1];
@@ -78,8 +108,10 @@ if ($qm_conf_ct > 0)
     $SSenable_languages =            $row[4];
     $SSlanguage_method =            $row[5];
     $SSallow_web_debug =            $row[6];
-    }
-if ($SSallow_web_debug < 1) {$DB=0;}
+}
+if ($SSallow_web_debug < 1) {
+    $DB=0;
+}
 $submit = preg_replace('/[^-_0-9a-zA-Z]/', '', $submit);
 $SUBMIT = preg_replace('/[^-_0-9a-zA-Z]/', '', $SUBMIT);
 $RR = preg_replace('/[^-_0-9a-zA-Z]/', '', $RR);
@@ -87,170 +119,187 @@ $file_download = preg_replace('/[^-_0-9a-zA-Z]/', '', $file_download);
 $adastats = preg_replace('/[^-_0-9a-zA-Z]/', '', $adastats);
 $current_displayed_report = preg_replace('/[^-_0-9a-zA-Z]/', '', $current_displayed_report);
 $browser_dimension = preg_replace('/[^-_0-9a-zA-Z]/', '', $browser_dimension);
-if ($non_latin < 1)
-    {
+if ($non_latin < 1) {
     $PHP_AUTH_USER = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_USER);
     $PHP_AUTH_PW = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_PW);
-    }
-else
-    {
+} else {
     $PHP_AUTH_USER = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_USER);
     $PHP_AUTH_PW = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_PW);
-    }
-if ( (strlen($slave_db_server)>5) and (preg_match("/$report_name/",$reports_use_slave_db)) )
-    {
+}
+if ((strlen($slave_db_server)>5) and (preg_match("/$report_name/", $reports_use_slave_db))) {
     mysqli_close($link);
     $use_slave_server=1;
     $db_source = 'S';
     require("dbconnect_mysqli.php");
     $MAIN.="<!-- Using slave server $slave_db_server $db_source -->\n";
-    }
+}
 $stmt="SELECT selected_language from vicidial_users where user='$PHP_AUTH_USER';";
-if ($DB) {echo "|$stmt|\n";}
+if ($DB) {
+    echo "|$stmt|\n";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 $sl_ct = mysqli_num_rows($rslt);
-if ($sl_ct > 0)
-    {
+if ($sl_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $VUselected_language =        $row[0];
-    }
+}
 $auth=0;
 $reports_auth=0;
 $admin_auth=0;
-$auth_message = user_authorization($PHP_AUTH_USER,$PHP_AUTH_PW,'REPORTS',1,0);
-if ($auth_message == 'GOOD')
-    {$auth=1;}
-if ($auth > 0)
-    {
+$auth_message = user_authorization($PHP_AUTH_USER, $PHP_AUTH_PW, 'REPORTS', 1, 0);
+if ($auth_message == 'GOOD') {
+    $auth=1;
+}
+if ($auth > 0) {
     $stmt="SELECT count(*) from vicidial_users where user='$PHP_AUTH_USER' and user_level > 7 and view_reports='1';";
-    if ($DB) {echo "|$stmt|\n";}
+    if ($DB) {
+        echo "|$stmt|\n";
+    }
     $rslt=mysql_to_mysqli($stmt, $link);
     $row=mysqli_fetch_row($rslt);
     $admin_auth=$row[0];
     $stmt="SELECT count(*) from vicidial_users where user='$PHP_AUTH_USER' and user_level > 6 and view_reports='1';";
-    if ($DB) {echo "|$stmt|\n";}
+    if ($DB) {
+        echo "|$stmt|\n";
+    }
     $rslt=mysql_to_mysqli($stmt, $link);
     $row=mysqli_fetch_row($rslt);
     $reports_auth=$row[0];
-    if ($reports_auth < 1)
-        {
+    if ($reports_auth < 1) {
         $VDdisplayMESSAGE = _QXZ("You are not allowed to view reports");
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
-    if ( ($reports_auth > 0) and ($admin_auth < 1) )
-        {
+    }
+    if (($reports_auth > 0) and ($admin_auth < 1)) {
         $ADD=999999;
         $reports_only_user=1;
-        }
     }
-else
-    {
+} else {
     $VDdisplayMESSAGE = _QXZ("Login incorrect, please try again");
-    if ($auth_message == 'LOCK')
-        {
+    if ($auth_message == 'LOCK') {
         $VDdisplayMESSAGE = _QXZ("Too many login attempts, try again in 15 minutes");
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
-    if ($auth_message == 'IPBLOCK')
-        {
+    }
+    if ($auth_message == 'IPBLOCK') {
         $VDdisplayMESSAGE = _QXZ("Your IP Address is not allowed") . ": $ip";
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
+    }
     Header("WWW-Authenticate: Basic realm=\"CONTACT-CENTER-ADMIN\"");
     Header("HTTP/1.0 401 Unauthorized");
     echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$PHP_AUTH_PW|$auth_message|\n";
     exit;
-    }
+}
 $stmt="SELECT user_group from vicidial_users where user='$PHP_AUTH_USER';";
-if ($DB) {$MAIN.="|$stmt|\n";}
+if ($DB) {
+    $MAIN.="|$stmt|\n";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 $row=mysqli_fetch_row($rslt);
 $LOGuser_group =            $row[0];
 $stmt="SELECT allowed_campaigns,allowed_reports from vicidial_user_groups where user_group='$LOGuser_group';";
-if ($DB) {$MAIN.="|$stmt|\n";}
+if ($DB) {
+    $MAIN.="|$stmt|\n";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 $row=mysqli_fetch_row($rslt);
 $LOGallowed_campaigns = $row[0];
 $LOGallowed_reports =    $row[1];
-if ( (!preg_match("/$report_name/",$LOGallowed_reports)) and (!preg_match("/ALL REPORTS/",$LOGallowed_reports)) )
-    {
+if ((!preg_match("/$report_name/", $LOGallowed_reports)) and (!preg_match("/ALL REPORTS/", $LOGallowed_reports))) {
     Header("WWW-Authenticate: Basic realm=\"CONTACT-CENTER-ADMIN\"");
     Header("HTTP/1.0 401 Unauthorized");
     echo _QXZ("You are not allowed to view this report").": |$PHP_AUTH_USER|$report_name|"._QXZ("$report_name")."|\n";
     exit;
-    }
+}
 $LOGallowed_campaignsSQL='';
 $whereLOGallowed_campaignsSQL='';
-if ( (!preg_match('/\-ALL/i', $LOGallowed_campaigns)) )
-    {
-    $rawLOGallowed_campaignsSQL = preg_replace("/ -/",'',$LOGallowed_campaigns);
-    $rawLOGallowed_campaignsSQL = preg_replace("/ /","','",$rawLOGallowed_campaignsSQL);
+if ((!preg_match('/\-ALL/i', $LOGallowed_campaigns))) {
+    $rawLOGallowed_campaignsSQL = preg_replace("/ -/", '', $LOGallowed_campaigns);
+    $rawLOGallowed_campaignsSQL = preg_replace("/ /", "','", $rawLOGallowed_campaignsSQL);
     $LOGallowed_campaignsSQL = "and campaign_id IN('$rawLOGallowed_campaignsSQL')";
     $whereLOGallowed_campaignsSQL = "where campaign_id IN('$rawLOGallowed_campaignsSQL')";
-    }
-for ($q=0; $q<count($types); $q++) 
-    {
+}
+for ($q=0; $q<count($types); $q++) {
     $types[$q] = preg_replace('/[^- \_0-9a-zA-Z]/', '', $types[$q]);
-    }
+}
 $campaign_typeSQL='';
-if (count($types)<2) 
-    {
+if (count($types)<2) {
     $types = preg_replace('/[^- \_0-9\p{L}]/u', '', $types);
-    if ($types == 'AUTO-DIAL ONLY')            {$campaign_typeSQL="and dial_method IN('RATIO','ADAPT_HARD_LIMIT','ADAPT_TAPERED','ADAPT_AVERAGE')";} 
-    if ($types == 'MANUAL ONLY')            {$campaign_typeSQL="and dial_method IN('MANUAL','INBOUND_MAN')";} 
-    if ($types == 'INBOUND ONLY')            {$campaign_typeSQL="and campaign_allow_inbound='Y'";} 
+    if ($types == 'AUTO-DIAL ONLY') {
+        $campaign_typeSQL="and dial_method IN('RATIO','ADAPT_HARD_LIMIT','ADAPT_TAPERED','ADAPT_AVERAGE')";
     }
-else 
-    {
-    if (!in_array('LIST ALL CAMPAIGNS', $types)) 
-        {
+    if ($types == 'MANUAL ONLY') {
+        $campaign_typeSQL="and dial_method IN('MANUAL','INBOUND_MAN')";
+    }
+    if ($types == 'INBOUND ONLY') {
+        $campaign_typeSQL="and campaign_allow_inbound='Y'";
+    }
+} else {
+    if (!in_array('LIST ALL CAMPAIGNS', $types)) {
         $types = preg_replace('/[^- \_0-9\p{L}]/u', '', $types);
         $campaign_typeSQL='and (';
-        if (in_array('AUTO-DIAL ONLY', $types)) {$campaign_typeSQL="dial_method IN('RATIO','ADAPT_HARD_LIMIT','ADAPT_TAPERED','ADAPT_AVERAGE') or ";} #  unset($types['AUTO-DIAL ONLY']);
-        if (in_array('MANUAL ONLY', $types)) {$campaign_typeSQL="dial_method IN('MANUAL','INBOUND_MAN') or ";} #  unset($types['MANUAL ONLY']);
-        if (in_array('INBOUND ONLY', $types)) {$campaign_typeSQL="campaign_allow_inbound='Y' or ";} #  unset($types['INBOUND ONLY']);
+        if (in_array('AUTO-DIAL ONLY', $types)) {
+            $campaign_typeSQL="dial_method IN('RATIO','ADAPT_HARD_LIMIT','ADAPT_TAPERED','ADAPT_AVERAGE') or ";
+        } #  unset($types['AUTO-DIAL ONLY']);
+        if (in_array('MANUAL ONLY', $types)) {
+            $campaign_typeSQL="dial_method IN('MANUAL','INBOUND_MAN') or ";
+        } #  unset($types['MANUAL ONLY']);
+        if (in_array('INBOUND ONLY', $types)) {
+            $campaign_typeSQL="campaign_allow_inbound='Y' or ";
+        } #  unset($types['INBOUND ONLY']);
         $campaign_typeSQL='campaign_id in ('.implode("', '", $types).')';
         $campaign_typeSQL=')';
-        }
     }
+}
 $stmt="select campaign_id from vicidial_campaigns where active='Y' $LOGallowed_campaignsSQL $campaign_typeSQL order by campaign_id;";
 $rslt=mysql_to_mysqli($stmt, $link);
-if (!isset($DB))   {$DB=0;}
-if ($DB) {$MAIN.="$stmt\n";}
+if (!isset($DB)) {
+    $DB=0;
+}
+if ($DB) {
+    $MAIN.="$stmt\n";
+}
 $groups_to_print = mysqli_num_rows($rslt);
 $i=0;
-while ($i < $groups_to_print)
-    {
+while ($i < $groups_to_print) {
     $row=mysqli_fetch_row($rslt);
     $groups[$i] =$row[0];
     $i++;
-    }
+}
 $stmt="select campaign_id, campaign_name from vicidial_campaigns where active='Y' $LOGallowed_campaignsSQL order by campaign_id;";
 $rslt=mysql_to_mysqli($stmt, $link);
-if (!isset($DB))   {$DB=0;}
-if ($DB) {$MAIN.="$stmt\n";}
+if (!isset($DB)) {
+    $DB=0;
+}
+if ($DB) {
+    $MAIN.="$stmt\n";
+}
 $campaigns_to_print = mysqli_num_rows($rslt);
 $campaign_options="<option value=''>-- INDIVIDUAL CAMPAIGNS --</option>\n";
 $i=0;
-while ($i < $campaigns_to_print)
-    {
+while ($i < $campaigns_to_print) {
     $row=mysqli_fetch_row($rslt);
     $campaign_options.="<option onClick='ClearTypes(1)' value='$row[0]'>$row[0]</option>\n";
     $i++;
-    }
+}
 $stop_button_class="android_offbutton_noshadow";
 $slow_button_class="android_offbutton_noshadow";
 $fast_button_class="android_offbutton_noshadow";
-if (!isset($RR))   {
-    if ($campaigns_to_print<=20) {$RR=4; $fast_button_class="android_onbutton_noshadow";}
-    else if ($campaigns_to_print<=500) {$RR=40; $slow_button_class="android_onbutton_noshadow";}
-    else {$RR=4000; $stop_button_class="android_offbutton_noshadow";}
+if (!isset($RR)) {
+    if ($campaigns_to_print<=20) {
+        $RR=4;
+        $fast_button_class="android_onbutton_noshadow";
+    } elseif ($campaigns_to_print<=500) {
+        $RR=40;
+        $slow_button_class="android_onbutton_noshadow";
+    } else {
+        $RR=4000;
+        $stop_button_class="android_offbutton_noshadow";
+    }
 }
 require("screen_colors.php");
 $HEADER.="<HTML>\n";
@@ -283,20 +332,22 @@ $HEADER.="-->\n";
 $HEADER.=" </STYLE>\n";
 $HEADER.="<link rel=\"stylesheet\" type=\"text/css\" href=\"vicidial_stylesheet.php\">\n";
 $HEADER.="<link rel=\"stylesheet\" href=\"horizontalbargraph.css\">\n";
-$HEADER.="<script src='chart/Chart.js'></script>\n"; 
+$HEADER.="<script src='chart/Chart.js'></script>\n";
 $HEADER.="<script src=\"pureknob.js\"></script>\n";
-$HEADER.="<TITLE>$report_name</TITLE></HEAD><BODY marginheight=0 marginwidth=0 leftmargin=0 topmargin=0 onLoad='StartRefresh()' onUnload='javascript:clearInterval(rInt)'>\n"; # BGCOLOR='#".$SSmenu_background."' 
+$HEADER.="<TITLE>$report_name</TITLE></HEAD><BODY marginheight=0 marginwidth=0 leftmargin=0 topmargin=0 onLoad='StartRefresh()' onUnload='javascript:clearInterval(rInt)'>\n"; # BGCOLOR='#".$SSmenu_background."'
 $MAIN.="<FORM action=$PHP_SELF method=POST><TABLE CELLPADDING=4 CELLSPACING=0><TR><TD><B>$report_name</B><BR>";
 $k=0;
 $JS_text.="var CAMPAIGNS=[";
 $JS_text2="var ALL_CAMPAIGNS=[";
 $JS_knob="";
 $sub_pct_display="";
-while($k<$groups_to_print)
-    {
+while($k<$groups_to_print) {
     $NFB = '<b><font size=3 face="courier">';
     $NFE = '</font></b>';
-    $F=''; $FG=''; $B=''; $BG='';
+    $F='';
+    $FG='';
+    $B='';
+    $BG='';
     $group = $groups[$k];
     $JS_text.="'$group',";
     $JS_text2.="'$group',";
@@ -305,8 +356,8 @@ while($k<$groups_to_print)
     $CSV_text.="\"$group\"\n";
     $stmt = "select count(*) from vicidial_campaigns where campaign_id='$group' and campaign_allow_inbound='Y';";
     $rslt=mysql_to_mysqli($stmt, $link);
-        $row=mysqli_fetch_row($rslt);
-        $campaign_allow_inbound = $row[0];
+    $row=mysqli_fetch_row($rslt);
+    $campaign_allow_inbound = $row[0];
     $stmt="select auto_dial_level,dial_status_a,dial_status_b,dial_status_c,dial_status_d,dial_status_e,lead_order,lead_filter_id,hopper_level,dial_method,adaptive_maximum_level,adaptive_dropped_percentage,adaptive_dl_diff_target,adaptive_intensity,available_only_ratio_tally,adaptive_latest_server_time,local_call_time,dial_timeout,dial_statuses from vicidial_campaigns where campaign_id='" . mysqli_real_escape_string($link, $group) . "';";
     $rslt=mysql_to_mysqli($stmt, $link);
     $row=mysqli_fetch_row($rslt);
@@ -329,7 +380,7 @@ while($k<$groups_to_print)
     $CALLtime["$group"] =        $row[16];
     $DIALtimeout["$group"] =    $row[17];
     $DIALstatuses["$group"] =    $row[18];
-    $DIALstatuses["$group"] = (preg_replace("/ -$|^ /","",$DIALstatuses["$group"]));
+    $DIALstatuses["$group"] = (preg_replace("/ -$|^ /", "", $DIALstatuses["$group"]));
     $DIALstatuses["$group"] = (preg_replace('/\s/', ', ', $DIALstatuses["$group"]));
     $stmt="select count(*) from vicidial_hopper where campaign_id='" . mysqli_real_escape_string($link, $group) . "';";
     $rslt=mysql_to_mysqli($stmt, $link);
@@ -359,114 +410,134 @@ while($k<$groups_to_print)
     $VSCagentcust["$group"] =        $row[18];
     $VSCagentacw["$group"] =        $row[19];
     $VSCagentpause["$group"] =    $row[20];
-    $diffpctONEMIN = ( MathZDC($diffONEMIN["$group"], $agentsONEMIN["$group"]) * 100);
+    $diffpctONEMIN = (MathZDC($diffONEMIN["$group"], $agentsONEMIN["$group"]) * 100);
     $diffpctONEMIN = sprintf("%01.2f", $diffpctONEMIN);
     $diffpctONEMIN_ary["$group"] = $diffpctONEMIN;
     $stmt="select sum(local_trunk_shortage) from vicidial_campaign_server_stats where campaign_id='" . mysqli_real_escape_string($link, $group) . "';";
     $rslt=mysql_to_mysqli($stmt, $link);
     $row=mysqli_fetch_row($rslt);
     $balanceSHORT["$group"] = $row[0];
-    if ($campaign_allow_inbound > 0)
-        {
+    if ($campaign_allow_inbound > 0) {
         $stmt="select closer_campaigns from vicidial_campaigns where campaign_id='" . mysqli_real_escape_string($link, $group) . "';";
         $rslt=mysql_to_mysqli($stmt, $link);
         $row=mysqli_fetch_row($rslt);
-        $closer_campaigns = preg_replace("/^ | -$/","",$row[0]);
-        $closer_campaigns = preg_replace("/ /","','",$closer_campaigns);
+        $closer_campaigns = preg_replace("/^ | -$/", "", $row[0]);
+        $closer_campaigns = preg_replace("/ /", "','", $closer_campaigns);
         $closer_campaigns = "'$closer_campaigns'";
         $stmt="select status from vicidial_auto_calls where status NOT IN('XFER') and ( (call_type='IN' and campaign_id IN($closer_campaigns)) or (campaign_id='" . mysqli_real_escape_string($link, $group) . "' and call_type='OUT') );";
+    } else {
+        if ($group=='XXXX-ALL-ACTIVE-XXXX') {
+            $groupSQL = '';
+        } else {
+            $groupSQL = " and campaign_id='" . mysqli_real_escape_string($link, $group) . "'";
         }
-    else
-        {
-        if ($group=='XXXX-ALL-ACTIVE-XXXX') {$groupSQL = '';}
-        else {$groupSQL = " and campaign_id='" . mysqli_real_escape_string($link, $group) . "'";}
         $stmt="select status from vicidial_auto_calls where status NOT IN('XFER') $groupSQL;";
-        }
+    }
     $rslt=mysql_to_mysqli($stmt, $link);
-    if ($DB) {$MAIN.="$stmt\n";}
+    if ($DB) {
+        $MAIN.="$stmt\n";
+    }
     $parked_to_print = mysqli_num_rows($rslt);
-    if ($parked_to_print > 0)
-        {
+    if ($parked_to_print > 0) {
         $i=0;
         $out_total["$group"]=0;
         $out_ring["$group"]=0;
         $out_live["$group"]=0;
         $in_ivr["$group"]=0;
-        while ($i < $parked_to_print)
-            {
+        while ($i < $parked_to_print) {
             $row=mysqli_fetch_row($rslt);
-            if (preg_match("/LIVE/i",$row[0])) 
-                {$out_live["$group"]++;}
-            else
-                {
-                if (preg_match("/IVR/i",$row[0])) 
-                    {$in_ivr["$group"]++;}
-                if (preg_match("/CLOSER/i",$row[0])) 
-                    {$nothing=1;}
-                else 
-                    {$out_ring["$group"]++;}
+            if (preg_match("/LIVE/i", $row[0])) {
+                $out_live["$group"]++;
+            } else {
+                if (preg_match("/IVR/i", $row[0])) {
+                    $in_ivr["$group"]++;
                 }
+                if (preg_match("/CLOSER/i", $row[0])) {
+                    $nothing=1;
+                } else {
+                    $out_ring["$group"]++;
+                }
+            }
             $out_total["$group"]++;
             $i++;
-            }
-            if ($out_live > 0) {$F='<FONT class="r1">'; $FG='</FONT>';}
-            if ($out_live > 4) {$F='<FONT class="r2">'; $FG='</FONT>';}
-            if ($out_live > 9) {$F='<FONT class="r3">'; $FG='</FONT>';}
-            if ($out_live > 14) {$F='<FONT class="r4">'; $FG='</FONT>';}
         }
+        if ($out_live > 0) {
+            $F='<FONT class="r1">';
+            $FG='</FONT>';
+        }
+        if ($out_live > 4) {
+            $F='<FONT class="r2">';
+            $FG='</FONT>';
+        }
+        if ($out_live > 9) {
+            $F='<FONT class="r3">';
+            $FG='</FONT>';
+        }
+        if ($out_live > 14) {
+            $F='<FONT class="r4">';
+            $FG='</FONT>';
+        }
+    }
     $agent_incall["$group"]=0;
     $agent_ready["$group"]=0;
     $agent_paused["$group"]=0;
     $agent_total["$group"]=0;
     $stmt="select extension,user,conf_exten,status,server_ip,UNIX_TIMESTAMP(last_call_time),UNIX_TIMESTAMP(last_call_finish),call_server_ip,campaign_id from vicidial_live_agents where campaign_id='" . mysqli_real_escape_string($link, $group) . "';";
     $rslt=mysql_to_mysqli($stmt, $link);
-    if ($DB) {$MAIN.="$stmt\n";}
+    if ($DB) {
+        $MAIN.="$stmt\n";
+    }
     $talking_to_print = mysqli_num_rows($rslt);
-        if ($talking_to_print > 0)
-        {
+    if ($talking_to_print > 0) {
         $i=0;
         $agentcount=0;
-        while ($i < $talking_to_print)
-            {
+        while ($i < $talking_to_print) {
             $row=mysqli_fetch_row($rslt);
-                if (preg_match("/READY|PAUSED/i",$row[3]))
-                {
+            if (preg_match("/READY|PAUSED/i", $row[3])) {
                 $row[5]=$row[6];
-                }
+            }
             $Lstatus =            $row[3];
             $status =            sprintf("%-6s", $row[3]);
-            if (!preg_match("/INCALL|QUEUE/i",$row[3]))
-                {$call_time_S = ($STARTtime - $row[6]);}
-            else
-                {$call_time_S = ($STARTtime - $row[5]);}
+            if (!preg_match("/INCALL|QUEUE/i", $row[3])) {
+                $call_time_S = ($STARTtime - $row[6]);
+            } else {
+                $call_time_S = ($STARTtime - $row[5]);
+            }
             $call_time_M = MathZDC($call_time_S, 60);
             $call_time_M = round($call_time_M, 2);
             $call_time_M_int = intval("$call_time_M");
             $call_time_SEC = ($call_time_M - $call_time_M_int);
             $call_time_SEC = ($call_time_SEC * 60);
             $call_time_SEC = round($call_time_SEC, 0);
-            if ($call_time_SEC < 10) {$call_time_SEC = "0$call_time_SEC";}
+            if ($call_time_SEC < 10) {
+                $call_time_SEC = "0$call_time_SEC";
+            }
             $call_time_MS = "$call_time_M_int:$call_time_SEC";
             $call_time_MS =        sprintf("%7s", $call_time_MS);
-            $G = '';        $EG = '';
-            if (preg_match("/PAUSED/i",$row[3])) 
-                {
-                if ($call_time_M_int >= 30) 
-                    {$i++; continue;} 
-                else
-                    {
-                    $agent_paused["$group"]++;  
+            $G = '';
+            $EG = '';
+            if (preg_match("/PAUSED/i", $row[3])) {
+                if ($call_time_M_int >= 30) {
+                    $i++;
+                    continue;
+                } else {
+                    $agent_paused["$group"]++;
                     $agent_total["$group"]++;
-                    }
                 }
-            if ( (preg_match("/INCALL/i",$status)) or (preg_match("/QUEUE/i",$status)) ) {$agent_incall["$group"]++;  $agent_total["$group"]++;}
-            if ( (preg_match("/READY/i",$status)) or (preg_match("/CLOSER/i",$status)) ) {$agent_ready["$group"]++;  $agent_total["$group"]++;}
+            }
+            if ((preg_match("/INCALL/i", $status)) or (preg_match("/QUEUE/i", $status))) {
+                $agent_incall["$group"]++;
+                $agent_total["$group"]++;
+            }
+            if ((preg_match("/READY/i", $status)) or (preg_match("/CLOSER/i", $status))) {
+                $agent_ready["$group"]++;
+                $agent_total["$group"]++;
+            }
             $agentcount++;
             $i++;
-            }
         }
-    if ($VSCagentcalls > 0)
-        {
+    }
+    if ($VSCagentcalls > 0) {
         $avgpauseTODAY = MathZDC($VSCagentpause["$group"], $VSCagentcalls["$group"]);
         $avgpauseTODAY = round($avgpauseTODAY, 0);
         $avgpauseTODAY = sprintf("%01.0f", $avgpauseTODAY);
@@ -483,9 +554,9 @@ while($k<$groups_to_print)
         $avgacwTODAY = round($avgacwTODAY, 0);
         $avgacwTODAY = sprintf("%01.0f", $avgacwTODAY);
         $avgacwTODAY_ary["$group"]=$avgacwTODAY;
-        }
-    $k++;
     }
+    $k++;
+}
 $JS_text=preg_replace('/,$/', '', $JS_text);
 $JS_text.="];\n";
 $JS_text2=preg_replace('/,$/', '', $JS_text2);
@@ -652,7 +723,7 @@ $out_total_JS.="];\n";
 $out_ring_JS.="];\n";
 $out_live_JS.="];\n";
 $in_ivr_JS.="];\n";
-$agent_incall_JS.="];\n"; 
+$agent_incall_JS.="];\n";
 $agent_ready_JS.="];\n";
 $agent_paused_JS.="];\n";
 $agent_total_JS.="];\n";
@@ -667,16 +738,24 @@ $MAIN.="<table class='android_table' border='0' cellpadding='0' cellspacing='5'>
 $MAIN.="<tr valign='top'>";
 $MAIN.="<th rowspan='2'><font class='android_campaign_header'>"._QXZ("CAMPAIGNS").": </font><BR><select name=types onBlur='RefreshReportWindow()' size='5' multiple class='form_field_android'>\n";
 $MAIN.="<option onClick='ClearTypes(0)' value=\"LIST ALL CAMPAIGNS\"";
-    if ($types == 'LIST ALL CAMPAIGNS') {$MAIN.=" selected";} 
+if ($types == 'LIST ALL CAMPAIGNS') {
+    $MAIN.=" selected";
+}
 $MAIN.=">"._QXZ("LIST ALL CAMPAIGNS")."</option>";
 $MAIN.="<option onClick='ClearTypes(1)' value=\"AUTO-DIAL ONLY\"";
-    if ($types == 'AUTO-DIAL ONLY') {$MAIN.=" selected";} 
+if ($types == 'AUTO-DIAL ONLY') {
+    $MAIN.=" selected";
+}
 $MAIN.=">"._QXZ("AUTO-DIAL ONLY")."</option>";
 $MAIN.="<option onClick='ClearTypes(1)' value=\"MANUAL ONLY\"";
-    if ($types == 'MANUAL ONLY') {$MAIN.=" selected";} 
+if ($types == 'MANUAL ONLY') {
+    $MAIN.=" selected";
+}
 $MAIN.=">"._QXZ("MANUAL ONLY")."</option>";
 $MAIN.="<option onClick='ClearTypes(1)' value=\"INBOUND ONLY\"";
-    if ($types == 'INBOUND ONLY') {$MAIN.=" selected";} 
+if ($types == 'INBOUND ONLY') {
+    $MAIN.=" selected";
+}
 $MAIN.=">"._QXZ("INBOUND ONLY")."</option>";
 $MAIN.=$campaign_options;
 $MAIN.="</select> \n";
@@ -687,23 +766,23 @@ $MAIN.="</tr>";
 $MAIN.="<tr valign='top'>";
 $MAIN.="<th>";
 $MAIN.="<ul class=\"dropdown_android\" style='list-style:none'><li><div class='android_switchbutton_blue'><a class='nodec' href=\"#\">REPORT</a></div>\n";
-    $MAIN.="<ul class=\"sub_menu\" style=\"z-index:1;list-style:none\">\n";
-        $MAIN.="<li><a class='nodec' onClick=\"SwitchGraphs('hopper'); document.getElementById('hopper_graph_button').className='android_onbutton_noshadow'\"><div id='hopper_graph_button' class='android_onbutton_noshadow'>"._QXZ("HOPPER")."</div></a></li>\n";
-        $MAIN.="<li><a class='nodec' onClick=\"SwitchGraphs('agent'); document.getElementById('agent_graph_button').className='android_onbutton_noshadow'\"><div id='agent_graph_button' class='android_offbutton_noshadow'>"._QXZ("AGENT")."</div></a></li>\n";
-        $MAIN.="<li><a class='nodec' onClick=\"SwitchGraphs('call'); document.getElementById('call_graph_button').className='android_onbutton_noshadow'\"><div id='call_graph_button' class='android_offbutton_noshadow'>"._QXZ("CALLS")."</div></a></li>\n";
-        $MAIN.="<li><a class='nodec' onClick=\"SwitchGraphs('dialable'); document.getElementById('dialable_graph_button').className='android_onbutton_noshadow'\"><div id='dialable_graph_button' class='android_offbutton_noshadow'>"._QXZ("DIALABLES")."</div></a></li>\n";
-        $MAIN.="<li><a class='nodec' onClick=\"SwitchGraphs('callsToday'); document.getElementById('callsToday_graph_button').className='android_onbutton_noshadow'\"><div id='callsToday_graph_button' class='android_offbutton_noshadow'>"._QXZ("TODAY")."</div></a></li>\n";
-        $MAIN.="<li><a class='nodec' onClick=\"SwitchGraphs('averages'); document.getElementById('average_graph_button').className='android_onbutton_noshadow'\"><div id='average_graph_button' class='android_offbutton_noshadow'>"._QXZ("AVERAGES")."</div></a></li>\n";
-    $MAIN.="</ul>";
+$MAIN.="<ul class=\"sub_menu\" style=\"z-index:1;list-style:none\">\n";
+$MAIN.="<li><a class='nodec' onClick=\"SwitchGraphs('hopper'); document.getElementById('hopper_graph_button').className='android_onbutton_noshadow'\"><div id='hopper_graph_button' class='android_onbutton_noshadow'>"._QXZ("HOPPER")."</div></a></li>\n";
+$MAIN.="<li><a class='nodec' onClick=\"SwitchGraphs('agent'); document.getElementById('agent_graph_button').className='android_onbutton_noshadow'\"><div id='agent_graph_button' class='android_offbutton_noshadow'>"._QXZ("AGENT")."</div></a></li>\n";
+$MAIN.="<li><a class='nodec' onClick=\"SwitchGraphs('call'); document.getElementById('call_graph_button').className='android_onbutton_noshadow'\"><div id='call_graph_button' class='android_offbutton_noshadow'>"._QXZ("CALLS")."</div></a></li>\n";
+$MAIN.="<li><a class='nodec' onClick=\"SwitchGraphs('dialable'); document.getElementById('dialable_graph_button').className='android_onbutton_noshadow'\"><div id='dialable_graph_button' class='android_offbutton_noshadow'>"._QXZ("DIALABLES")."</div></a></li>\n";
+$MAIN.="<li><a class='nodec' onClick=\"SwitchGraphs('callsToday'); document.getElementById('callsToday_graph_button').className='android_onbutton_noshadow'\"><div id='callsToday_graph_button' class='android_offbutton_noshadow'>"._QXZ("TODAY")."</div></a></li>\n";
+$MAIN.="<li><a class='nodec' onClick=\"SwitchGraphs('averages'); document.getElementById('average_graph_button').className='android_onbutton_noshadow'\"><div id='average_graph_button' class='android_offbutton_noshadow'>"._QXZ("AVERAGES")."</div></a></li>\n";
+$MAIN.="</ul>";
 $MAIN.="</li></ul>";
 $MAIN.="</th>";
 $MAIN.="<th>";
 $MAIN.="<ul class=\"dropdown_android\" style='list-style:none'><li><div class='android_switchbutton_blue'><a class='nodec' href=\"#\">REFRESH</a></div>\n";
-    $MAIN.="<ul class=\"sub_menu\" style=\"z-index:1;list-style:none\">\n";
-        $MAIN.="<li><a class='nodec' onClick=\"SwitchIntervals(4000); document.getElementById('stop_button').className='android_onbutton_noshadow'\"><div id='stop_button' class='$stop_button_class'>"._QXZ("STOP")."</div></a></li>\n";
-        $MAIN.="<li><a class='nodec' onClick=\"SwitchIntervals(40); document.getElementById('slow_button').className='android_onbutton_noshadow'\"><div id='slow_button' class='$slow_button_class'>"._QXZ("SLOW")."</div></a>\n";
-        $MAIN.="<li><a class='nodec' onClick=\"SwitchIntervals(4); document.getElementById('go_button').className='android_onbutton_noshadow'\"><div id='go_button' class='$fast_button_class'>"._QXZ("FAST")."</div></a></li>\n";
-    $MAIN.="</ul>";
+$MAIN.="<ul class=\"sub_menu\" style=\"z-index:1;list-style:none\">\n";
+$MAIN.="<li><a class='nodec' onClick=\"SwitchIntervals(4000); document.getElementById('stop_button').className='android_onbutton_noshadow'\"><div id='stop_button' class='$stop_button_class'>"._QXZ("STOP")."</div></a></li>\n";
+$MAIN.="<li><a class='nodec' onClick=\"SwitchIntervals(40); document.getElementById('slow_button').className='android_onbutton_noshadow'\"><div id='slow_button' class='$slow_button_class'>"._QXZ("SLOW")."</div></a>\n";
+$MAIN.="<li><a class='nodec' onClick=\"SwitchIntervals(4); document.getElementById('go_button').className='android_onbutton_noshadow'\"><div id='go_button' class='$fast_button_class'>"._QXZ("FAST")."</div></a></li>\n";
+$MAIN.="</ul>";
 $MAIN.="</li></ul>";
 $MAIN.="</th>";
 $MAIN.="</tr>";
@@ -735,33 +814,35 @@ $MAIN.="<input type='hidden' name='graph_type' id='graph_type' value='hopper'>";
 $MAIN.="</FORM>\n\n<BR>";
 $MAIN.="</PRE>\n";
 $MAIN.="</BODY></HTML>\n";
-    if ($file_download>0) {
-        $FILE_TIME = date("Ymd-His");
-        $CSVfilename = "AST_timeonVDADallSUMMARY_$US$FILE_TIME.csv";
-        $CSV_text=preg_replace('/\n +,/', ',', $CSV_text);
-        $CSV_text=preg_replace('/ +\"/', '"', $CSV_text);
-        $CSV_text=preg_replace('/\" +/', '"', $CSV_text);
-        // We'll be outputting a TXT file
-        header('Content-type: application/octet-stream');
-        // It will be called LIST_101_20090209-121212.txt
-        header("Content-Disposition: attachment; filename=\"$CSVfilename\"");
-        header('Expires: 0');
-        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-        header('Pragma: public');
-        ob_clean();
-        flush();
-        echo "$CSV_text";
-        exit;
-    } else {
-        header ("Content-type: text/html; charset=utf-8");
-        echo $HEADER;
-        $android_header=1;
-        require("admin_header.php");
-        echo $MAIN;
-        echo "<script language='Javascript'>\n";
-        echo $JS_text;
-        if (!$RR) {$RR=999999;}
-?>
+if ($file_download>0) {
+    $FILE_TIME = date("Ymd-His");
+    $CSVfilename = "AST_timeonVDADallSUMMARY_$US$FILE_TIME.csv";
+    $CSV_text=preg_replace('/\n +,/', ',', $CSV_text);
+    $CSV_text=preg_replace('/ +\"/', '"', $CSV_text);
+    $CSV_text=preg_replace('/\" +/', '"', $CSV_text);
+    // We'll be outputting a TXT file
+    header('Content-type: application/octet-stream');
+    // It will be called LIST_101_20090209-121212.txt
+    header("Content-Disposition: attachment; filename=\"$CSVfilename\"");
+    header('Expires: 0');
+    header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+    header('Pragma: public');
+    ob_clean();
+    flush();
+    echo "$CSV_text";
+    exit;
+} else {
+    header("Content-type: text/html; charset=utf-8");
+    echo $HEADER;
+    $android_header=1;
+    require("admin_header.php");
+    echo $MAIN;
+    echo "<script language='Javascript'>\n";
+    echo $JS_text;
+    if (!$RR) {
+        $RR=999999;
+    }
+    ?>
 var graph_type=document.getElementById('graph_type').value;
 var refresh_rate=<?php echo $RR; ?>;
 var gauge_size = Math.floor(window.innerWidth/6) > 200 ? 200 : Math.floor(window.innerWidth/6) < 75 ? 75 : Math.floor(window.innerWidth/6);
@@ -1578,17 +1659,17 @@ function RefreshReportWindow() {
         }
 }
 <?php
-        echo "</script>";
-    }
+            echo "</script>";
+}
 /*
-                if (MainGraph) 
+                if (MainGraph)
                     {
-                    if (document.getElementById('graph_type').value!=graph_type) 
+                    if (document.getElementById('graph_type').value!=graph_type)
                         {
                         graph_type=document.getElementById('graph_type').value;
                         MainGraph.destroy();
-                        } 
-                    else 
+                        }
+                    else
                         {
                         MainGraph.update();
                         }

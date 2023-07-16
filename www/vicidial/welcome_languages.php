@@ -33,7 +33,7 @@
 # * ======================================== */
 ?>
 <?php
-header ("Content-type: text/html; charset=utf-8");
+header("Content-type: text/html; charset=utf-8");
 require("functions.php");
 echo "<title>"._QXZ("ViciDial Welcome")."</title>\n";
 echo "</head>\n";

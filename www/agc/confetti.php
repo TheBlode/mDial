@@ -41,24 +41,20 @@ $maxParticleCount="2350";
 $particleSpeed="2";
 $confetti_stmt="select * from vicidial_settings_containers where container_id='CONFETTI_SETTINGS'";
 $confetti_rslt=mysql_to_mysqli($confetti_stmt, $link);
-if (mysqli_num_rows($confetti_rslt)>0)
-    {
+if (mysqli_num_rows($confetti_rslt)>0) {
     $confetti_row=mysqli_fetch_array($confetti_rslt);
     $container_entry=explode("\n", $confetti_row['container_entry']);
-    for ($q=0; $q<count($container_entry); $q++)
-        {
-        if (!preg_match('/^\;/', $container_entry[$q]) && preg_match('/\s\=\>\s/', $container_entry[$q]))
-            {
+    for ($q=0; $q<count($container_entry); $q++) {
+        if (!preg_match('/^\;/', $container_entry[$q]) && preg_match('/\s\=\>\s/', $container_entry[$q])) {
             $container_setting=explode(" => ", trim($container_entry[$q]));
             $setting_name=$container_setting[0];
             $setting_value=$container_setting[1];
-            if ($setting_name=="duration" || $setting_name=="maxParticleCount" || $setting_name=="particleSpeed") 
-                {
+            if ($setting_name=="duration" || $setting_name=="maxParticleCount" || $setting_name=="particleSpeed") {
                 $$setting_name=$setting_value;
-                }
             }
         }
     }
+}
 ?>
 // confetti.js - https://github.com/mathusummut/confetti.js - MIT License
 var confettiDuration = <?php echo $duration; ?>; //set max confetti count

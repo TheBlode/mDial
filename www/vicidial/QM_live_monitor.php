@@ -32,51 +32,86 @@
 # * Bug reports, feature requests and patches welcome!
 # * ======================================== */
 ?>
-<?php 
+<?php
 $version = '2.14-6';
 $build = '220226-2215';
 $DBlogfile=0; # set to 1 for logfile writing
-header ("Content-type: text/html; charset=utf-8");
+header("Content-type: text/html; charset=utf-8");
 require("dbconnect_mysqli.php");
 require("functions.php");
 $PHP_SELF=$_SERVER['PHP_SELF'];
-$PHP_SELF = preg_replace('/\.php.*/i','.php',$PHP_SELF);
-if (isset($_GET["DB"]))                    {$DB=$_GET["DB"];}
-    elseif (isset($_POST["DB"]))        {$DB=$_POST["DB"];}
-if (isset($_GET["campaign"]))            {$campaign=$_GET["campaign"];}
-    elseif (isset($_POST["campaign"]))    {$campaign=$_POST["campaign"];}
-if (isset($_GET["user"]))                {$user=$_GET["user"];}
-    elseif (isset($_POST["user"]))        {$user=$_POST["user"];}
-if (isset($_GET["server_ip"]))            {$server_ip=$_GET["server_ip"];}
-    elseif (isset($_POST["server_ip"]))    {$server_ip=$_POST["server_ip"];}
-if (isset($_GET["session"]))            {$session=$_GET["session"];}
-    elseif (isset($_POST["session"]))    {$session=$_POST["session"];}
-if (isset($_GET["phone"]))                {$phone=$_GET["phone"];}
-    elseif (isset($_POST["phone"]))        {$phone=$_POST["phone"];}
-if (isset($_GET["type"]))                {$type=$_GET["type"];}
-    elseif (isset($_POST["type"]))        {$type=$_POST["type"];}
-if (isset($_GET["call"]))                {$call=$_GET["call"];}
-    elseif (isset($_POST["call"]))        {$call=$_POST["call"];}
-if (isset($_GET["QMuser"]))                {$QMuser=$_GET["QMuser"];}
-    elseif (isset($_POST["QMuser"]))    {$QMuser=$_POST["QMuser"];}
-if (isset($_GET["extension"]))            {$extension=$_GET["extension"];}
-    elseif (isset($_POST["extension"]))    {$extension=$_POST["extension"];}
-if (isset($_GET["stage"]))                {$stage=$_GET["stage"];}
-    elseif (isset($_POST["stage"]))        {$stage=$_POST["stage"];}
-$DB=preg_replace("/[^0-9a-zA-Z]/","",$DB);
+$PHP_SELF = preg_replace('/\.php.*/i', '.php', $PHP_SELF);
+if (isset($_GET["DB"])) {
+    $DB=$_GET["DB"];
+} elseif (isset($_POST["DB"])) {
+    $DB=$_POST["DB"];
+}
+if (isset($_GET["campaign"])) {
+    $campaign=$_GET["campaign"];
+} elseif (isset($_POST["campaign"])) {
+    $campaign=$_POST["campaign"];
+}
+if (isset($_GET["user"])) {
+    $user=$_GET["user"];
+} elseif (isset($_POST["user"])) {
+    $user=$_POST["user"];
+}
+if (isset($_GET["server_ip"])) {
+    $server_ip=$_GET["server_ip"];
+} elseif (isset($_POST["server_ip"])) {
+    $server_ip=$_POST["server_ip"];
+}
+if (isset($_GET["session"])) {
+    $session=$_GET["session"];
+} elseif (isset($_POST["session"])) {
+    $session=$_POST["session"];
+}
+if (isset($_GET["phone"])) {
+    $phone=$_GET["phone"];
+} elseif (isset($_POST["phone"])) {
+    $phone=$_POST["phone"];
+}
+if (isset($_GET["type"])) {
+    $type=$_GET["type"];
+} elseif (isset($_POST["type"])) {
+    $type=$_POST["type"];
+}
+if (isset($_GET["call"])) {
+    $call=$_GET["call"];
+} elseif (isset($_POST["call"])) {
+    $call=$_POST["call"];
+}
+if (isset($_GET["QMuser"])) {
+    $QMuser=$_GET["QMuser"];
+} elseif (isset($_POST["QMuser"])) {
+    $QMuser=$_POST["QMuser"];
+}
+if (isset($_GET["extension"])) {
+    $extension=$_GET["extension"];
+} elseif (isset($_POST["extension"])) {
+    $extension=$_POST["extension"];
+}
+if (isset($_GET["stage"])) {
+    $stage=$_GET["stage"];
+} elseif (isset($_POST["stage"])) {
+    $stage=$_POST["stage"];
+}
+$DB=preg_replace("/[^0-9a-zA-Z]/", "", $DB);
 $ERR=0;
 $ERRstring='';
 $stmt = "SELECT use_non_latin,enable_queuemetrics_logging,allow_web_debug FROM system_settings;";
 $rslt=mysql_to_mysqli($stmt, $link);
 $qm_conf_ct = mysqli_num_rows($rslt);
-if ($qm_conf_ct > 0)
-    {
+if ($qm_conf_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $non_latin =                    $row[0];
     $enable_queuemetrics_logging =    $row[1];
     $SSallow_web_debug =            $row[2];
-    }
-if ($SSallow_web_debug < 1) {$DB=0;   $DBlogfile=0;}
+}
+if ($SSallow_web_debug < 1) {
+    $DB=0;
+    $DBlogfile=0;
+}
 $call = preg_replace('/[^0-9a-zA-Z]/', '', $call);
 $session = preg_replace('/[^0-9a-zA-Z]/', '', $session);
 $extension = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $extension);
@@ -85,71 +120,66 @@ $stage = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $stage);
 $phone = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $phone);
 $type = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $type);
 $QMuser = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $QMuser);
-if ($non_latin < 1)
-    {
+if ($non_latin < 1) {
     $user = preg_replace('/[^-_0-9a-zA-Z]/', '', $user);
     $campaign = preg_replace('/[^-_0-9a-zA-Z]/', '', $campaign);
-    }
-else
-    {
+} else {
     $user = preg_replace('/[^-_0-9\p{L}]/u', '', $user);
     $campaign = preg_replace('/[^-_0-9\p{L}]/u', '', $campaign);
-    }
-if ($DBlogfile > 0)
-    {
+}
+if ($DBlogfile > 0) {
     $logfile=fopen('qm_rpc_debug.txt', "a");
     fwrite($logfile, "QM Live-Monitor: " . date("U") . ' - ' . date("Y-m-d H:i:s") . " $version $build\nParameters: |$call|$user|$extension|$server_ip|$stage|$campaign|$phone|$type|$QMuser|\n");
     fclose($logfile);
-    }
-if ($enable_queuemetrics_logging > 0)
-    {
+}
+if ($enable_queuemetrics_logging > 0) {
     $stmt = "SELECT user,server_ip,conf_exten,comments FROM vicidial_live_agents where callerid='$call';";
     $rslt=mysql_to_mysqli($stmt, $link);
-    if ($DB) {echo "$stmt\n";}
+    if ($DB) {
+        echo "$stmt\n";
+    }
     $vla_conf_ct = mysqli_num_rows($rslt);
-    if ($vla_conf_ct > 0)
-        {
+    if ($vla_conf_ct > 0) {
         $row=mysqli_fetch_row($rslt);
         $VLAuser =            $row[0];
         $VLAserver_ip =        $row[1];
         $VLAconf_exten =    $row[2];
         $stmt = "SELECT campaign_id,phone_number,call_type FROM vicidial_auto_calls where callerid='$call';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {echo "$stmt\n";}
+        if ($DB) {
+            echo "$stmt\n";
+        }
         $vla_conf_ct = mysqli_num_rows($rslt);
-        if ($vla_conf_ct > 0)
-            {
+        if ($vla_conf_ct > 0) {
             $row=mysqli_fetch_row($rslt);
             $VACcampaign =    $row[0];
             $VACphone =        $row[1];
             $VACtype =        $row[2];
-            if ($stage == 'MONITOR')
-                {
+            if ($stage == 'MONITOR') {
                 $script_name = getenv("SCRIPT_NAME");
                 $server_name = getenv("SERVER_NAME");
                 $server_port = getenv("SERVER_PORT");
-                if (preg_match("/443/i",$server_port)) {$HTTPprotocol = 'https://';}
-                  else {$HTTPprotocol = 'http://';}
+                if (preg_match("/443/i", $server_port)) {
+                    $HTTPprotocol = 'https://';
+                } else {
+                    $HTTPprotocol = 'http://';
+                }
                 $admDIR = "$HTTPprotocol$server_name$script_name";
-                $admDIR = preg_replace('/QM_live_monitor\.php/i', '',$admDIR);
+                $admDIR = preg_replace('/QM_live_monitor\.php/i', '', $admDIR);
                 $monitor_script = 'non_agent_api.php';
                 $monitorURL = "$admDIR$monitor_script?source=queuemetrics&function=blind_monitor&user=$user&pass=$call&phone_login=$extension&session_id=$session&server_ip=$server_ip&stage=$stage&value=$stage&agent_user=$user";
                 $monitorCONTENTS = file("$monitorURL");
-                if (preg_match('/SUCCESS/i',$monitorCONTENTS[0]))
-                    {
+                if (preg_match('/SUCCESS/i', $monitorCONTENTS[0])) {
                     echo "<HTML><BODY BGCOLOR=\"E6E6E6\" onLoad=\"javascript:window.close();\">\n";
-                    if ($DBlogfile > 0)
-                        {
+                    if ($DBlogfile > 0) {
                         $logfile=fopen('qm_rpc_debug.txt', "a");
                         fwrite($logfile, "QM Live-Monitor Closing: $monitorCONTENTS[0]\n");
                         fclose($logfile);
-                        }
                     }
-                else
-                    {
+                } else {
                     echo "<HTML><BODY BGCOLOR=\"E6E6E6\">\n";
                     echo "$monitorCONTENTS[0]<BR>\n";
-                    }
+                }
                 echo "<!-- $monitorURL -->\n";
                 echo "<!-- $monitorCONTENTS[0] -->\n";
                 echo "<FORM ACTION=\"$PHP_SELF\" METHOD=POST>\n";
@@ -158,9 +188,7 @@ if ($enable_queuemetrics_logging > 0)
                 echo "</FORM>\n";
                 echo "</BODY></HTML>\n";
                 exit;
-                }
-            else
-                {
+            } else {
                 echo "<HTML><BODY BGCOLOR=\"E6E6E6\">";
                 echo "<FORM ACTION=\"$PHP_SELF\" METHOD=POST>\n";
                 echo "<INPUT TYPE=HIDDEN NAME=stage VALUE=\"MONITOR\">\n";
@@ -186,30 +214,23 @@ if ($enable_queuemetrics_logging > 0)
                 echo "</FORM>";
                 echo "</BODY></HTML>";
                 exit;
-                }
             }
-        else
-            {
+        } else {
             $ERR++;
             $ERRstring = "Call not found";
-            }
         }
-    else
-        {
+    } else {
         $ERR++;
         $ERRstring = "Agent not found";
-        }
     }
-else
-    {
+} else {
     $ERR++;
     $ERRstring = "QueueMetrics is not enabled on this system";
-    }
-if ($ERR > 0)
-    {
+}
+if ($ERR > 0) {
     echo "ERROR: $ERRstring\n";
     echo "<!-- Agent: $user -->\n";
     echo "<!-- Call:  $call -->\n";
     exit;
-    }
+}
 exit;

@@ -39,63 +39,134 @@ $MT[0]='';
 require("dbconnect_mysqli.php");
 require("functions.php");
 $PHP_SELF=$_SERVER['PHP_SELF'];
-$PHP_SELF = preg_replace('/\.php.*/i','.php',$PHP_SELF);
-if (isset($_GET["action"]))                    {$action=$_GET["action"];}
-    elseif (isset($_POST["action"]))        {$action=$_POST["action"];}
-if (isset($_GET["DB"]))                        {$DB=$_GET["DB"];}
-    elseif (isset($_POST["DB"]))            {$DB=$_POST["DB"];}
-if (isset($_GET["run"]))                    {$run=$_GET["run"];}
-    elseif (isset($_POST["run"]))            {$run=$_POST["run"];}
-if (isset($_GET["batch"]))                    {$batch=$_GET["batch"];}
-    elseif (isset($_POST["batch"]))            {$batch=$_POST["batch"];}
-if (isset($_GET["starting_batch"]))                {$starting_batch=$_GET["starting_batch"];}
-    elseif (isset($_POST["starting_batch"]))    {$starting_batch=$_POST["starting_batch"];}
-if (isset($_GET["pack"]))                    {$pack=$_GET["pack"];}
-    elseif (isset($_POST["pack"]))            {$pack=$_POST["pack"];}
-if (isset($_GET["sequence"]))                {$sequence=$_GET["sequence"];}
-    elseif (isset($_POST["sequence"]))        {$sequence=$_POST["sequence"];}
-if (isset($_GET["card_id"]))                {$card_id=$_GET["card_id"];}
-    elseif (isset($_POST["card_id"]))        {$card_id=$_POST["card_id"];}
-if (isset($_GET["pin"]))                    {$pin=$_GET["pin"];}
-    elseif (isset($_POST["pin"]))            {$pin=$_POST["pin"];}
-if (isset($_GET["status"]))                    {$status=$_GET["status"];}
-    elseif (isset($_POST["status"]))        {$status=$_POST["status"];}
-if (isset($_GET["total"]))                    {$total=$_GET["total"];}
-    elseif (isset($_POST["total"]))            {$total=$_POST["total"];}
-if (isset($_GET["comment"]))                {$comment=$_GET["comment"];}
-    elseif (isset($_POST["comment"]))        {$comment=$_POST["comment"];}
-if (isset($_GET["balance_minutes"]))            {$balance_minutes=$_GET["balance_minutes"];}
-    elseif (isset($_POST["balance_minutes"]))    {$balance_minutes=$_POST["balance_minutes"];}
-if (isset($_GET["initial_value"]))            {$initial_value=$_GET["initial_value"];}
-    elseif (isset($_POST["initial_value"]))    {$initial_value=$_POST["initial_value"];}
-if (isset($_GET["initial_minutes"]))            {$initial_minutes=$_GET["initial_minutes"];}
-    elseif (isset($_POST["initial_minutes"]))    {$initial_minutes=$_POST["initial_minutes"];}
-if (isset($_GET["note_purchase_order"]))            {$note_purchase_order=$_GET["note_purchase_order"];}
-    elseif (isset($_POST["note_purchase_order"]))    {$note_purchase_order=$_POST["note_purchase_order"];}
-if (isset($_GET["note_printer"]))            {$note_printer=$_GET["note_printer"];}
-    elseif (isset($_POST["note_printer"]))    {$note_printer=$_POST["note_printer"];}
-if (isset($_GET["note_did"]))                {$note_did=$_GET["note_did"];}
-    elseif (isset($_POST["note_did"]))        {$note_did=$_POST["note_did"];}
-if (isset($_GET["inbound_group_id"]))            {$inbound_group_id=$_GET["inbound_group_id"];}
-    elseif (isset($_POST["inbound_group_id"]))    {$inbound_group_id=$_POST["inbound_group_id"];}
-if (isset($_GET["note_language"]))            {$note_language=$_GET["note_language"];}
-    elseif (isset($_POST["note_language"]))    {$note_language=$_POST["note_language"];}
-if (isset($_GET["note_name"]))                {$note_name=$_GET["note_name"];}
-    elseif (isset($_POST["note_name"]))        {$note_name=$_POST["note_name"];}
-if (isset($_GET["note_comments"]))            {$note_comments=$_GET["note_comments"];}
-    elseif (isset($_POST["note_comments"]))    {$note_comments=$_POST["note_comments"];}
-if (isset($_GET["user"]))                    {$user=$_GET["user"];}
-    elseif (isset($_POST["user"]))            {$user=$_POST["user"];}
-if (isset($_GET["SUBMIT"]))                    {$SUBMIT=$_GET["SUBMIT"];}
-    elseif (isset($_POST["SUBMIT"]))        {$SUBMIT=$_POST["SUBMIT"];}
-$DB=preg_replace("/[^0-9a-zA-Z]/","",$DB);
+$PHP_SELF = preg_replace('/\.php.*/i', '.php', $PHP_SELF);
+if (isset($_GET["action"])) {
+    $action=$_GET["action"];
+} elseif (isset($_POST["action"])) {
+    $action=$_POST["action"];
+}
+if (isset($_GET["DB"])) {
+    $DB=$_GET["DB"];
+} elseif (isset($_POST["DB"])) {
+    $DB=$_POST["DB"];
+}
+if (isset($_GET["run"])) {
+    $run=$_GET["run"];
+} elseif (isset($_POST["run"])) {
+    $run=$_POST["run"];
+}
+if (isset($_GET["batch"])) {
+    $batch=$_GET["batch"];
+} elseif (isset($_POST["batch"])) {
+    $batch=$_POST["batch"];
+}
+if (isset($_GET["starting_batch"])) {
+    $starting_batch=$_GET["starting_batch"];
+} elseif (isset($_POST["starting_batch"])) {
+    $starting_batch=$_POST["starting_batch"];
+}
+if (isset($_GET["pack"])) {
+    $pack=$_GET["pack"];
+} elseif (isset($_POST["pack"])) {
+    $pack=$_POST["pack"];
+}
+if (isset($_GET["sequence"])) {
+    $sequence=$_GET["sequence"];
+} elseif (isset($_POST["sequence"])) {
+    $sequence=$_POST["sequence"];
+}
+if (isset($_GET["card_id"])) {
+    $card_id=$_GET["card_id"];
+} elseif (isset($_POST["card_id"])) {
+    $card_id=$_POST["card_id"];
+}
+if (isset($_GET["pin"])) {
+    $pin=$_GET["pin"];
+} elseif (isset($_POST["pin"])) {
+    $pin=$_POST["pin"];
+}
+if (isset($_GET["status"])) {
+    $status=$_GET["status"];
+} elseif (isset($_POST["status"])) {
+    $status=$_POST["status"];
+}
+if (isset($_GET["total"])) {
+    $total=$_GET["total"];
+} elseif (isset($_POST["total"])) {
+    $total=$_POST["total"];
+}
+if (isset($_GET["comment"])) {
+    $comment=$_GET["comment"];
+} elseif (isset($_POST["comment"])) {
+    $comment=$_POST["comment"];
+}
+if (isset($_GET["balance_minutes"])) {
+    $balance_minutes=$_GET["balance_minutes"];
+} elseif (isset($_POST["balance_minutes"])) {
+    $balance_minutes=$_POST["balance_minutes"];
+}
+if (isset($_GET["initial_value"])) {
+    $initial_value=$_GET["initial_value"];
+} elseif (isset($_POST["initial_value"])) {
+    $initial_value=$_POST["initial_value"];
+}
+if (isset($_GET["initial_minutes"])) {
+    $initial_minutes=$_GET["initial_minutes"];
+} elseif (isset($_POST["initial_minutes"])) {
+    $initial_minutes=$_POST["initial_minutes"];
+}
+if (isset($_GET["note_purchase_order"])) {
+    $note_purchase_order=$_GET["note_purchase_order"];
+} elseif (isset($_POST["note_purchase_order"])) {
+    $note_purchase_order=$_POST["note_purchase_order"];
+}
+if (isset($_GET["note_printer"])) {
+    $note_printer=$_GET["note_printer"];
+} elseif (isset($_POST["note_printer"])) {
+    $note_printer=$_POST["note_printer"];
+}
+if (isset($_GET["note_did"])) {
+    $note_did=$_GET["note_did"];
+} elseif (isset($_POST["note_did"])) {
+    $note_did=$_POST["note_did"];
+}
+if (isset($_GET["inbound_group_id"])) {
+    $inbound_group_id=$_GET["inbound_group_id"];
+} elseif (isset($_POST["inbound_group_id"])) {
+    $inbound_group_id=$_POST["inbound_group_id"];
+}
+if (isset($_GET["note_language"])) {
+    $note_language=$_GET["note_language"];
+} elseif (isset($_POST["note_language"])) {
+    $note_language=$_POST["note_language"];
+}
+if (isset($_GET["note_name"])) {
+    $note_name=$_GET["note_name"];
+} elseif (isset($_POST["note_name"])) {
+    $note_name=$_POST["note_name"];
+}
+if (isset($_GET["note_comments"])) {
+    $note_comments=$_GET["note_comments"];
+} elseif (isset($_POST["note_comments"])) {
+    $note_comments=$_POST["note_comments"];
+}
+if (isset($_GET["user"])) {
+    $user=$_GET["user"];
+} elseif (isset($_POST["user"])) {
+    $user=$_POST["user"];
+}
+if (isset($_GET["SUBMIT"])) {
+    $SUBMIT=$_GET["SUBMIT"];
+} elseif (isset($_POST["SUBMIT"])) {
+    $SUBMIT=$_POST["SUBMIT"];
+}
+$DB=preg_replace("/[^0-9a-zA-Z]/", "", $DB);
 $report_name = 'CallCard Search';
 $SEARCHONLY=0;
 $stmt = "SELECT use_non_latin,callcard_enabled,enable_languages,language_method,active_modules,contacts_enabled,allow_emails,outbound_autodial_active,enable_tts_integration,sounds_central_control_active,qc_features_active,enable_auto_reports,campaign_cid_areacodes_enabled,allow_web_debug FROM system_settings;";
 $rslt=mysql_to_mysqli($stmt, $link);
 $ss_conf_ct = mysqli_num_rows($rslt);
-if ($ss_conf_ct > 0)
-    {
+if ($ss_conf_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $non_latin =                        $row[0];
     $callcard_enabled =                    $row[1];
@@ -111,140 +182,131 @@ if ($ss_conf_ct > 0)
     $SSenable_auto_reports =            $row[11];
     $SScampaign_cid_areacodes_enabled = $row[12];
     $SSallow_web_debug =                $row[13];
-    }
-if ($SSallow_web_debug < 1) {$DB=0;}
-$DB = preg_replace('/[^0-9]/','',$DB);
-$action = preg_replace('/[^\_0-9a-zA-Z]/','',$action);
-$card_id = preg_replace('/[^-\_0-9]/','',$card_id);
-$run = preg_replace('/[^0-9]/','',$run);
-$batch = preg_replace('/[^0-9a-zA-Z]/','',$batch);
-$pack = preg_replace('/[^0-9]/','',$pack);
-$sequence = preg_replace('/[^0-9]/','',$sequence);
-$pin = preg_replace('/[^0-9a-zA-Z]/','',$pin);
-$starting_batch = preg_replace("/\<|\>|\’|\"|\\\\|;/",'',$starting_batch);
-$status = preg_replace("/\<|\>|\’|\"|\\\\|;/",'',$status);
-$total = preg_replace("/\<|\>|\’|\"|\\\\|;/",'',$total);
-$comment = preg_replace("/\<|\>|\’|\"|\\\\|;/",'',$comment);
-$balance_minutes = preg_replace("/\<|\>|\’|\"|\\\\|;/",'',$balance_minutes);
-$initial_value = preg_replace("/\<|\>|\’|\"|\\\\|;/",'',$initial_value);
-$initial_minutes = preg_replace("/\<|\>|\’|\"|\\\\|;/",'',$initial_minutes);
-$note_purchase_order = preg_replace("/\<|\>|\’|\"|\\\\|;/",'',$note_purchase_order);
-$note_printer = preg_replace("/\<|\>|\’|\"|\\\\|;/",'',$note_printer);
-$note_did = preg_replace("/\<|\>|\’|\"|\\\\|;/",'',$note_did);
-$inbound_group_id = preg_replace("/\<|\>|\’|\"|\\\\|;/",'',$inbound_group_id);
-$note_language = preg_replace("/\<|\>|\’|\"|\\\\|;/",'',$note_language);
-$note_name = preg_replace("/\<|\>|\’|\"|\\\\|;/",'',$note_name);
-$note_comments = preg_replace("/\<|\>|\’|\"|\\\\|;/",'',$note_comments);
-$SUBMIT = preg_replace("/\<|\>|\’|\"|\\\\|;/",'',$SUBMIT);
-if ($non_latin < 1)
-    {
-    $territory_description = preg_replace('/[^- \_\.\,0-9a-zA-Z]/','',$territory_description);
-    $user = preg_replace('/[^-_0-9a-zA-Z]/', '',$user);
-    $old_territory = preg_replace('/[^-_0-9a-zA-Z]/', '',$old_territory);
-    $old_user = preg_replace('/[^-_0-9a-zA-Z]/', '',$old_user);
-    $accountid = preg_replace('/[^-_0-9a-zA-Z]/', '',$accountid);
-    }
-else
-    {
-    $territory_description = preg_replace('/[^- \_\.\,0-9\p{L}]/u','',$territory_description);
-    $user = preg_replace('/[^-_0-9\p{L}]/u', '',$user);
-    $old_territory = preg_replace('/[^-_0-9\p{L}]/u', '',$old_territory);
-    $old_user = preg_replace('/[^-_0-9\p{L}]/u', '',$old_user);
-    $accountid = preg_replace('/[^-_0-9\p{L}]/u', '',$accountid);
-    }
-if (preg_match("/YES/i",$batch))
-    {
+}
+if ($SSallow_web_debug < 1) {
+    $DB=0;
+}
+$DB = preg_replace('/[^0-9]/', '', $DB);
+$action = preg_replace('/[^\_0-9a-zA-Z]/', '', $action);
+$card_id = preg_replace('/[^-\_0-9]/', '', $card_id);
+$run = preg_replace('/[^0-9]/', '', $run);
+$batch = preg_replace('/[^0-9a-zA-Z]/', '', $batch);
+$pack = preg_replace('/[^0-9]/', '', $pack);
+$sequence = preg_replace('/[^0-9]/', '', $sequence);
+$pin = preg_replace('/[^0-9a-zA-Z]/', '', $pin);
+$starting_batch = preg_replace("/\<|\>|\’|\"|\\\\|;/", '', $starting_batch);
+$status = preg_replace("/\<|\>|\’|\"|\\\\|;/", '', $status);
+$total = preg_replace("/\<|\>|\’|\"|\\\\|;/", '', $total);
+$comment = preg_replace("/\<|\>|\’|\"|\\\\|;/", '', $comment);
+$balance_minutes = preg_replace("/\<|\>|\’|\"|\\\\|;/", '', $balance_minutes);
+$initial_value = preg_replace("/\<|\>|\’|\"|\\\\|;/", '', $initial_value);
+$initial_minutes = preg_replace("/\<|\>|\’|\"|\\\\|;/", '', $initial_minutes);
+$note_purchase_order = preg_replace("/\<|\>|\’|\"|\\\\|;/", '', $note_purchase_order);
+$note_printer = preg_replace("/\<|\>|\’|\"|\\\\|;/", '', $note_printer);
+$note_did = preg_replace("/\<|\>|\’|\"|\\\\|;/", '', $note_did);
+$inbound_group_id = preg_replace("/\<|\>|\’|\"|\\\\|;/", '', $inbound_group_id);
+$note_language = preg_replace("/\<|\>|\’|\"|\\\\|;/", '', $note_language);
+$note_name = preg_replace("/\<|\>|\’|\"|\\\\|;/", '', $note_name);
+$note_comments = preg_replace("/\<|\>|\’|\"|\\\\|;/", '', $note_comments);
+$SUBMIT = preg_replace("/\<|\>|\’|\"|\\\\|;/", '', $SUBMIT);
+if ($non_latin < 1) {
+    $territory_description = preg_replace('/[^- \_\.\,0-9a-zA-Z]/', '', $territory_description);
+    $user = preg_replace('/[^-_0-9a-zA-Z]/', '', $user);
+    $old_territory = preg_replace('/[^-_0-9a-zA-Z]/', '', $old_territory);
+    $old_user = preg_replace('/[^-_0-9a-zA-Z]/', '', $old_user);
+    $accountid = preg_replace('/[^-_0-9a-zA-Z]/', '', $accountid);
+} else {
+    $territory_description = preg_replace('/[^- \_\.\,0-9\p{L}]/u', '', $territory_description);
+    $user = preg_replace('/[^-_0-9\p{L}]/u', '', $user);
+    $old_territory = preg_replace('/[^-_0-9\p{L}]/u', '', $old_territory);
+    $old_user = preg_replace('/[^-_0-9\p{L}]/u', '', $old_user);
+    $accountid = preg_replace('/[^-_0-9\p{L}]/u', '', $accountid);
+}
+if (preg_match("/YES/i", $batch)) {
     $USER='batch';
     $PASS='batch';
-    }
-else
-    {
+} else {
     $PASS=$_SERVER['PHP_AUTH_PW'];
     $USER=$_SERVER['PHP_AUTH_USER'];
     $user=$_SERVER['PHP_AUTH_USER'];
     $PHP_AUTH_USER=$_SERVER['PHP_AUTH_USER'];
-    }
-if ($non_latin < 1)
-    {
+}
+if ($non_latin < 1) {
     $PASS = preg_replace('/[^-_0-9a-zA-Z]/', '', $PASS);
     $USER = preg_replace('/[^-_0-9a-zA-Z]/', '', $USER);
     $user = preg_replace('/[^-_0-9a-zA-Z]/', '', $user);
     $PHP_AUTH_USER = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_USER);
-    }
-else
-    {
+} else {
     $PASS = preg_replace('/[^-_0-9\p{L}]/u', '', $PASS);
     $USER = preg_replace('/[^-_0-9\p{L}]/u', '', $USER);
     $user = preg_replace('/[^-_0-9\p{L}]/u', '', $user);
     $PHP_AUTH_USER = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_USER);
-    }
+}
 $stmt="SELECT selected_language from vicidial_users where user='$user';";
-if ($DB) {echo "|$stmt|\n";}
+if ($DB) {
+    echo "|$stmt|\n";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 $sl_ct = mysqli_num_rows($rslt);
-if ($sl_ct > 0)
-    {
+if ($sl_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $VUselected_language =        $row[0];
-    }
-if ($callcard_enabled < 1)
-    {
+}
+if ($callcard_enabled < 1) {
     echo _QXZ("ERROR: CallCard is not active on this system")."\n";
     exit;
-    }
+}
 $auth=0;
 $reports_auth=0;
 $admin_auth=0;
-$auth_message = user_authorization($USER,$PASS,'',1,0);
-if ($auth_message == 'GOOD')
-    {$auth=1;}
-if ($auth > 0)
-    {
+$auth_message = user_authorization($USER, $PASS, '', 1, 0);
+if ($auth_message == 'GOOD') {
+    $auth=1;
+}
+if ($auth > 0) {
     $stmt="SELECT count(*) from vicidial_users where user='$user' and user_level > 7 and view_reports='1';";
-    if ($DB) {echo "|$stmt|\n";}
+    if ($DB) {
+        echo "|$stmt|\n";
+    }
     $rslt=mysql_to_mysqli($stmt, $link);
     $row=mysqli_fetch_row($rslt);
     $admin_auth=$row[0];
     $stmt="SELECT count(*) from vicidial_users where user='$user' and user_level > 6 and view_reports='1';";
-    if ($DB) {echo "|$stmt|\n";}
+    if ($DB) {
+        echo "|$stmt|\n";
+    }
     $rslt=mysql_to_mysqli($stmt, $link);
     $row=mysqli_fetch_row($rslt);
     $reports_auth=$row[0];
-    if ($reports_auth < 1)
-        {
+    if ($reports_auth < 1) {
         $VDdisplayMESSAGE = _QXZ("You are not allowed to view reports");
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$USER|$auth_message|\n";
         exit;
-        }
-    if ( ($reports_auth > 0) and ($admin_auth < 1) )
-        {
+    }
+    if (($reports_auth > 0) and ($admin_auth < 1)) {
         $ADD=999999;
         $reports_only_user=1;
-        }
     }
-else
-    {
+} else {
     $VDdisplayMESSAGE = _QXZ("Login incorrect, please try again");
-    if ($auth_message == 'LOCK')
-        {
+    if ($auth_message == 'LOCK') {
         $VDdisplayMESSAGE = _QXZ("Too many login attempts, try again in 15 minutes");
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$USER|$auth_message|\n";
         exit;
-        }
-    if ($auth_message == 'IPBLOCK')
-        {
+    }
+    if ($auth_message == 'IPBLOCK') {
         $VDdisplayMESSAGE = _QXZ("Your IP Address is not allowed") . ": $ip";
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
+    }
     Header("WWW-Authenticate: Basic realm=\"CONTACT-CENTER-ADMIN\"");
     Header("HTTP/1.0 401 Unauthorized");
     echo "$VDdisplayMESSAGE: |$USER|$PASS|$auth_message|\n";
     exit;
-    }
+}
 $stmt="SELECT callcard_admin,user_group,full_name,qc_enabled from vicidial_users where user='$user';";
 $rslt=mysql_to_mysqli($stmt, $link);
 $row=mysqli_fetch_row($rslt);
@@ -252,45 +314,41 @@ $LOGcallcard_admin =    $row[0];
 $LOGuser_group =        $row[1];
 $LOGfullname =            $row[2];
 $qc_auth =                $row[3];
-if($reports_only_user > 0)
-    {
+if($reports_only_user > 0) {
     $stmt="SELECT allowed_reports from vicidial_user_groups where user_group='$LOGuser_group';";
-    if ($DB) {echo "|$stmt|\n";}
+    if ($DB) {
+        echo "|$stmt|\n";
+    }
     $rslt=mysql_to_mysqli($stmt, $link);
     $row=mysqli_fetch_row($rslt);
     $LOGallowed_reports =    $row[0];
-    if ( (!preg_match("/$report_name/",$LOGallowed_reports)) and (!preg_match("/ALL REPORTS/",$LOGallowed_reports)) )
-        {
+    if ((!preg_match("/$report_name/", $LOGallowed_reports)) and (!preg_match("/ALL REPORTS/", $LOGallowed_reports))) {
         Header("WWW-Authenticate: Basic realm=\"CONTACT-CENTER-ADMIN\"");
         Header("HTTP/1.0 401 Unauthorized");
         echo _QXZ("You are not allowed to view this report").": |$USER|$report_name|\n";
         exit;
-        }
-    else
-        {
+    } else {
         $SEARCHONLY=1;
-        }
     }
-else
-    {
-    if ($LOGcallcard_admin < 1)
-        {
-        Header ("Content-type: text/html; charset=utf-8");
+} else {
+    if ($LOGcallcard_admin < 1) {
+        Header("Content-type: text/html; charset=utf-8");
         echo _QXZ("You do not have permissions for call card administration").": |$USER|\n";
         exit;
-        }
     }
-if ($SEARCHONLY > 0)
-    {
-    if ( ($action != 'SEARCH') and ($action != 'SEARCH_RESULTS') and ($action != 'CALLCARD_DETAIL') )
-        {$action = 'SEARCH';}
+}
+if ($SEARCHONLY > 0) {
+    if (($action != 'SEARCH') and ($action != 'SEARCH_RESULTS') and ($action != 'CALLCARD_DETAIL')) {
+        $action = 'SEARCH';
     }
-if (strlen($action) < 1)
-    {$action = 'CALLCARD_SUMMARY';}
+}
+if (strlen($action) < 1) {
+    $action = 'CALLCARD_SUMMARY';
+}
 require("screen_colors.php");
-header ("Content-type: text/html; charset=utf-8");
-header ("Cache-Control: no-cache, must-revalidate");  // HTTP/1.1
-header ("Pragma: no-cache");                          // HTTP/1.0
+header("Content-type: text/html; charset=utf-8");
+header("Cache-Control: no-cache, must-revalidate");  // HTTP/1.1
+header("Pragma: no-cache");                          // HTTP/1.0
 ?>
 <html>
 <head>
@@ -324,7 +382,7 @@ require("admin_header.php");
 $colspan='3';
 ?>
 <TABLE WIDTH=<?php echo $page_width ?> BGCOLOR=#<?php echo $SSframe_background; ?> cellpadding=2 cellspacing=0>
-<?php 
+<?php
 echo "<TR BGCOLOR=\"#".$SSframe_background."\"><TD ALIGN=LEFT COLSPAN=$colspan><FONT FACE=\"ARIAL,HELVETICA\" COLOR=BLACK SIZE=3><B> &nbsp; \n";
 $STARTtime = date("U");
 $TODAY = date("Y-m-d");
@@ -336,78 +394,74 @@ $browser = getenv("HTTP_USER_AGENT");
 $script_name = getenv("SCRIPT_NAME");
 $server_name = getenv("SERVER_NAME");
 $server_port = getenv("SERVER_PORT");
-if (preg_match("/443/i",$server_port)) {$HTTPprotocol = 'https://';}
-  else {$HTTPprotocol = 'http://';}
+if (preg_match("/443/i", $server_port)) {
+    $HTTPprotocol = 'https://';
+} else {
+    $HTTPprotocol = 'http://';
+}
 $admDIR = "$HTTPprotocol$server_name:$server_port$script_name";
-$admDIR = preg_replace('/callcard_admin\.php/i', '',$admDIR);
+$admDIR = preg_replace('/callcard_admin\.php/i', '', $admDIR);
 $admSCR = 'admin.php';
 $NWB = "<IMG SRC=\"help.png\" onClick=\"FillAndShowHelpDiv(event, '";
 $NWE = "')\" WIDTH=20 HEIGHT=20 BORDER=0 ALT=\"HELP\" ALIGN=TOP>";
 $secX = date("U");
 $pulldate0 = "$year-$mon-$mday $hour:$min:$sec";
-if ($action == "CALLCARD_STATUS")
-    {
-    if ( (strlen($card_id)<1) or (strlen($status)<1) )
-        {
+if ($action == "CALLCARD_STATUS") {
+    if ((strlen($card_id)<1) or (strlen($status)<1)) {
         echo _QXZ("ERROR: Card ID and Status must be filled in")."<BR>\n";
-        }
-    else
-        {
+    } else {
         $stmt="SELECT count(*) from callcard_accounts_details where card_id='$card_id';";
         $rslt=mysql_to_mysqli($stmt, $link);
         $row=mysqli_fetch_row($rslt);
-        if ($row[0] < 1)
-            {
+        if ($row[0] < 1) {
             echo _QXZ("ERROR: This card_id is not in the system")."<BR>\n";
-            }
-        else
-            {
-            if ($status == 'RESET')
-                {
+        } else {
+            if ($status == 'RESET') {
                 $initial_minutes=1;
                 $stmt="SELECT initial_minutes FROM callcard_accounts_details where card_id='$card_id';";
                 $rslt=mysql_to_mysqli($stmt, $link);
-                if ($DB) {echo "$stmt\n";}
+                if ($DB) {
+                    echo "$stmt\n";
+                }
                 $im_ct = mysqli_num_rows($rslt);
-                if ($im_ct > 0)
-                    {
+                if ($im_ct > 0) {
                     $row=mysqli_fetch_row($rslt);
                     $initial_minutes = $row[0];
-                    }
+                }
                 $stmt="UPDATE callcard_accounts_details SET status='ACTIVE',balance_minutes='$initial_minutes',used_time=NOW(),used_user='$USER' where card_id='$card_id';";
                 $stmtB="UPDATE callcard_accounts SET status='ACTIVE',balance_minutes='$initial_minutes' where card_id='$card_id';";
-                }
-            if ($status == 'VOID')
-                {
+            }
+            if ($status == 'VOID') {
                 $stmt="UPDATE callcard_accounts_details SET status='VOID',void_time=NOW(),void_user='$USER' where card_id='$card_id';";
                 $stmtB="UPDATE callcard_accounts SET status='VOID' where card_id='$card_id';";
-                }
-            if ($status == 'ACTIVE')
-                {
+            }
+            if ($status == 'ACTIVE') {
                 $stmt="UPDATE callcard_accounts_details SET status='ACTIVE',activate_time=NOW(),activate_user='$USER' where card_id='$card_id';";
                 $stmtB="UPDATE callcard_accounts SET status='ACTIVE' where card_id='$card_id';";
-                }
+            }
             $rslt=mysql_to_mysqli($stmt, $link);
             $rslt=mysql_to_mysqli($stmtB, $link);
-            if ($DB) {echo "|$stmt|$stmtB|\n";}
+            if ($DB) {
+                echo "|$stmt|$stmtB|\n";
+            }
             echo _QXZ("Card ID Status Modified").": $card_id - $status<BR>\n";
             $SQL_log = "$stmt|";
             $SQL_log = preg_replace('/;/', '', $SQL_log);
             $SQL_log = addslashes($SQL_log);
             $stmt="INSERT INTO vicidial_admin_log set event_date='$NOW_TIME', user='$USER', ip_address='$ip', event_section='CALLCARD', event_type='MODIFY', record_id='$card_id', event_code='ADMIN MODIFY CALLCARD', event_sql=\"$SQL_log\", event_notes='$status';";
-            if ($DB) {echo "|$stmt|\n";}
-            $rslt=mysql_to_mysqli($stmt, $link);
+            if ($DB) {
+                echo "|$stmt|\n";
             }
+            $rslt=mysql_to_mysqli($stmt, $link);
         }
-    $action = "CALLCARD_DETAIL";
     }
-if ($action == "CALLCARD_DETAIL")
-    {
+    $action = "CALLCARD_DETAIL";
+}
+if ($action == "CALLCARD_DETAIL") {
     $stmt="SELECT card_id,run,batch,pack,sequence,status,balance_minutes,initial_value,initial_minutes,note_purchase_order,note_printer,note_did,inbound_group_id,note_language,note_name,note_comments,create_user,activate_user,used_user,void_user,create_time,activate_time,used_time,void_time from callcard_accounts_details where card_id='$card_id';";
     $rslt=mysql_to_mysqli($stmt, $link);
     $details_to_print = mysqli_num_rows($rslt);
-    if ($details_to_print > 0) 
-        {
+    if ($details_to_print > 0) {
         $rowx=mysqli_fetch_row($rslt);
         $card_id =                $rowx[0];
         $run =                    $rowx[1];
@@ -436,11 +490,10 @@ if ($action == "CALLCARD_DETAIL")
         $stmt="SELECT pin from callcard_accounts where card_id='$card_id';";
         $rslt=mysql_to_mysqli($stmt, $link);
         $pin_to_print = mysqli_num_rows($rslt);
-        if ($pin_to_print > 0) 
-            {
+        if ($pin_to_print > 0) {
             $rowx=mysqli_fetch_row($rslt);
             $pin =                $rowx[0];
-            }
+        }
         echo "<TABLE><TR><TD>\n";
         echo "<FONT FACE=\"ARIAL,HELVETICA\" COLOR=BLACK SIZE=2>";
         echo "<br>"._QXZ("CallCard Detail")."<form action=$PHP_SELF method=POST>\n";
@@ -471,13 +524,12 @@ if ($action == "CALLCARD_DETAIL")
         echo "<tr bgcolor=#".$SSstd_row4_background."><td align=right>"._QXZ("Void User/Date").": </td><td align=left><B>$void_user / $void_time</B></td></tr>\n";
         echo "</TABLE>\n";
         echo "<BR><BR><BR>\n";
-        if ($SEARCHONLY < 1)
-            {
+        if ($SEARCHONLY < 1) {
             echo "<a href=\"$PHP_SELF?action=CALLCARD_STATUS&status=VOID&card_id=$card_id&DB=$DB\">"._QXZ("Void This Card ID")."</a><BR><BR>\n";
             echo "<a href=\"$PHP_SELF?action=CALLCARD_STATUS&status=ACTIVE&card_id=$card_id&DB=$DB\">"._QXZ("Activate This Card ID")."</a><BR><BR>\n";
             echo "<a href=\"$PHP_SELF?action=CALLCARD_STATUS&status=RESET&card_id=$card_id&DB=$DB\">"._QXZ("Reset Minutes on This Card ID")."</a>\n";
             echo "<BR><BR>\n";
-            }
+        }
         echo "<TABLE><TR><TD>\n";
         echo "<FONT FACE=\"ARIAL,HELVETICA\" COLOR=BLACK SIZE=2>";
         echo "<br>"._QXZ("Call Log for this Card ID").":\n";
@@ -495,16 +547,18 @@ if ($action == "CALLCARD_DETAIL")
         echo "</TR>\n";
         $stmt = "SELECT call_time,phone_number,inbound_did,balance_minutes_start,agent_talk_min,agent,agent_time,agent_dispo FROM callcard_log where card_id='$card_id' order by call_time;";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {echo "$stmt\n";}
+        if ($DB) {
+            echo "$stmt\n";
+        }
         $vt_ct = mysqli_num_rows($rslt);
         $i=0;
-        while ($vt_ct > $i)
-            {
+        while ($vt_ct > $i) {
             $row=mysqli_fetch_row($rslt);
-            if (preg_match("/1$|3$|5$|7$|9$/i", $i))
-                {$bgcolor='bgcolor="#'.$SSstd_row4_background.'"';}
-            else
-                {$bgcolor='bgcolor="#'.$SSstd_row3_background.'"';} 
+            if (preg_match("/1$|3$|5$|7$|9$/i", $i)) {
+                $bgcolor='bgcolor="#'.$SSstd_row4_background.'"';
+            } else {
+                $bgcolor='bgcolor="#'.$SSstd_row3_background.'"';
+            }
             echo "<tr $bgcolor>\n";
             echo "<td><font size=1> $i </td>";
             echo "<td><font size=1> $row[0] </td>";
@@ -517,20 +571,16 @@ if ($action == "CALLCARD_DETAIL")
             echo "<td><font size=1> $row[7] </td>";
             echo "</tr>\n";
             $i++;
-            }
+        }
         echo "</TABLE><BR><BR>\n";
-        if ($SEARCHONLY < 1)
-            {
+        if ($SEARCHONLY < 1) {
             echo "<a href=\"admin.php?ADD=720000000000000&category=CALLCARD&stage=$card_id&DB=$DB\">"._QXZ("Admin Log for this Card ID")."</a><BR><BR>\n";
-            }
         }
-    else
-        {
+    } else {
         echo _QXZ("ERROR: Card ID not found").": $card_id<BR>\n";
-        }
     }
-if ($action == "CALLCARD_SUMMARY")
-    {
+}
+if ($action == "CALLCARD_SUMMARY") {
     echo "<TABLE><TR><TD>\n";
     echo "<img src=\"images/icon_callcard.png\" width=42 height=42 align=left> <FONT FACE=\"ARIAL,HELVETICA\" COLOR=BLACK SIZE=2>";
     echo "<br>"._QXZ("CallCard Summary").":\n";
@@ -541,84 +591,88 @@ if ($action == "CALLCARD_SUMMARY")
     echo "</TR>\n";
     $stmt = "SELECT count(*),status FROM callcard_accounts_details group by status order by status;";
     $rslt=mysql_to_mysqli($stmt, $link);
-    if ($DB) {echo "$stmt\n";}
+    if ($DB) {
+        echo "$stmt\n";
+    }
     $vt_ct = mysqli_num_rows($rslt);
     $i=0;
-    while ($vt_ct > $i)
-        {
+    while ($vt_ct > $i) {
         $row=mysqli_fetch_row($rslt);
         $Lcount[$i] =        $row[0];
         $Lstatus[$i] =        $row[1];
-        if (preg_match("/1$|3$|5$|7$|9$/i", $i))
-            {$bgcolor='bgcolor="#'.$SSstd_row4_background.'"';}
-        else
-            {$bgcolor='bgcolor="#'.$SSstd_row3_background.'"';} 
+        if (preg_match("/1$|3$|5$|7$|9$/i", $i)) {
+            $bgcolor='bgcolor="#'.$SSstd_row4_background.'"';
+        } else {
+            $bgcolor='bgcolor="#'.$SSstd_row3_background.'"';
+        }
         echo "<tr $bgcolor>\n";
         echo "<td><font size=1> "._QXZ("$Lstatus[$i]")."</td>";
         echo "<td><font size=1> $Lcount[$i] </td>";
         echo "</tr>\n";
         $i++;
-        }
+    }
     echo "</TABLE><BR><BR>\n";
     $stmt = "SELECT count(distinct batch) FROM callcard_accounts_details;";
     $rslt=mysql_to_mysqli($stmt, $link);
-    if ($DB) {echo "$stmt\n";}
+    if ($DB) {
+        echo "$stmt\n";
+    }
     $db_ct = mysqli_num_rows($rslt);
-    if ($db_ct > 0)
-        {
+    if ($db_ct > 0) {
         $row=mysqli_fetch_row($rslt);
         $DBcount =        $row[0];
         echo "<b>"._QXZ("There are")." $DBcount "._QXZ("batches in the system")."\n";
-        }
+    }
     echo "<BR><BR>\n";
-        echo "<TABLE><TR><TD>\n";
-        echo "<FONT FACE=\"ARIAL,HELVETICA\" COLOR=BLACK SIZE=2>";
-        echo "<br>"._QXZ("Last 10 Calls").":\n";
-        echo "<center><TABLE width=740 cellspacing=0 cellpadding=1>\n";
-        echo "<TR BGCOLOR=BLACK>";
-        echo "<TD><B><FONT FACE=\"Arial,Helvetica\" size=2 color=white>#</B></TD>";
-        echo "<TD><B><FONT FACE=\"Arial,Helvetica\" size=2 color=white>"._QXZ("CARD ID")."</B></TD>";
-        echo "<TD><B><FONT FACE=\"Arial,Helvetica\" size=2 color=white>"._QXZ("DATE")."</B></TD>";
-        echo "<TD><B><FONT FACE=\"Arial,Helvetica\" size=2 color=white>"._QXZ("CallerID")."</B></TD>";
-        echo "<TD><B><FONT FACE=\"Arial,Helvetica\" size=2 color=white>"._QXZ("DID")."</B></TD>";
-        echo "<TD><B><FONT FACE=\"Arial,Helvetica\" size=2 color=white>"._QXZ("START MIN")."</B></TD>";
-        echo "<TD><B><FONT FACE=\"Arial,Helvetica\" size=2 color=white>"._QXZ("TALK MIN")."</B></TD>";
-        echo "<TD><B><FONT FACE=\"Arial,Helvetica\" size=2 color=white>"._QXZ("AGENT")."</B></TD>";
-        echo "<TD><B><FONT FACE=\"Arial,Helvetica\" size=2 color=white>"._QXZ("AGENT DATE")."</B></TD>";
-        echo "<TD><B><FONT FACE=\"Arial,Helvetica\" size=2 color=white>"._QXZ("DISPO")."</B></TD>";
-        echo "</TR>\n";
-        $stmt = "SELECT card_id,call_time,phone_number,inbound_did,balance_minutes_start,agent_talk_min,agent,agent_time,agent_dispo FROM callcard_log order by call_time desc limit 10;";
-        $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {echo "$stmt\n";}
-        $vt_ct = mysqli_num_rows($rslt);
-        $i=0;
-        while ($vt_ct > $i)
-            {
-            $row=mysqli_fetch_row($rslt);
-            if (preg_match("/1$|3$|5$|7$|9$/i", $i))
-                {$bgcolor='bgcolor="#'.$SSstd_row4_background.'"';}
-            else
-                {$bgcolor='bgcolor="#'.$SSstd_row3_background.'"';} 
-            echo "<tr $bgcolor>\n";
-            echo "<td><font size=1> $i </td>";
-            echo "<td><font size=1> <a href=\"$PHP_SELF?action=CALLCARD_DETAIL&card_id=$row[0]&DB=$DB\"><font color=black>$row[0]</font></a> </td>";
-            echo "<td><font size=1> $row[1] </td>";
-            echo "<td><font size=1> $row[2] </td>";
-            echo "<td><font size=1> $row[3] </td>";
-            echo "<td><font size=1> $row[4] </td>";
-            echo "<td><font size=1> $row[5] </td>";
-            echo "<td><font size=1> $row[6] </td>";
-            echo "<td><font size=1> $row[7] </td>";
-            echo "<td><font size=1> $row[8] </td>";
-            echo "</tr>\n";
-            $i++;
-            }
-        echo "</TABLE><BR><BR>\n";
+    echo "<TABLE><TR><TD>\n";
+    echo "<FONT FACE=\"ARIAL,HELVETICA\" COLOR=BLACK SIZE=2>";
+    echo "<br>"._QXZ("Last 10 Calls").":\n";
+    echo "<center><TABLE width=740 cellspacing=0 cellpadding=1>\n";
+    echo "<TR BGCOLOR=BLACK>";
+    echo "<TD><B><FONT FACE=\"Arial,Helvetica\" size=2 color=white>#</B></TD>";
+    echo "<TD><B><FONT FACE=\"Arial,Helvetica\" size=2 color=white>"._QXZ("CARD ID")."</B></TD>";
+    echo "<TD><B><FONT FACE=\"Arial,Helvetica\" size=2 color=white>"._QXZ("DATE")."</B></TD>";
+    echo "<TD><B><FONT FACE=\"Arial,Helvetica\" size=2 color=white>"._QXZ("CallerID")."</B></TD>";
+    echo "<TD><B><FONT FACE=\"Arial,Helvetica\" size=2 color=white>"._QXZ("DID")."</B></TD>";
+    echo "<TD><B><FONT FACE=\"Arial,Helvetica\" size=2 color=white>"._QXZ("START MIN")."</B></TD>";
+    echo "<TD><B><FONT FACE=\"Arial,Helvetica\" size=2 color=white>"._QXZ("TALK MIN")."</B></TD>";
+    echo "<TD><B><FONT FACE=\"Arial,Helvetica\" size=2 color=white>"._QXZ("AGENT")."</B></TD>";
+    echo "<TD><B><FONT FACE=\"Arial,Helvetica\" size=2 color=white>"._QXZ("AGENT DATE")."</B></TD>";
+    echo "<TD><B><FONT FACE=\"Arial,Helvetica\" size=2 color=white>"._QXZ("DISPO")."</B></TD>";
+    echo "</TR>\n";
+    $stmt = "SELECT card_id,call_time,phone_number,inbound_did,balance_minutes_start,agent_talk_min,agent,agent_time,agent_dispo FROM callcard_log order by call_time desc limit 10;";
+    $rslt=mysql_to_mysqli($stmt, $link);
+    if ($DB) {
+        echo "$stmt\n";
+    }
+    $vt_ct = mysqli_num_rows($rslt);
+    $i=0;
+    while ($vt_ct > $i) {
+        $row=mysqli_fetch_row($rslt);
+        if (preg_match("/1$|3$|5$|7$|9$/i", $i)) {
+            $bgcolor='bgcolor="#'.$SSstd_row4_background.'"';
+        } else {
+            $bgcolor='bgcolor="#'.$SSstd_row3_background.'"';
+        }
+        echo "<tr $bgcolor>\n";
+        echo "<td><font size=1> $i </td>";
+        echo "<td><font size=1> <a href=\"$PHP_SELF?action=CALLCARD_DETAIL&card_id=$row[0]&DB=$DB\"><font color=black>$row[0]</font></a> </td>";
+        echo "<td><font size=1> $row[1] </td>";
+        echo "<td><font size=1> $row[2] </td>";
+        echo "<td><font size=1> $row[3] </td>";
+        echo "<td><font size=1> $row[4] </td>";
+        echo "<td><font size=1> $row[5] </td>";
+        echo "<td><font size=1> $row[6] </td>";
+        echo "<td><font size=1> $row[7] </td>";
+        echo "<td><font size=1> $row[8] </td>";
+        echo "</tr>\n";
+        $i++;
+    }
+    echo "</TABLE><BR><BR>\n";
     echo "\n";
     echo "</center>\n";
-    }
-if ($action == "CALLCARD_RUNS")
-    {
+}
+if ($action == "CALLCARD_RUNS") {
     echo "<TABLE><TR><TD>\n";
     echo "<FONT FACE=\"ARIAL,HELVETICA\" COLOR=BLACK SIZE=2>";
     echo "<br>"._QXZ("CallCard Batches").":\n";
@@ -630,31 +684,32 @@ if ($action == "CALLCARD_RUNS")
     echo "</TR>\n";
     $stmt = "SELECT count(*),run FROM callcard_accounts_details group by run order by run;";
     $rslt=mysql_to_mysqli($stmt, $link);
-    if ($DB) {echo "$stmt\n";}
+    if ($DB) {
+        echo "$stmt\n";
+    }
     $vt_ct = mysqli_num_rows($rslt);
     $i=0;
-    while ($vt_ct > $i)
-        {
+    while ($vt_ct > $i) {
         $row=mysqli_fetch_row($rslt);
         $Lcount[$i] =        $row[0];
         $Lrun[$i] =        $row[1];
-        if (preg_match("/1$|3$|5$|7$|9$/i", $i))
-            {$bgcolor='bgcolor="#'.$SSstd_row4_background.'"';}
-        else
-            {$bgcolor='bgcolor="#'.$SSstd_row3_background.'"';} 
+        if (preg_match("/1$|3$|5$|7$|9$/i", $i)) {
+            $bgcolor='bgcolor="#'.$SSstd_row4_background.'"';
+        } else {
+            $bgcolor='bgcolor="#'.$SSstd_row3_background.'"';
+        }
         echo "<tr $bgcolor>\n";
         echo "<td><font size=1> $Lrun[$i] </td>";
         echo "<td><font size=1> $Lcount[$i] </td>";
         echo "<td><font size=1> <a href=\"$PHP_SELF?action=SEARCH_RESULTS&run=$Lrun[$i]&DB=$DB\">"._QXZ("LIST")."</a> </td>";
         echo "</tr>\n";
         $i++;
-        }
+    }
     echo "</TABLE><BR><BR>\n";
     echo "\n";
     echo "</center>\n";
-    }
-if ($action == "CALLCARD_BATCHES")
-    {
+}
+if ($action == "CALLCARD_BATCHES") {
     echo "<TABLE><TR><TD>\n";
     echo "<FONT FACE=\"ARIAL,HELVETICA\" COLOR=BLACK SIZE=2>";
     echo "<br>"._QXZ("CallCard Batches").":\n";
@@ -666,38 +721,36 @@ if ($action == "CALLCARD_BATCHES")
     echo "</TR>\n";
     $stmt = "SELECT count(*),batch FROM callcard_accounts_details group by batch order by batch;";
     $rslt=mysql_to_mysqli($stmt, $link);
-    if ($DB) {echo "$stmt\n";}
+    if ($DB) {
+        echo "$stmt\n";
+    }
     $vt_ct = mysqli_num_rows($rslt);
     $i=0;
-    while ($vt_ct > $i)
-        {
+    while ($vt_ct > $i) {
         $row=mysqli_fetch_row($rslt);
         $Lcount[$i] =        $row[0];
         $Lbatch[$i] =        $row[1];
-        if (preg_match("/1$|3$|5$|7$|9$/i", $i))
-            {$bgcolor='bgcolor="#'.$SSstd_row4_background.'"';}
-        else
-            {$bgcolor='bgcolor="#'.$SSstd_row3_background.'"';} 
+        if (preg_match("/1$|3$|5$|7$|9$/i", $i)) {
+            $bgcolor='bgcolor="#'.$SSstd_row4_background.'"';
+        } else {
+            $bgcolor='bgcolor="#'.$SSstd_row3_background.'"';
+        }
         echo "<tr $bgcolor>\n";
         echo "<td><font size=1> $Lbatch[$i] </td>";
         echo "<td><font size=1> $Lcount[$i] </td>";
         echo "<td><font size=1> <a href=\"$PHP_SELF?action=SEARCH_RESULTS&batch=$Lbatch[$i]&DB=$DB\">"._QXZ("LIST")."</a> </td>";
         echo "</tr>\n";
         $i++;
-        }
+    }
     echo "</TABLE><BR><BR>\n";
     echo "\n";
     echo "</center>\n";
-    }
-if ($action == "GENERATE_RESULTS")
-    {
-    if ( (strlen($sequence) < 1) or (strlen($starting_batch) < 1) or (strlen($batch) < 1) or (strlen($run) < 1) or (strlen($total) < 1) )
-        {
+}
+if ($action == "GENERATE_RESULTS") {
+    if ((strlen($sequence) < 1) or (strlen($starting_batch) < 1) or (strlen($batch) < 1) or (strlen($run) < 1) or (strlen($total) < 1)) {
         echo _QXZ("you must enter in all fields")."<BR><BR>\n";
         $action = 'GENERATE';
-        }
-    else
-        {
+    } else {
         echo "<TABLE><TR><TD>\n";
         echo "<FONT FACE=\"ARIAL,HELVETICA\" COLOR=BLACK SIZE=2>";
         echo "<br>"._QXZ("CallCard GENERATE").":\n";
@@ -710,79 +763,71 @@ if ($action == "GENERATE_RESULTS")
         $Gbatch=$starting_batch;
         $Gbatch_count=-1;
         $Gsequence=$sequence;
-        while ($i < $total)
-            {
+        while ($i < $total) {
             $Gbatch_count++;
             $Gsequence++;
-            if ($Gbatch_count >= $batch)
-                {
+            if ($Gbatch_count >= $batch) {
                 $Gbatch_count = 0;
                 $Gbatch++;
-                }
+            }
             $Pbatch =        sprintf("%05s", $Gbatch);
             $Psequence =    sprintf("%05s", $Gsequence);
             $Pcard_id = "$run-$Pbatch-$Psequence";
             $stmt = "SELECT count(*) FROM callcard_accounts_details where card_id='$Pcard_id';";
             $rslt=mysql_to_mysqli($stmt, $link);
-            if ($DB) {echo "$stmt\n";}
+            if ($DB) {
+                echo "$stmt\n";
+            }
             $vt_ct = mysqli_num_rows($rslt);
-            if ($vt_ct > 0)
-                {
+            if ($vt_ct > 0) {
                 $row=mysqli_fetch_row($rslt);
                 $duplicate_count =    $row[0];
-                if ($duplicate_count < 1)
-                    {
+                if ($duplicate_count < 1) {
                     $duplicate_pin=1;
                     $pin_give_up=0;
-                    while ( ($duplicate_pin > 0) and ($pin_give_up < 100000) )
-                        {
+                    while (($duplicate_pin > 0) and ($pin_give_up < 100000)) {
                         $Ppin = rand(10000000, 99999999);
                         $stmt = "SELECT count(*) FROM callcard_accounts where pin='$Ppin';";
                         $rslt=mysql_to_mysqli($stmt, $link);
-                        if ($DB) {echo "$stmt\n";}
+                        if ($DB) {
+                            echo "$stmt\n";
+                        }
                         $pin_ct = mysqli_num_rows($rslt);
-                        if ($pin_ct > 0)
-                            {
+                        if ($pin_ct > 0) {
                             $row=mysqli_fetch_row($rslt);
                             $duplicate_pin =    $row[0];
-                            }
-                        else
-                            {
+                        } else {
                             echo _QXZ("ERROR - cannot query system")."<BR>\n";
-                            }
-                        $pin_give_up++;
                         }
+                        $pin_give_up++;
+                    }
                     $stmt="INSERT INTO callcard_accounts SET card_id='$Pcard_id',pin='$Ppin',status='GENERATE',balance_minutes='$balance_minutes';";
                     $rslt=mysql_to_mysqli($stmt, $link);
                     $stmt="INSERT INTO callcard_accounts_details SET card_id='$Pcard_id',status='GENERATE',run='$run',pack='',batch='$Pbatch',sequence='$Psequence',balance_minutes='$balance_minutes',initial_value='$initial_value',initial_minutes='$initial_minutes',note_purchase_order='$note_purchase_order',note_printer='$note_printer',note_did='$note_did',inbound_group_id='$inbound_group_id',note_language='$note_language',note_name='$note_name',note_comments='$note_comments',create_time='$NOW_TIME',create_user='$USER';";
                     $rslt=mysql_to_mysqli($stmt, $link);
-                    if (preg_match("/1$|3$|5$|7$|9$/i", $i))
-                        {$bgcolor='bgcolor="#'.$SSstd_row4_background.'"';}
-                    else
-                        {$bgcolor='bgcolor="#'.$SSstd_row3_background.'"';} 
+                    if (preg_match("/1$|3$|5$|7$|9$/i", $i)) {
+                        $bgcolor='bgcolor="#'.$SSstd_row4_background.'"';
+                    } else {
+                        $bgcolor='bgcolor="#'.$SSstd_row3_background.'"';
+                    }
                     echo "<tr $bgcolor>\n";
                     echo "<td><font size=1> <a href=\"$PHP_SELF?action=CALLCARD_DETAIL&card_id=$Pcard_id&DB=$DB\"><font color=black>$Pcard_id</font></a> </td>";
                     echo "<td><font size=1> $Ppin </td>";
                     echo "</tr>\n";
-                    }
-                else
-                    {
+                } else {
                     echo _QXZ("ERROR - card_id already exists").": $Pcard_id<BR>\n";
-                    }
                 }
-            else
-                {
+            } else {
                 echo _QXZ("ERROR - cannot query system")."<BR>\n";
-                }
-            $i++;
             }
+            $i++;
+        }
         echo "</TABLE><BR><BR>\n";
         echo "\n";
         echo "</center>\n";
-        }
     }
-if ($action == "GENERATE")
-    {
+}
+if ($action == "GENERATE") {
     echo "<TABLE><TR><TD>\n";
     echo "<FONT FACE=\"ARIAL,HELVETICA\" COLOR=BLACK SIZE=2>";
     echo "<br>"._QXZ("CallCard Generate IDs")."<form action=$PHP_SELF method=POST>\n";
@@ -808,55 +853,56 @@ if ($action == "GENERATE")
     echo "</TABLE></center>\n";
     echo "\n";
     echo "</center>\n";
-    }
-if ($action == "SEARCH_RESULTS")
-    {
-    if (strlen($pin) > 1)
-        {
+}
+if ($action == "SEARCH_RESULTS") {
+    if (strlen($pin) > 1) {
         $searchSQL = "pin='$pin'";
         $stmt = "SELECT card_id FROM callcard_accounts where $searchSQL;";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {echo "$stmt\n";}
+        if ($DB) {
+            echo "$stmt\n";
+        }
         $vt_ct = mysqli_num_rows($rslt);
-        if ($vt_ct > 0)
-            {
+        if ($vt_ct > 0) {
             $row=mysqli_fetch_row($rslt);
             $card_id =            $row[0];
-            }
         }
-    if (strlen($card_id) > 1)
-        {$searchSQL = "card_id='$card_id'";}
-    if (strlen($run) > 1)
-        {
+    }
+    if (strlen($card_id) > 1) {
+        $searchSQL = "card_id='$card_id'";
+    }
+    if (strlen($run) > 1) {
         $and='';
-        if (strlen($searchSQL) > 1) {$and=' and';}
+        if (strlen($searchSQL) > 1) {
+            $and=' and';
+        }
         $searchSQL .= "$and run='$run'";
-        }
-    if (strlen($batch) > 1)
-        {
+    }
+    if (strlen($batch) > 1) {
         $and='';
-        if (strlen($searchSQL) > 1) {$and=' and';}
+        if (strlen($searchSQL) > 1) {
+            $and=' and';
+        }
         $searchSQL .= "$and batch='$batch'";
-        }
-    if (strlen($pack) > 1)
-        {
+    }
+    if (strlen($pack) > 1) {
         $and='';
-        if (strlen($searchSQL) > 1) {$and=' and';}
+        if (strlen($searchSQL) > 1) {
+            $and=' and';
+        }
         $searchSQL .= "$and pack='$pack'";
-        }
-    if (strlen($sequence) > 1)
-        {
+    }
+    if (strlen($sequence) > 1) {
         $and='';
-        if (strlen($searchSQL) > 1) {$and=' and';}
-        $searchSQL .= "$and sequence='$sequence'";
+        if (strlen($searchSQL) > 1) {
+            $and=' and';
         }
-    if (strlen($searchSQL) < 5)
-        {
+        $searchSQL .= "$and sequence='$sequence'";
+    }
+    if (strlen($searchSQL) < 5) {
         echo _QXZ("you must enter something to search for")."<BR><BR>\n";
         $action = 'SEARCH';
-        }
-    else
-        {
+    } else {
         echo "<TABLE><TR><TD>\n";
         echo "<FONT FACE=\"ARIAL,HELVETICA\" COLOR=BLACK SIZE=2>";
         echo "<br>"._QXZ("CallCard Batches").":\n";
@@ -873,11 +919,12 @@ if ($action == "SEARCH_RESULTS")
         echo "</TR>\n";
         $stmt = "SELECT card_id,status,balance_minutes,create_time,activate_time,used_time,void_time FROM callcard_accounts_details where $searchSQL;";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {echo "$stmt\n";}
+        if ($DB) {
+            echo "$stmt\n";
+        }
         $vt_ct = mysqli_num_rows($rslt);
         $i=0;
-        while ($vt_ct > $i)
-            {
+        while ($vt_ct > $i) {
             $row=mysqli_fetch_row($rslt);
             $Lcard_id[$i] =            $row[0];
             $Lstatus[$i] =            $row[1];
@@ -886,10 +933,11 @@ if ($action == "SEARCH_RESULTS")
             $Lactivate_time[$i] =    $row[4];
             $Lused_time[$i] =        $row[5];
             $Lvoid_time[$i] =        $row[6];
-            if (preg_match("/1$|3$|5$|7$|9$/i", $i))
-                {$bgcolor='bgcolor="#'.$SSstd_row4_background.'"';}
-            else
-                {$bgcolor='bgcolor="#'.$SSstd_row3_background.'"';} 
+            if (preg_match("/1$|3$|5$|7$|9$/i", $i)) {
+                $bgcolor='bgcolor="#'.$SSstd_row4_background.'"';
+            } else {
+                $bgcolor='bgcolor="#'.$SSstd_row3_background.'"';
+            }
             echo "<tr $bgcolor>\n";
             echo "<td><font size=1> <a href=\"$PHP_SELF?action=CALLCARD_DETAIL&card_id=$Lcard_id[$i]&DB=$DB\"><font color=black>$Lcard_id[$i]</font></a> </td>";
             echo "<td><font size=1> $Lstatus[$i] </td>";
@@ -901,14 +949,13 @@ if ($action == "SEARCH_RESULTS")
             echo "<td><font size=1> <a href=\"$PHP_SELF?action=CALLCARD_DETAIL&card_id=$Lcard_id[$i]&DB=$DB\">"._QXZ("DETAILS")."</a> </td>";
             echo "</tr>\n";
             $i++;
-            }
+        }
         echo "</TABLE><BR><BR>\n";
         echo "\n";
         echo "</center>\n";
-        }
     }
-if ($action == "SEARCH")
-    {
+}
+if ($action == "SEARCH") {
     echo "<TABLE><TR><TD>\n";
     echo "<FONT FACE=\"ARIAL,HELVETICA\" COLOR=BLACK SIZE=2>";
     echo "<br>"._QXZ("CallCard Search")."<form action=$PHP_SELF method=POST>\n";
@@ -924,7 +971,7 @@ if ($action == "SEARCH")
     echo "</TABLE></center>\n";
     echo "\n";
     echo "</center>\n";
-    }
+}
 ?>
 <BR><font size=1><?php echo _QXZ("CallCard"); ?> &nbsp; &nbsp; <?php echo _QXZ("VERSION"); ?>: <?php echo $version ?> &nbsp; &nbsp; <?php echo _QXZ("BUILD"); ?>: <?php echo $build ?> &nbsp; &nbsp; </td></tr>
 </TD></TR></TABLE>

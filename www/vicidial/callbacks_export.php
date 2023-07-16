@@ -39,28 +39,55 @@ require("functions.php");
 $PHP_AUTH_USER=$_SERVER['PHP_AUTH_USER'];
 $PHP_AUTH_PW=$_SERVER['PHP_AUTH_PW'];
 $PHP_SELF=$_SERVER['PHP_SELF'];
-$PHP_SELF = preg_replace('/\.php.*/i','.php',$PHP_SELF);
-if (isset($_GET["DB"]))                    {$DB=$_GET["DB"];}
-    elseif (isset($_POST["DB"]))        {$DB=$_POST["DB"];}
-if (isset($_GET["submit"]))                {$submit=$_GET["submit"];}
-    elseif (isset($_POST["submit"]))    {$submit=$_POST["submit"];}
-if (isset($_GET["SUBMIT"]))                {$SUBMIT=$_GET["SUBMIT"];}
-    elseif (isset($_POST["SUBMIT"]))    {$SUBMIT=$_POST["SUBMIT"];}
-if (isset($_GET["file_download"]))                {$file_download=$_GET["file_download"];}
-    elseif (isset($_POST["file_download"]))        {$file_download=$_POST["file_download"];}
-if (isset($_GET["query_date"]))                {$query_date=$_GET["query_date"];}
-    elseif (isset($_POST["query_date"]))    {$query_date=$_POST["query_date"];}
-if (isset($_GET["end_date"]))            {$end_date=$_GET["end_date"];}
-    elseif (isset($_POST["end_date"]))    {$end_date=$_POST["end_date"];}
-if (isset($_GET["cb_groups"]))            {$cb_groups=$_GET["cb_groups"];}
-    elseif (isset($_POST["cb_groups"]))    {$cb_groups=$_POST["cb_groups"];}
-$DB=preg_replace("/[^0-9a-zA-Z]/","",$DB);
+$PHP_SELF = preg_replace('/\.php.*/i', '.php', $PHP_SELF);
+if (isset($_GET["DB"])) {
+    $DB=$_GET["DB"];
+} elseif (isset($_POST["DB"])) {
+    $DB=$_POST["DB"];
+}
+if (isset($_GET["submit"])) {
+    $submit=$_GET["submit"];
+} elseif (isset($_POST["submit"])) {
+    $submit=$_POST["submit"];
+}
+if (isset($_GET["SUBMIT"])) {
+    $SUBMIT=$_GET["SUBMIT"];
+} elseif (isset($_POST["SUBMIT"])) {
+    $SUBMIT=$_POST["SUBMIT"];
+}
+if (isset($_GET["file_download"])) {
+    $file_download=$_GET["file_download"];
+} elseif (isset($_POST["file_download"])) {
+    $file_download=$_POST["file_download"];
+}
+if (isset($_GET["query_date"])) {
+    $query_date=$_GET["query_date"];
+} elseif (isset($_POST["query_date"])) {
+    $query_date=$_POST["query_date"];
+}
+if (isset($_GET["end_date"])) {
+    $end_date=$_GET["end_date"];
+} elseif (isset($_POST["end_date"])) {
+    $end_date=$_POST["end_date"];
+}
+if (isset($_GET["cb_groups"])) {
+    $cb_groups=$_GET["cb_groups"];
+} elseif (isset($_POST["cb_groups"])) {
+    $cb_groups=$_POST["cb_groups"];
+}
+$DB=preg_replace("/[^0-9a-zA-Z]/", "", $DB);
 $StarTtimE = date("U");
 $TODAY = date("Y-m-d");
 $NOW_TIME = date("Y-m-d H:i:s");
-if (!isset($cb_groups)) {$cb_groups=array();}
-if (!isset($query_date)) {$query_date = $TODAY;}
-if (!isset($end_date)) {$end_date = $TODAY;}
+if (!isset($cb_groups)) {
+    $cb_groups=array();
+}
+if (!isset($query_date)) {
+    $query_date = $TODAY;
+}
+if (!isset($end_date)) {
+    $end_date = $TODAY;
+}
 $ip = getenv("REMOTE_ADDR");
 $date = date("r");
 $ip = getenv("REMOTE_ADDR");
@@ -69,8 +96,7 @@ $report_name="Callbacks Export";
 $stmt = "SELECT use_non_latin,webroot_writable,outbound_autodial_active,enable_languages,language_method,qc_features_active,allow_web_debug FROM system_settings;";
 $rslt=mysql_to_mysqli($stmt, $link);
 $qm_conf_ct = mysqli_num_rows($rslt);
-if ($qm_conf_ct > 0)
-    {
+if ($qm_conf_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $non_latin =                    $row[0];
     $webroot_writable =                $row[1];
@@ -79,8 +105,10 @@ if ($qm_conf_ct > 0)
     $SSlanguage_method =            $row[4];
     $SSqc_features_active =            $row[5];
     $SSallow_web_debug =            $row[6];
-    }
-if ($SSallow_web_debug < 1) {$DB=0;}
+}
+if ($SSallow_web_debug < 1) {
+    $DB=0;
+}
 $query_date = preg_replace('/[^- \:\_0-9a-zA-Z]/', '', $query_date);
 $end_date = preg_replace('/[^- \:\_0-9a-zA-Z]/', '', $end_date);
 $submit = preg_replace('/[^-_0-9a-zA-Z]/', '', $submit);
@@ -88,55 +116,51 @@ $SUBMIT = preg_replace('/[^-_0-9a-zA-Z]/', '', $SUBMIT);
 $search_archived_data = preg_replace('/[^-_0-9a-zA-Z]/', '', $search_archived_data);
 $file_download = preg_replace('/[^-_0-9a-zA-Z]/', '', $file_download);
 $report_display_type = preg_replace('/[^-_0-9a-zA-Z]/', '', $report_display_type);
-if ($non_latin < 1)
-    {
+if ($non_latin < 1) {
     $PHP_AUTH_USER = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_USER);
     $PHP_AUTH_PW = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_PW);
-    }
-else
-    {
+} else {
     $PHP_AUTH_USER = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_USER);
     $PHP_AUTH_PW = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_PW);
-    }
+}
 $stmt="SELECT selected_language,qc_enabled,user_group from vicidial_users where user='$PHP_AUTH_USER';";
-if ($DB) {echo "|$stmt|\n";}
+if ($DB) {
+    echo "|$stmt|\n";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 $sl_ct = mysqli_num_rows($rslt);
-if ($sl_ct > 0)
-    {
+if ($sl_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $VUselected_language =        $row[0];
     $qc_auth =                    $row[1];
     $LOGuser_group =            $row[2];
-    }
+}
 $category='';
 $record_id='';
 $auth=0;
-$auth_message = user_authorization($PHP_AUTH_USER,$PHP_AUTH_PW,'',1,0);
-if ($auth_message == 'GOOD')
-    {$auth=1;}
-if ($auth < 1)
-    {
+$auth_message = user_authorization($PHP_AUTH_USER, $PHP_AUTH_PW, '', 1, 0);
+if ($auth_message == 'GOOD') {
+    $auth=1;
+}
+if ($auth < 1) {
     $VDdisplayMESSAGE = _QXZ("Login incorrect, please try again");
-    if ($auth_message == 'LOCK')
-        {
+    if ($auth_message == 'LOCK') {
         $VDdisplayMESSAGE = _QXZ("Too many login attempts, try again in 15 minutes");
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
-    if ($auth_message == 'IPBLOCK')
-        {
+    }
+    if ($auth_message == 'IPBLOCK') {
         $VDdisplayMESSAGE = _QXZ("Your IP Address is not allowed") . ": $ip";
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
+    }
     Header("WWW-Authenticate: Basic realm=\"CONTACT-CENTER-ADMIN\"");
     Header("HTTP/1.0 401 Unauthorized");
     echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$PHP_AUTH_PW|$auth_message|\n";
     exit;
-    }
+}
 $stmt="SELECT full_name,change_agent_campaign,modify_timeclock_log,user_group,user_level,modify_leads from vicidial_users where user='$PHP_AUTH_USER';";
 $rslt=mysql_to_mysqli($stmt, $link);
 $row=mysqli_fetch_row($rslt);
@@ -146,22 +170,20 @@ $modify_timeclock_log =        $row[2];
 $LOGuser_group =            $row[3];
 $user_level =                $row[4];
 $LOGmodify_leads =            $row[5];
-if ($user_level==9) 
-    {
+if ($user_level==9) {
     $ul_clause="where user_level<=9";
-    }
-else 
-    {
+} else {
     $ul_clause="where user_level<$user_level";
-    }
-if ($LOGmodify_leads < 1)
-    {
-    Header ("Content-type: text/html; charset=utf-8");
+}
+if ($LOGmodify_leads < 1) {
+    Header("Content-type: text/html; charset=utf-8");
     echo _QXZ("You do not have permissions to modify leads").": |$PHP_AUTH_USER|\n";
     exit;
-    }
+}
 $stmt="SELECT allowed_campaigns,allowed_reports,admin_viewable_groups,admin_viewable_call_times from vicidial_user_groups where user_group='$LOGuser_group';";
-if ($DB) {echo "|$stmt|\n";}
+if ($DB) {
+    echo "|$stmt|\n";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 $row=mysqli_fetch_row($rslt);
 $LOGallowed_campaigns =            $row[0];
@@ -170,43 +192,38 @@ $LOGadmin_viewable_groups =        $row[2];
 $LOGadmin_viewable_call_times =    $row[3];
 $LOGallowed_campaignsSQL='';
 $whereLOGallowed_campaignsSQL='';
-if ( (!preg_match('/\-ALL/i', $LOGallowed_campaigns)) )
-    {
-    $rawLOGallowed_campaignsSQL = preg_replace("/ -/",'',$LOGallowed_campaigns);
-    $rawLOGallowed_campaignsSQL = preg_replace("/ /","','",$rawLOGallowed_campaignsSQL);
+if ((!preg_match('/\-ALL/i', $LOGallowed_campaigns))) {
+    $rawLOGallowed_campaignsSQL = preg_replace("/ -/", '', $LOGallowed_campaigns);
+    $rawLOGallowed_campaignsSQL = preg_replace("/ /", "','", $rawLOGallowed_campaignsSQL);
     $LOGallowed_campaignsSQL = "and campaign_id IN('$rawLOGallowed_campaignsSQL')";
     $whereLOGallowed_campaignsSQL = "where campaign_id IN('$rawLOGallowed_campaignsSQL')";
-    }
+}
 $regexLOGallowed_campaigns = " $LOGallowed_campaigns ";
 $LOGadmin_viewable_groupsSQL='';
 $whereLOGadmin_viewable_groupsSQL='';
-if ( (!preg_match('/\-\-ALL\-\-/i',$LOGadmin_viewable_groups)) and (strlen($LOGadmin_viewable_groups) > 3) )
-    {
-    $rawLOGadmin_viewable_groupsSQL = preg_replace("/ -/",'',$LOGadmin_viewable_groups);
-    $rawLOGadmin_viewable_groupsSQL = preg_replace("/ /","','",$rawLOGadmin_viewable_groupsSQL);
+if ((!preg_match('/\-\-ALL\-\-/i', $LOGadmin_viewable_groups)) and (strlen($LOGadmin_viewable_groups) > 3)) {
+    $rawLOGadmin_viewable_groupsSQL = preg_replace("/ -/", '', $LOGadmin_viewable_groups);
+    $rawLOGadmin_viewable_groupsSQL = preg_replace("/ /", "','", $rawLOGadmin_viewable_groupsSQL);
     $LOGadmin_viewable_groupsSQL = "and user_group IN('---ALL---','$rawLOGadmin_viewable_groupsSQL')";
     $whereLOGadmin_viewable_groupsSQL = "where user_group IN('---ALL---','$rawLOGadmin_viewable_groupsSQL')";
-    }
+}
 $LOGadmin_viewable_call_timesSQL='';
 $whereLOGadmin_viewable_call_timesSQL='';
-if ( (!preg_match('/\-\-ALL\-\-/i', $LOGadmin_viewable_call_times)) and (strlen($LOGadmin_viewable_call_times) > 3) )
-    {
-    $rawLOGadmin_viewable_call_timesSQL = preg_replace("/ -/",'',$LOGadmin_viewable_call_times);
-    $rawLOGadmin_viewable_call_timesSQL = preg_replace("/ /","','",$rawLOGadmin_viewable_call_timesSQL);
+if ((!preg_match('/\-\-ALL\-\-/i', $LOGadmin_viewable_call_times)) and (strlen($LOGadmin_viewable_call_times) > 3)) {
+    $rawLOGadmin_viewable_call_timesSQL = preg_replace("/ -/", '', $LOGadmin_viewable_call_times);
+    $rawLOGadmin_viewable_call_timesSQL = preg_replace("/ /", "','", $rawLOGadmin_viewable_call_timesSQL);
     $LOGadmin_viewable_call_timesSQL = "and call_time_id IN('---ALL---','$rawLOGadmin_viewable_call_timesSQL')";
     $whereLOGadmin_viewable_call_timesSQL = "where call_time_id IN('---ALL---','$rawLOGadmin_viewable_call_timesSQL')";
-    }
-if ( (!preg_match("/$report_name/",$LOGallowed_reports)) and (!preg_match("/ALL REPORTS/",$LOGallowed_reports)) )
-    {
+}
+if ((!preg_match("/$report_name/", $LOGallowed_reports)) and (!preg_match("/ALL REPORTS/", $LOGallowed_reports))) {
     Header("WWW-Authenticate: Basic realm=\"CONTACT-CENTER-ADMIN\"");
     Header("HTTP/1.0 401 Unauthorized");
     echo "You are not allowed to view this report: |$PHP_AUTH_USER|$report_name|\n";
     exit;
-    }
+}
 $NWB = "<IMG SRC=\"help.png\" onClick=\"FillAndShowHelpDiv(event, '";
 $NWE = "')\" WIDTH=20 HEIGHT=20 BORDER=0 ALT=\"HELP\" ALIGN=TOP>";
-if ($SUBMIT) 
-    {
+if ($SUBMIT) {
     $LOGip = getenv("REMOTE_ADDR");
     $LOGbrowser = getenv("HTTP_USER_AGENT");
     $LOGscript_name = getenv("SCRIPT_NAME");
@@ -214,36 +231,49 @@ if ($SUBMIT)
     $LOGserver_port = getenv("SERVER_PORT");
     $LOGrequest_uri = getenv("REQUEST_URI");
     $LOGhttp_referer = getenv("HTTP_REFERER");
-    $LOGbrowser=preg_replace("/\'|\"|\\\\/","",$LOGbrowser);
-    $LOGrequest_uri=preg_replace("/\'|\"|\\\\/","",$LOGrequest_uri);
-    $LOGhttp_referer=preg_replace("/\'|\"|\\\\/","",$LOGhttp_referer);
-    if (preg_match("/443/i",$LOGserver_port)) {$HTTPprotocol = 'https://';}
-      else {$HTTPprotocol = 'http://';}
-    if (($LOGserver_port == '80') or ($LOGserver_port == '443') ) {$LOGserver_port='';}
-    else {$LOGserver_port = ":$LOGserver_port";}
+    $LOGbrowser=preg_replace("/\'|\"|\\\\/", "", $LOGbrowser);
+    $LOGrequest_uri=preg_replace("/\'|\"|\\\\/", "", $LOGrequest_uri);
+    $LOGhttp_referer=preg_replace("/\'|\"|\\\\/", "", $LOGhttp_referer);
+    if (preg_match("/443/i", $LOGserver_port)) {
+        $HTTPprotocol = 'https://';
+    } else {
+        $HTTPprotocol = 'http://';
+    }
+    if (($LOGserver_port == '80') or ($LOGserver_port == '443')) {
+        $LOGserver_port='';
+    } else {
+        $LOGserver_port = ":$LOGserver_port";
+    }
     $LOGfull_url = "$HTTPprotocol$LOGserver_name$LOGserver_port$LOGrequest_uri";
     $LOGhostname = php_uname('n');
-    if (strlen($LOGhostname)<1) {$LOGhostname='X';}
-    if (strlen($LOGserver_name)<1) {$LOGserver_name='X';}
+    if (strlen($LOGhostname)<1) {
+        $LOGhostname='X';
+    }
+    if (strlen($LOGserver_name)<1) {
+        $LOGserver_name='X';
+    }
     $stmt="SELECT webserver_id FROM vicidial_webservers where webserver='$LOGserver_name' and hostname='$LOGhostname' LIMIT 1;";
     $rslt=mysql_to_mysqli($stmt, $link);
-    if ($DB) {echo "$stmt\n";}
+    if ($DB) {
+        echo "$stmt\n";
+    }
     $webserver_id_ct = mysqli_num_rows($rslt);
-    if ($webserver_id_ct > 0)
-        {
+    if ($webserver_id_ct > 0) {
         $row=mysqli_fetch_row($rslt);
         $webserver_id = $row[0];
-        }
-    else
-        {
+    } else {
         $stmt="INSERT INTO vicidial_webservers (webserver,hostname) values('$LOGserver_name','$LOGhostname');";
-        if ($DB) {echo "$stmt\n";}
+        if ($DB) {
+            echo "$stmt\n";
+        }
         $rslt=mysql_to_mysqli($stmt, $link);
         $affected_rows = mysqli_affected_rows($link);
         $webserver_id = mysqli_insert_id($link);
-        }
+    }
     $stmt="INSERT INTO vicidial_report_log set event_date=NOW(), user='$PHP_AUTH_USER', ip_address='$LOGip', report_name='$report_name', browser='$LOGbrowser', referer='$LOGhttp_referer', notes='$LOGserver_name:$LOGserver_port $LOGscript_name', url='$LOGfull_url', webserver='$webserver_id';";
-    if ($DB) {echo "|$stmt|\n";}
+    if ($DB) {
+        echo "|$stmt|\n";
+    }
     $rslt=mysql_to_mysqli($stmt, $link);
     $report_log_id = mysqli_insert_id($link);
     $SSmenu_background='015B91';
@@ -256,14 +286,14 @@ if ($SUBMIT)
     $SSalt_row1_background='BDFFBD';
     $SSalt_row2_background='99FF99';
     $SSalt_row3_background='CCFFCC';
-    if ($SSadmin_screen_colors != 'default')
-        {
+    if ($SSadmin_screen_colors != 'default') {
         $stmt = "SELECT menu_background,frame_background,std_row1_background,std_row2_background,std_row3_background,std_row4_background,std_row5_background,alt_row1_background,alt_row2_background,alt_row3_background,web_logo FROM vicidial_screen_colors where colors_id='$SSadmin_screen_colors';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {echo "$stmt\n";}
+        if ($DB) {
+            echo "$stmt\n";
+        }
         $colors_ct = mysqli_num_rows($rslt);
-        if ($colors_ct > 0)
-            {
+        if ($colors_ct > 0) {
             $row=mysqli_fetch_row($rslt);
             $SSmenu_background =        $row[0];
             $SSframe_background =        $row[1];
@@ -276,44 +306,38 @@ if ($SUBMIT)
             $SSalt_row2_background =    $row[8];
             $SSalt_row3_background =    $row[9];
             $SSweb_logo =                $row[10];
-            }
         }
-    if (count($cb_groups)>0 && $query_date)
-        {
-        for ($i=0; $i<count($cb_groups); $i++) 
-            {
+    }
+    if (count($cb_groups)>0 && $query_date) {
+        for ($i=0; $i<count($cb_groups); $i++) {
             $cb_groups[$i] = preg_replace('/[^-_0-9\p{L}]/u', '', $cb_groups[$i]);
-            }
-        if (in_array("ALL", $cb_groups)) 
-            {
+        }
+        if (in_array("ALL", $cb_groups)) {
             $groups_stmt="SELECT distinct campaign_id from vicidial_callbacks $whereLOGallowed_campaignsSQL";
             $groups_rslt=mysql_to_mysqli($groups_stmt, $link);
             $groupsSQL=" and campaign_id in (";
             $groupsQS="";
-            while($groups_row=mysqli_fetch_row($groups_rslt)) 
-                {
+            while($groups_row=mysqli_fetch_row($groups_rslt)) {
                 $groupsSQL.="'$groups_row[0]',";
                 $groupsQS.="&cb_groups[]=".$groups_row[0];
-                }
+            }
             $groupsSQL=preg_replace('/,$/', '', $groupsSQL);
             $groupsSQL.=") ";
-            }
-        else
-            {
+        } else {
             $groupsSQL=" and campaign_id in ('".implode("','", $cb_groups)."') ";
             $groupsQS="";
-            for ($i=0; $i<count($cb_groups); $i++) 
-                {
+            for ($i=0; $i<count($cb_groups); $i++) {
                 $groupsQS.="&cb_groups[]=".$cb_groups[$i];
-                }
             }
-        if (!$end_date) {$end_date=$query_date;}
+        }
+        if (!$end_date) {
+            $end_date=$query_date;
+        }
         $daySQL=" callback_time>='$query_date 00:00:00' and callback_time<='$end_date 23:59:59' ";
         $callback_stmt="select lead_id, status, entry_time, callback_time, comments, user from vicidial_callbacks where $daySQL $groupsSQL order by callback_time asc, entry_time asc";
         $callback_rslt=mysql_to_mysqli($callback_stmt, $link);
         $callbacks_count=mysqli_num_rows($callback_rslt);
-        if (mysqli_num_rows($callback_rslt)>0) 
-            {
+        if (mysqli_num_rows($callback_rslt)>0) {
             $rpt_output="<table width='100%' cellspacing='0' cellpadding='3'>";
             $rpt_output.="<tr><th colspan='4'><FONT class='standard'>Total Results:</font> <font color='red' class='standard_bold'>".$callbacks_count."</FONT></th><th colspan='3'><FONT class='standard'><a href='$PHP_SELF?query_date=$query_date&end_date=$end_date$groupsQS&file_download=1&SUBMIT=$SUBMIT'>[DOWNLOAD AS CSV FILE]</A></font></th></tr>";
             $rpt_output.="<tr bgcolor='#000'>";
@@ -329,48 +353,41 @@ if ($SUBMIT)
             $rpt_output.="</tr>";
             $CSV_output="\"LEAD ID\",\"PHONE NUMBER\",\"CALLBACK STATUS\",\"CREATED BY USER\",\"CALLBACK ENTRY TIME\",\"SCHEDULED CALLBACK TIME\",\"NOTES\"\n";
             $i=0;
-            while($callback_row=mysqli_fetch_array($callback_rslt))
-                {
+            while($callback_row=mysqli_fetch_array($callback_rslt)) {
                 $lead_active=0;
                 $lead_archived=0;
                 $phone_number="";
                 $vl_stmt="select count(*), phone_number from vicidial_list where lead_id='$callback_row[lead_id]'";
                 $vl_rslt=mysql_to_mysqli($vl_stmt, $link);
                 $vl_row=mysqli_fetch_row($vl_rslt);
-                if($vl_row[0]>0) 
-                    {
+                if($vl_row[0]>0) {
                     $lead_active=1;
                     $phone_number=$vl_row[1];
-                    }
-                else
-                    {
-                    if(table_exists("vicidial_list_archive"))
-                        {
+                } else {
+                    if(table_exists("vicidial_list_archive")) {
                         $vl_stmt.="select count(*), phone_number from vicidial_list_archive where lead_id='$callback_row[lead_id]'";
                         $vl_rslt=mysql_to_mysqli($vl_stmt, $link);
                         $vl_row=mysqli_fetch_row($vl_rslt);
-                        if($vl_row[0]>0) 
-                            {
+                        if($vl_row[0]>0) {
                             $lead_archived=1;
                             $phone_number=$vl_row[1];
-                            }
                         }
                     }
+                }
                 $i++;
-                if ($lead_active)
-                    {
-                    if ($i%2==0) {$bgcolor=$SSstd_row1_background;} else {$bgcolor=$SSstd_row2_background;}
+                if ($lead_active) {
+                    if ($i%2==0) {
+                        $bgcolor=$SSstd_row1_background;
+                    } else {
+                        $bgcolor=$SSstd_row2_background;
                     }
-                else if ($lead_archived)
-                    {
+                } elseif ($lead_archived) {
                     $bgcolor="#FF9";
                     $callback_row["status"]="LEAD ARCHIVED";
-                    }
-                else
-                    {
+                } else {
                     $bgcolor="#F99";
                     $callback_row["status"]="LEAD MISSING";
-                    }
+                }
                 $rpt_output.="<tr bgcolor='".$bgcolor."'>\n";
                 $rpt_output.="<th nowrap><FONT FACE=\"ARIAL,HELVETICA\" SIZE=1>$callback_row[lead_id]</FONT></th>";
                 $rpt_output.="<th nowrap><FONT FACE=\"ARIAL,HELVETICA\" SIZE=1>$phone_number</FONT></th>";
@@ -381,20 +398,23 @@ if ($SUBMIT)
                 $rpt_output.="<th><FONT FACE=\"ARIAL,HELVETICA\" SIZE=1>$callback_row[comments]</FONT></th>";
                 $rpt_output.="</tr>";
                 $CSV_output.="\"$callback_row[lead_id]\",\"$phone_number\",\"$callback_row[status]\",\"$callback_row[user]\",\"$callback_row[entry_time]\",\"$callback_row[callback_time]\",\"$callback_row[comments]\"\n";
-                }
+            }
             $rpt_output.="</table>";
-            if ($DB) {$rpt_output.=$callback_stmt."*\n";}
+            if ($DB) {
+                $rpt_output.=$callback_stmt."*\n";
+            }
             $endMS = microtime();
-            $startMSary = explode(" ",$startMS);
-            $endMSary = explode(" ",$endMS);
+            $startMSary = explode(" ", $startMS);
+            $endMSary = explode(" ", $endMS);
             $runS = ($endMSary[0] - $startMSary[0]);
             $runM = ($endMSary[1] - $startMSary[1]);
             $TOTALrun = ($runS + $runM);
             $stmt="UPDATE vicidial_report_log set run_time='$TOTALrun' where report_log_id='$report_log_id';";
-            if ($DB) {echo "|$stmt|\n";}
+            if ($DB) {
+                echo "|$stmt|\n";
+            }
             $rslt=mysql_to_mysqli($stmt, $link);
-            if ($file_download)
-                {
+            if ($file_download) {
                 $FILE_TIME = date("Ymd-His");
                 $CSVfilename = "CALLBACKS_EXPORT_$FILE_TIME.csv";
                 header('Content-type: application/octet-stream');
@@ -405,32 +425,29 @@ if ($SUBMIT)
                 ob_clean();
                 flush();
                 echo "$CSV_output";
-                if ($db_source == 'S')
-                    {
+                if ($db_source == 'S') {
                     mysqli_close($link);
                     $use_slave_server=0;
                     $db_source = 'M';
                     require("dbconnect_mysqli.php");
-                    }
+                }
                 $SQL_log = "$callback_stmt";
                 $SQL_log = preg_replace('/;/', '', $SQL_log);
                 $SQL_log = addslashes($SQL_log);
                 $stmt="INSERT INTO vicidial_admin_log set event_date='$NOW_TIME', user='$PHP_AUTH_USER', ip_address='$ip', event_section='CALLBACKS', event_type='EXPORT', record_id='', event_code='ADMIN EXPORT CALLBACKS REPORT', event_sql=\"$SQL_log\", event_notes='';";
-                if ($DB) {echo "|$stmt|\n";}
+                if ($DB) {
+                    echo "|$stmt|\n";
+                }
                 $rslt=mysql_to_mysqli($stmt, $link);
                 exit;
-                }
             }
-        else
-            {
+        } else {
             $err_msg="<tr><th colspan=2><B><font color='#F00'>** NO RESULTS FOUND **</th></tr>";
-            }
         }
-    else 
-        {
+    } else {
         $err_msg="<tr><th colspan=2><B><font color='#F00'>** REPORT NOT RUN - SOME VALUES MISSING **</th></tr>";
-        }
     }
+}
 echo "<html>\n";
 echo "<head>\n";
 echo "<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=utf-8\">\n";
@@ -464,67 +481,69 @@ echo "<input type=hidden name=DB value=\"$DB\">\n";
 $purge_trigger=0;
 $callback_statuses="'LIVE'";
 $purge_verbiage=array();
-    echo "<table width='650' align='center' border=0>";
-    echo $err_msg;
-    echo "<tr>";
-    echo "<td align='left' width='270'>";
-    $stmt="SELECT campaign_id, count(*) as ct from vicidial_callbacks $whereLOGallowed_campaignsSQL group by campaign_id order by campaign_id";
-    $rslt=mysql_to_mysqli($stmt, $link);
-    if ($DB) {echo "$stmt\n";}
-    echo "<B>"._QXZ("Campaigns with callbacks").":</B>$NWB#cb-bulk-campaigns$NWE<BR><select name='cb_groups[]' size=5 multiple>\n";
-    echo "<option value='ALL'>--- "._QXZ("ALL CAMPAIGNS")." ---</option>\n";
-    if (mysqli_num_rows($rslt)>0) 
-        {
-        while ($row=mysqli_fetch_array($rslt)) 
-            {
-            if (in_array($row["campaign_id"], $cb_groups)) {$s=" selected";} else {$s="";}
-            echo "\t<option value='$row[campaign_id]'$s>".($row["campaign_id"] ? $row["campaign_id"] : "(none)")." - ($row[ct] "._QXZ("callbacks").")</option>\n";
-            }
+echo "<table width='650' align='center' border=0>";
+echo $err_msg;
+echo "<tr>";
+echo "<td align='left' width='270'>";
+$stmt="SELECT campaign_id, count(*) as ct from vicidial_callbacks $whereLOGallowed_campaignsSQL group by campaign_id order by campaign_id";
+$rslt=mysql_to_mysqli($stmt, $link);
+if ($DB) {
+    echo "$stmt\n";
+}
+echo "<B>"._QXZ("Campaigns with callbacks").":</B>$NWB#cb-bulk-campaigns$NWE<BR><select name='cb_groups[]' size=5 multiple>\n";
+echo "<option value='ALL'>--- "._QXZ("ALL CAMPAIGNS")." ---</option>\n";
+if (mysqli_num_rows($rslt)>0) {
+    while ($row=mysqli_fetch_array($rslt)) {
+        if (in_array($row["campaign_id"], $cb_groups)) {
+            $s=" selected";
+        } else {
+            $s="";
         }
-    else
-        {
-        echo "\t<option value=''>**"._QXZ("NO CALLBACKS")."**</option>\n";
-        }
-    echo "</select>";
-    echo "</td>";
-    echo "<TD VALIGN=TOP align='left'><B>"._QXZ("Scheduled Callback Dates").":$NWB#cb-export-cb-dates$NWE<BR>";
-    echo "<INPUT TYPE=TEXT NAME=query_date SIZE=10 MAXLENGTH=10 VALUE=\"$query_date\">";
-    echo "<script language=\"JavaScript\">\n";
-    echo "function openNewWindow(url)\n";
-    echo "  {\n";
-    echo "  window.open (url,\"\",'width=620,height=300,scrollbars=yes,menubar=yes,address=yes');\n";
-    echo "  }\n";
-    echo "var o_cal = new tcal ({\n";
-    echo "    // form name\n";
-    echo "    'formname': 'vicidial_report',\n";
-    echo "    // input name\n";
-    echo "    'controlname': 'query_date'\n";
-    echo "});\n";
-    echo "o_cal.a_tpl.yearscroll = false;\n";
-    echo "// o_cal.a_tpl.weekstart = 1; // Monday week start\n";
-    echo "</script>\n";
-    echo "<BR> "._QXZ("to")." <BR><INPUT TYPE=TEXT NAME=end_date SIZE=10 MAXLENGTH=10 VALUE=\"$end_date\">";
-    echo "<script language=\"JavaScript\">\n";
-    echo "var o_cal = new tcal ({\n";
-    echo "    // form name\n";
-    echo "    'formname': 'vicidial_report',\n";
-    echo "    // input name\n";
-    echo "    'controlname': 'end_date'\n";
-    echo "});\n";
-    echo "o_cal.a_tpl.yearscroll = false;\n";
-    echo "// o_cal.a_tpl.weekstart = 1; // Monday week start\n";
-    echo "</script>\n";
-    echo "</B></TD>";
-    echo "<tr>";
-    echo "<td align='center' colspan='2'>";
-    echo "<input type='submit' name='SUBMIT' value='SUBMIT'><BR/><BR/>";
-    echo "</td>";
-    echo "</tr>";
-    echo "</TR>";
-    echo "</table>";
-    echo "</table>";
-    echo "<BR><BR>";
-    echo $rpt_output;
+        echo "\t<option value='$row[campaign_id]'$s>".($row["campaign_id"] ? $row["campaign_id"] : "(none)")." - ($row[ct] "._QXZ("callbacks").")</option>\n";
+    }
+} else {
+    echo "\t<option value=''>**"._QXZ("NO CALLBACKS")."**</option>\n";
+}
+echo "</select>";
+echo "</td>";
+echo "<TD VALIGN=TOP align='left'><B>"._QXZ("Scheduled Callback Dates").":$NWB#cb-export-cb-dates$NWE<BR>";
+echo "<INPUT TYPE=TEXT NAME=query_date SIZE=10 MAXLENGTH=10 VALUE=\"$query_date\">";
+echo "<script language=\"JavaScript\">\n";
+echo "function openNewWindow(url)\n";
+echo "  {\n";
+echo "  window.open (url,\"\",'width=620,height=300,scrollbars=yes,menubar=yes,address=yes');\n";
+echo "  }\n";
+echo "var o_cal = new tcal ({\n";
+echo "    // form name\n";
+echo "    'formname': 'vicidial_report',\n";
+echo "    // input name\n";
+echo "    'controlname': 'query_date'\n";
+echo "});\n";
+echo "o_cal.a_tpl.yearscroll = false;\n";
+echo "// o_cal.a_tpl.weekstart = 1; // Monday week start\n";
+echo "</script>\n";
+echo "<BR> "._QXZ("to")." <BR><INPUT TYPE=TEXT NAME=end_date SIZE=10 MAXLENGTH=10 VALUE=\"$end_date\">";
+echo "<script language=\"JavaScript\">\n";
+echo "var o_cal = new tcal ({\n";
+echo "    // form name\n";
+echo "    'formname': 'vicidial_report',\n";
+echo "    // input name\n";
+echo "    'controlname': 'end_date'\n";
+echo "});\n";
+echo "o_cal.a_tpl.yearscroll = false;\n";
+echo "// o_cal.a_tpl.weekstart = 1; // Monday week start\n";
+echo "</script>\n";
+echo "</B></TD>";
+echo "<tr>";
+echo "<td align='center' colspan='2'>";
+echo "<input type='submit' name='SUBMIT' value='SUBMIT'><BR/><BR/>";
+echo "</td>";
+echo "</tr>";
+echo "</TR>";
+echo "</table>";
+echo "</table>";
+echo "<BR><BR>";
+echo $rpt_output;
 echo "</form>\n";
 $ENDtime = date("U");
 $RUNtime = ($ENDtime - $StarTtimE);

@@ -32,54 +32,109 @@
 # * Bug reports, feature requests and patches welcome!
 # * ======================================== */
 ?>
-<?php 
+<?php
 $startMS = microtime();
 require("dbconnect_mysqli.php");
 require("functions.php");
 $PHP_AUTH_USER=$_SERVER['PHP_AUTH_USER'];
 $PHP_AUTH_PW=$_SERVER['PHP_AUTH_PW'];
 $PHP_SELF=$_SERVER['PHP_SELF'];
-$PHP_SELF = preg_replace('/\.php.*/i','.php',$PHP_SELF);
-if (isset($_GET["time_interval"]))            {$time_interval=$_GET["time_interval"];}
-    elseif (isset($_POST["time_interval"]))    {$time_interval=$_POST["time_interval"];}
-if (isset($_GET["print_calls"]))            {$print_calls=$_GET["print_calls"];}
-    elseif (isset($_POST["print_calls"]))    {$print_calls=$_POST["print_calls"];}
-if (isset($_GET["include_rollover"]))            {$include_rollover=$_GET["include_rollover"];}
-    elseif (isset($_POST["include_rollover"]))    {$include_rollover=$_POST["include_rollover"];}
-if (isset($_GET["bareformat"]))                {$bareformat=$_GET["bareformat"];}
-    elseif (isset($_POST["bareformat"]))    {$bareformat=$_POST["bareformat"];}
-if (isset($_GET["costformat"]))                {$costformat=$_GET["costformat"];}
-    elseif (isset($_POST["costformat"]))    {$costformat=$_POST["costformat"];}
-if (isset($_GET["group"]))                {$group=$_GET["group"];}
-    elseif (isset($_POST["group"]))        {$group=$_POST["group"];}
-if (isset($_GET["query_date"]))                {$query_date=$_GET["query_date"];}
-    elseif (isset($_POST["query_date"]))    {$query_date=$_POST["query_date"];}
-if (isset($_GET["end_date"]))            {$end_date=$_GET["end_date"];}
-    elseif (isset($_POST["end_date"]))    {$end_date=$_POST["end_date"];}
-if (isset($_GET["shift"]))                {$shift=$_GET["shift"];}
-    elseif (isset($_POST["shift"]))        {$shift=$_POST["shift"];}
-if (isset($_GET["submit"]))                {$submit=$_GET["submit"];}
-    elseif (isset($_POST["submit"]))    {$submit=$_POST["submit"];}
-if (isset($_GET["SUBMIT"]))                {$SUBMIT=$_GET["SUBMIT"];}
-    elseif (isset($_POST["SUBMIT"]))    {$SUBMIT=$_POST["SUBMIT"];}
-if (isset($_GET["DB"]))                    {$DB=$_GET["DB"];}
-    elseif (isset($_POST["DB"]))        {$DB=$_POST["DB"];}
-if (isset($_GET["file_download"]))            {$file_download=$_GET["file_download"];}
-    elseif (isset($_POST["file_download"]))    {$file_download=$_POST["file_download"];}
-if (isset($_GET["report_display_type"]))            {$report_display_type=$_GET["report_display_type"];}
-    elseif (isset($_POST["report_display_type"]))    {$report_display_type=$_POST["report_display_type"];}
-if (isset($_GET["search_archived_data"]))            {$search_archived_data=$_GET["search_archived_data"];}
-    elseif (isset($_POST["search_archived_data"]))    {$search_archived_data=$_POST["search_archived_data"];}
-$DB=preg_replace("/[^0-9a-zA-Z]/","",$DB);
+$PHP_SELF = preg_replace('/\.php.*/i', '.php', $PHP_SELF);
+if (isset($_GET["time_interval"])) {
+    $time_interval=$_GET["time_interval"];
+} elseif (isset($_POST["time_interval"])) {
+    $time_interval=$_POST["time_interval"];
+}
+if (isset($_GET["print_calls"])) {
+    $print_calls=$_GET["print_calls"];
+} elseif (isset($_POST["print_calls"])) {
+    $print_calls=$_POST["print_calls"];
+}
+if (isset($_GET["include_rollover"])) {
+    $include_rollover=$_GET["include_rollover"];
+} elseif (isset($_POST["include_rollover"])) {
+    $include_rollover=$_POST["include_rollover"];
+}
+if (isset($_GET["bareformat"])) {
+    $bareformat=$_GET["bareformat"];
+} elseif (isset($_POST["bareformat"])) {
+    $bareformat=$_POST["bareformat"];
+}
+if (isset($_GET["costformat"])) {
+    $costformat=$_GET["costformat"];
+} elseif (isset($_POST["costformat"])) {
+    $costformat=$_POST["costformat"];
+}
+if (isset($_GET["group"])) {
+    $group=$_GET["group"];
+} elseif (isset($_POST["group"])) {
+    $group=$_POST["group"];
+}
+if (isset($_GET["query_date"])) {
+    $query_date=$_GET["query_date"];
+} elseif (isset($_POST["query_date"])) {
+    $query_date=$_POST["query_date"];
+}
+if (isset($_GET["end_date"])) {
+    $end_date=$_GET["end_date"];
+} elseif (isset($_POST["end_date"])) {
+    $end_date=$_POST["end_date"];
+}
+if (isset($_GET["shift"])) {
+    $shift=$_GET["shift"];
+} elseif (isset($_POST["shift"])) {
+    $shift=$_POST["shift"];
+}
+if (isset($_GET["submit"])) {
+    $submit=$_GET["submit"];
+} elseif (isset($_POST["submit"])) {
+    $submit=$_POST["submit"];
+}
+if (isset($_GET["SUBMIT"])) {
+    $SUBMIT=$_GET["SUBMIT"];
+} elseif (isset($_POST["SUBMIT"])) {
+    $SUBMIT=$_POST["SUBMIT"];
+}
+if (isset($_GET["DB"])) {
+    $DB=$_GET["DB"];
+} elseif (isset($_POST["DB"])) {
+    $DB=$_POST["DB"];
+}
+if (isset($_GET["file_download"])) {
+    $file_download=$_GET["file_download"];
+} elseif (isset($_POST["file_download"])) {
+    $file_download=$_POST["file_download"];
+}
+if (isset($_GET["report_display_type"])) {
+    $report_display_type=$_GET["report_display_type"];
+} elseif (isset($_POST["report_display_type"])) {
+    $report_display_type=$_POST["report_display_type"];
+}
+if (isset($_GET["search_archived_data"])) {
+    $search_archived_data=$_GET["search_archived_data"];
+} elseif (isset($_POST["search_archived_data"])) {
+    $search_archived_data=$_POST["search_archived_data"];
+}
+$DB=preg_replace("/[^0-9a-zA-Z]/", "", $DB);
 $MT[0]='0';
 $NOW_DATE = date("Y-m-d");
 $NOW_TIME = date("Y-m-d H:i:s");
 $STARTtime = date("U");
-if (!isset($group)) {$group = array();}
-if (!isset($query_date)) {$query_date = $NOW_DATE;}
-if (!isset($end_date)) {$end_date = $NOW_DATE;}
-if (strlen($shift)<2) {$shift='ALL';}
-if (strlen($include_rollover)<2) {$include_rollover='NO';}
+if (!isset($group)) {
+    $group = array();
+}
+if (!isset($query_date)) {
+    $query_date = $NOW_DATE;
+}
+if (!isset($end_date)) {
+    $end_date = $NOW_DATE;
+}
+if (strlen($shift)<2) {
+    $shift='ALL';
+}
+if (strlen($include_rollover)<2) {
+    $include_rollover='NO';
+}
 $report_name = 'Outbound Summary Interval Report';
 $db_source = 'M';
 $JS_text="<script language='Javascript'>\n";
@@ -91,8 +146,7 @@ $JS_onload="onload = function() {\n";
 $stmt = "SELECT use_non_latin,outbound_autodial_active,slave_db_server,reports_use_slave_db,enable_languages,language_method,report_default_format,allow_web_debug FROM system_settings;";
 $rslt=mysql_to_mysqli($stmt, $link);
 $qm_conf_ct = mysqli_num_rows($rslt);
-if ($qm_conf_ct > 0)
-    {
+if ($qm_conf_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $non_latin =                    $row[0];
     $outbound_autodial_active =        $row[1];
@@ -102,9 +156,13 @@ if ($qm_conf_ct > 0)
     $SSlanguage_method =            $row[5];
     $SSreport_default_format =        $row[6];
     $SSallow_web_debug =            $row[7];
-    }
-if ($SSallow_web_debug < 1) {$DB=0;}
-if (strlen($report_display_type)<2) {$report_display_type = $SSreport_default_format;}
+}
+if ($SSallow_web_debug < 1) {
+    $DB=0;
+}
+if (strlen($report_display_type)<2) {
+    $report_display_type = $SSreport_default_format;
+}
 $query_date = preg_replace('/[^- \:\_0-9a-zA-Z]/', '', $query_date);
 $end_date = preg_replace('/[^- \:\_0-9a-zA-Z]/', '', $end_date);
 $SUBMIT = preg_replace('/[^-_0-9a-zA-Z]/', '', $SUBMIT);
@@ -117,123 +175,121 @@ $print_calls = preg_replace('/[^-_0-9a-zA-Z]/', '', $print_calls);
 $include_rollover = preg_replace('/[^-_0-9a-zA-Z]/', '', $include_rollover);
 $bareformat = preg_replace('/[^-_0-9a-zA-Z]/', '', $bareformat);
 $costformat = preg_replace('/[^-_0-9a-zA-Z]/', '', $costformat);
-if ($non_latin < 1)
-    {
+if ($non_latin < 1) {
     $PHP_AUTH_USER = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_USER);
     $PHP_AUTH_PW = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_PW);
     $shift = preg_replace('/[^-_0-9a-zA-Z]/', '', $shift);
-    }
-else
-    {
+} else {
     $PHP_AUTH_USER = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_USER);
     $PHP_AUTH_PW = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_PW);
     $shift = preg_replace('/[^-_0-9\p{L}]/u', '', $shift);
-    }
+}
 $archives_available="N";
 $log_tables_array=array("vicidial_log", "vicidial_closer_log", "vicidial_agent_log");
-for ($t=0; $t<count($log_tables_array); $t++) 
-    {
+for ($t=0; $t<count($log_tables_array); $t++) {
     $table_name=$log_tables_array[$t];
     $archive_table_name=use_archive_table($table_name);
-    if ($archive_table_name!=$table_name) {$archives_available="Y";}
+    if ($archive_table_name!=$table_name) {
+        $archives_available="Y";
     }
-if ($search_archived_data) 
-    {
+}
+if ($search_archived_data) {
     $vicidial_log_table=use_archive_table("vicidial_log");
     $vicidial_closer_log_table=use_archive_table("vicidial_closer_log");
     $vicidial_agent_log_table=use_archive_table("vicidial_agent_log");
-    }
-else
-    {
+} else {
     $vicidial_log_table="vicidial_log";
     $vicidial_closer_log_table="vicidial_closer_log";
     $vicidial_agent_log_table="vicidial_agent_log";
-    }
+}
 $stmt = "SELECT local_gmt FROM servers where active='Y' limit 1;";
 $rslt=mysql_to_mysqli($stmt, $link);
-if ($DB) {$MAIN.="$stmt\n";}
+if ($DB) {
+    $MAIN.="$stmt\n";
+}
 $gmt_conf_ct = mysqli_num_rows($rslt);
 $dst = date("I");
-if ($gmt_conf_ct > 0)
-    {
+if ($gmt_conf_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $local_gmt =        $row[0];
     $epoch_offset =        (($local_gmt + $dst) * 3600);
-    }
+}
 $stmt="SELECT selected_language from vicidial_users where user='$PHP_AUTH_USER';";
-if ($DB) {echo "|$stmt|\n";}
+if ($DB) {
+    echo "|$stmt|\n";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 $sl_ct = mysqli_num_rows($rslt);
-if ($sl_ct > 0)
-    {
+if ($sl_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $VUselected_language =        $row[0];
-    }
+}
 $auth=0;
 $reports_auth=0;
 $admin_auth=0;
-$auth_message = user_authorization($PHP_AUTH_USER,$PHP_AUTH_PW,'REPORTS',1,0);
-if ($auth_message == 'GOOD')
-    {$auth=1;}
-if ($auth > 0)
-    {
+$auth_message = user_authorization($PHP_AUTH_USER, $PHP_AUTH_PW, 'REPORTS', 1, 0);
+if ($auth_message == 'GOOD') {
+    $auth=1;
+}
+if ($auth > 0) {
     $stmt="SELECT count(*) from vicidial_users where user='$PHP_AUTH_USER' and user_level > 7 and view_reports='1';";
-    if ($DB) {echo "|$stmt|\n";}
+    if ($DB) {
+        echo "|$stmt|\n";
+    }
     $rslt=mysql_to_mysqli($stmt, $link);
     $row=mysqli_fetch_row($rslt);
     $admin_auth=$row[0];
     $stmt="SELECT count(*) from vicidial_users where user='$PHP_AUTH_USER' and user_level > 6 and view_reports='1';";
-    if ($DB) {echo "|$stmt|\n";}
+    if ($DB) {
+        echo "|$stmt|\n";
+    }
     $rslt=mysql_to_mysqli($stmt, $link);
     $row=mysqli_fetch_row($rslt);
     $reports_auth=$row[0];
-    if ($reports_auth < 1)
-        {
+    if ($reports_auth < 1) {
         $VDdisplayMESSAGE = _QXZ("You are not allowed to view reports");
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
-    if ( ($reports_auth > 0) and ($admin_auth < 1) )
-        {
+    }
+    if (($reports_auth > 0) and ($admin_auth < 1)) {
         $ADD=999999;
         $reports_only_user=1;
-        }
     }
-else
-    {
+} else {
     $VDdisplayMESSAGE = _QXZ("Login incorrect, please try again");
-    if ($auth_message == 'LOCK')
-        {
+    if ($auth_message == 'LOCK') {
         $VDdisplayMESSAGE = _QXZ("Too many login attempts, try again in 15 minutes");
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
-    if ($auth_message == 'IPBLOCK')
-        {
+    }
+    if ($auth_message == 'IPBLOCK') {
         $VDdisplayMESSAGE = _QXZ("Your IP Address is not allowed") . ": $ip";
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
+    }
     Header("WWW-Authenticate: Basic realm=\"CONTACT-CENTER-ADMIN\"");
     Header("HTTP/1.0 401 Unauthorized");
     echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$PHP_AUTH_PW|$auth_message|\n";
     exit;
-    }
+}
 $stmt="SELECT full_name,user_level,user_group from vicidial_users where user='$PHP_AUTH_USER';";
-if ($DB) {$MAIN.="|$stmt|\n";}
-if ($non_latin > 0) {$rslt=mysql_to_mysqli("SET NAMES 'UTF8'", $link);}
+if ($DB) {
+    $MAIN.="|$stmt|\n";
+}
+if ($non_latin > 0) {
+    $rslt=mysql_to_mysqli("SET NAMES 'UTF8'", $link);
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 $records_to_print = mysqli_num_rows($rslt);
-if ($records_to_print > 0)
-    {
+if ($records_to_print > 0) {
     $row=mysqli_fetch_row($rslt);
     $full_name =    $row[0];
     $user_level =    $row[1];
     $user_group =    $row[2];
-    }
+}
 $LOGip = getenv("REMOTE_ADDR");
 $LOGbrowser = getenv("HTTP_USER_AGENT");
 $LOGscript_name = getenv("SCRIPT_NAME");
@@ -241,263 +297,276 @@ $LOGserver_name = getenv("SERVER_NAME");
 $LOGserver_port = getenv("SERVER_PORT");
 $LOGrequest_uri = getenv("REQUEST_URI");
 $LOGhttp_referer = getenv("HTTP_REFERER");
-$LOGbrowser=preg_replace("/\'|\"|\\\\/","",$LOGbrowser);
-$LOGrequest_uri=preg_replace("/\'|\"|\\\\/","",$LOGrequest_uri);
-$LOGhttp_referer=preg_replace("/\'|\"|\\\\/","",$LOGhttp_referer);
-if (preg_match("/443/i",$LOGserver_port)) {$HTTPprotocol = 'https://';}
-  else {$HTTPprotocol = 'http://';}
-if (($LOGserver_port == '80') or ($LOGserver_port == '443') ) {$LOGserver_port='';}
-else {$LOGserver_port = ":$LOGserver_port";}
+$LOGbrowser=preg_replace("/\'|\"|\\\\/", "", $LOGbrowser);
+$LOGrequest_uri=preg_replace("/\'|\"|\\\\/", "", $LOGrequest_uri);
+$LOGhttp_referer=preg_replace("/\'|\"|\\\\/", "", $LOGhttp_referer);
+if (preg_match("/443/i", $LOGserver_port)) {
+    $HTTPprotocol = 'https://';
+} else {
+    $HTTPprotocol = 'http://';
+}
+if (($LOGserver_port == '80') or ($LOGserver_port == '443')) {
+    $LOGserver_port='';
+} else {
+    $LOGserver_port = ":$LOGserver_port";
+}
 $LOGfull_url = "$HTTPprotocol$LOGserver_name$LOGserver_port$LOGrequest_uri";
 $LOGhostname = php_uname('n');
-if (strlen($LOGhostname)<1) {$LOGhostname='X';}
-if (strlen($LOGserver_name)<1) {$LOGserver_name='X';}
+if (strlen($LOGhostname)<1) {
+    $LOGhostname='X';
+}
+if (strlen($LOGserver_name)<1) {
+    $LOGserver_name='X';
+}
 $stmt="SELECT webserver_id FROM vicidial_webservers where webserver='$LOGserver_name' and hostname='$LOGhostname' LIMIT 1;";
 $rslt=mysql_to_mysqli($stmt, $link);
-if ($DB) {echo "$stmt\n";}
+if ($DB) {
+    echo "$stmt\n";
+}
 $webserver_id_ct = mysqli_num_rows($rslt);
-if ($webserver_id_ct > 0)
-    {
+if ($webserver_id_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $webserver_id = $row[0];
-    }
-else
-    {
+} else {
     $stmt="INSERT INTO vicidial_webservers (webserver,hostname) values('$LOGserver_name','$LOGhostname');";
-    if ($DB) {echo "$stmt\n";}
+    if ($DB) {
+        echo "$stmt\n";
+    }
     $rslt=mysql_to_mysqli($stmt, $link);
     $affected_rows = mysqli_affected_rows($link);
     $webserver_id = mysqli_insert_id($link);
-    }
+}
 $stmt="INSERT INTO vicidial_report_log set event_date=NOW(), user='$PHP_AUTH_USER', ip_address='$LOGip', report_name='$report_name', browser='$LOGbrowser', referer='$LOGhttp_referer', notes='$LOGserver_name:$LOGserver_port $LOGscript_name |$query_date, $end_date, $shift, $file_download, $report_display_type|', url='$LOGfull_url', webserver='$webserver_id';";
-if ($DB) {echo "|$stmt|\n";}
+if ($DB) {
+    echo "|$stmt|\n";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 $report_log_id = mysqli_insert_id($link);
-if ( (strlen($slave_db_server)>5) and (preg_match("/$report_name/",$reports_use_slave_db)) )
-    {
+if ((strlen($slave_db_server)>5) and (preg_match("/$report_name/", $reports_use_slave_db))) {
     mysqli_close($link);
     $use_slave_server=1;
     $db_source = 'S';
     require("dbconnect_mysqli.php");
     $MAIN.="<!-- Using slave server $slave_db_server $db_source -->\n";
-    }
+}
 $LOGallowed_campaignsSQL='';
 $whereLOGallowed_campaignsSQL='';
 $stmt="SELECT allowed_campaigns,allowed_reports,admin_viewable_call_times from vicidial_user_groups where user_group='$user_group';";
 $rslt=mysql_to_mysqli($stmt, $link);
 $records_to_print = mysqli_num_rows($rslt);
-if ($records_to_print > 0)
-    {
+if ($records_to_print > 0) {
     $row=mysqli_fetch_row($rslt);
     $LOGallowed_reports =    $row[1];
     $LOGadmin_viewable_call_times =    $row[2];
-    if ( (!preg_match("/ALL-CAMPAIGNS/i",$row[0])) )
-        {
-        $rawLOGallowed_campaignsSQL = preg_replace('/\s\-/i', '',$row[0]);
-        $rawLOGallowed_campaignsSQL = preg_replace('/\s/i', '\',\'',$rawLOGallowed_campaignsSQL);
+    if ((!preg_match("/ALL-CAMPAIGNS/i", $row[0]))) {
+        $rawLOGallowed_campaignsSQL = preg_replace('/\s\-/i', '', $row[0]);
+        $rawLOGallowed_campaignsSQL = preg_replace('/\s/i', '\',\'', $rawLOGallowed_campaignsSQL);
         $LOGallowed_campaignsSQL = "and campaign_id IN('$rawLOGallowed_campaignsSQL')";
         $whereLOGallowed_campaignsSQL = "where campaign_id IN('$rawLOGallowed_campaignsSQL')";
-        }
-    if ( (!preg_match("/$report_name/",$LOGallowed_reports)) and (!preg_match("/ALL REPORTS/",$LOGallowed_reports)) )
-        {
+    }
+    if ((!preg_match("/$report_name/", $LOGallowed_reports)) and (!preg_match("/ALL REPORTS/", $LOGallowed_reports))) {
         echo _QXZ("You are not allowed to view this report").": |$PHP_AUTH_USER|$report_name|\n";
         exit;
-        }
     }
-else
-    {
+} else {
     echo _QXZ("Campaigns Permissions Error").": |$PHP_AUTH_USER|$user_group|\n";
     exit;
-    }
+}
 $LOGadmin_viewable_call_timesSQL='';
 $whereLOGadmin_viewable_call_timesSQL='';
-if ( (!preg_match('/\-\-ALL\-\-/i', $LOGadmin_viewable_call_times)) and (strlen($LOGadmin_viewable_call_times) > 3) )
-    {
-    $rawLOGadmin_viewable_call_timesSQL = preg_replace("/ -/",'',$LOGadmin_viewable_call_times);
-    $rawLOGadmin_viewable_call_timesSQL = preg_replace("/ /","','",$rawLOGadmin_viewable_call_timesSQL);
+if ((!preg_match('/\-\-ALL\-\-/i', $LOGadmin_viewable_call_times)) and (strlen($LOGadmin_viewable_call_times) > 3)) {
+    $rawLOGadmin_viewable_call_timesSQL = preg_replace("/ -/", '', $LOGadmin_viewable_call_times);
+    $rawLOGadmin_viewable_call_timesSQL = preg_replace("/ /", "','", $rawLOGadmin_viewable_call_timesSQL);
     $LOGadmin_viewable_call_timesSQL = "and call_time_id IN('---ALL---','$rawLOGadmin_viewable_call_timesSQL')";
     $whereLOGadmin_viewable_call_timesSQL = "where call_time_id IN('---ALL---','$rawLOGadmin_viewable_call_timesSQL')";
-    }
+}
 $i=0;
 $group_string='|';
 $group_ct = count($group);
-while($i < $group_ct)
-    {
+while($i < $group_ct) {
     $group[$i] = preg_replace('/[^-_0-9\p{L}]/u', '', $group[$i]);
     $group_string .= "$group[$i]|";
     $i++;
-    }
+}
 $stmt="select campaign_id,campaign_name from vicidial_campaigns $whereLOGallowed_campaignsSQL order by campaign_id;";
 $rslt=mysql_to_mysqli($stmt, $link);
-if ($DB) {$MAIN.="$stmt\n";}
+if ($DB) {
+    $MAIN.="$stmt\n";
+}
 $campaigns_to_print = mysqli_num_rows($rslt);
 $i=0;
 $groups=array();
 $group_names=array();
-while ($i < $campaigns_to_print)
-    {
+while ($i < $campaigns_to_print) {
     $row=mysqli_fetch_row($rslt);
     $groups[$i] =        $row[0];
     $group_names[$i] =    $row[1];
-    if (preg_match('/\-\-ALL\-\-/i',$group_string))
-        {$group[$i] =    $row[0];}
-    $i++;
+    if (preg_match('/\-\-ALL\-\-/i', $group_string)) {
+        $group[$i] =    $row[0];
     }
-if ($DB) {$MAIN.="$group_string|$i\n";}
+    $i++;
+}
+if ($DB) {
+    $MAIN.="$group_string|$i\n";
+}
 $rollover_groups_count=0;
 $i=0;
 $group_string='|';
 $group_ct = count($group);
 $group_cname=array();
-while($i < $group_ct)
-    {
+while($i < $group_ct) {
     $stmt="select campaign_name from vicidial_campaigns where campaign_id='$group[$i]' $LOGallowed_campaignsSQL;";
     $rslt=mysql_to_mysqli($stmt, $link);
     $campaign_names_to_print = mysqli_num_rows($rslt);
-    if ($campaign_names_to_print > 0)
-        {
+    if ($campaign_names_to_print > 0) {
         $row=mysqli_fetch_row($rslt);
         $group_cname[$i] =    $row[0];
         $group_string .= "$group[$i]|";
         $group_SQL .= "'$group[$i]',";
         $groupQS .= "&group[]=$group[$i]";
-        }
-    if (preg_match("/YES/i",$include_rollover))
-        {
+    }
+    if (preg_match("/YES/i", $include_rollover)) {
         $stmt="select drop_inbound_group from vicidial_campaigns where campaign_id='$group[$i]' $LOGallowed_campaignsSQL and drop_inbound_group NOT LIKE \"%NONE%\" and drop_inbound_group is NOT NULL and drop_inbound_group != '';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $in_groups_to_print = mysqli_num_rows($rslt);
-        if ($in_groups_to_print > 0)
-            {
+        if ($in_groups_to_print > 0) {
             $row=mysqli_fetch_row($rslt);
             $group_drop_SQL .= "'$row[0]',";
             $rollover_groups_count++;
-            }
         }
-    $i++;
     }
-if ( (preg_match('/\-\-ALL\-\-/',$group_string) ) or ($group_ct < 1) )
-    {
+    $i++;
+}
+if ((preg_match('/\-\-ALL\-\-/', $group_string)) or ($group_ct < 1)) {
     $group_SQL = "";
     $group_drop_SQL = "";
-    }
-else
-    {
-    $group_SQL = preg_replace('/,$/i', '',$group_SQL);
-    $group_drop_SQL = preg_replace('/,$/i', '',$group_drop_SQL);
+} else {
+    $group_SQL = preg_replace('/,$/i', '', $group_SQL);
+    $group_drop_SQL = preg_replace('/,$/i', '', $group_drop_SQL);
     $both_group_SQLand = "and ( (campaign_id IN($group_drop_SQL)) or (campaign_id IN($group_SQL)) )";
     $both_group_SQL = "where ( (campaign_id IN($group_drop_SQL)) or (campaign_id IN($group_SQL)) )";
     $group_SQLand = "and campaign_id IN($group_SQL)";
     $group_SQL = "where campaign_id IN($group_SQL)";
     $group_drop_SQLand = "and campaign_id IN($group_drop_SQL)";
     $group_drop_SQL = "where campaign_id IN($group_drop_SQL)";
-    }
+}
 $stmt="select vsc_id,vsc_name from vicidial_status_categories;";
 $rslt=mysql_to_mysqli($stmt, $link);
-if ($DB) {$MAIN.="$stmt\n";}
+if ($DB) {
+    $MAIN.="$stmt\n";
+}
 $statcats_to_print = mysqli_num_rows($rslt);
 $i=0;
 $vsc_id=array();
 $vsc_name=array();
 $vsc_count=array();
-while ($i < $statcats_to_print)
-    {
+while ($i < $statcats_to_print) {
     $row=mysqli_fetch_row($rslt);
     $vsc_id[$i] =    $row[0];
     $vsc_name[$i] =    $row[1];
     $vsc_count[$i] = 0;
     $i++;
-    }
+}
 $stmt="select call_time_id,call_time_name from vicidial_call_times $whereLOGadmin_viewable_call_timesSQL order by call_time_id;";
 $rslt=mysql_to_mysqli($stmt, $link);
-if ($DB) {$MAIN.="$stmt\n";}
+if ($DB) {
+    $MAIN.="$stmt\n";
+}
 $times_to_print = mysqli_num_rows($rslt);
 $i=0;
 $call_times=array();
 $call_time_names=array();
-while ($i < $times_to_print)
-    {
+while ($i < $times_to_print) {
     $row=mysqli_fetch_row($rslt);
     $call_times[$i] =        $row[0];
     $call_time_names[$i] =    $row[1];
     $i++;
-    }
+}
 $customer_interactive_statuses='';
 $stmt="select status from vicidial_statuses where human_answered='Y';";
 $rslt=mysql_to_mysqli($stmt, $link);
-if ($DB) {$MAIN.="$stmt\n";}
+if ($DB) {
+    $MAIN.="$stmt\n";
+}
 $statha_to_print = mysqli_num_rows($rslt);
 $i=0;
-while ($i < $statha_to_print)
-    {
+while ($i < $statha_to_print) {
     $row=mysqli_fetch_row($rslt);
     $customer_interactive_statuses .= "'$row[0]',";
     $i++;
-    }
+}
 $stmt="select status from vicidial_campaign_statuses where human_answered='Y';";
 $rslt=mysql_to_mysqli($stmt, $link);
-if ($DB) {$MAIN.="$stmt\n";}
+if ($DB) {
+    $MAIN.="$stmt\n";
+}
 $statha_to_print = mysqli_num_rows($rslt);
 $i=0;
-while ($i < $statha_to_print)
-    {
+while ($i < $statha_to_print) {
     $row=mysqli_fetch_row($rslt);
     $customer_interactive_statuses .= "'$row[0]',";
     $i++;
-    }
-if (strlen($customer_interactive_statuses)>2)
-    {$customer_interactive_statuses = substr("$customer_interactive_statuses", 0, -1);}
-else
-    {$customer_interactive_statuses="''";}
+}
+if (strlen($customer_interactive_statuses)>2) {
+    $customer_interactive_statuses = substr("$customer_interactive_statuses", 0, -1);
+} else {
+    $customer_interactive_statuses="''";
+}
 $stmt="select status from vicidial_statuses where sale='Y';";
 $rslt=mysql_to_mysqli($stmt, $link);
-if ($DB) {$MAIN.="$stmt\n";}
+if ($DB) {
+    $MAIN.="$stmt\n";
+}
 $statsale_to_print = mysqli_num_rows($rslt);
 $i=0;
 $sale_statusesLIST=array();
-while ($i < $statsale_to_print)
-    {
+while ($i < $statsale_to_print) {
     $row=mysqli_fetch_row($rslt);
     array_push($sale_statusesLIST, "$row[0]");
     $i++;
-    }
+}
 $stmt="select status from vicidial_campaign_statuses where sale='Y';";
 $rslt=mysql_to_mysqli($stmt, $link);
-if ($DB) {$MAIN.="$stmt\n";}
+if ($DB) {
+    $MAIN.="$stmt\n";
+}
 $statsale_to_print = mysqli_num_rows($rslt);
 $i=0;
-while ($i < $statsale_to_print)
-    {
+while ($i < $statsale_to_print) {
     $row=mysqli_fetch_row($rslt);
     array_push($sale_statusesLIST, "$row[0]");
     $i++;
-    }
+}
 $sale_statusesLIST=array_values(array_unique($sale_statusesLIST));
 $sale_ct=count($sale_statusesLIST);
 $stmt="select status from vicidial_statuses where dnc='Y';";
 $rslt=mysql_to_mysqli($stmt, $link);
-if ($DB) {$MAIN.="$stmt\n";}
+if ($DB) {
+    $MAIN.="$stmt\n";
+}
 $statdnc_to_print = mysqli_num_rows($rslt);
 $i=0;
 $dnc_statusesLIST=array();
-while ($i < $statdnc_to_print)
-    {
+while ($i < $statdnc_to_print) {
     $row=mysqli_fetch_row($rslt);
     array_push($dnc_statusesLIST, "$row[0]");
     $i++;
-    }
+}
 $stmt="select status from vicidial_campaign_statuses where dnc='Y';";
 $rslt=mysql_to_mysqli($stmt, $link);
-if ($DB) {$MAIN.="$stmt\n";}
+if ($DB) {
+    $MAIN.="$stmt\n";
+}
 $statdnc_to_print = mysqli_num_rows($rslt);
 $i=0;
-while ($i < $statdnc_to_print)
-    {
+while ($i < $statdnc_to_print) {
     $row=mysqli_fetch_row($rslt);
     array_push($dnc_statusesLIST, "$row[0]");
     $i++;
-    }
+}
 $dnc_statusesLIST=array_values(array_unique($dnc_statusesLIST));
 $dnc_ct=count($dnc_statusesLIST);
 require("screen_colors.php");
@@ -520,23 +589,21 @@ $HEADER.="<script language=\"JavaScript\" src=\"calendar_db.js\"></script>\n";
 $HEADER.="<link rel=\"stylesheet\" href=\"calendar.css\">\n";
 $HEADER.="<link rel=\"stylesheet\" href=\"horizontalbargraph.css\">\n";
 require("chart_button.php");
-$HEADER.="<script src='chart/Chart.js'></script>\n"; 
+$HEADER.="<script src='chart/Chart.js'></script>\n";
 $HEADER.="<script language=\"JavaScript\" src=\"vicidial_chart_functions.js\"></script>\n";
 $HEADER.="<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=utf-8\">\n";
 $HEADER.="<TITLE>"._QXZ("$report_name")."</TITLE></HEAD><BODY BGCOLOR=WHITE marginheight=0 marginwidth=0 leftmargin=0 topmargin=0>\n";
-if ($bareformat < 1)
-    {
+if ($bareformat < 1) {
     $short_header=1;
     $MAIN.="<b>"._QXZ("$report_name")."</b> $NWB#OUTBOUNDsummary_interval$NWE\n";
     $MAIN.="<TABLE CELLPADDING=3 CELLSPACING=0><TR><TD>";
-    if ($DB > 0)
-        {
+    if ($DB > 0) {
         $MAIN.="<BR>\n";
         $MAIN.="$group_ct|$group_string|$group_SQL\n";
         $MAIN.="<BR>\n";
         $MAIN.="$shift|$query_date|$end_date\n";
         $MAIN.="<BR>\n";
-        }
+    }
     $MAIN.="<FORM ACTION=\"$PHP_SELF\" METHOD=GET name=vicidial_report id=vicidial_report>\n";
     $MAIN.="<TABLE BORDER=0 CELLPADDING=3 CELLSPACING=0 BGCOLOR=\"#".$SSframe_background."\"><TR><TD VALIGN=TOP>\n";
     $MAIN.="<INPUT TYPE=HIDDEN NAME=DB VALUE=\"$DB\">\n";
@@ -567,17 +634,20 @@ if ($bareformat < 1)
     $MAIN.="    </script>\n";
     $MAIN.="</TD><TD VALIGN=TOP ROWSPAN=2> "._QXZ("Campaigns").":<BR>";
     $MAIN.="<SELECT SIZE=5 NAME=group[] multiple>\n";
-    if  (preg_match('/\-\-ALL\-\-/',$group_string))
-        {$MAIN.="<option value=\"--ALL--\" selected>-- "._QXZ("ALL CAMPAIGNS")." --</option>\n";}
-    else
-        {$MAIN.="<option value=\"--ALL--\">-- "._QXZ("ALL CAMPAIGNS")." --</option>\n";}
+    if  (preg_match('/\-\-ALL\-\-/', $group_string)) {
+        $MAIN.="<option value=\"--ALL--\" selected>-- "._QXZ("ALL CAMPAIGNS")." --</option>\n";
+    } else {
+        $MAIN.="<option value=\"--ALL--\">-- "._QXZ("ALL CAMPAIGNS")." --</option>\n";
+    }
     $o=0;
-    while ($campaigns_to_print > $o)
-        {
-        if (preg_match("/$groups[$o]\|/i",$group_string)) {$MAIN.="<option selected value=\"$groups[$o]\">$groups[$o] - $group_names[$o]</option>\n";}
-          else {$MAIN.="<option value=\"$groups[$o]\">$groups[$o] - $group_names[$o]</option>\n";}
-        $o++;
+    while ($campaigns_to_print > $o) {
+        if (preg_match("/$groups[$o]\|/i", $group_string)) {
+            $MAIN.="<option selected value=\"$groups[$o]\">$groups[$o] - $group_names[$o]</option>\n";
+        } else {
+            $MAIN.="<option value=\"$groups[$o]\">$groups[$o] - $group_names[$o]</option>\n";
         }
+        $o++;
+    }
     $MAIN.="</SELECT>\n";
     $MAIN.="</TD><TD VALIGN=TOP ROWSPAN=2>";
     $MAIN.=_QXZ("Include Drop")." &nbsp; <BR>"._QXZ("Rollover").":<BR>";
@@ -588,29 +658,26 @@ if ($bareformat < 1)
     $MAIN.="</SELECT><BR>\n";
     $MAIN.=_QXZ("Time Interval").":<BR>";
     $MAIN.="<SELECT SIZE=1 NAME=time_interval>\n";
-    if ($time_interval <= 900)
-        {
+    if ($time_interval <= 900) {
         $interval_count = 96;
         $hf=45;
         $MAIN.="<option selected value=\"900\">"._QXZ("15 Minutes")."</option>\n";
-        }
-    else
-        {$MAIN.="<option value=\"900\">"._QXZ("15 Minutes")."</option>\n";}
-    if ( ($time_interval > 900) and ($time_interval <= 1800) )
-        {
+    } else {
+        $MAIN.="<option value=\"900\">"._QXZ("15 Minutes")."</option>\n";
+    }
+    if (($time_interval > 900) and ($time_interval <= 1800)) {
         $interval_count = 48;
         $hf=30;
         $MAIN.="<option selected value=\"1800\">"._QXZ("30 Minutes")."</option>\n";
-        }
-    else
-        {$MAIN.="<option value=\"1800\">"._QXZ("30 Minutes")."</option>\n";}
-    if ($time_interval > 1800)
-        {
+    } else {
+        $MAIN.="<option value=\"1800\">"._QXZ("30 Minutes")."</option>\n";
+    }
+    if ($time_interval > 1800) {
         $interval_count = 24;
         $MAIN.="<option selected value=\"3600\">"._QXZ("1 Hour")."</option>\n";
-        }
-    else
-        {$MAIN.="<option value=\"3600\">"._QXZ("1 Hour")."</option>\n";}
+    } else {
+        $MAIN.="<option value=\"3600\">"._QXZ("1 Hour")."</option>\n";
+    }
     $MAIN.="</SELECT>\n";
     $MAIN.="</TD><TD VALIGN=TOP ALIGN=LEFT ROWSPAN=2>\n";
     $MAIN.="<FONT FACE=\"ARIAL,HELVETICA\" COLOR=BLACK SIZE=2> &nbsp; &nbsp; &nbsp; &nbsp; ";
@@ -620,12 +687,13 @@ if ($bareformat < 1)
     $MAIN.="</FONT><BR><BR>\n";
     $MAIN.=_QXZ("Display as").":<BR>";
     $MAIN.="<select name='report_display_type'>";
-    if ($report_display_type) {$MAIN.="<option value='$report_display_type' selected>"._QXZ("$report_display_type")."</option>";}
+    if ($report_display_type) {
+        $MAIN.="<option value='$report_display_type' selected>"._QXZ("$report_display_type")."</option>";
+    }
     $MAIN.="<option value='TEXT'>"._QXZ("TEXT")."</option><option value='HTML'>"._QXZ("HTML")."</option></select>\n<BR>";
-    if ($archives_available=="Y") 
-        {
+    if ($archives_available=="Y") {
         $MAIN.="<input type='checkbox' name='search_archived_data' value='checked' $search_archived_data>"._QXZ("Search archived data")."\n";
-        }
+    }
     $MAIN.="<BR> &nbsp; &nbsp; &nbsp; &nbsp; ";
     $MAIN.="<INPUT TYPE=submit NAME=SUBMIT VALUE='"._QXZ("SUBMIT")."'>\n";
     $MAIN.="</TD></TR>\n";
@@ -633,38 +701,35 @@ if ($bareformat < 1)
     $MAIN.=_QXZ("Call Time").":<BR>\n";
     $MAIN.="<SELECT SIZE=1 NAME=shift>\n";
     $o=0;
-    while ($times_to_print > $o)
-        {
-        if ($call_times[$o] == $shift) {$MAIN.="<option selected value=\"$call_times[$o]\">$call_times[$o] - $call_time_names[$o]</option>\n";}
-        else {$MAIN.="<option value=\"$call_times[$o]\">$call_times[$o] - $call_time_names[$o]</option>\n";}
-        $o++;
+    while ($times_to_print > $o) {
+        if ($call_times[$o] == $shift) {
+            $MAIN.="<option selected value=\"$call_times[$o]\">$call_times[$o] - $call_time_names[$o]</option>\n";
+        } else {
+            $MAIN.="<option value=\"$call_times[$o]\">$call_times[$o] - $call_time_names[$o]</option>\n";
         }
+        $o++;
+    }
     $MAIN.="</SELECT>\n";
     $MAIN.="</TD><TD>\n";
     $MAIN.="</TD></TR></TABLE>\n";
     $MAIN.="</FORM>\n\n";
     $MAIN.="<PRE><FONT SIZE=2>\n\n";
-    }
-if ($group_ct < 1)
-    {
+}
+if ($group_ct < 1) {
     $MAIN.="\n\n";
     $MAIN.=_QXZ("PLEASE SELECT A CAMPAIGN AND DATE RANGE ABOVE AND CLICK SUBMIT")."\n";
-    }
-else
-    {
-    if ($shift == 'ALL') 
-        {
+} else {
+    if ($shift == 'ALL') {
         $Gct_default_start = "0";
         $Gct_default_stop = "2400";
-        }
-    else 
-        {
+    } else {
         $stmt="SELECT call_time_id,call_time_name,call_time_comments,ct_default_start,ct_default_stop,ct_sunday_start,ct_sunday_stop,ct_monday_start,ct_monday_stop,ct_tuesday_start,ct_tuesday_stop,ct_wednesday_start,ct_wednesday_stop,ct_thursday_start,ct_thursday_stop,ct_friday_start,ct_friday_stop,ct_saturday_start,ct_saturday_stop,ct_state_call_times FROM vicidial_call_times where call_time_id='$shift';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $calltimes_to_print = mysqli_num_rows($rslt);
-        if ($calltimes_to_print > 0)
-            {
+        if ($calltimes_to_print > 0) {
             $row=mysqli_fetch_row($rslt);
             $Gct_default_start =    $row[3];
             $Gct_default_stop =        $row[4];
@@ -682,72 +747,61 @@ else
             $Gct_friday_stop =        $row[16];
             $Gct_saturday_start =    $row[17];
             $Gct_saturday_stop =    $row[18];
-            }
-        else
-            {
+        } else {
             $Gct_default_start = "0";
             $Gct_default_stop = "2400";
-            }
         }
+    }
     $h=0;
     $hh=0;
     $Hcalltime=array();
     $Hcalltime_HHMM=array();
-    while ($h < $interval_count)
-        {
-        if ($interval_count>=96)
-            {
-            if ($hf < 45)
-                {
+    while ($h < $interval_count) {
+        if ($interval_count>=96) {
+            if ($hf < 45) {
                 $hf = ($hf + 15);
-                }
-            else
-                {
+            } else {
                 $hf = "00";
-                if ($h > 0)
-                    {$hh++;}
+                if ($h > 0) {
+                    $hh++;
                 }
-            $H_test = "$hh$hf";
             }
-        if ($interval_count==48)
-            {
-            if ($hf < 30)
-                {
+            $H_test = "$hh$hf";
+        }
+        if ($interval_count==48) {
+            if ($hf < 30) {
                 $hf = ($hf + 30);
-                }
-            else
-                {
+            } else {
                 $hf = "00";
-                if ($h > 0)
-                    {$hh++;}
+                if ($h > 0) {
+                    $hh++;
                 }
+            }
             $H_test = "$hh$hf";
-            }
-        if ($interval_count<=24)
-            {
+        }
+        if ($interval_count<=24) {
             $H_test = $h . "00";
-            }
-        if ( ($H_test >= $Gct_default_start) and ($H_test <= $Gct_default_stop) )
-            {
+        }
+        if (($H_test >= $Gct_default_start) and ($H_test <= $Gct_default_stop)) {
             $Hcalltime[$h]++;
             $Hcalltime_HHMM[$h] = "$H_test";
-            }
-        if ($DB)
-            {$MAIN.="( ($H_test >= $Gct_default_start) and ($H_test <= $Gct_default_stop) ) $hh $hf\n";}
-        $h++;
         }
-    $query_date_BEGIN = "$query_date 00:00:00";   
+        if ($DB) {
+            $MAIN.="( ($H_test >= $Gct_default_start) and ($H_test <= $Gct_default_stop) ) $hh $hf\n";
+        }
+        $h++;
+    }
+    $query_date_BEGIN = "$query_date 00:00:00";
     $query_date_END = "$end_date 23:59:59";
-    $MAIN .= _QXZ("Outbound Summary Interval Report",32).": $group_string          $NOW_TIME\n";
+    $MAIN .= _QXZ("Outbound Summary Interval Report", 32).": $group_string          $NOW_TIME\n";
     $CSV_main.="\""._QXZ("Outbound Summary Interval Report").":\"\n\"$group_string\"\n\"$NOW_TIME\"\n\n";
-    if ($group_ct > 0)
-        {
+    if ($group_ct > 0) {
         $ASCII_text .= "\n";
         $ASCII_text .= "---------- "._QXZ("MULTI-CAMPAIGN BREAKDOWN").":\n";
         $ASCII_text .= "+------------------------------------------+--------+--------+--------+--------+--------+--------+--------+------------+------------+\n";
-        $ASCII_text .= "|                                          |        | "._QXZ("SYSTEM",6)." | "._QXZ("AGENT",6)." |        |        | "._QXZ("NO",6)." |        | "._QXZ("AGENT",10)." | "._QXZ("AGENT",10)." |\n";
-        $ASCII_text .= "|                                          | "._QXZ("TOTAL",6)." | "._QXZ("RELEASE",7)."| "._QXZ("RELEASE",7)."| "._QXZ("SALE",6)." | "._QXZ("DNC",6)." | "._QXZ("ANSWER",6)." | "._QXZ("DROP",6)." | "._QXZ("LOGIN",10)." | "._QXZ("PAUSE",10)." |\n";
-        $ASCII_text .= "| "._QXZ("CAMPAIGN",40)." | "._QXZ("CALLS",6)." | "._QXZ("CALLS",6)." | "._QXZ("CALLS",6)." | "._QXZ("CALLS",6)." | "._QXZ("CALLS",6)." | "._QXZ("PERCENT",7)."| "._QXZ("PERCENT",7)."| "._QXZ("TIME(H:M:S)",11)."| "._QXZ("TIME(H:M:S)",11)."|\n";
+        $ASCII_text .= "|                                          |        | "._QXZ("SYSTEM", 6)." | "._QXZ("AGENT", 6)." |        |        | "._QXZ("NO", 6)." |        | "._QXZ("AGENT", 10)." | "._QXZ("AGENT", 10)." |\n";
+        $ASCII_text .= "|                                          | "._QXZ("TOTAL", 6)." | "._QXZ("RELEASE", 7)."| "._QXZ("RELEASE", 7)."| "._QXZ("SALE", 6)." | "._QXZ("DNC", 6)." | "._QXZ("ANSWER", 6)." | "._QXZ("DROP", 6)." | "._QXZ("LOGIN", 10)." | "._QXZ("PAUSE", 10)." |\n";
+        $ASCII_text .= "| "._QXZ("CAMPAIGN", 40)." | "._QXZ("CALLS", 6)." | "._QXZ("CALLS", 6)." | "._QXZ("CALLS", 6)." | "._QXZ("CALLS", 6)." | "._QXZ("CALLS", 6)." | "._QXZ("PERCENT", 7)."| "._QXZ("PERCENT", 7)."| "._QXZ("TIME(H:M:S)", 11)."| "._QXZ("TIME(H:M:S)", 11)."|\n";
         $ASCII_text .= "+------------------------------------------+--------+--------+--------+--------+--------+--------+--------+------------+------------+\n";
         $CSV_main.="\""._QXZ("MULTI-CAMPAIGN BREAKDOWN").":\"\n";
         $CSV_main.="\""._QXZ("CAMPAIGN")."\",\""._QXZ("TOTAL CALLS")."\",\""._QXZ("SYSTEM RELEASE CALLS")."\",\""._QXZ("AGENT RELEASE CALLS")."\",\""._QXZ("SALE CALLS")."\",\""._QXZ("DNC CALLS")."\",\""._QXZ("NO ANSWER PERCENT")."\",\""._QXZ("DROP PERCENT")."\",\""._QXZ("AGENT LOGIN TIME(H:M:S)")."\",\""._QXZ("AGENT PAUSE TIME(H:M:S)")."\"\n";
@@ -823,32 +877,33 @@ else
         $talk_avg=array();
         $queue_avg=array();
         $graph_stats=array();
-        while($i < $group_ct)
-            {
+        while($i < $group_ct) {
             $u=0;
             $stmt="select event_time,UNIX_TIMESTAMP(event_time),campaign_id,pause_sec,wait_sec,talk_sec,dispo_sec from ".$vicidial_agent_log_table." where event_time >= '$query_date_BEGIN' and event_time <= '$query_date_END' and campaign_id IN('$group_drop[$i]','$group[$i]');";
             $rslt=mysql_to_mysqli($stmt, $link);
-            if ($DB) {$ASCII_text.="$stmt\n";}
+            if ($DB) {
+                $ASCII_text.="$stmt\n";
+            }
             $AGENTtime_to_print = mysqli_num_rows($rslt);
             $s=0;
-            while ($s < $AGENTtime_to_print)
-                {
+            while ($s < $AGENTtime_to_print) {
                 $row=mysqli_fetch_row($rslt);
-                $inTOTALsec =        ($row[3] + $row[4] + $row[5] + $row[6]);    
+                $inTOTALsec =        ($row[3] + $row[4] + $row[5] + $row[6]);
                 $ATcall_date[$s] =        $row[0];
                 $ATepoch[$s] =            $row[1];
                 $ATcampaign_id[$s] =    $row[2];
                 $ATpause_sec[$s] =        $row[3];
                 $ATagent_sec[$s] =        $inTOTALsec;
                 $s++;
-                }
+            }
             $stmt = "SELECT status,length_in_sec,call_date,UNIX_TIMESTAMP(call_date),phone_number,campaign_id,uniqueid,lead_id from ".$vicidial_log_table." where call_date >= '$query_date_BEGIN' and call_date <= '$query_date_END' and campaign_id='$group[$i]';";
             $rslt=mysql_to_mysqli($stmt, $link);
-            if ($DB) {$ASCII_text.="$stmt\n";}
+            if ($DB) {
+                $ASCII_text.="$stmt\n";
+            }
             $calls_to_parse = mysqli_num_rows($rslt);
             $p=0;
-            while ($p < $calls_to_parse)
-                {
+            while ($p < $calls_to_parse) {
                 $row=mysqli_fetch_row($rslt);
                 $CPstatus[$u] =            $row[0];
                 $CPlength_in_sec[$u] =    $row[1];
@@ -863,49 +918,50 @@ else
                 $CPin_out[$u] =            _QXZ("OUT");
                 $p++;
                 $u++;
-                }
+            }
             $group_drop[$i]='';
-            if (preg_match("/YES/i",$include_rollover))
-                {
+            if (preg_match("/YES/i", $include_rollover)) {
                 $stmt="select drop_inbound_group from vicidial_campaigns where campaign_id='$group[$i]' $LOGallowed_campaignsSQL and drop_inbound_group NOT LIKE \"%NONE%\" and drop_inbound_group is NOT NULL and drop_inbound_group != '';";
                 $rslt=mysql_to_mysqli($stmt, $link);
-                if ($DB) {$ASCII_text.="$stmt\n";}
+                if ($DB) {
+                    $ASCII_text.="$stmt\n";
+                }
                 $in_groups_to_print = mysqli_num_rows($rslt);
-                if ($in_groups_to_print > 0)
-                    {
+                if ($in_groups_to_print > 0) {
                     $row=mysqli_fetch_row($rslt);
                     $group_drop[$i] = $row[0];
                     $rollover_groups_count++;
-                    }
+                }
                 $length_in_secZ=0;
                 $queue_secondsZ=0;
                 $agent_alert_delayZ=0;
                 $stmt="select status,length_in_sec,queue_seconds,agent_alert_delay,call_date,UNIX_TIMESTAMP(call_date),phone_number,campaign_id,closecallid,lead_id,uniqueid from ".$vicidial_closer_log_table.",vicidial_inbound_groups where call_date >= '$query_date_BEGIN' and call_date <= '$query_date_END' and group_id=campaign_id and campaign_id='$group_drop[$i]';";
                 $rslt=mysql_to_mysqli($stmt, $link);
-                if ($DB) {$ASCII_text.="$stmt\n";}
+                if ($DB) {
+                    $ASCII_text.="$stmt\n";
+                }
                 $INallcalls_to_printZ = mysqli_num_rows($rslt);
                 $y=0;
-                while ($y < $INallcalls_to_printZ)
-                    {
+                while ($y < $INallcalls_to_printZ) {
                     $row=mysqli_fetch_row($rslt);
                     $k=0;
                     $front_call_found=0;
-                    while($k < $p)
-                        {
-                        if ($TESTuniqueid[$k] == $row[10])
-                            {$front_call_found++;}
-                        $k++;
+                    while($k < $p) {
+                        if ($TESTuniqueid[$k] == $row[10]) {
+                            $front_call_found++;
                         }
-                    if ($front_call_found > 0)
-                        {
+                        $k++;
+                    }
+                    if ($front_call_found > 0) {
                         $length_in_secZ = $row[1];
                         $queue_secondsZ = $row[2];
                         $agent_alert_delayZ = $row[3];
                         $TOTALdelay =        round(MathZDC($agent_alert_delayZ, 1000));
                         $thiscallsec = (($length_in_secZ - $queue_secondsZ) - $TOTALdelay);
-                        if ($thiscallsec < 0)
-                            {$thiscallsec = 0;}
-                        $inTOTALsec =    ($inTOTALsec + $thiscallsec);    
+                        if ($thiscallsec < 0) {
+                            $thiscallsec = 0;
+                        }
+                        $inTOTALsec =    ($inTOTALsec + $thiscallsec);
                         $CPstatus[$u] =            $row[0];
                         $CPlength_in_sec[$u] =    $inTOTALsec;
                         $CPcall_date[$u] =        $row[4];
@@ -916,10 +972,10 @@ else
                         $CPlead_id[$u] =        $row[9];
                         $CPin_out[$u] =            'IN';
                         $u++;
-                        }
-                    $y++;
                     }
+                    $y++;
                 }
+            }
             $out_of_call_time=0;
             $length_in_sec[$i]=0;
             $queue_seconds[$i]=0;
@@ -980,202 +1036,246 @@ else
             $hTOTmax_queue_seconds =    0;
             $hTOTdrop_count =            0;
             $p=0;
-            while ($p < $s)
-                {
+            while ($p < $s) {
                 $call_date = explode(" ", $ATcall_date[$p]);
-                $call_time = preg_replace('/[^0-9]/','',$call_date[1]);
+                $call_time = preg_replace('/[^0-9]/', '', $call_date[1]);
                 $epoch = $ATepoch[$p];
                 $Cwday = date("w", $epoch);
                 $CTstart = $Gct_default_start . "00";
                 $CTstop = $Gct_default_stop . "59";
-                if ( ($Cwday == 0) and ( ($Gct_sunday_start > 0) and ($Gct_sunday_stop > 0) ) )
-                    {$CTstart = $Gct_sunday_start . "00";   $CTstop = $Gct_sunday_stop . "59";}
-                if ( ($Cwday == 1) and ( ($Gct_monday_start > 0) and ($Gct_monday_stop > 0) ) )
-                    {$CTstart = $Gct_monday_start . "00";   $CTstop = $Gct_monday_stop . "59";}
-                if ( ($Cwday == 2) and ( ($Gct_tuesday_start > 0) and ($Gct_tuesday_stop > 0) ) )
-                    {$CTstart = $Gct_tuesday_start . "00";   $CTstop = $Gct_tuesday_stop . "59";}
-                if ( ($Cwday == 3) and ( ($Gct_wednesday_start > 0) and ($Gct_wednesday_stop > 0) ) )
-                    {$CTstart = $Gct_wednesday_start . "00";   $CTstop = $Gct_wednesday_stop . "59";}
-                if ( ($Cwday == 4) and ( ($Gct_thursday_start > 0) and ($Gct_thursday_stop > 0) ) )
-                    {$CTstart = $Gct_thursday_start . "00";   $CTstop = $Gct_thursday_stop . "59";}
-                if ( ($Cwday == 5) and ( ($Gct_friday_start > 0) and ($Gct_friday_stop > 0) ) )
-                    {$CTstart = $Gct_friday_start . "00";   $CTstop = $Gct_friday_stop . "59";}
-                if ( ($Cwday == 6) and ( ($Gct_saturday_start > 0) and ($Gct_saturday_stop > 0) ) )
-                    {$CTstart = $Gct_saturday_start . "00";   $CTstop = $Gct_saturday_stop . "59";}
+                if (($Cwday == 0) and (($Gct_sunday_start > 0) and ($Gct_sunday_stop > 0))) {
+                    $CTstart = $Gct_sunday_start . "00";
+                    $CTstop = $Gct_sunday_stop . "59";
+                }
+                if (($Cwday == 1) and (($Gct_monday_start > 0) and ($Gct_monday_stop > 0))) {
+                    $CTstart = $Gct_monday_start . "00";
+                    $CTstop = $Gct_monday_stop . "59";
+                }
+                if (($Cwday == 2) and (($Gct_tuesday_start > 0) and ($Gct_tuesday_stop > 0))) {
+                    $CTstart = $Gct_tuesday_start . "00";
+                    $CTstop = $Gct_tuesday_stop . "59";
+                }
+                if (($Cwday == 3) and (($Gct_wednesday_start > 0) and ($Gct_wednesday_stop > 0))) {
+                    $CTstart = $Gct_wednesday_start . "00";
+                    $CTstop = $Gct_wednesday_stop . "59";
+                }
+                if (($Cwday == 4) and (($Gct_thursday_start > 0) and ($Gct_thursday_stop > 0))) {
+                    $CTstart = $Gct_thursday_start . "00";
+                    $CTstop = $Gct_thursday_stop . "59";
+                }
+                if (($Cwday == 5) and (($Gct_friday_start > 0) and ($Gct_friday_stop > 0))) {
+                    $CTstart = $Gct_friday_start . "00";
+                    $CTstop = $Gct_friday_stop . "59";
+                }
+                if (($Cwday == 6) and (($Gct_saturday_start > 0) and ($Gct_saturday_stop > 0))) {
+                    $CTstart = $Gct_saturday_start . "00";
+                    $CTstop = $Gct_saturday_stop . "59";
+                }
                 $Chour = date("G", $epoch);
                 $Cmin = date("i", $epoch);
-                if ($interval_count==96)
-                    {
+                if ($interval_count==96) {
                     $ChourX = ($Chour * 4);
-                    if ($Cmin < 15) {$Cmin = "00"; $CminX = 0;}
-                    if ( ($Cmin >= 15) and ($Cmin < 30) ) {$Cmin = "15"; $CminX = 1;}
-                    if ( ($Cmin >= 30) and ($Cmin < 45) ) {$Cmin = "30"; $CminX = 2;}
-                    if ($Cmin >= 45) {$Cmin = "45"; $CminX = 3;}
-                    $Chour = ($ChourX + $CminX);
+                    if ($Cmin < 15) {
+                        $Cmin = "00";
+                        $CminX = 0;
                     }
-                if ($interval_count==48)
-                    {
+                    if (($Cmin >= 15) and ($Cmin < 30)) {
+                        $Cmin = "15";
+                        $CminX = 1;
+                    }
+                    if (($Cmin >= 30) and ($Cmin < 45)) {
+                        $Cmin = "30";
+                        $CminX = 2;
+                    }
+                    if ($Cmin >= 45) {
+                        $Cmin = "45";
+                        $CminX = 3;
+                    }
+                    $Chour = ($ChourX + $CminX);
+                }
+                if ($interval_count==48) {
                     $ChourX = ($Chour * 2);
-                    if ($Cmin < 30) {$Cmin = "00"; $CminX = 0;}
-                    if ($Cmin >= 30) {$Cmin = "30"; $CminX = 1;}
-                    $Chour = ($ChourX + $CminX);
+                    if ($Cmin < 30) {
+                        $Cmin = "00";
+                        $CminX = 0;
                     }
-                if ( ($call_time > $CTstart) and ($call_time < $CTstop) )
-                    {
+                    if ($Cmin >= 30) {
+                        $Cmin = "30";
+                        $CminX = 1;
+                    }
+                    $Chour = ($ChourX + $CminX);
+                }
+                if (($call_time > $CTstart) and ($call_time < $CTstop)) {
                     $agent_sec[$i] = ($agent_sec[$i] + $ATagent_sec[$p]);
                     $Hagent_sec[$Chour] = ($Hagent_sec[$Chour] + $ATagent_sec[$p]);
                     $pause_sec[$i] = ($pause_sec[$i] + $ATpause_sec[$p]);
                     $Hpause_sec[$Chour] = ($Hpause_sec[$Chour] + $ATpause_sec[$p]);
                     $Hcalltime[$Chour]++;
-                    if ($print_calls > 0)
-                        {
+                    if ($print_calls > 0) {
                         $ASCII_text.="$row[5]\t$row[6]\t$TEMPtalk\n";
                         $PCtemptalk = ($PCtemptalk + $TEMPtalk);
-                        }
-                    $q++;
                     }
-                else
-                    {$out_of_call_time++;}
-                if ($DB)
-                    {$ASCII_text.="$Hcalltime[$Chour] | "._QXZ("AGENT").": $agent_sec[$i] "._QXZ("PAUSE").": $pause_sec[$i]\n";}
-                $p++;
+                    $q++;
+                } else {
+                    $out_of_call_time++;
                 }
+                if ($DB) {
+                    $ASCII_text.="$Hcalltime[$Chour] | "._QXZ("AGENT").": $agent_sec[$i] "._QXZ("PAUSE").": $pause_sec[$i]\n";
+                }
+                $p++;
+            }
             $p=0;
-            while ($p < $u)
-                {
+            while ($p < $u) {
                 $call_date = explode(" ", $CPcall_date[$p]);
-                $call_time = preg_replace('/[^0-9]/','',$call_date[1]);
+                $call_time = preg_replace('/[^0-9]/', '', $call_date[1]);
                 $epoch = $CPepoch[$p];
                 $Cwday = date("w", $epoch);
                 $CTstart = $Gct_default_start . "00";
                 $CTstop = $Gct_default_stop . "59";
-                if ( ($Cwday == 0) and ( ($Gct_sunday_start > 0) and ($Gct_sunday_stop > 0) ) )
-                    {$CTstart = $Gct_sunday_start . "00";   $CTstop = $Gct_sunday_stop . "59";}
-                if ( ($Cwday == 1) and ( ($Gct_monday_start > 0) and ($Gct_monday_stop > 0) ) )
-                    {$CTstart = $Gct_monday_start . "00";   $CTstop = $Gct_monday_stop . "59";}
-                if ( ($Cwday == 2) and ( ($Gct_tuesday_start > 0) and ($Gct_tuesday_stop > 0) ) )
-                    {$CTstart = $Gct_tuesday_start . "00";   $CTstop = $Gct_tuesday_stop . "59";}
-                if ( ($Cwday == 3) and ( ($Gct_wednesday_start > 0) and ($Gct_wednesday_stop > 0) ) )
-                    {$CTstart = $Gct_wednesday_start . "00";   $CTstop = $Gct_wednesday_stop . "59";}
-                if ( ($Cwday == 4) and ( ($Gct_thursday_start > 0) and ($Gct_thursday_stop > 0) ) )
-                    {$CTstart = $Gct_thursday_start . "00";   $CTstop = $Gct_thursday_stop . "59";}
-                if ( ($Cwday == 5) and ( ($Gct_friday_start > 0) and ($Gct_friday_stop > 0) ) )
-                    {$CTstart = $Gct_friday_start . "00";   $CTstop = $Gct_friday_stop . "59";}
-                if ( ($Cwday == 6) and ( ($Gct_saturday_start > 0) and ($Gct_saturday_stop > 0) ) )
-                    {$CTstart = $Gct_saturday_start . "00";   $CTstop = $Gct_saturday_stop . "59";}
+                if (($Cwday == 0) and (($Gct_sunday_start > 0) and ($Gct_sunday_stop > 0))) {
+                    $CTstart = $Gct_sunday_start . "00";
+                    $CTstop = $Gct_sunday_stop . "59";
+                }
+                if (($Cwday == 1) and (($Gct_monday_start > 0) and ($Gct_monday_stop > 0))) {
+                    $CTstart = $Gct_monday_start . "00";
+                    $CTstop = $Gct_monday_stop . "59";
+                }
+                if (($Cwday == 2) and (($Gct_tuesday_start > 0) and ($Gct_tuesday_stop > 0))) {
+                    $CTstart = $Gct_tuesday_start . "00";
+                    $CTstop = $Gct_tuesday_stop . "59";
+                }
+                if (($Cwday == 3) and (($Gct_wednesday_start > 0) and ($Gct_wednesday_stop > 0))) {
+                    $CTstart = $Gct_wednesday_start . "00";
+                    $CTstop = $Gct_wednesday_stop . "59";
+                }
+                if (($Cwday == 4) and (($Gct_thursday_start > 0) and ($Gct_thursday_stop > 0))) {
+                    $CTstart = $Gct_thursday_start . "00";
+                    $CTstop = $Gct_thursday_stop . "59";
+                }
+                if (($Cwday == 5) and (($Gct_friday_start > 0) and ($Gct_friday_stop > 0))) {
+                    $CTstart = $Gct_friday_start . "00";
+                    $CTstop = $Gct_friday_stop . "59";
+                }
+                if (($Cwday == 6) and (($Gct_saturday_start > 0) and ($Gct_saturday_stop > 0))) {
+                    $CTstart = $Gct_saturday_start . "00";
+                    $CTstop = $Gct_saturday_stop . "59";
+                }
                 $Chour = date("G", $epoch);
                 $Cmin = date("i", $epoch);
-                if ($interval_count==96)
-                    {
+                if ($interval_count==96) {
                     $ChourX = ($Chour * 4);
-                    if ($Cmin < 15) {$Cmin = "00"; $CminX = 0;}
-                    if ( ($Cmin >= 15) and ($Cmin < 30) ) {$Cmin = "15"; $CminX = 1;}
-                    if ( ($Cmin >= 30) and ($Cmin < 45) ) {$Cmin = "30"; $CminX = 2;}
-                    if ($Cmin >= 45) {$Cmin = "45"; $CminX = 3;}
-                    $Chour = ($ChourX + $CminX);
+                    if ($Cmin < 15) {
+                        $Cmin = "00";
+                        $CminX = 0;
                     }
-                if ($interval_count==48)
-                    {
+                    if (($Cmin >= 15) and ($Cmin < 30)) {
+                        $Cmin = "15";
+                        $CminX = 1;
+                    }
+                    if (($Cmin >= 30) and ($Cmin < 45)) {
+                        $Cmin = "30";
+                        $CminX = 2;
+                    }
+                    if ($Cmin >= 45) {
+                        $Cmin = "45";
+                        $CminX = 3;
+                    }
+                    $Chour = ($ChourX + $CminX);
+                }
+                if ($interval_count==48) {
                     $ChourX = ($Chour * 2);
-                    if ($Cmin < 30) {$Cmin = "00"; $CminX = 0;}
-                    if ($Cmin >= 30) {$Cmin = "30"; $CminX = 1;}
-                    $Chour = ($ChourX + $CminX);
+                    if ($Cmin < 30) {
+                        $Cmin = "00";
+                        $CminX = 0;
                     }
-                if ( ($call_time > $CTstart) and ($call_time < $CTstop) )
-                    {
+                    if ($Cmin >= 30) {
+                        $Cmin = "30";
+                        $CminX = 1;
+                    }
+                    $Chour = ($ChourX + $CminX);
+                }
+                if (($call_time > $CTstart) and ($call_time < $CTstop)) {
                     $calls_count[$i]++;
                     $length_in_sec[$i] =    ($length_in_sec[$i] + $CPlength_in_sec[$p]);
                     $Hlength_in_sec[$Chour] =    ($Hlength_in_sec[$Chour] + $row[1]);
                     $Hqueue_seconds[$Chour] =    ($Hqueue_seconds[$Chour] + $row[2]);
                     $TEMPtalk = $CPlength_in_sec[$p];
-                    if ($TEMPtalk < 0) {$TEMPtalk = 0;}
+                    if ($TEMPtalk < 0) {
+                        $TEMPtalk = 0;
+                    }
                     $talk_sec[$i] =    ($talk_sec[$i] + $TEMPtalk);
                     $Htalk_sec[$Chour] =    ($Htalk_sec[$Chour] + $TEMPtalk);
                     $Hcalls_count[$Chour]++;
-                    if (preg_match("/DROP/i",$CPstatus[$p]))
-                        {
-                        if ($CPin_out[$p] == 'OUT')
-                            {
+                    if (preg_match("/DROP/i", $CPstatus[$p])) {
+                        if ($CPin_out[$p] == 'OUT') {
                             $drop_count_OUT[$i]++;
                             $Hdrop_count_OUT[$Chour]++;
-                            }
+                        }
                         $drop_count[$i]++;
                         $Hdrop_count[$Chour]++;
-                        }
-                    else
-                        {
+                    } else {
                         $answer_count[$i]++;
                         $Hanswer_count[$Chour]++;
-                        }
-                    if (preg_match("/\|$CPstatus[$p]\|/i",'|NA|NEW|QUEUE|INCALL|DROP|XDROP|AA|AM|AL|AFAX|AB|ADC|DNCL|DNCC|PU|PM|SVYEXT|SVYHU|SVYVM|SVYREC|QVMAIL|'))
-                        {
+                    }
+                    if (preg_match("/\|$CPstatus[$p]\|/i", '|NA|NEW|QUEUE|INCALL|DROP|XDROP|AA|AM|AL|AFAX|AB|ADC|DNCL|DNCC|PU|PM|SVYEXT|SVYHU|SVYVM|SVYREC|QVMAIL|')) {
                         $system_count[$i]++;
                         $Hsystem_count[$Chour]++;
-                        }
-                    else
-                        {
+                    } else {
                         $agent_count[$i]++;
                         $Hagent_count[$Chour]++;
-                        }
-                    if ($CPstatus[$p] == 'NA')
-                        {
+                    }
+                    if ($CPstatus[$p] == 'NA') {
                         $na_count[$i]++;
                         $Hna_count[$Chour]++;
-                        }
-                    if ($CPin_out[$p] == 'IN')
-                        {
+                    }
+                    if ($CPin_out[$p] == 'IN') {
                         $calls_count_IN[$i]++;
                         $Hcalls_count_IN[$Chour]++;
-                        }
+                    }
                     $k=0;
-                    while($k < $sale_ct)
-                        {
-                        if ($sale_statusesLIST[$k] == $CPstatus[$p])
-                            {
+                    while($k < $sale_ct) {
+                        if ($sale_statusesLIST[$k] == $CPstatus[$p]) {
                             $ptp_count[$i]++;
                             $Hptp_count[$Chour]++;
-                            }
-                        $k++;
                         }
+                        $k++;
+                    }
                     $k=0;
-                    while($k < $dnc_ct)
-                        {
-                        if ($dnc_statusesLIST[$k] == $CPstatus[$p])
-                            {
+                    while($k < $dnc_ct) {
+                        if ($dnc_statusesLIST[$k] == $CPstatus[$p]) {
                             $rtp_count[$i]++;
                             $Hrtp_count[$Chour]++;
-                            }
-                        $k++;
                         }
+                        $k++;
+                    }
                     $Hcalltime[$Chour]++;
-                    if ($print_calls > 0)
-                        {
+                    if ($print_calls > 0) {
                         $ASCII_text.="$row[5]\t$row[6]\t$TEMPtalk\n";
                         $PCtemptalk = ($PCtemptalk + $TEMPtalk);
-                        }
-                    $q++;
                     }
-                else
-                    {$out_of_call_time++;}
-                if ($DB)
-                    {$ASCII_text.="$call_time > $CTstart | $call_time < $CTstop | $Cwday | $Chour | $Hcalltime[$Chour] | $talk_sec[$i]\n";}
-                $p++;
+                    $q++;
+                } else {
+                    $out_of_call_time++;
                 }
+                if ($DB) {
+                    $ASCII_text.="$call_time > $CTstart | $call_time < $CTstop | $Cwday | $Chour | $Hcalltime[$Chour] | $talk_sec[$i]\n";
+                }
+                $p++;
+            }
             $talk_avg[$i] = MathZDC($talk_sec[$i], $answer_count[$i]);
             $queue_avg[$i] = MathZDC($queue_seconds[$i], $calls_count[$i]);
-            if ($print_calls > 0)
-                {
+            if ($print_calls > 0) {
                 $PCtemptalkmin = MathZDC($PCtemptalk, 60);
                 $ASCII_text.="$q\t$PCtemptalk\t$PCtemptalkmin\n";
-                }
-            if ( ($calls_count_IN[$i] > 0) and ($drop_count_OUT[$i] > 0) )
-                {
+            }
+            if (($calls_count_IN[$i] > 0) and ($drop_count_OUT[$i] > 0)) {
                 $drop_count[$i] = ($drop_count[$i] - $calls_count_IN[$i]);
                 $calls_count[$i] = ($calls_count[$i] - $calls_count_IN[$i]);
                 $system_count[$i] = ($system_count[$i] - $calls_count_IN[$i]);
-                if ($drop_count[$i] < 0)
-                    {$drop_count[$i] = 0;}
+                if ($drop_count[$i] < 0) {
+                    $drop_count[$i] = 0;
                 }
+            }
             $TOTcalls_count =            ($TOTcalls_count + $calls_count[$i]);
             $TOTsystem_count =            ($TOTsystem_count + $system_count[$i]);
             $TOTagent_count =            ($TOTagent_count + $agent_count[$i]);
@@ -1188,15 +1288,30 @@ else
             $TOTtalk_sec =                ($TOTtalk_sec + $talk_sec[$i]);
             $TOTqueue_seconds =            ($TOTqueue_seconds + $queue_seconds[$i]);
             $TOTdrop_count =            ($TOTdrop_count + $drop_count[$i]);
-            if ($max_queue_seconds[$i] > $TOTmax_queue_seconds)
-                {$TOTmax_queue_seconds = $max_queue_seconds[$i];}
-            if ($calls_count[$i]>$max_calls) {$max_calls=$calls_count[$i];}
-            if ($system_count[$i]>$max_system_release) {$max_system_release=$system_count[$i];}
-            if ($agent_count[$i]>$max_agent_release) {$max_agent_release=$agent_count[$i];}
-            if ($ptp_count[$i]>$max_sales) {$max_sales=$ptp_count[$i];}
-            if ($rtp_count[$i]>$max_dncs) {$max_dncs=$rtp_count[$i];}
-            if ($agent_sec[$i]>$max_login_time) {$max_login_time=$agent_sec[$i];}
-            if ($pause_sec[$i]>$max_pause_time) {$max_pause_time=$pause_sec[$i];}
+            if ($max_queue_seconds[$i] > $TOTmax_queue_seconds) {
+                $TOTmax_queue_seconds = $max_queue_seconds[$i];
+            }
+            if ($calls_count[$i]>$max_calls) {
+                $max_calls=$calls_count[$i];
+            }
+            if ($system_count[$i]>$max_system_release) {
+                $max_system_release=$system_count[$i];
+            }
+            if ($agent_count[$i]>$max_agent_release) {
+                $max_agent_release=$agent_count[$i];
+            }
+            if ($ptp_count[$i]>$max_sales) {
+                $max_sales=$ptp_count[$i];
+            }
+            if ($rtp_count[$i]>$max_dncs) {
+                $max_dncs=$rtp_count[$i];
+            }
+            if ($agent_sec[$i]>$max_login_time) {
+                $max_login_time=$agent_sec[$i];
+            }
+            if ($pause_sec[$i]>$max_pause_time) {
+                $max_pause_time=$pause_sec[$i];
+            }
             $graph_stats[$i][0]="$group[$i] - $group_cname[$i]";
             $graph_stats[$i][1]=$calls_count[$i];
             $graph_stats[$i][2]=$system_count[$i];
@@ -1205,21 +1320,21 @@ else
             $graph_stats[$i][5]=$rtp_count[$i];
             $graph_stats[$i][8]=$agent_sec[$i];
             $graph_stats[$i][9]=$pause_sec[$i];
-            $agent_sec[$i] =            sec_convert($agent_sec[$i],'H'); 
-            $pause_sec[$i] =            sec_convert($pause_sec[$i],'H'); 
-            $talk_sec[$i] =                sec_convert($talk_sec[$i],'H'); 
-            $talk_avg[$i] =                sec_convert($talk_avg[$i],'H'); 
-            $queue_seconds[$i] =        sec_convert($queue_seconds[$i],'H'); 
-            $queue_avg[$i] =            sec_convert($queue_avg[$i],'H'); 
-            $max_queue_seconds[$i] =    sec_convert($max_queue_seconds[$i],'H'); 
+            $agent_sec[$i] =            sec_convert($agent_sec[$i], 'H');
+            $pause_sec[$i] =            sec_convert($pause_sec[$i], 'H');
+            $talk_sec[$i] =                sec_convert($talk_sec[$i], 'H');
+            $talk_avg[$i] =                sec_convert($talk_avg[$i], 'H');
+            $queue_seconds[$i] =        sec_convert($queue_seconds[$i], 'H');
+            $queue_avg[$i] =            sec_convert($queue_avg[$i], 'H');
+            $max_queue_seconds[$i] =    sec_convert($max_queue_seconds[$i], 'H');
             $groupDISPLAY =    sprintf("%-40s", "$group[$i] - $group_cname[$i]");
             $gTOTALcalls =    sprintf("%6s", $calls_count[$i]);
             $gSYSTEMcalls =    sprintf("%6s", $system_count[$i]);
             $gAGENTcalls =    sprintf("%6s", $agent_count[$i]);
             $gPTPcalls =    sprintf("%6s", $ptp_count[$i]);
             $gRTPcalls =    sprintf("%6s", $rtp_count[$i]);
-            $gNApercent = ( MathZDC($na_count[$i], $calls_count[$i]) * 100);
-            $gNApercent =    sprintf("%6.2f",$gNApercent);
+            $gNApercent = (MathZDC($na_count[$i], $calls_count[$i]) * 100);
+            $gNApercent =    sprintf("%6.2f", $gNApercent);
             $gNAcalls =        sprintf("%6s", $na_count[$i]);
             $gANSWERcalls =    sprintf("%6s", $answer_count[$i]);
             $gSUMagent =    sprintf("%10s", $agent_sec[$i]);
@@ -1229,53 +1344,86 @@ else
             $gSUMqueue =    sprintf("%9s", $queue_seconds[$i]);
             $gAVGqueue =    sprintf("%7s", $queue_avg[$i]);
             $gMAXqueue =    sprintf("%7s", $max_queue_seconds[$i]);
-            $gDROPpercent = ( MathZDC($drop_count[$i], $calls_count[$i]) * 100);
-            $gDROPpercent =        sprintf("%6.2f",$gDROPpercent);
+            $gDROPpercent = (MathZDC($drop_count[$i], $calls_count[$i]) * 100);
+            $gDROPpercent =        sprintf("%6.2f", $gDROPpercent);
             $gDROPcalls =    sprintf("%6s", $drop_count[$i]);
-            if (trim($gNApercent)>$max_nas) {$max_nas=trim($gNApercent);}
-            if (trim($gDROPpercent)>$max_drops) {$max_drops=trim($gDROPpercent);}
+            if (trim($gNApercent)>$max_nas) {
+                $max_nas=trim($gNApercent);
+            }
+            if (trim($gDROPpercent)>$max_drops) {
+                $max_drops=trim($gDROPpercent);
+            }
             $graph_stats[$i][6]=trim($gNApercent);
             $graph_stats[$i][7]=trim($gDROPpercent);
-            while(strlen($groupDISPLAY)>40) {$groupDISPLAY = substr("$groupDISPLAY", 0, -1);}
+            while(strlen($groupDISPLAY)>40) {
+                $groupDISPLAY = substr("$groupDISPLAY", 0, -1);
+            }
             $ASCII_text .= "| $groupDISPLAY | $gTOTALcalls | $gSYSTEMcalls | $gAGENTcalls | $gPTPcalls | $gRTPcalls | $gNApercent%| $gDROPpercent%| $gSUMagent | $gSUMpause |";
             $CSV_main.="\"$groupDISPLAY\",\"$gTOTALcalls\",\"$gSYSTEMcalls\",\"$gAGENTcalls\",\"$gPTPcalls\",\"$gRTPcalls\",\"$gNApercent%\",\"$gDROPpercent%\",\"$gSUMagent\",\"$gSUMpause\"\n";
-            if ($DB) {$ASCII_text .= " $gDROPcalls($calls_count_IN[$i]/$drop_count_OUT[$i]) |";}
+            if ($DB) {
+                $ASCII_text .= " $gDROPcalls($calls_count_IN[$i]/$drop_count_OUT[$i]) |";
+            }
             $ASCII_text .= "<!-- OUT OF CALLTIME: $out_of_call_time -->\n";
             $SUB_ASCII_text .= "\n---------- $group[$i] - $group_cname[$i]\n"._QXZ("INTERVAL BREAKDOWN").":\n";
             $SUB_ASCII_text .= "+---------------------+--------+--------+--------+--------+--------+--------+--------+------------+------------+\n";
-            $SUB_ASCII_text .= "|                     |        | "._QXZ("SYSTEM",6)." | "._QXZ("AGENT",6)." |        |        | "._QXZ("NO",6)." |        | "._QXZ("AGENT",10)." | "._QXZ("AGENT",10)." |\n";
-            $SUB_ASCII_text .= "|                     | "._QXZ("TOTAL",6)." | "._QXZ("RELEASE",7)."| "._QXZ("RELEASE",7)."| "._QXZ("SALE",6)." | "._QXZ("DNC",6)." | "._QXZ("ANSWER",6)." | "._QXZ("DROP",6)." | "._QXZ("LOGIN",10)." | "._QXZ("PAUSE",10)." |\n";
-            $SUB_ASCII_text .= "| "._QXZ("INTERVAL",19)." | "._QXZ("CALLS",6)." | "._QXZ("CALLS",6)." | "._QXZ("CALLS",6)." | "._QXZ("CALLS",6)." | "._QXZ("CALLS",6)." | "._QXZ("PERCENT",7)."| "._QXZ("PERCENT",7)."| "._QXZ("TIME(H:M:S)",11)."| "._QXZ("TIME(H:M:S)",11)."|\n";
+            $SUB_ASCII_text .= "|                     |        | "._QXZ("SYSTEM", 6)." | "._QXZ("AGENT", 6)." |        |        | "._QXZ("NO", 6)." |        | "._QXZ("AGENT", 10)." | "._QXZ("AGENT", 10)." |\n";
+            $SUB_ASCII_text .= "|                     | "._QXZ("TOTAL", 6)." | "._QXZ("RELEASE", 7)."| "._QXZ("RELEASE", 7)."| "._QXZ("SALE", 6)." | "._QXZ("DNC", 6)." | "._QXZ("ANSWER", 6)." | "._QXZ("DROP", 6)." | "._QXZ("LOGIN", 10)." | "._QXZ("PAUSE", 10)." |\n";
+            $SUB_ASCII_text .= "| "._QXZ("INTERVAL", 19)." | "._QXZ("CALLS", 6)." | "._QXZ("CALLS", 6)." | "._QXZ("CALLS", 6)." | "._QXZ("CALLS", 6)." | "._QXZ("CALLS", 6)." | "._QXZ("PERCENT", 7)."| "._QXZ("PERCENT", 7)."| "._QXZ("TIME(H:M:S)", 11)."| "._QXZ("TIME(H:M:S)", 11)."|\n";
             $SUB_ASCII_text .= "+---------------------+--------+--------+--------+--------+--------+--------+--------+------------+------------+\n";
             $CSV_subreports.="\n\n\"$group[$i] - $group_cname[$i]\"\n\""._QXZ("INTERVAL BREAKDOWN").":\"\n";
             $CSV_subreports.="\""._QXZ("INTERVAL")."\",\""._QXZ("TOTAL CALLS")."\",\""._QXZ("SYSTEM RELEASE CALLS")."\",\""._QXZ("AGENT RELEASE CALLS")."\",\""._QXZ("SALE CALLS")."\",\""._QXZ("DNC CALLS")."\",\""._QXZ("NO ANSWER PERCENT")."\",\""._QXZ("DROP PERCENT")."\",\""._QXZ("AGENT LOGIN TIME (H:M:S)")."\",\""._QXZ("AGENT PAUSE TIME(H:M:S)")."\"\n";
-            $h=0; $z=0;
+            $h=0;
+            $z=0;
             $SUBgraph_stats=array();
-            while ($h < $interval_count)
-                {
-                if ($Hcalltime[$h] > 0)
-                    {
-                    if (strlen($Hcalls_count[$h]) < 1)            {$Hcalls_count[$h] = 0;}
-                    if (strlen($Hsystem_count[$h]) < 1)            {$Hsystem_count[$h] = 0;}
-                    if (strlen($Hagent_count[$h]) < 1)            {$Hagent_count[$h] = 0;}
-                    if (strlen($Hptp_count[$h]) < 1)            {$Hptp_count[$h] = 0;}
-                    if (strlen($Hrtp_count[$h]) < 1)            {$Hrtp_count[$h] = 0;}
-                    if (strlen($Hna_count[$h]) < 1)                {$Hna_count[$h] = 0;}
-                    if (strlen($Hanswer_count[$h]) < 1)            {$Hanswer_count[$h] = 0;}
-                    if (strlen($Hagent_sec[$h]) < 1)            {$Hagent_sec[$h] = 0;}
-                    if (strlen($Hpause_sec[$h]) < 1)            {$Hpause_sec[$h] = 0;}
-                    if (strlen($Htalk_sec[$h]) < 1)                {$Htalk_sec[$h] = 0;}
-                    if (strlen($Hqueue_seconds[$h]) < 1)        {$Hqueue_seconds[$h] = 0;}
-                    if (strlen($Hmax_queue_seconds[$h]) < 1)    {$Hmax_queue_seconds[$h] = 0;}
-                    if (strlen($Hdrop_count[$h]) < 1)            {$Hdrop_count[$h] = 0;}
-                    if ( ($Hcalls_count_IN[$h] > 0) and ($Hdrop_count_OUT[$h] > 0) )
-                        {
+            while ($h < $interval_count) {
+                if ($Hcalltime[$h] > 0) {
+                    if (strlen($Hcalls_count[$h]) < 1) {
+                        $Hcalls_count[$h] = 0;
+                    }
+                    if (strlen($Hsystem_count[$h]) < 1) {
+                        $Hsystem_count[$h] = 0;
+                    }
+                    if (strlen($Hagent_count[$h]) < 1) {
+                        $Hagent_count[$h] = 0;
+                    }
+                    if (strlen($Hptp_count[$h]) < 1) {
+                        $Hptp_count[$h] = 0;
+                    }
+                    if (strlen($Hrtp_count[$h]) < 1) {
+                        $Hrtp_count[$h] = 0;
+                    }
+                    if (strlen($Hna_count[$h]) < 1) {
+                        $Hna_count[$h] = 0;
+                    }
+                    if (strlen($Hanswer_count[$h]) < 1) {
+                        $Hanswer_count[$h] = 0;
+                    }
+                    if (strlen($Hagent_sec[$h]) < 1) {
+                        $Hagent_sec[$h] = 0;
+                    }
+                    if (strlen($Hpause_sec[$h]) < 1) {
+                        $Hpause_sec[$h] = 0;
+                    }
+                    if (strlen($Htalk_sec[$h]) < 1) {
+                        $Htalk_sec[$h] = 0;
+                    }
+                    if (strlen($Hqueue_seconds[$h]) < 1) {
+                        $Hqueue_seconds[$h] = 0;
+                    }
+                    if (strlen($Hmax_queue_seconds[$h]) < 1) {
+                        $Hmax_queue_seconds[$h] = 0;
+                    }
+                    if (strlen($Hdrop_count[$h]) < 1) {
+                        $Hdrop_count[$h] = 0;
+                    }
+                    if (($Hcalls_count_IN[$h] > 0) and ($Hdrop_count_OUT[$h] > 0)) {
                         $Hdrop_count[$h] = ($Hdrop_count[$h] - $Hcalls_count_IN[$h]);
                         $Hcalls_count[$h] = ($Hcalls_count[$h] - $Hcalls_count_IN[$h]);
                         $Hsystem_count[$h] = ($Hsystem_count[$h] - $Hcalls_count_IN[$h]);
-                        if ($Hdrop_count[$h] < 0)
-                            {$Hdrop_count[$h] = 0;}
+                        if ($Hdrop_count[$h] < 0) {
+                            $Hdrop_count[$h] = 0;
                         }
+                    }
                     $hTOTcalls_count =            ($hTOTcalls_count + $Hcalls_count[$h]);
                     $hTOTsystem_count =            ($hTOTsystem_count + $Hsystem_count[$h]);
                     $hTOTagent_count =            ($hTOTagent_count + $Hagent_count[$h]);
@@ -1288,19 +1436,38 @@ else
                     $hTOTtalk_sec =                ($hTOTtalk_sec + $Htalk_sec[$h]);
                     $hTOTqueue_seconds =        ($hTOTqueue_seconds + $Hqueue_seconds[$h]);
                     $hTOTdrop_count =            ($hTOTdrop_count + $Hdrop_count[$h]);
-                    if ($Hmax_queue_seconds[$h] > $hTOTmax_queue_seconds)
-                        {$hTOTmax_queue_seconds = $Hmax_queue_seconds[$h];}
+                    if ($Hmax_queue_seconds[$h] > $hTOTmax_queue_seconds) {
+                        $hTOTmax_queue_seconds = $Hmax_queue_seconds[$h];
+                    }
                     $Htalk_avg[$h] = MathZDC($Htalk_sec[$h], $Hanswer_count[$h]);
                     $Hqueue_avg[$h] = MathZDC($Hqueue_seconds[$h], $Hcalls_count[$h]);
-                    if ($Hcalls_count[$h]>$SUBmax_calls) {$SUBmax_calls=$Hcalls_count[$h];}
-                    if ($Hsystem_count[$h]>$SUBmax_system_release) {$SUBmax_system_release=$Hsystem_count[$h];}
-                    if ($Hagent_count[$h]>$SUBmax_agent_release) {$SUBmax_agent_release=$Hagent_count[$h];}
-                    if ($Hptp_count[$h]>$SUBmax_sales) {$SUBmax_sales=$Hptp_count[$h];}
-                    if ($Hrtp_count[$h]>$SUBmax_dncs) {$SUBmax_dncs=$Hrtp_count[$h];}
-                    if (trim($hNApercent)>$SUBmax_nas) {$SUBmax_nas=trim($hNApercent);}
-                    if (trim($hDROPpercent)>$SUBmax_drops) {$SUBmax_drops=trim($hDROPpercent);}
-                    if ($Hagent_sec[$h]>$SUBmax_login_time) {$SUBmax_login_time=$Hagent_sec[$h];}
-                    if ($Hpause_sec[$h]>$SUBmax_pause_time) {$SUBmax_pause_time=$Hpause_sec[$h];}
+                    if ($Hcalls_count[$h]>$SUBmax_calls) {
+                        $SUBmax_calls=$Hcalls_count[$h];
+                    }
+                    if ($Hsystem_count[$h]>$SUBmax_system_release) {
+                        $SUBmax_system_release=$Hsystem_count[$h];
+                    }
+                    if ($Hagent_count[$h]>$SUBmax_agent_release) {
+                        $SUBmax_agent_release=$Hagent_count[$h];
+                    }
+                    if ($Hptp_count[$h]>$SUBmax_sales) {
+                        $SUBmax_sales=$Hptp_count[$h];
+                    }
+                    if ($Hrtp_count[$h]>$SUBmax_dncs) {
+                        $SUBmax_dncs=$Hrtp_count[$h];
+                    }
+                    if (trim($hNApercent)>$SUBmax_nas) {
+                        $SUBmax_nas=trim($hNApercent);
+                    }
+                    if (trim($hDROPpercent)>$SUBmax_drops) {
+                        $SUBmax_drops=trim($hDROPpercent);
+                    }
+                    if ($Hagent_sec[$h]>$SUBmax_login_time) {
+                        $SUBmax_login_time=$Hagent_sec[$h];
+                    }
+                    if ($Hpause_sec[$h]>$SUBmax_pause_time) {
+                        $SUBmax_pause_time=$Hpause_sec[$h];
+                    }
                     $SUBgraph_stats[$z][0]="$Hcalltime_HHMM[$h]";
                     $SUBgraph_stats[$z][1]=$Hcalls_count[$h];
                     $SUBgraph_stats[$z][2]=$Hsystem_count[$h];
@@ -1309,20 +1476,20 @@ else
                     $SUBgraph_stats[$z][5]=$Hrtp_count[$h];
                     $SUBgraph_stats[$z][8]=$Hagent_sec[$h];
                     $SUBgraph_stats[$z][9]=$Hpause_sec[$h];
-                    $Hagent_sec[$h] =            sec_convert($Hagent_sec[$h],'H'); 
-                    $Hpause_sec[$h] =            sec_convert($Hpause_sec[$h],'H'); 
-                    $Htalk_sec[$h] =            sec_convert($Htalk_sec[$h],'H'); 
-                    $Htalk_avg[$h] =            sec_convert($Htalk_avg[$h],'H'); 
-                    $Hqueue_seconds[$h] =        sec_convert($Hqueue_seconds[$h],'H'); 
-                    $Hqueue_avg[$h] =            sec_convert($Hqueue_avg[$h],'H'); 
-                    $Hmax_queue_seconds[$h] =    sec_convert($Hmax_queue_seconds[$h],'H');
+                    $Hagent_sec[$h] =            sec_convert($Hagent_sec[$h], 'H');
+                    $Hpause_sec[$h] =            sec_convert($Hpause_sec[$h], 'H');
+                    $Htalk_sec[$h] =            sec_convert($Htalk_sec[$h], 'H');
+                    $Htalk_avg[$h] =            sec_convert($Htalk_avg[$h], 'H');
+                    $Hqueue_seconds[$h] =        sec_convert($Hqueue_seconds[$h], 'H');
+                    $Hqueue_avg[$h] =            sec_convert($Hqueue_avg[$h], 'H');
+                    $Hmax_queue_seconds[$h] =    sec_convert($Hmax_queue_seconds[$h], 'H');
                     $hTOTALcalls =    sprintf("%6s", $Hcalls_count[$h]);
                     $hSYSTEMcalls =    sprintf("%6s", $Hsystem_count[$h]);
                     $hAGENTcalls =    sprintf("%6s", $Hagent_count[$h]);
                     $hPTPcalls =    sprintf("%6s", $Hptp_count[$h]);
                     $hRTPcalls =    sprintf("%6s", $Hrtp_count[$h]);
-                    $hNApercent = ( MathZDC($Hna_count[$h], $Hcalls_count[$h]) * 100);
-                    $hNApercent =        sprintf("%6.2f",$hNApercent);
+                    $hNApercent = (MathZDC($Hna_count[$h], $Hcalls_count[$h]) * 100);
+                    $hNApercent =        sprintf("%6.2f", $hNApercent);
                     $hNAcalls =        sprintf("%6s", $Hna_count[$h]);
                     $hANSWERcalls =    sprintf("%6s", $Hanswer_count[$h]);
                     $hSUMagent =    sprintf("%10s", $Hagent_sec[$h]);
@@ -1332,35 +1499,37 @@ else
                     $hSUMqueue =    sprintf("%9s", $Hqueue_seconds[$h]);
                     $hAVGqueue =    sprintf("%7s", $Hqueue_avg[$h]);
                     $hMAXqueue =    sprintf("%7s", $Hmax_queue_seconds[$h]);
-                    $hDROPpercent = ( MathZDC($Hdrop_count[$h], $Hcalls_count[$h]) * 100);
-                    $hDROPpercent =        sprintf("%6.2f",$hDROPpercent);
+                    $hDROPpercent = (MathZDC($Hdrop_count[$h], $Hcalls_count[$h]) * 100);
+                    $hDROPpercent =        sprintf("%6.2f", $hDROPpercent);
                     $hDROPcalls =    sprintf("%6s", $Hdrop_count[$h]);
                     $hPRINT =        sprintf("%19s", $Hcalltime_HHMM[$h]);
                     $SUB_ASCII_text .= "| $hPRINT | $hTOTALcalls | $hSYSTEMcalls | $hAGENTcalls | $hPTPcalls | $hRTPcalls | $hNApercent%| $hDROPpercent%| $hSUMagent | $hSUMpause |\n";
                     $CSV_subreports.="\"$hPRINT\",\"$hTOTALcalls\",\"$hSYSTEMcalls\",\"$hAGENTcalls\",\"$hPTPcalls\",\"$hRTPcalls\",\"$hNApercent%\",\"$hDROPpercent%\",\"$hSUMagent\",\"$hSUMpause\"\n";
-                    if ($DB) {$SUB_ASCII_text .= " $hDROPcalls($Hcalls_count_IN[$h]/$Hdrop_count_OUT[$h]) |\n";}
+                    if ($DB) {
+                        $SUB_ASCII_text .= " $hDROPcalls($Hcalls_count_IN[$h]/$Hdrop_count_OUT[$h]) |\n";
+                    }
                     $SUBgraph_stats[$z][6]=trim($hNApercent);
                     $SUBgraph_stats[$z][7]=trim($hDROPpercent);
                     $z++;
-                    }
-                $h++;
                 }
+                $h++;
+            }
             $hTOTtalk_avg = MathZDC($hTOTtalk_sec, $hTOTanswer_count);
             $hTOTqueue_avg = MathZDC($hTOTqueue_seconds, $hTOTcalls_count);
-            $hTOTagent_sec =            sec_convert($hTOTagent_sec,'H'); 
-            $hTOTpause_sec =            sec_convert($hTOTpause_sec,'H'); 
-            $hTOTtalk_sec =                sec_convert($hTOTtalk_sec,'H'); 
-            $hTOTtalk_avg =                sec_convert($hTOTtalk_avg,'H'); 
-            $hTOTqueue_seconds =        sec_convert($hTOTqueue_seconds,'H'); 
-            $hTOTqueue_avg =            sec_convert($hTOTqueue_avg,'H'); 
-            $hTOTmax_queue_seconds =    sec_convert($hTOTmax_queue_seconds,'H'); 
+            $hTOTagent_sec =            sec_convert($hTOTagent_sec, 'H');
+            $hTOTpause_sec =            sec_convert($hTOTpause_sec, 'H');
+            $hTOTtalk_sec =                sec_convert($hTOTtalk_sec, 'H');
+            $hTOTtalk_avg =                sec_convert($hTOTtalk_avg, 'H');
+            $hTOTqueue_seconds =        sec_convert($hTOTqueue_seconds, 'H');
+            $hTOTqueue_avg =            sec_convert($hTOTqueue_avg, 'H');
+            $hTOTmax_queue_seconds =    sec_convert($hTOTmax_queue_seconds, 'H');
             $hTOTcalls_count =            sprintf("%6s", $hTOTcalls_count);
             $hTOTsystem_count =            sprintf("%6s", $hTOTsystem_count);
             $hTOTagent_count =            sprintf("%6s", $hTOTagent_count);
             $hTOTptp_count =            sprintf("%6s", $hTOTptp_count);
             $hTOTrtp_count =            sprintf("%6s", $hTOTrtp_count);
-            $hTOTna_percent = ( MathZDC($hTOTna_count, $hTOTcalls_count) * 100);
-            $hTOTna_percent =            sprintf("%6.2f",$hTOTna_percent);
+            $hTOTna_percent = (MathZDC($hTOTna_count, $hTOTcalls_count) * 100);
+            $hTOTna_percent =            sprintf("%6.2f", $hTOTna_percent);
             $hTOTna_count =                sprintf("%6s", $hTOTna_count);
             $hTOTanswer_count =            sprintf("%6s", $hTOTanswer_count);
             $hTOTagent_sec =            sprintf("%10s", $hTOTagent_sec);
@@ -1370,25 +1539,25 @@ else
             $hTOTqueue_seconds =        sprintf("%9s", $hTOTqueue_seconds);
             $hTOTqueue_avg =            sprintf("%7s", $hTOTqueue_avg);
             $hTOTmax_queue_seconds =    sprintf("%7s", $hTOTmax_queue_seconds);
-            $hTOTdrop_percent = ( MathZDC($hTOTdrop_count, $hTOTcalls_count) * 100);
-            $hTOTdrop_percent =            sprintf("%6.2f",$hTOTdrop_percent);
+            $hTOTdrop_percent = (MathZDC($hTOTdrop_count, $hTOTcalls_count) * 100);
+            $hTOTdrop_percent =            sprintf("%6.2f", $hTOTdrop_percent);
             $hTOTdrop_count =            sprintf("%6s", $hTOTdrop_count);
             $SUB_ASCII_text .= "+---------------------+--------+--------+--------+--------+--------+--------+--------+------------+------------+\n";
-            $SUB_ASCII_text .= "| "._QXZ("TOTALS",19)." | $hTOTcalls_count | $hTOTsystem_count | $hTOTagent_count | $hTOTptp_count | $hTOTrtp_count | $hTOTna_percent%| $hTOTdrop_percent%| $hTOTagent_sec | $hTOTpause_sec |\n";
+            $SUB_ASCII_text .= "| "._QXZ("TOTALS", 19)." | $hTOTcalls_count | $hTOTsystem_count | $hTOTagent_count | $hTOTptp_count | $hTOTrtp_count | $hTOTna_percent%| $hTOTdrop_percent%| $hTOTagent_sec | $hTOTpause_sec |\n";
             $SUB_ASCII_text .= "+---------------------+--------+--------+--------+--------+--------+--------+--------+------------+------------+\n";
             $CSV_subreports.="\""._QXZ("TOTALS")."\",\"$hTOTcalls_count\",\"$hTOTsystem_count\",\"$hTOTagent_count\",\"$hTOTptp_count\",\"$hTOTrtp_count\",\"$hTOTna_percent%\",\"$hTOTdrop_percent%\",\"$hTOTagent_sec\",\"$hTOTpause_sec\"\n";
             $multigraph_text="";
             $graph_id++;
             $graph_array=array("OSI_CALLSdata$group[$i]|1|CALLS|integer|", "OSI_SYSTEMRELEASEdata$group[$i]|2|SYSTEM RELEASE CALLS|integer|", "OSI_AGENTRELEASEdata$group[$i]|3|AGENT RELEASE CALLS|integer|", "OSI_SALECALLSdata$group[$i]|4|SALE CALLS|integer|", "OSI_DNCCALLSdata$group[$i]|5|DNC CALLS|integer|", "OSI_NOANSWERPERCENTdata$group[$i]|6|NO ANSWER PERCENT|percent|", "OSI_DROPPERCENTdata$group[$i]|7|DROP PERCENT|percent|", "OSI_AGENTLOGINdata$group[$i]|8|AGENT LOGIN TIME|time|", "OSI_AGENTPAUSEdata$group[$i]|9|AGENT PAUSE TIME|time|");
             $default_graph="bar"; # Graph that is initally displayed when page loads
-            include("graph_color_schemas.inc"); 
+            include("graph_color_schemas.inc");
             $graph_totals_array=array();
             $graph_totals_rawdata=array();
             for ($q=0; $q<count($graph_array); $q++) {
-                $graph_info=explode("|", $graph_array[$q]); 
+                $graph_info=explode("|", $graph_array[$q]);
                 $current_graph_total=0;
                 $dataset_name=$graph_info[0];
-                $dataset_index=$graph_info[1]; 
+                $dataset_index=$graph_info[1];
                 $dataset_type=$graph_info[3];
                 $JS_text.="var $dataset_name = {\n";
                 $datasets="\t\tdatasets: [\n";
@@ -1410,7 +1579,7 @@ else
                     $graphConstantsA.="\"$bgcolor\",";
                     $graphConstantsB.="\"$hbgcolor\",";
                     $graphConstantsC.="\"$hbcolor\",";
-                }    
+                }
                 $graphConstantsA.="],\n";
                 $graphConstantsB.="],\n";
                 $graphConstantsC.="],\n";
@@ -1451,21 +1620,21 @@ else
         $rawTOTtalk_min = round(MathZDC($rawTOTtalk_sec, 60));
         $TOTtalk_avg = MathZDC($TOTtalk_sec, $TOTanswer_count);
         $TOTqueue_avg = MathZDC($TOTqueue_seconds, $TOTcalls_count);
-        $TOTagent_sec =            sec_convert($TOTagent_sec,'H'); 
-        $TOTpause_sec =            sec_convert($TOTpause_sec,'H'); 
-        $TOTtalk_sec =            sec_convert($TOTtalk_sec,'H'); 
-        $TOTtalk_avg =            sec_convert($TOTtalk_avg,'H'); 
-        $TOTqueue_seconds =        sec_convert($TOTqueue_seconds,'H'); 
-        $TOTqueue_avg =            sec_convert($TOTqueue_avg,'H'); 
-        $TOTmax_queue_seconds =    sec_convert($TOTmax_queue_seconds,'H'); 
+        $TOTagent_sec =            sec_convert($TOTagent_sec, 'H');
+        $TOTpause_sec =            sec_convert($TOTpause_sec, 'H');
+        $TOTtalk_sec =            sec_convert($TOTtalk_sec, 'H');
+        $TOTtalk_avg =            sec_convert($TOTtalk_avg, 'H');
+        $TOTqueue_seconds =        sec_convert($TOTqueue_seconds, 'H');
+        $TOTqueue_avg =            sec_convert($TOTqueue_avg, 'H');
+        $TOTmax_queue_seconds =    sec_convert($TOTmax_queue_seconds, 'H');
         $i =                    sprintf("%4s", $i);
         $TOTcalls_count =        sprintf("%6s", $TOTcalls_count);
         $TOTsystem_count =        sprintf("%6s", $TOTsystem_count);
         $TOTagent_count =        sprintf("%6s", $TOTagent_count);
         $TOTptp_count =            sprintf("%6s", $TOTptp_count);
         $TOTrtp_count =            sprintf("%6s", $TOTrtp_count);
-        $TOTna_percent = ( MathZDC($TOTna_count, $TOTcalls_count) * 100);
-        $TOTna_percent =        sprintf("%6.2f",$TOTna_percent);
+        $TOTna_percent = (MathZDC($TOTna_count, $TOTcalls_count) * 100);
+        $TOTna_percent =        sprintf("%6.2f", $TOTna_percent);
         $TOTna_count =            sprintf("%6s", $TOTna_count);
         $TOTanswer_count =        sprintf("%6s", $TOTanswer_count);
         $TOTagent_sec =            sprintf("%10s", $TOTagent_sec);
@@ -1475,50 +1644,50 @@ else
         $TOTqueue_seconds =        sprintf("%9s", $TOTqueue_seconds);
         $TOTqueue_avg =            sprintf("%7s", $TOTqueue_avg);
         $TOTmax_queue_seconds =    sprintf("%7s", $TOTmax_queue_seconds);
-        $TOTdrop_percent = ( MathZDC($TOTdrop_count, $TOTcalls_count) * 100);
-        $TOTdrop_percent =        sprintf("%6.2f",$TOTdrop_percent);
+        $TOTdrop_percent = (MathZDC($TOTdrop_count, $TOTcalls_count) * 100);
+        $TOTdrop_percent =        sprintf("%6.2f", $TOTdrop_percent);
         $TOTdrop_count =        sprintf("%6s", $TOTdrop_count);
         $ASCII_text .= "+------------------------------------------+--------+--------+--------+--------+--------+--------+--------+------------+------------+\n";
-        $ASCII_text .= "| "._QXZ("TOTALS",12)." "._QXZ("Campaigns",9).": $i             | $TOTcalls_count | $TOTsystem_count | $TOTagent_count | $TOTptp_count | $TOTrtp_count | $TOTna_percent%| $TOTdrop_percent%| $TOTagent_sec | $TOTpause_sec |\n";
+        $ASCII_text .= "| "._QXZ("TOTALS", 12)." "._QXZ("Campaigns", 9).": $i             | $TOTcalls_count | $TOTsystem_count | $TOTagent_count | $TOTptp_count | $TOTrtp_count | $TOTna_percent%| $TOTdrop_percent%| $TOTagent_sec | $TOTpause_sec |\n";
         $ASCII_text .= "+------------------------------------------+--------+--------+--------+--------+--------+--------+--------+------------+------------+\n";
         $CSV_main.="\""._QXZ("TOTALS")."       "._QXZ("Campaigns").": $i\",\"$TOTcalls_count\",\"$TOTsystem_count\",\"$TOTagent_count\",\"$TOTptp_count\",\"$TOTrtp_count\",\"$TOTna_percent%\",\"$TOTdrop_percent%\",\"$TOTagent_sec\",\"$TOTpause_sec\"\n";
-        }
-    if ($costformat > 0)
-        {
+    }
+    if ($costformat > 0) {
         $ASCII_text.="</PRE>\n<B>";
         $inbound_cost = ($rawTOTtalk_min * $inbound_rate);
         $inbound_cost =        sprintf("%8.2f", $inbound_cost);
         $ASCII_text.=_QXZ("INBOUND")." $query_date "._QXZ("to")." $end_date, &nbsp; $rawTOTtalk_min "._QXZ("minutes at")." \$$inbound_rate = \$$inbound_cost\n";
-        if ($db_source == 'S')
-            {
+        if ($db_source == 'S') {
             mysqli_close($link);
             $use_slave_server=0;
             $db_source = 'M';
             require("dbconnect_mysqli.php");
-            }
+        }
         $endMS = microtime();
-        $startMSary = explode(" ",$startMS);
-        $endMSary = explode(" ",$endMS);
+        $startMSary = explode(" ", $startMS);
+        $endMSary = explode(" ", $endMS);
         $runS = ($endMSary[0] - $startMSary[0]);
         $runM = ($endMSary[1] - $startMSary[1]);
         $TOTALrun = ($runS + $runM);
         $stmt="UPDATE vicidial_report_log set run_time='$TOTALrun' where report_log_id='$report_log_id';";
-        if ($DB) {echo "|$stmt|\n";}
+        if ($DB) {
+            echo "|$stmt|\n";
+        }
         $rslt=mysql_to_mysqli($stmt, $link);
         exit;
-        }
+    }
     $multigraph_text="";
     $graph_id++;
     $graph_array=array("OSI_CALLSdata|1|CALLS|integer|", "OSI_SYSTEMRELEASEdata|2|SYSTEM RELEASE CALLS|integer|", "OSI_AGENTRELEASEdata|3|AGENT RELEASE CALLS|integer|", "OSI_SALECALLSdata|4|SALE CALLS|integer|", "OSI_DNCCALLSdata|5|DNC CALLS|integer|", "OSI_NOANSWERPERCENTdata|6|NO ANSWER PERCENT|percent|", "OSI_DROPPERCENTdata|7|DROP PERCENT|percent|", "OSI_AGENTLOGINdata|8|AGENT LOGIN TIME|time|", "OSI_AGENTPAUSEdata|9|AGENT PAUSE TIME|time|");
     $default_graph="bar"; # Graph that is initally displayed when page loads
-    include("graph_color_schemas.inc"); 
+    include("graph_color_schemas.inc");
     $graph_totals_array=array();
     $graph_totals_rawdata=array();
     for ($q=0; $q<count($graph_array); $q++) {
-        $graph_info=explode("|", $graph_array[$q]); 
+        $graph_info=explode("|", $graph_array[$q]);
         $current_graph_total=0;
         $dataset_name=$graph_info[0];
-        $dataset_index=$graph_info[1]; 
+        $dataset_index=$graph_info[1];
         $dataset_type=$graph_info[3];
         $JS_text.="var $dataset_name = {\n";
         $datasets="\t\tdatasets: [\n";
@@ -1532,7 +1701,7 @@ else
         $graphConstantsC="\t\t\t\thoverBorderColor: [";
         for ($d=0; $d<count($graph_stats); $d++) {
             $labels.="\"".preg_replace('/ +/', ' ', $graph_stats[$d][0])."\",";
-            $data.="\"".$graph_stats[$d][$dataset_index]."\","; 
+            $data.="\"".$graph_stats[$d][$dataset_index]."\",";
             $current_graph_total+=$graph_stats[$d][$dataset_index];
             $bgcolor=$backgroundColor[($d%count($backgroundColor))];
             $hbgcolor=$hoverBackgroundColor[($d%count($hoverBackgroundColor))];
@@ -1540,7 +1709,7 @@ else
             $graphConstantsA.="\"$bgcolor\",";
             $graphConstantsB.="\"$hbgcolor\",";
             $graphConstantsC.="\"$hbcolor\",";
-        }    
+        }
         $graphConstantsA.="],\n";
         $graphConstantsB.="],\n";
         $graphConstantsC.="],\n";
@@ -1575,79 +1744,80 @@ else
     include("graphcanvas.inc");
     $HEADER.=$HTML_graph_head;
     $GRAPH_text.=$graphCanvas;
+}
+if ($file_download>0) {
+    $CSVfilename = "AST_OUTBOUNDsummary_interval$US$FILE_TIME.csv";
+    $CSV_text=$CSV_main.$CSV_subreports;
+    $CSV_text=preg_replace('/ +\"/', '"', $CSV_text);
+    $CSV_text=preg_replace('/\" +/', '"', $CSV_text);
+    // We'll be outputting a TXT file
+    header('Content-type: application/octet-stream');
+    // It will be called LIST_101_20090209-121212.txt
+    header("Content-Disposition: attachment; filename=\"$CSVfilename\"");
+    header('Expires: 0');
+    header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+    header('Pragma: public');
+    ob_clean();
+    flush();
+    echo "$CSV_text";
+    if ($db_source == 'S') {
+        mysqli_close($link);
+        $use_slave_server=0;
+        $db_source = 'M';
+        require("dbconnect_mysqli.php");
     }
-    if ($file_download>0) {
-        $CSVfilename = "AST_OUTBOUNDsummary_interval$US$FILE_TIME.csv";
-        $CSV_text=$CSV_main.$CSV_subreports;
-        $CSV_text=preg_replace('/ +\"/', '"', $CSV_text);
-        $CSV_text=preg_replace('/\" +/', '"', $CSV_text);
-        // We'll be outputting a TXT file
-        header('Content-type: application/octet-stream');
-        // It will be called LIST_101_20090209-121212.txt
-        header("Content-Disposition: attachment; filename=\"$CSVfilename\"");
-        header('Expires: 0');
-        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-        header('Pragma: public');
-        ob_clean();
-        flush();
-        echo "$CSV_text";
-        if ($db_source == 'S')
-            {
-            mysqli_close($link);
-            $use_slave_server=0;
-            $db_source = 'M';
-            require("dbconnect_mysqli.php");
-            }
-        $endMS = microtime();
-        $startMSary = explode(" ",$startMS);
-        $endMSary = explode(" ",$endMS);
-        $runS = ($endMSary[0] - $startMSary[0]);
-        $runM = ($endMSary[1] - $startMSary[1]);
-        $TOTALrun = ($runS + $runM);
-        $stmt="UPDATE vicidial_report_log set run_time='$TOTALrun' where report_log_id='$report_log_id';";
-        if ($DB) {echo "|$stmt|\n";}
-        $rslt=mysql_to_mysqli($stmt, $link);
-        exit;
+    $endMS = microtime();
+    $startMSary = explode(" ", $startMS);
+    $endMSary = explode(" ", $endMS);
+    $runS = ($endMSary[0] - $startMSary[0]);
+    $runM = ($endMSary[1] - $startMSary[1]);
+    $TOTALrun = ($runS + $runM);
+    $stmt="UPDATE vicidial_report_log set run_time='$TOTALrun' where report_log_id='$report_log_id';";
+    if ($DB) {
+        echo "|$stmt|\n";
+    }
+    $rslt=mysql_to_mysqli($stmt, $link);
+    exit;
+} else {
+    $JS_onload.="}\n";
+    if ($report_display_type=='HTML') {
+        $JS_text.=$JS_onload;
+    }
+    $JS_text.="</script>\n";
+    if ($report_display_type=="HTML") {
+        $MAIN.=$GRAPH_text;
+        $SUBoutput.=$SUB_HTML_text;
+        $SUBoutput.=$JS_text;
     } else {
-        $JS_onload.="}\n";
-        if ($report_display_type=='HTML') {$JS_text.=$JS_onload;}
-        $JS_text.="</script>\n";
-        if ($report_display_type=="HTML")
-            {
-            $MAIN.=$GRAPH_text;
-            $SUBoutput.=$SUB_HTML_text;
-            $SUBoutput.=$JS_text;
-            }
-        else
-            {
-            $MAIN.=$ASCII_text;
-            $SUBoutput.=$SUB_ASCII_text;
-            }
-        echo "$HEADER";
-        require("admin_header.php");
-        echo "$MAIN";
-        echo "$SUBoutput";
-        $ENDtime = date("U");
-        $RUNtime = ($ENDtime - $STARTtime);
-        echo "\n\n"._QXZ("Run Time").": $RUNtime "._QXZ("seconds")."|$db_source\n";
-        echo "</PRE>";
-        echo "</TD></TR></TABLE>";
-        echo "</BODY></HTML>";
+        $MAIN.=$ASCII_text;
+        $SUBoutput.=$SUB_ASCII_text;
     }
-if ($db_source == 'S')
-    {
+    echo "$HEADER";
+    require("admin_header.php");
+    echo "$MAIN";
+    echo "$SUBoutput";
+    $ENDtime = date("U");
+    $RUNtime = ($ENDtime - $STARTtime);
+    echo "\n\n"._QXZ("Run Time").": $RUNtime "._QXZ("seconds")."|$db_source\n";
+    echo "</PRE>";
+    echo "</TD></TR></TABLE>";
+    echo "</BODY></HTML>";
+}
+if ($db_source == 'S') {
     mysqli_close($link);
     $use_slave_server=0;
     $db_source = 'M';
     require("dbconnect_mysqli.php");
-    }
+}
 $endMS = microtime();
-$startMSary = explode(" ",$startMS);
-$endMSary = explode(" ",$endMS);
+$startMSary = explode(" ", $startMS);
+$endMSary = explode(" ", $endMS);
 $runS = ($endMSary[0] - $startMSary[0]);
 $runM = ($endMSary[1] - $startMSary[1]);
 $TOTALrun = ($runS + $runM);
 $stmt="UPDATE vicidial_report_log set run_time='$TOTALrun' where report_log_id='$report_log_id';";
-if ($DB) {echo "|$stmt|\n";}
+if ($DB) {
+    echo "|$stmt|\n";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 ?>

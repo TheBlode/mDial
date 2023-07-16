@@ -33,19 +33,19 @@
 # * ======================================== */
 ?>
 <?php
-header ("Content-type: text/html; charset=utf-8");
+header("Content-type: text/html; charset=utf-8");
 require_once("dbconnect_mysqli.php");
 require("functions.php");
-if (file_exists('options.php'))
-    {
+if (file_exists('options.php')) {
     require_once('options.php');
-    }
+}
 $stmt = "SELECT use_non_latin,enable_languages,language_method,default_language,agent_screen_colors,admin_web_directory,agent_script,allow_web_debug FROM system_settings;";
 $rslt=mysql_to_mysqli($stmt, $link);
-    if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01001',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+if ($mel > 0) {
+    mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01001', $VD_login, $server_ip, $session_name, $one_mysql_log);
+}
 $qm_conf_ct = mysqli_num_rows($rslt);
-if ($qm_conf_ct > 0)
-    {
+if ($qm_conf_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $non_latin =                $row[0];
     $SSenable_languages =        $row[1];
@@ -55,8 +55,10 @@ if ($qm_conf_ct > 0)
     $admin_web_directory =        $row[5];
     $SSagent_script =            $row[6];
     $SSallow_web_debug =        $row[7];
-    }
-if ($SSallow_web_debug < 1) {$DB=0;}
+}
+if ($SSallow_web_debug < 1) {
+    $DB=0;
+}
 $SSmenu_background='015B91';
 $SSframe_background='D9E6FE';
 $SSstd_row1_background='9BB9FB';
@@ -67,15 +69,17 @@ $SSstd_row5_background='A3C3D6';
 $SSalt_row1_background='BDFFBD';
 $SSalt_row2_background='99FF99';
 $SSalt_row3_background='CCFFCC';
-if ($agent_screen_colors != 'default')
-    {
+if ($agent_screen_colors != 'default') {
     $stmt = "SELECT menu_background,frame_background,std_row1_background,std_row2_background,std_row3_background,std_row4_background,std_row5_background,alt_row1_background,alt_row2_background,alt_row3_background,web_logo FROM vicidial_screen_colors where colors_id='$agent_screen_colors';";
     $rslt=mysql_to_mysqli($stmt, $link);
-        if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01XXX',$VD_login,$server_ip,$session_name,$one_mysql_log);}
-    if ($DB) {echo "$stmt\n";}
+    if ($mel > 0) {
+        mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01XXX', $VD_login, $server_ip, $session_name, $one_mysql_log);
+    }
+    if ($DB) {
+        echo "$stmt\n";
+    }
     $qm_conf_ct = mysqli_num_rows($rslt);
-    if ($qm_conf_ct > 0)
-        {
+    if ($qm_conf_ct > 0) {
         $row=mysqli_fetch_row($rslt);
         $SSmenu_background =        $row[0];
         $SSframe_background =        $row[1];
@@ -88,31 +92,31 @@ if ($agent_screen_colors != 'default')
         $SSalt_row2_background =    $row[8];
         $SSalt_row3_background =    $row[9];
         $SSweb_logo =                $row[10];
-        }
     }
+}
 $Mhead_color =    $SSstd_row5_background;
 $Mmain_bgcolor = $SSmenu_background;
 $Mhead_color =    $SSstd_row5_background;
 $selected_logo = "./images/vicidial_admin_web_logo.png";
 $logo_new=0;
 $logo_old=0;
-if (file_exists('../$admin_web_directory/images/vicidial_admin_web_logo.png')) {$logo_new++;}
-if (file_exists('vicidial_admin_web_logo.gif')) {$logo_old++;}
-if ($SSweb_logo=='default_new')
-    {
+if (file_exists('../$admin_web_directory/images/vicidial_admin_web_logo.png')) {
+    $logo_new++;
+}
+if (file_exists('vicidial_admin_web_logo.gif')) {
+    $logo_old++;
+}
+if ($SSweb_logo=='default_new') {
     $selected_logo = "./images/vicidial_admin_web_logo.png";
-    }
-if ( ($SSweb_logo=='default_old') and ($logo_old > 0) )
-    {
+}
+if (($SSweb_logo=='default_old') and ($logo_old > 0)) {
     $selected_logo = "../$admin_web_directory/vicidial_admin_web_logo.gif";
-    }
-if ( ($SSweb_logo!='default_new') and ($SSweb_logo!='default_old') )
-    {
-    if (file_exists("../$admin_web_directory/images/vicidial_admin_web_logo$SSweb_logo")) 
-        {
+}
+if (($SSweb_logo!='default_new') and ($SSweb_logo!='default_old')) {
+    if (file_exists("../$admin_web_directory/images/vicidial_admin_web_logo$SSweb_logo")) {
         $selected_logo = "../$admin_web_directory/images/vicidial_admin_web_logo$SSweb_logo";
-        }
     }
+}
 echo"<HTML><HEAD>\n";
 echo"<TITLE>"._QXZ("Welcome Screen")."</TITLE>\n";
 echo"<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=utf-8\">\n";
@@ -130,8 +134,9 @@ echo "<tr><td align=\"left\" colspan=\"2\"><font size=\"1\"> &nbsp; </font></td>
 echo "<TR><TD ALIGN=CENTER COLSPAN=2><font size=1> &nbsp; </TD></TR>\n";
 echo "<TR><TD ALIGN=CENTER COLSPAN=2><font class=\"skb_text\"> <a href=\"../agc/$SSagent_script\">"._QXZ("Agent Login")."</a> </TD></TR>\n";
 echo "<TR><TD ALIGN=CENTER COLSPAN=2><font size=1> &nbsp; </TD></TR>\n";
-if ($hide_timeclock_link < 1)
-    {echo "<TR><TD ALIGN=CENTER COLSPAN=2><font class=\"skb_text\"> <a href=\"../agc/timeclock.php?referrer=welcome\"> "._QXZ("Timeclock")."</a> </TD></TR>\n";}
+if ($hide_timeclock_link < 1) {
+    echo "<TR><TD ALIGN=CENTER COLSPAN=2><font class=\"skb_text\"> <a href=\"../agc/timeclock.php?referrer=welcome\"> "._QXZ("Timeclock")."</a> </TD></TR>\n";
+}
 echo "<TR><TD ALIGN=CENTER COLSPAN=2><font size=1> &nbsp; </TD></TR>\n";
 echo "<TR><TD ALIGN=CENTER COLSPAN=2><font class=\"skb_text\"> <a href=\"../$admin_web_directory/admin.php\">"._QXZ("Administration")."</a> </TD></TR>\n";
 echo "<TR><TD ALIGN=CENTER COLSPAN=2><font size=1> &nbsp; </TD></TR>\n";

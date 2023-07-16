@@ -36,13 +36,13 @@
 <?php
 $color_stmt="select menu_background, frame_background, std_row1_background, std_row2_background, std_row3_background, std_row4_background, std_row5_background from system_settings s, vicidial_screen_colors v where s.admin_screen_colors=v.colors_id and length(frame_background)=6 and length(menu_background)=6 limit 1;";
 $color_rslt=mysql_to_mysqli($color_stmt, $link);
-if (file_exists('options.php'))
-    {
+if (file_exists('options.php')) {
     require('options.php');
     $init_height=$graph_canvas_size;  # Chart has a minimum height/width of 600 by default
-    }
-if (strlen($init_height)<2)
-    {$init_height=600;}
+}
+if (strlen($init_height)<2) {
+    $init_height=600;
+}
 if(mysqli_num_rows($color_rslt) > 0) {
     $color_row=mysqli_fetch_array($color_rslt);
     $rgbbutton=hex2rgb("#$color_row[std_row1_background]");

@@ -39,24 +39,24 @@ $linkAST=mysqli_connect("1.1.1.1", "cron", "1234", "asterisk");
 $PHP_AUTH_USER=$_SERVER['PHP_AUTH_USER'];
 $PHP_AUTH_PW=$_SERVER['PHP_AUTH_PW'];
 $PHP_SELF=$_SERVER['PHP_SELF'];
-$PHP_SELF = preg_replace('/\.php.*/i','.php',$PHP_SELF);
-if (isset($_GET["QUERY_recid"]))                {$QUERY_recid=$_GET["QUERY_recid"];}
-    elseif (isset($_POST["QUERY_recid"]))        {$QUERY_recid=$_POST["QUERY_recid"];}
-$QUERY_recid = preg_replace("/\<|\>|\'|\"|\\\\|;/","",$QUERY_recid);
-$PHP_AUTH_USER = preg_replace("/\<|\>|\'|\"|\\\\|;/","",$PHP_AUTH_USER);
-$PHP_AUTH_PW = preg_replace("/\<|\>|\'|\"|\\\\|;/","",$PHP_AUTH_PW);
+$PHP_SELF = preg_replace('/\.php.*/i', '.php', $PHP_SELF);
+if (isset($_GET["QUERY_recid"])) {
+    $QUERY_recid=$_GET["QUERY_recid"];
+} elseif (isset($_POST["QUERY_recid"])) {
+    $QUERY_recid=$_POST["QUERY_recid"];
+}
+$QUERY_recid = preg_replace("/\<|\>|\'|\"|\\\\|;/", "", $QUERY_recid);
+$PHP_AUTH_USER = preg_replace("/\<|\>|\'|\"|\\\\|;/", "", $PHP_AUTH_USER);
+$PHP_AUTH_PW = preg_replace("/\<|\>|\'|\"|\\\\|;/", "", $PHP_AUTH_PW);
 $web_server = '1.1.1.1';
 $US='_';
-if( (preg_match("/VDC/i",$PHP_AUTH_USER)) or (preg_match("/VDC/i",$PHP_AUTH_PW)) )
-    {
-    }
-else
-    {
+if((preg_match("/VDC/i", $PHP_AUTH_USER)) or (preg_match("/VDC/i", $PHP_AUTH_PW))) {
+} else {
     Header("WWW-Authenticate: Basic realm=\"VICI-VERIF\"");
     Header("HTTP/1.0 401 Unauthorized");
     echo "Invalid Username/Password: |$PHP_AUTH_USER|$PHP_AUTH_PW|\n";
     exit;
-    }
+}
 require("screen_colors.php");
 ?>
 <html>
@@ -64,14 +64,11 @@ require("screen_colors.php");
 <title>Recording ID Lookup: </title>
 </head>
 <body bgcolor=white>
-<?php 
+<?php
 echo "<br><br>\n";
-if (strlen($QUERY_recid)<10)
-    {
+if (strlen($QUERY_recid)<10) {
     echo "Please enter a recording ID(customer phone number) below:\n";
-    }
-else
-    {
+} else {
     $logs_to_print=0;
     echo "<B>searching for: $QUERY_recid</B>\n";
     echo "<PRE>\n";
@@ -79,20 +76,19 @@ else
     $rslt=mysql_to_mysqli($stmt, $linkAST);
     $logs_to_print = mysqli_num_rows($rslt);
     $u=0;
-    if ($logs_to_print)
-        {
+    if ($logs_to_print) {
         $row=mysqli_fetch_row($rslt);
         $phone = $QUERY_recid;
-        $recording_id = $row[0]; 
-        $lead_id =        $row[1]; 
+        $recording_id = $row[0];
+        $lead_id =        $row[1];
         $user =            $row[2];
         $filename =        $row[3];
         $location =        $row[4];
         $start_time =    $row[5];
         $length_in_sec = $row[6];
-        $AUDname =    explode("/",$location);
+        $AUDname =    explode("/", $location);
         $AUDnamect =    (count($AUDname)) - 1;
-        preg_replace('/10\.10\.10\.16/i', "10.10.10.16",$AUDname[$AUDnamect]);
+        preg_replace('/10\.10\.10\.16/i', "10.10.10.16", $AUDname[$AUDnamect]);
         echo "Call Date/Time:        $start_time\n";
         echo "Recording Length:      $length_in_sec\n";
         echo "Phone Number:          $phone\n";
@@ -101,23 +97,20 @@ else
         echo "Unique ID:             $lead_id\n";
         $fileGSM=$AUDname[$AUDnamect];
         $locationGSM=$location;
-        $fileGSM = preg_replace('/\.wav/i', ".gsm",$fileGSM);
-        if (!preg_match('/gsm/i',$locationGSM))
-            {
-            $locationGSM = preg_replace('/10\.10\.10\.16/i', "10.10.10.16/GSM",$locationGSM);
-            $locationGSM = preg_replace('/\.wav/i', ".gsm",$locationGSM);
-            }
+        $fileGSM = preg_replace('/\.wav/i', ".gsm", $fileGSM);
+        if (!preg_match('/gsm/i', $locationGSM)) {
+            $locationGSM = preg_replace('/10\.10\.10\.16/i', "10.10.10.16/GSM", $locationGSM);
+            $locationGSM = preg_replace('/\.wav/i', ".gsm", $locationGSM);
+        }
         passthru("/usr/local/apache2/htdocs/vicidial/wget --output-document=/usr/local/apache2/htdocs/vicidial/temp/$AUDname[$AUDnamect] $location\n");
         passthru("/usr/local/apache2/htdocs/vicidial/wget --output-document=/usr/local/apache2/htdocs/vicidial/temp/$fileGSM $locationGSM\n");
         echo "Link Uncompressed WAV: <a href=\"./temp/$AUDname[$AUDnamect]\">$AUDname[$AUDnamect]</a>\n";
         echo "Link Compressed GSM:   <a href=\"./temp/$fileGSM\">$fileGSM</a>\n";
-        }
-    else
-        {
+    } else {
         echo "ERROR:        $QUERY_recid\n";
-        }
-    echo "</PRE>\n";
     }
+    echo "</PRE>\n";
+}
 $ENDtime = date("U");
 $RUNtime = ($ENDtime - $STARTtime);
 echo "\n\n\n<br><br><br>\n<FORM ACTION=\"$PHP_SELF\" METHOD=GET>\n";

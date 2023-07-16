@@ -55,21 +55,21 @@ $scripts_color =    '#99FFCC';
 $filters_color =    '#CCCCCC';
 $admin_color =        '#FF99FF';
 $reports_color =    '#99FF33';
-    $times_color =        '#FF33FF';
-    $shifts_color =        '#FF33FF';
-    $phones_color =        '#FF33FF';
-    $conference_color =    '#FF33FF';
-    $server_color =        '#FF33FF';
-    $templates_color =    '#FF33FF';
-    $carriers_color =    '#FF33FF';
-    $settings_color =     '#FF33FF';
-    $label_color =        '#FF33FF';
-    $status_color =     '#FF33FF';
-    $moh_color =         '#FF33FF';
-    $vm_color =         '#FF33FF';
-    $tts_color =         '#FF33FF';
-    $cc_color =         '#FF33FF';
-    $cts_color =         '#FF33FF';
+$times_color =        '#FF33FF';
+$shifts_color =        '#FF33FF';
+$phones_color =        '#FF33FF';
+$conference_color =    '#FF33FF';
+$server_color =        '#FF33FF';
+$templates_color =    '#FF33FF';
+$carriers_color =    '#FF33FF';
+$settings_color =     '#FF33FF';
+$label_color =        '#FF33FF';
+$status_color =     '#FF33FF';
+$moh_color =         '#FF33FF';
+$vm_color =         '#FF33FF';
+$tts_color =         '#FF33FF';
+$cc_color =         '#FF33FF';
+$cts_color =         '#FF33FF';
 $subcamp_color =    '#FF9933';
 $users_font =        'BLACK';
 $campaigns_font =    'BLACK';
@@ -82,18 +82,18 @@ $filters_font =        'BLACK';
 $admin_font =        'BLACK';
 $qc_font =            'BLACK';
 $reports_font =        'BLACK';
-    $times_font =        'BLACK';
-    $phones_font =        'BLACK';
-    $conference_font =    'BLACK';
-    $server_font =        'BLACK';
-    $settings_font =     'BLACK';
-    $label_font =     'BLACK';
-    $status_font =     'BLACK';
-    $moh_font =     'BLACK';
-    $vm_font =         'BLACK';
-    $tts_font =     'BLACK';
-    $cc_font =        'BLACK';
-    $cts_font =     'BLACK';
+$times_font =        'BLACK';
+$phones_font =        'BLACK';
+$conference_font =    'BLACK';
+$server_font =        'BLACK';
+$settings_font =     'BLACK';
+$label_font =     'BLACK';
+$status_font =     'BLACK';
+$moh_font =     'BLACK';
+$vm_font =         'BLACK';
+$tts_font =     'BLACK';
+$cc_font =        'BLACK';
+$cts_font =     'BLACK';
 $subcamp_font =        'BLACK';
 $users_color =        '#E6E6E6';
 $campaigns_color =    '#E6E6E6';
@@ -106,26 +106,26 @@ $filters_color =    '#E6E6E6';
 $admin_color =        '#E6E6E6';
 $qc_color =            '#E6E6E6';
 $reports_color =    '#E6E6E6';
-    $times_color =        '#C6C6C6';
-    $shifts_color =        '#C6C6C6';
-    $phones_color =        '#C6C6C6';
-    $conference_color =    '#C6C6C6';
-    $server_color =        '#C6C6C6';
-    $templates_color =    '#C6C6C6';
-    $carriers_color =    '#C6C6C6';
-    $settings_color =     '#C6C6C6';
-    $label_color =        '#C6C6C6';
-    $colors_color =        '#C6C6C6';
-    $status_color =     '#C6C6C6';
-    $moh_color =         '#C6C6C6';
-    $vm_color =         '#C6C6C6';
-    $tts_color =         '#C6C6C6';
-    $cc_color =         '#C6C6C6';
-    $cts_color =         '#C6C6C6';
-    $sc_color =         '#C6C6C6';
-    $sg_color =         '#C6C6C6';
-    $ar_color =         '#C6C6C6';
-    $il_color =         '#C6C6C6';
+$times_color =        '#C6C6C6';
+$shifts_color =        '#C6C6C6';
+$phones_color =        '#C6C6C6';
+$conference_color =    '#C6C6C6';
+$server_color =        '#C6C6C6';
+$templates_color =    '#C6C6C6';
+$carriers_color =    '#C6C6C6';
+$settings_color =     '#C6C6C6';
+$label_color =        '#C6C6C6';
+$colors_color =        '#C6C6C6';
+$status_color =     '#C6C6C6';
+$moh_color =         '#C6C6C6';
+$vm_color =         '#C6C6C6';
+$tts_color =         '#C6C6C6';
+$cc_color =         '#C6C6C6';
+$cts_color =         '#C6C6C6';
+$sc_color =         '#C6C6C6';
+$sg_color =         '#C6C6C6';
+$ar_color =         '#C6C6C6';
+$il_color =         '#C6C6C6';
 $subcamp_color =    '#C6C6C6';
 $Msubhead_color =    '#E6E6E6';
 $Mselected_color =    '#C6C6C6';
@@ -135,13 +135,12 @@ $PHP_AUTH_USER=$_SERVER['PHP_AUTH_USER'];
 $PHP_AUTH_PW=$_SERVER['PHP_AUTH_PW'];
 $QUERY_STRING = getenv("QUERY_STRING");
 $PHP_SELF=$_SERVER['PHP_SELF'];
-$PHP_SELF = preg_replace('/\.php.*/i','.php',$PHP_SELF);
+$PHP_SELF = preg_replace('/\.php.*/i', '.php', $PHP_SELF);
 $Vreports = 'NONE, Real-Time Main Report, Real-Time Campaign Summary, Real-Time Whiteboard Report, Inbound Report, Inbound Report by DID, Inbound Service Level Report, Inbound Summary Hourly Report, Inbound Daily Report, Inbound DID Report, Inbound DID Summary Report, Agent DID Report, Inbound IVR Report, Inbound Forecasting Report, Advanced Forecasting Report, Outbound Calling Report, Outbound Summary Interval Report, Outbound IVR Report, Callmenu Survey Report, Outbound Lead Source Report, Fronter - Closer Report, Fronter - Closer Detail Report, Lists Campaign Statuses Report, Lists Statuses Report, Campaign Status List Report, Export Calls Report, Export Leads Report, Agent Time Detail, Agent Status Detail, Agent Inbound Status Summary, Agent Performance Detail, Team Performance Detail, Performance Comparison Report, Single Agent Daily, Single Agent Daily Time, User Group Login Report, User Group Hourly Report, User Group Detail Hourly Report, User Timeclock Report, User Group Timeclock Status Report, User Timeclock Detail Report, Server Performance Report, Administration Change Log, List Update Stats, User Stats, User Time Sheet, Download List, Dialer Inventory Report, Maximum System Stats, Maximum Stats Detail, Search Leads Logs, Email Log Report, Carrier Log Report, Campaign Debug, Asterisk Debug, Hangup Cause Report, Lists Pass Report, Called Counts List IDs Report, Agent Debug Log Report, Agent Parked Call Report, Agent-Manager Chat Log, Recording Access Log Report, API Log Report, Real-Time Monitoring Log Report';
 $UGreports = 'ALL REPORTS, NONE, Real-Time Main Report, Real-Time Campaign Summary, Real-Time Whiteboard Report, Inbound Report, Inbound Report by DID, Inbound Service Level Report, Inbound Summary Hourly Report, Inbound Daily Report, Inbound DID Report, Inbound DID Summary Report, Agent DID Report, Inbound Email Report, Inbound Chat Report, Inbound IVR Report, Inbound Forecasting Report, Advanced Forecasting Report, Outbound Calling Report, Outbound Summary Interval Report, Outbound IVR Report, Callmenu Survey Report, Outbound Lead Source Report, Fronter - Closer Report, Fronter - Closer Detail Report, Lists Campaign Statuses Report, Lists Statuses Report, Campaign Status List Report, Export Calls Report, Export Leads Report, Agent Time Detail, Agent Status Detail, Agent Inbound Status Summary, Agent Performance Detail, Team Performance Detail, Performance Comparison Report, Single Agent Daily, Single Agent Daily Time, User Group Login Report, User Group Hourly Report, User Group Detail Hourly Report, User Timeclock Report, User Group Timeclock Status Report, User Timeclock Detail Report, Server Performance Report, Administration Change Log, List Update Stats, User Stats, User Time Sheet, Download List, Dialer Inventory Report, Custom Reports Links, CallCard Search, Maximum System Stats, Maximum Stats Detail, Search Leads Logs, Email Log Report, Lists Pass Report, Called Counts List IDs Report, Front Page System Summary, Report Page Servers Summary, Admin Utilities Page, Agent Debug Log Report, Agent Parked Call Report, Agent-Manager Chat Log, Recording Access Log Report, API Log Report, Real-Time Monitoring Log Report';
 $Vtables = 'NONE,log_noanswer,did_agent_log,contact_information';
 $APIfunctions = 'ALL_FUNCTIONS add_group_alias add_lead add_list add_phone add_phone_alias add_user agent_ingroup_info agent_stats_export agent_status audio_playback blind_monitor call_agent callid_info change_ingroups check_phone_number did_log_export external_add_lead external_dial external_hangup external_pause external_status in_group_status logout moh_list park_call pause_code preview_dial_action ra_call_control recording recording_lookup send_dtmf server_refresh set_timer_action sounds_list st_get_agent_active_lead st_login_log transfer_conference update_fields update_lead update_list update_log_entry update_phone update_phone_alias update_user user_group_status vm_list webphone_url webserver logged_in_agents update_campaign update_did lead_field_info phone_number_log switch_lead ccc_lead_info lead_status_search call_status_stats calls_in_queue_count force_fronter_leave_3way';
-if (!file_exists('old_clear'))
-    {
+if (!file_exists('old_clear')) {
     array_map('unlink', glob("./*.csv"));
     array_map('unlink', glob("./*.xls"));
     array_map('unlink', glob("./ploticus/*"));
@@ -149,15 +148,17 @@ if (!file_exists('old_clear'))
     $clear_file=fopen('old_clear', "w");
     fwrite($clear_file, '1');
     fclose($clear_file);
-    }
-if (isset($_GET["DB"]))                {$DB=$_GET["DB"];}
-    elseif (isset($_POST["DB"]))    {$DB=$_POST["DB"];}
-$DB=preg_replace("/[^0-9a-zA-Z]/","",$DB);
+}
+if (isset($_GET["DB"])) {
+    $DB=$_GET["DB"];
+} elseif (isset($_POST["DB"])) {
+    $DB=$_POST["DB"];
+}
+$DB=preg_replace("/[^0-9a-zA-Z]/", "", $DB);
 $stmt = "SELECT use_non_latin,enable_queuemetrics_logging,enable_vtiger_integration,qc_features_active,outbound_autodial_active,sounds_central_control_active,enable_second_webform,user_territories_active,custom_fields_enabled,admin_web_directory,webphone_url,first_login_trigger,hosted_settings,default_phone_registration_password,default_phone_login_password,default_server_password,test_campaign_calls,active_voicemail_server,voicemail_timezones,default_voicemail_timezone,default_local_gmt,campaign_cid_areacodes_enabled,pllb_grouping_limit,did_ra_extensions_enabled,expanded_list_stats,contacts_enabled,alt_log_server_ip,alt_log_dbname,alt_log_login,alt_log_pass,tables_use_alt_log_db,call_menu_qualify_enabled,admin_list_counts,allow_voicemail_greeting,svn_revision,allow_emails,level_8_disable_add,pass_key,pass_hash_enabled,disable_auto_dial,country_code_list_stats,frozen_server_call_clear,active_modules,allow_chats,enable_languages,language_method,meetme_enter_login_filename,meetme_enter_leave3way_filename,enable_did_entry_list_id,enable_third_webform,default_language,user_hide_realtime_enabled,log_recording_access,alt_ivr_logging,admin_row_click,admin_screen_colors,ofcom_uk_drop_calc,agent_screen_colors,script_remove_js,manual_auto_next,user_new_lead_limit,agent_xfer_park_3way,agent_soundboards,web_loader_phone_length,agent_script,enable_auto_reports,enable_pause_code_limits,enable_drop_lists,allow_ip_lists,system_ip_blacklist,hide_inactive_lists,allow_manage_active_lists,expired_lists_inactive,did_system_filter,enable_gdpr_download_deletion,allow_web_debug FROM system_settings;";
 $rslt=mysql_to_mysqli($stmt, $link);
 $qm_conf_ct = mysqli_num_rows($rslt);
-if ($qm_conf_ct > 0)
-    {
+if ($qm_conf_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $non_latin =                            $row[0];
     $SSenable_queuemetrics_logging =        $row[1];
@@ -235,39 +236,38 @@ if ($qm_conf_ct > 0)
     $SSdid_system_filter =                    $row[73];
     $SSenable_gdpr_download_deletion =        $row[74];
     $SSallow_web_debug =                    $row[75];
-    }
-if ($SSallow_web_debug < 1) {$DB=0;}
-if ($non_latin < 1)
-    {
+}
+if ($SSallow_web_debug < 1) {
+    $DB=0;
+}
+if ($non_latin < 1) {
     $PHP_AUTH_USER = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_USER);
     $PHP_AUTH_PW = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_PW);
-    }
-else
-    {
+} else {
     $PHP_AUTH_USER = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_USER);
     $PHP_AUTH_PW = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_PW);
-    }
-if ( ($qm_conf_ct > 0) and (strlen($SSpass_key)<16) )
-    {
+}
+if (($qm_conf_ct > 0) and (strlen($SSpass_key)<16)) {
     $SSpass_key = '';
-    $possible = "0123456789abcdefghijklmnpqrstvwxyzABCDEFGHIJKLMNPQRSTUVWXYZ";  
-    $i = 0; 
+    $possible = "0123456789abcdefghijklmnpqrstvwxyzABCDEFGHIJKLMNPQRSTUVWXYZ";
+    $i = 0;
     $length = 16;
-    while ($i < $length) 
-        { 
+    while ($i < $length) {
         $char = substr($possible, mt_rand(0, strlen($possible)-1), 1);
         $SSpass_key .= $char;
         $i++;
-        }
+    }
     $stmt="UPDATE system_settings set pass_key='$SSpass_key' where ( (pass_key is NULL) or (pass_key='') );";
     $rslt=mysql_to_mysqli($stmt, $link);
-    }
+}
 $STARTtime = date("U");
 $SQLdate = date("Y-m-d H:i:s");
 $REPORTdate = date("Y-m-d");
 $EXPtestdate = date("Ymd");
 $CIDdate = date("mdHis");
-while (strlen($CIDdate) > 9) {$CIDdate = substr("$CIDdate", 1);}
+while (strlen($CIDdate) > 9) {
+    $CIDdate = substr("$CIDdate", 1);
+}
 $MT[0]='';
 $US='_';
 $active_lists=0;
@@ -277,56 +277,77 @@ $modify_footer_refresh=0;
 $check_time = ($STARTtime - 86400);
 $SSanswer_transfer_agent =    '8368';
 $add_copy_disabled=0;
-$month_old = mktime(0, 0, 0, date("m")-1, date("d"),  date("Y"));
-$past_month_date = date("Y-m-d H:i:s",$month_old);
-$week_old = mktime(0, 0, 0, date("m"), date("d")-7,  date("Y"));
-$past_week_date = date("Y-m-d H:i:s",$week_old);
-$dtmf[0]='0';                $dtmf_key[0]='0';
-$dtmf[1]='1';                $dtmf_key[1]='1';
-$dtmf[2]='2';                $dtmf_key[2]='2';
-$dtmf[3]='3';                $dtmf_key[3]='3';
-$dtmf[4]='4';                $dtmf_key[4]='4';
-$dtmf[5]='5';                $dtmf_key[5]='5';
-$dtmf[6]='6';                $dtmf_key[6]='6';
-$dtmf[7]='7';                $dtmf_key[7]='7';
-$dtmf[8]='8';                $dtmf_key[8]='8';
-$dtmf[9]='9';                $dtmf_key[9]='9';
-$dtmf[10]='HASH';            $dtmf_key[10]='#';
-$dtmf[11]='STAR';            $dtmf_key[11]='*';
-$dtmf[12]='A';                $dtmf_key[12]='A';
-$dtmf[13]='B';                $dtmf_key[13]='B';
-$dtmf[14]='C';                $dtmf_key[14]='C';
-$dtmf[15]='D';                $dtmf_key[15]='D';
-$dtmf[16]='TIMECHECK';        $dtmf_key[16]='TIMECHECK';
-$dtmf[17]='TIMEOUT';        $dtmf_key[17]='TIMEOUT';
-$dtmf[18]='INVALID';        $dtmf_key[18]='INVALID';
-$dtmf[19]='INVALID_2ND';    $dtmf_key[19]='INVALID_2ND';
-$dtmf[20]='INVALID_3RD';    $dtmf_key[20]='INVALID_3RD';
+$month_old = mktime(0, 0, 0, date("m")-1, date("d"), date("Y"));
+$past_month_date = date("Y-m-d H:i:s", $month_old);
+$week_old = mktime(0, 0, 0, date("m"), date("d")-7, date("Y"));
+$past_week_date = date("Y-m-d H:i:s", $week_old);
+$dtmf[0]='0';
+$dtmf_key[0]='0';
+$dtmf[1]='1';
+$dtmf_key[1]='1';
+$dtmf[2]='2';
+$dtmf_key[2]='2';
+$dtmf[3]='3';
+$dtmf_key[3]='3';
+$dtmf[4]='4';
+$dtmf_key[4]='4';
+$dtmf[5]='5';
+$dtmf_key[5]='5';
+$dtmf[6]='6';
+$dtmf_key[6]='6';
+$dtmf[7]='7';
+$dtmf_key[7]='7';
+$dtmf[8]='8';
+$dtmf_key[8]='8';
+$dtmf[9]='9';
+$dtmf_key[9]='9';
+$dtmf[10]='HASH';
+$dtmf_key[10]='#';
+$dtmf[11]='STAR';
+$dtmf_key[11]='*';
+$dtmf[12]='A';
+$dtmf_key[12]='A';
+$dtmf[13]='B';
+$dtmf_key[13]='B';
+$dtmf[14]='C';
+$dtmf_key[14]='C';
+$dtmf[15]='D';
+$dtmf_key[15]='D';
+$dtmf[16]='TIMECHECK';
+$dtmf_key[16]='TIMECHECK';
+$dtmf[17]='TIMEOUT';
+$dtmf_key[17]='TIMEOUT';
+$dtmf[18]='INVALID';
+$dtmf_key[18]='INVALID';
+$dtmf[19]='INVALID_2ND';
+$dtmf_key[19]='INVALID_2ND';
+$dtmf[20]='INVALID_3RD';
+$dtmf_key[20]='INVALID_3RD';
 $stmt="SELECT selected_language from vicidial_users where user='$PHP_AUTH_USER';";
-if ($DB) {echo "|$stmt|\n";}
+if ($DB) {
+    echo "|$stmt|\n";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 $sl_ct = mysqli_num_rows($rslt);
-if ($sl_ct > 0)
-    {
+if ($sl_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $VUselected_language =        $row[0];
-    }
-if ($force_logout)
-    {
-    if( (strlen($PHP_AUTH_USER)>0) or (strlen($PHP_AUTH_PW)>0) )
-        {
+}
+if ($force_logout) {
+    if((strlen($PHP_AUTH_USER)>0) or (strlen($PHP_AUTH_PW)>0)) {
         Header("WWW-Authenticate: Basic realm=\"CONTACT-CENTER-ADMIN\"");
         Header("HTTP/1.0 401 Unauthorized");
-        }
+    }
     echo _QXZ("You have now logged out. Thank you")."\n<BR>"._QXZ("To log back in").", <a href=\"$PHP_SELF\">"._QXZ("click here")."</a>";
     exit;
-    }
+}
 $stmt = "SELECT use_non_latin,auto_dial_limit,user_territories_active,allow_custom_dialplan,callcard_enabled,admin_modify_refresh,nocache_admin,webroot_writable,allow_emails,manual_dial_validation FROM system_settings;";
 $rslt=mysql_to_mysqli($stmt, $link);
-if ($DB) {echo "$stmt\n";}
+if ($DB) {
+    echo "$stmt\n";
+}
 $qm_conf_ct = mysqli_num_rows($rslt);
-if ($qm_conf_ct > 0)
-    {
+if ($qm_conf_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $non_latin =                    $row[0];
     $SSauto_dial_limit =            $row[1];
@@ -339,7 +360,7 @@ if ($qm_conf_ct > 0)
     $SSemail_enabled =                $row[8];
     $SSmanual_dial_validation =        $row[9];
     $SSauto_dial_limit = ($SSauto_dial_limit + 0.001);
-    }
+}
 $date = date("r");
 $ip = getenv("REMOTE_ADDR");
 $browser = getenv("HTTP_USER_AGENT");
@@ -347,79 +368,74 @@ $user_auth=0;
 $auth=0;
 $reports_auth=0;
 $qc_auth=0;
-$auth_message = user_authorization($PHP_AUTH_USER,$PHP_AUTH_PW,'QC',1,0);
-if ( ($auth_message == 'GOOD') or ($auth_message == '2FA') )
-    {
+$auth_message = user_authorization($PHP_AUTH_USER, $PHP_AUTH_PW, 'QC', 1, 0);
+if (($auth_message == 'GOOD') or ($auth_message == '2FA')) {
     $user_auth=1;
-    if ($auth_message == '2FA')
-        {
-        header ("Content-type: text/html; charset=utf-8");
+    if ($auth_message == '2FA') {
+        header("Content-type: text/html; charset=utf-8");
         echo _QXZ("Your session is expired").". <a href=\"admin.php\">"._QXZ("Click here to log in")."</a>.\n";
         exit;
-        }
     }
-if ($user_auth > 0)
-    {
+}
+if ($user_auth > 0) {
     $stmt="SELECT count(*) from vicidial_users where user='$PHP_AUTH_USER' and user_level > 7 and api_only_user != '1';";
-    if ($DB) {echo "|$stmt|\n";}
+    if ($DB) {
+        echo "|$stmt|\n";
+    }
     $rslt=mysql_to_mysqli($stmt, $link);
     $row=mysqli_fetch_row($rslt);
     $auth=$row[0];
     $stmt="SELECT count(*) from vicidial_users where user='$PHP_AUTH_USER' and user_level > 6 and view_reports='1' and api_only_user != '1';";
-    if ($DB) {echo "|$stmt|\n";}
+    if ($DB) {
+        echo "|$stmt|\n";
+    }
     $rslt=mysql_to_mysqli($stmt, $link);
     $row=mysqli_fetch_row($rslt);
     $reports_auth=$row[0];
     $stmt="SELECT count(*) from vicidial_users where user='$PHP_AUTH_USER' and user_level > 1 and qc_enabled='1' and api_only_user != '1';";
-    if ($DB) {echo "|$stmt|\n";}
+    if ($DB) {
+        echo "|$stmt|\n";
+    }
     $rslt=mysql_to_mysqli($stmt, $link);
     $row=mysqli_fetch_row($rslt);
     $qc_auth=$row[0];
     $reports_only_user=0;
     $qc_only_user=0;
-    if ( ($reports_auth > 0) and ($auth < 1) )
-        {
+    if (($reports_auth > 0) and ($auth < 1)) {
         $ADD=999990;
         $reports_only_user=1;
-        }
-    if ( ($qc_auth > 0) and ($reports_auth < 1) and ($auth < 1) )
-        {
-        if ( ($ADD != '881') and ($ADD != '100000000000000') )
-            {
-            $ADD=100000000000000;
-            }
-        $qc_only_user=1;
-        }
-    if ( ($qc_auth < 1) and ($reports_auth < 1) and ($auth < 1) )
-        {
-        $VDdisplayMESSAGE = _QXZ("You do not have permission to be here");
-        Header ("Content-type: text/html; charset=utf-8");
-        echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
-        exit;
-        }
     }
-else
-    {
+    if (($qc_auth > 0) and ($reports_auth < 1) and ($auth < 1)) {
+        if (($ADD != '881') and ($ADD != '100000000000000')) {
+            $ADD=100000000000000;
+        }
+        $qc_only_user=1;
+    }
+    if (($qc_auth < 1) and ($reports_auth < 1) and ($auth < 1)) {
+        $VDdisplayMESSAGE = _QXZ("You do not have permission to be here");
+        Header("Content-type: text/html; charset=utf-8");
+        echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
+        exit;
+    }
+} else {
     $VDdisplayMESSAGE = _QXZ("Login incorrect, please try again");
-    if ($auth_message == 'LOCK')
-        {
+    if ($auth_message == 'LOCK') {
         $VDdisplayMESSAGE = _QXZ("Too many login attempts, try again in 15 minutes");
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
-    if ($auth_message == 'IPBLOCK')
-        {
+    }
+    if ($auth_message == 'IPBLOCK') {
         $VDdisplayMESSAGE = _QXZ("Your IP Address is not allowed") . ": $ip";
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
+    }
     Header("WWW-Authenticate: Basic realm=\"CONTACT-CENTER-ADMIN\"");
     Header("HTTP/1.0 401 Unauthorized");
     echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$PHP_AUTH_PW|$auth_message|\n";
     exit;
-    }
+}
 $stmt="SELECT user_id,user,pass,full_name,user_level,user_group,phone_login,phone_pass,delete_users,delete_user_groups,delete_lists,delete_campaigns,delete_ingroups,delete_remote_agents,load_leads,campaign_detail,ast_admin_access,ast_delete_phones,delete_scripts,modify_leads,hotkeys_active,change_agent_campaign,agent_choose_ingroups,closer_campaigns,scheduled_callbacks,agentonly_callbacks,agentcall_manual,vicidial_recording,vicidial_transfers,delete_filters,alter_agent_interface_options,closer_default_blended,delete_call_times,modify_call_times,modify_users,modify_campaigns,modify_lists,modify_scripts,modify_filters,modify_ingroups,modify_usergroups,modify_remoteagents,modify_servers,view_reports,vicidial_recording_override,alter_custdata_override,qc_enabled,qc_user_level,qc_pass,qc_finish,qc_commit,add_timeclock_log,modify_timeclock_log,delete_timeclock_log,alter_custphone_override,vdc_agent_api_access,modify_inbound_dids,delete_inbound_dids,active,alert_enabled,download_lists,agent_shift_enforcement_override,manager_shift_enforcement_override,shift_override_flag,export_reports,delete_from_dnc,email,user_code,territory,allow_alerts,callcard_admin,force_change_password,modify_shifts,modify_phones,modify_carriers,modify_labels,modify_statuses,modify_voicemail,modify_audiostore,modify_moh,modify_tts,modify_contacts,modify_same_user_level,alter_admin_interface_options,modify_custom_dialplans,modify_languages,selected_language,user_choose_language,modify_colors,api_only_user,modify_auto_reports,modify_ip_lists,export_gdpr_leads from vicidial_users where user='$PHP_AUTH_USER';";
 $rslt=mysql_to_mysqli($stmt, $link);
 $row=mysqli_fetch_row($rslt);
@@ -492,75 +508,71 @@ $LOGqc_allowed_inbound_groups =    $row[5];
 $LOGallowed_campaignsSQL='';
 $campLOGallowed_campaignsSQL='';
 $whereLOGallowed_campaignsSQL='';
-if ( (!preg_match('/\-ALL/i', $LOGallowed_campaigns)) )
-    {
-    $rawLOGallowed_campaignsSQL = preg_replace("/ -/",'',$LOGallowed_campaigns);
-    $rawLOGallowed_campaignsSQL = preg_replace("/ /","','",$rawLOGallowed_campaignsSQL);
+if ((!preg_match('/\-ALL/i', $LOGallowed_campaigns))) {
+    $rawLOGallowed_campaignsSQL = preg_replace("/ -/", '', $LOGallowed_campaigns);
+    $rawLOGallowed_campaignsSQL = preg_replace("/ /", "','", $rawLOGallowed_campaignsSQL);
     $LOGallowed_campaignsSQL = "and campaign_id IN('$rawLOGallowed_campaignsSQL')";
     $campLOGallowed_campaignsSQL = "and camp.campaign_id IN('$rawLOGallowed_campaignsSQL')";
     $whereLOGallowed_campaignsSQL = "where campaign_id IN('$rawLOGallowed_campaignsSQL')";
-    }
+}
 $regexLOGallowed_campaigns = " $LOGallowed_campaigns ";
-if (preg_match("/DRA/",$SShosted_settings))
-    {$LOGmodify_remoteagents=0;}
+if (preg_match("/DRA/", $SShosted_settings)) {
+    $LOGmodify_remoteagents=0;
+}
 $admin_viewable_groupsALL=0;
 $LOGadmin_viewable_groupsSQL='';
 $whereLOGadmin_viewable_groupsSQL='';
 $valLOGadmin_viewable_groupsSQL='';
 $vmLOGadmin_viewable_groupsSQL='';
-if ( (!preg_match('/\-\-ALL\-\-/i',$LOGadmin_viewable_groups)) and (strlen($LOGadmin_viewable_groups) > 3) )
-    {
-    $rawLOGadmin_viewable_groupsSQL = preg_replace("/ -/",'',$LOGadmin_viewable_groups);
-    $rawLOGadmin_viewable_groupsSQL = preg_replace("/ /","','",$rawLOGadmin_viewable_groupsSQL);
+if ((!preg_match('/\-\-ALL\-\-/i', $LOGadmin_viewable_groups)) and (strlen($LOGadmin_viewable_groups) > 3)) {
+    $rawLOGadmin_viewable_groupsSQL = preg_replace("/ -/", '', $LOGadmin_viewable_groups);
+    $rawLOGadmin_viewable_groupsSQL = preg_replace("/ /", "','", $rawLOGadmin_viewable_groupsSQL);
     $LOGadmin_viewable_groupsSQL = "and user_group IN('---ALL---','$rawLOGadmin_viewable_groupsSQL')";
     $whereLOGadmin_viewable_groupsSQL = "where user_group IN('---ALL---','$rawLOGadmin_viewable_groupsSQL')";
     $valLOGadmin_viewable_groupsSQL = "and val.user_group IN('---ALL---','$rawLOGadmin_viewable_groupsSQL')";
     $vmLOGadmin_viewable_groupsSQL = "and vm.user_group IN('---ALL---','$rawLOGadmin_viewable_groupsSQL')";
-    }
-else 
-    {$admin_viewable_groupsALL=1;}
+} else {
+    $admin_viewable_groupsALL=1;
+}
 $regexLOGadmin_viewable_groups = " $LOGadmin_viewable_groups ";
 $LOGadmin_viewable_call_timesSQL='';
 $whereLOGadmin_viewable_call_timesSQL='';
-if ( (!preg_match('/\-\-ALL\-\-/i', $LOGadmin_viewable_call_times)) and (strlen($LOGadmin_viewable_call_times) > 3) )
-    {
-    $rawLOGadmin_viewable_call_timesSQL = preg_replace("/ -/",'',$LOGadmin_viewable_call_times);
-    $rawLOGadmin_viewable_call_timesSQL = preg_replace("/ /","','",$rawLOGadmin_viewable_call_timesSQL);
+if ((!preg_match('/\-\-ALL\-\-/i', $LOGadmin_viewable_call_times)) and (strlen($LOGadmin_viewable_call_times) > 3)) {
+    $rawLOGadmin_viewable_call_timesSQL = preg_replace("/ -/", '', $LOGadmin_viewable_call_times);
+    $rawLOGadmin_viewable_call_timesSQL = preg_replace("/ /", "','", $rawLOGadmin_viewable_call_timesSQL);
     $LOGadmin_viewable_call_timesSQL = "and call_time_id IN('---ALL---','$rawLOGadmin_viewable_call_timesSQL')";
     $whereLOGadmin_viewable_call_timesSQL = "where call_time_id IN('---ALL---','$rawLOGadmin_viewable_call_timesSQL')";
-    }
+}
 $regexLOGadmin_viewable_call_times = " $LOGadmin_viewable_call_times ";
 $UUgroups_list='';
-if ($admin_viewable_groupsALL > 0)
-    {$UUgroups_list .= "<option value=\"---ALL---\">"._QXZ("All Admin User Groups")."</option>\n";}
+if ($admin_viewable_groupsALL > 0) {
+    $UUgroups_list .= "<option value=\"---ALL---\">"._QXZ("All Admin User Groups")."</option>\n";
+}
 $stmt="SELECT user_group,group_name from vicidial_user_groups $whereLOGadmin_viewable_groupsSQL order by user_group;";
 $rslt=mysql_to_mysqli($stmt, $link);
 $UUgroups_to_print = mysqli_num_rows($rslt);
 $o=0;
-while ($UUgroups_to_print > $o) 
-    {
+while ($UUgroups_to_print > $o) {
     $rowx=mysqli_fetch_row($rslt);
     $UUgroups_list .= "<option value=\"$rowx[0]\">$rowx[0] - $rowx[1]</option>\n";
     $o++;
-    }
+}
 $LOGqc_allowed_campaignsSQL='';
 $whereLOGqc_allowed_campaignsSQL='';
-if ( (!preg_match('/\-ALL/i', $LOGqc_allowed_campaigns)) )
-    {
-    $rawLOGqc_allowed_campaignsSQL = preg_replace("/ -/",'',$LOGqc_allowed_campaigns);
-    $rawLOGqc_allowed_campaignsSQL = preg_replace("/ /","','",$rawLOGqc_allowed_campaignsSQL);
+if ((!preg_match('/\-ALL/i', $LOGqc_allowed_campaigns))) {
+    $rawLOGqc_allowed_campaignsSQL = preg_replace("/ -/", '', $LOGqc_allowed_campaigns);
+    $rawLOGqc_allowed_campaignsSQL = preg_replace("/ /", "','", $rawLOGqc_allowed_campaignsSQL);
     $LOGqc_allowed_campaignsSQL = "and campaign_id IN('$rawLOGqc_allowed_campaignsSQL')";
     $whereLOGqc_allowed_campaignsSQL = "where campaign_id IN('$rawLOGqc_allowed_campaignsSQL')";
-    }
+}
 $LOGqc_allowed_inbound_groupsSQL='';
 $whereLOGqc_allowed_inbound_groupsSQL='';
-if ( (!preg_match('/\-ALL/i', $LOGqc_allowed_inbound_groups)) )
-    {
-    $rawLOGqc_allowed_inbound_groupsSQL = preg_replace("/ -/",'',$LOGqc_allowed_inbound_groups);
-    $rawLOGqc_allowed_inbound_groupsSQL = preg_replace("/ /","','",$rawLOGqc_allowed_inbound_groupsSQL);
+if ((!preg_match('/\-ALL/i', $LOGqc_allowed_inbound_groups))) {
+    $rawLOGqc_allowed_inbound_groupsSQL = preg_replace("/ -/", '', $LOGqc_allowed_inbound_groups);
+    $rawLOGqc_allowed_inbound_groupsSQL = preg_replace("/ /", "','", $rawLOGqc_allowed_inbound_groupsSQL);
     $LOGqc_allowed_inbound_groupsSQL = "and group_id IN('$rawLOGqc_allowed_inbound_groupsSQL')";
     $whereLOGqc_allowed_inbound_groupsSQL = "where group_id IN('$rawLOGqc_allowed_inbound_groupsSQL')";
-    }
+}
 $SSmenu_background='015B91';
 $SSframe_background='D9E6FE';
 $SSstd_row1_background='9BB9FB';
@@ -572,14 +584,14 @@ $SSalt_row1_background='BDFFBD';
 $SSalt_row2_background='99FF99';
 $SSalt_row3_background='CCFFCC';
 $SSweb_logo='default_old';
-if ($SSadmin_screen_colors != 'default')
-    {
+if ($SSadmin_screen_colors != 'default') {
     $stmt = "SELECT menu_background,frame_background,std_row1_background,std_row2_background,std_row3_background,std_row4_background,std_row5_background,alt_row1_background,alt_row2_background,alt_row3_background,web_logo FROM vicidial_screen_colors where colors_id='$SSadmin_screen_colors';";
     $rslt=mysql_to_mysqli($stmt, $link);
-    if ($DB) {echo "$stmt\n";}
+    if ($DB) {
+        echo "$stmt\n";
+    }
     $colors_ct = mysqli_num_rows($rslt);
-    if ($colors_ct > 0)
-        {
+    if ($colors_ct > 0) {
         $row=mysqli_fetch_row($rslt);
         $SSmenu_background =        $row[0];
         $SSframe_background =        $row[1];
@@ -592,53 +604,46 @@ if ($SSadmin_screen_colors != 'default')
         $SSalt_row2_background =    $row[8];
         $SSalt_row3_background =    $row[9];
         $SSweb_logo =                $row[10];
-        }
     }
+}
 $Mhead_color =    $SSstd_row5_background;
 $Mmain_bgcolor = $SSmenu_background;
 $Mhead_color =    $SSstd_row5_background;
-if ($download_max_system_stats_metric_name) 
-    {
-    if (!$query_date) {$query_date=date("Y-m-d", time()-(29*86400));}
-    if (!$end_date) 
-        {
+if ($download_max_system_stats_metric_name) {
+    if (!$query_date) {
+        $query_date=date("Y-m-d", time()-(29*86400));
+    }
+    if (!$end_date) {
         $end_date=date("Y-m-d", time());
-        }
-    else if (strtotime($end_date)>strtotime(date("Y-m-d"))) 
-        {
+    } elseif (strtotime($end_date)>strtotime(date("Y-m-d"))) {
         $end_date=date("Y-m-d");
-        }
-    if ($query_date>$end_date) {$query_date=$end_date;}
+    }
+    if ($query_date>$end_date) {
+        $query_date=$end_date;
+    }
     $num_graph_days = ceil(abs(strtotime($end_date) - strtotime($query_date)) / 86400)+1;
     $CSV_text="";
-    if ($download_max_system_stats_metric_name=="ALL" || $download_max_system_stats_metric_name=="total call count in and out") 
-        {
-        download_max_system_stats($campaign_id,$num_graph_days,'system','total_calls','total call count in and out',$end_date);
-        }
-    if ($download_max_system_stats_metric_name=="ALL" || $download_max_system_stats_metric_name=="total inbound call count") 
-        {
-        download_max_system_stats($campaign_id,$num_graph_days,'system','total_calls_inbound_all','total inbound call count',$end_date);
-        }
-    if ($download_max_system_stats_metric_name=="ALL" || $download_max_system_stats_metric_name=="total outbound call count") 
-        {
-        download_max_system_stats($campaign_id,$num_graph_days,'system','total_calls_outbound_all','total outbound call count',$end_date);
-        }
-    if ($download_max_system_stats_metric_name=="ALL" || $download_max_system_stats_metric_name=="most concurrent calls in and out") 
-        {
-        download_max_system_stats($campaign_id,$num_graph_days,'system','(max_inbound + max_outbound)','most concurrent calls in and out',$end_date);
-        }
-    if ($download_max_system_stats_metric_name=="ALL" || $download_max_system_stats_metric_name=="most concurrent calls inbound total") 
-        {
-        download_max_system_stats($campaign_id,$num_graph_days,'system','max_inbound','most concurrent calls inbound total',$end_date);
-        }
-    if ($download_max_system_stats_metric_name=="ALL" || $download_max_system_stats_metric_name=="most concurrent calls outbound total") 
-        {
-        download_max_system_stats($campaign_id,$num_graph_days,'system','max_outbound','most concurrent calls outbound total',$end_date);
-        }
-    if ($download_max_system_stats_metric_name=="ALL" || $download_max_system_stats_metric_name=="most concurrent agents") 
-        {
-        download_max_system_stats($campaign_id,$num_graph_days,'system','max_agents','most concurrent agents',$end_date);
-        }
+    if ($download_max_system_stats_metric_name=="ALL" || $download_max_system_stats_metric_name=="total call count in and out") {
+        download_max_system_stats($campaign_id, $num_graph_days, 'system', 'total_calls', 'total call count in and out', $end_date);
+    }
+    if ($download_max_system_stats_metric_name=="ALL" || $download_max_system_stats_metric_name=="total inbound call count") {
+        download_max_system_stats($campaign_id, $num_graph_days, 'system', 'total_calls_inbound_all', 'total inbound call count', $end_date);
+    }
+    if ($download_max_system_stats_metric_name=="ALL" || $download_max_system_stats_metric_name=="total outbound call count") {
+        download_max_system_stats($campaign_id, $num_graph_days, 'system', 'total_calls_outbound_all', 'total outbound call count', $end_date);
+    }
+    if ($download_max_system_stats_metric_name=="ALL" || $download_max_system_stats_metric_name=="most concurrent calls in and out") {
+        download_max_system_stats($campaign_id, $num_graph_days, 'system', '(max_inbound + max_outbound)', 'most concurrent calls in and out', $end_date);
+    }
+    if ($download_max_system_stats_metric_name=="ALL" || $download_max_system_stats_metric_name=="most concurrent calls inbound total") {
+        download_max_system_stats($campaign_id, $num_graph_days, 'system', 'max_inbound', 'most concurrent calls inbound total', $end_date);
+    }
+    if ($download_max_system_stats_metric_name=="ALL" || $download_max_system_stats_metric_name=="most concurrent calls outbound total") {
+        download_max_system_stats($campaign_id, $num_graph_days, 'system', 'max_outbound', 'most concurrent calls outbound total', $end_date);
+    }
+    if ($download_max_system_stats_metric_name=="ALL" || $download_max_system_stats_metric_name=="most concurrent agents") {
+        download_max_system_stats($campaign_id, $num_graph_days, 'system', 'max_agents', 'most concurrent agents', $end_date);
+    }
     $FILE_TIME = date("Ymd-His");
     $CSVfilename = "MAX_SYSTEM_STATS_$US$FILE_TIME.csv";
     $CSV_text=preg_replace('/ +\"/', '"', $CSV_text);
@@ -652,13 +657,12 @@ if ($download_max_system_stats_metric_name)
     flush();
     echo "$CSV_text";
     exit;
-    }
-header ("Content-type: text/html; charset=utf-8");
-if ($SSnocache_admin=='1')
-    {
-    header ("Cache-Control: no-cache, must-revalidate");  // HTTP/1.1
-    header ("Pragma: no-cache");                          // HTTP/1.0
-    }
+}
+header("Content-type: text/html; charset=utf-8");
+if ($SSnocache_admin=='1') {
+    header("Cache-Control: no-cache, must-revalidate");  // HTTP/1.1
+    header("Pragma: no-cache");                          // HTTP/1.0
+}
 echo "<html>\n";
 echo "<head>\n";
 echo "<!-- VERSION: $admin_version   BUILD: $build   ADD: $ADD   PHP_SELF: $PHP_SELF-->\n";
@@ -675,181 +679,231 @@ echo "<!--\n";
 echo "    .admin_stats_table {width: 95vw; max-width: 950px; }\n";
 echo "-->\n";
 echo "</STYLE>\n";
-if ($SSnocache_admin=='1')
-    {
+if ($SSnocache_admin=='1') {
     echo "<META HTTP-EQUIV=\"Pragma\" CONTENT=\"no-cache\">\n";
     echo "<META HTTP-EQUIV=\"Expires\" CONTENT=\"-1\">\n";
     echo "<META HTTP-EQUIV=\"CACHE-CONTROL\" CONTENT=\"NO-CACHE\">\n";
-    }
-if ( ($SSadmin_modify_refresh > 1) and (preg_match("/^3/",$ADD)) )
-    {
+}
+if (($SSadmin_modify_refresh > 1) and (preg_match("/^3/", $ADD))) {
     $modify_refresh_set=1;
-    if (preg_match("/^3/",$ADD)) {$modify_url = "$PHP_SELF?$QUERY_STRING";}
-    echo "<META HTTP-EQUIV=\"REFRESH\" CONTENT=\"$SSadmin_modify_refresh;URL=$modify_url\">\n";
+    if (preg_match("/^3/", $ADD)) {
+        $modify_url = "$PHP_SELF?$QUERY_STRING";
     }
+    echo "<META HTTP-EQUIV=\"REFRESH\" CONTENT=\"$SSadmin_modify_refresh;URL=$modify_url\">\n";
+}
 echo "<title>"._QXZ("ADMINISTRATION").": ";
 echo "</title>\n";
 echo "<BODY BGCOLOR='#$SSframe_background' marginheight=0 marginwidth=0 leftmargin=0 topmargin=0 onLoad='LoadHourlyCharts()'>\n";
-if ( (!isset($ADD)) or (strlen($ADD)<1) )   {$ADD="999990";}
-if ($ADD=='0') {$ADD="999990";}
+if ((!isset($ADD)) or (strlen($ADD)<1)) {
+    $ADD="999990";
+}
+if ($ADD=='0') {
+    $ADD="999990";
+}
 $no_title=1;
 $ADMIN=$PHP_SELF;
 $android_header=1;
 require("admin_header.php");
 echo "<TABLE CELLPADDING=0 CELLSPACING=0 BGCOLOR='#$SSframe_background' width='100%' style='height:100vh' valign='top'><TR><TD>";
-if ($ADD==999990)
-    {
-    if ( (preg_match("/Front Page System Summary/",$LOGallowed_reports)) or (preg_match("/ALL REPORTS/",$LOGallowed_reports)) )
-        {
+if ($ADD==999990) {
+    if ((preg_match("/Front Page System Summary/", $LOGallowed_reports)) or (preg_match("/ALL REPORTS/", $LOGallowed_reports))) {
         $stmt="SELECT closer_campaigns from vicidial_campaigns $whereLOGallowed_campaignsSQL;";
-        if ($DB) {echo "|$stmt|\n";}
+        if ($DB) {
+            echo "|$stmt|\n";
+        }
         $rslt=mysql_to_mysqli($stmt, $link);
         $row=mysqli_fetch_row($rslt);
-        $closer_campaigns = preg_replace("/^ | -$/","",$row[0]);
-        $closer_campaigns = preg_replace("/ /","','",$closer_campaigns);
+        $closer_campaigns = preg_replace("/^ | -$/", "", $row[0]);
+        $closer_campaigns = preg_replace("/ /", "','", $closer_campaigns);
         $closer_campaigns = "'$closer_campaigns'";
         $stmt="SELECT status from vicidial_auto_calls where status NOT IN('XFER') and ( (call_type='IN' and campaign_id IN($closer_campaigns)) or (call_type='OUT' $LOGallowed_campaignsSQL) );";
-        if ($DB) {echo "|$stmt|\n";}
+        if ($DB) {
+            echo "|$stmt|\n";
+        }
         $rslt=mysql_to_mysqli($stmt, $link);
         $active_calls=mysqli_num_rows($rslt);
         $ringing_calls=0;
-        if ($active_calls>0) 
-            {
-            while ($row=mysqli_fetch_row($rslt)) 
-                {
-                if (!preg_match("/LIVE|CLOSER/i",$row[0])) 
-                    {$ringing_calls++;}
+        if ($active_calls>0) {
+            while ($row=mysqli_fetch_row($rslt)) {
+                if (!preg_match("/LIVE|CLOSER/i", $row[0])) {
+                    $ringing_calls++;
                 }
             }
+        }
         $active_stmt="SELECT active from vicidial_users $whereLOGadmin_viewable_groupsSQL";
-        if ($DB) {echo "|$active_stmt|\n";}
+        if ($DB) {
+            echo "|$active_stmt|\n";
+        }
         $active_rslt=mysql_to_mysqli($active_stmt, $link);
-        while ($active_row=mysqli_fetch_array($active_rslt)) 
-            {
+        while ($active_row=mysqli_fetch_array($active_rslt)) {
             $users[$active_row["active"]]++;
-            }
+        }
         $active_stmt="SELECT active from vicidial_campaigns $whereLOGallowed_campaignsSQL";
-        if ($DB) {echo "|$active_stmt|\n";}
+        if ($DB) {
+            echo "|$active_stmt|\n";
+        }
         $active_rslt=mysql_to_mysqli($active_stmt, $link);
-        while ($active_row=mysqli_fetch_array($active_rslt)) 
-            {
+        while ($active_row=mysqli_fetch_array($active_rslt)) {
             $campaigns[$active_row["active"]]++;
-            }
+        }
         $active_stmt="SELECT active from vicidial_lists $whereLOGallowed_campaignsSQL";
-        if ($DB) {echo "|$active_stmt|\n";}
+        if ($DB) {
+            echo "|$active_stmt|\n";
+        }
         $active_rslt=mysql_to_mysqli($active_stmt, $link);
-        while ($active_row=mysqli_fetch_array($active_rslt)) 
-            {
+        while ($active_row=mysqli_fetch_array($active_rslt)) {
             $lists[$active_row["active"]]++;
-            }
+        }
         $active_stmt="SELECT did_active from vicidial_inbound_dids $whereLOGadmin_viewable_groupsSQL";
-        if ($DB) {echo "|$active_stmt|\n";}
+        if ($DB) {
+            echo "|$active_stmt|\n";
+        }
         $active_rslt=mysql_to_mysqli($active_stmt, $link);
-        while ($active_row=mysqli_fetch_array($active_rslt)) 
-            {
+        while ($active_row=mysqli_fetch_array($active_rslt)) {
             $dids[$active_row["did_active"]]++;
-            }
+        }
         $active_stmt="SELECT active from vicidial_inbound_groups $whereLOGadmin_viewable_groupsSQL";
-        if ($DB) {echo "|$active_stmt|\n";}
+        if ($DB) {
+            echo "|$active_stmt|\n";
+        }
         $active_rslt=mysql_to_mysqli($active_stmt, $link);
-        while ($active_row=mysqli_fetch_array($active_rslt)) 
-            {
+        while ($active_row=mysqli_fetch_array($active_rslt)) {
             $ingroups[$active_row["active"]]++;
-            }
+        }
         $stmt="SELECT extension,user,conf_exten,status,server_ip,UNIX_TIMESTAMP(last_call_time),UNIX_TIMESTAMP(last_call_finish),call_server_ip,campaign_id from vicidial_live_agents $whereLOGallowed_campaignsSQL";
-        if ($DB) {echo "|$stmt|\n";}
+        if ($DB) {
+            echo "|$stmt|\n";
+        }
         $rslt=mysql_to_mysqli($stmt, $link);
-        $agent_incall=0; $agent_total=0; $agent_paused=0; $agent_waiting=0;
-        while($row=mysqli_fetch_array($rslt)) 
-            {
+        $agent_incall=0;
+        $agent_total=0;
+        $agent_paused=0;
+        $agent_waiting=0;
+        while($row=mysqli_fetch_array($rslt)) {
             $status=$row[3];
             $agent_total++;
-            if ( (preg_match("/INCALL/i",$status)) or (preg_match("/QUEUE/i",$status)) ) {$agent_incall++; }
-            if ( (preg_match("/PAUSED/i",$status))) {$agent_paused++; }
-            if ( (preg_match("/READY/i",$status)) or (preg_match("/CLOSER/i",$status)) ) {$agent_waiting++; }
+            if ((preg_match("/INCALL/i", $status)) or (preg_match("/QUEUE/i", $status))) {
+                $agent_incall++;
             }
-        if (preg_match("/MXAG/",$SShosted_settings))
-            {
+            if ((preg_match("/PAUSED/i", $status))) {
+                $agent_paused++;
+            }
+            if ((preg_match("/READY/i", $status)) or (preg_match("/CLOSER/i", $status))) {
+                $agent_waiting++;
+            }
+        }
+        if (preg_match("/MXAG/", $SShosted_settings)) {
             $vla_set = $SShosted_settings;
-            $vla_set = preg_replace("/.*MXAG|_BUILD_|DRA|_MXCS\d+|_MXTR\d+| /",'',$vla_set);
-            $vla_set = preg_replace('/[^0-9]/','',$vla_set);
-            if (strlen($vla_set)>0)
-                {
-                $AAf=''; $AAb='';
-                if ($agent_total >= $vla_set)
-                    {$AAf='<font color=red>'; $AAb='<font>';}
-                $agent_total = "$AAf$agent_total / $vla_set$AAb";
+            $vla_set = preg_replace("/.*MXAG|_BUILD_|DRA|_MXCS\d+|_MXTR\d+| /", '', $vla_set);
+            $vla_set = preg_replace('/[^0-9]/', '', $vla_set);
+            if (strlen($vla_set)>0) {
+                $AAf='';
+                $AAb='';
+                if ($agent_total >= $vla_set) {
+                    $AAf='<font color=red>';
+                    $AAb='<font>';
                 }
+                $agent_total = "$AAf$agent_total / $vla_set$AAb";
             }
+        }
         echo "<BR><FONT CLASS=\"android_standard\">";
         echo "<center>";
-    if ($LOGview_reports==1)
-        {
-        echo "<TABLE class='admin_stats_table' valign='top'><TR><TD>\n";
-        echo "<FONT CLASS=\"android_standard bold\">";
-        echo "<B><a href='#' id='ReportLink' onClick='ToggleReports()'>SHOW REPORTS</a></B>";
-        echo "<div id='ReportStorageDiv' style='display:none'>";
-        echo "<BR><B>"._QXZ("Real-Time Reports")."</B><BR>\n";
-        echo "<UL>\n";
-        echo "<LI><a href=\"#HourlyCampaignCounts\"><FONT CLASS=\"android_standard\">"._QXZ("Hourly Campaign Counts")."</a></FONT></LI>\n";
-        echo "<LI><a href=\"#SystemSummary\"><FONT CLASS=\"android_standard\">"._QXZ("System Summary")."</a></FONT></LI>\n";
-        if ( (preg_match("/Agent Sales Report/",$LOGallowed_reports)) or (preg_match("/ALL REPORTS/",$LOGallowed_reports)) )
-            {echo "<LI><a href=\"agent_sales_report_mobile.php\"><FONT CLASS=\"android_standard\">"._QXZ("Agent Sales Report")."</a></FONT></LI>\n";}
-        if ( (preg_match("/Real-Time Main Report/",$LOGallowed_reports)) or (preg_match("/ALL REPORTS/",$LOGallowed_reports)) )
-            {echo "<LI><a href=\"realtime_report_mobile.php\"><FONT CLASS=\"android_standard\">"._QXZ("Real-Time Main Report")."</a></FONT></LI>\n";}
-        if ( (preg_match("/Real-Time Campaign Summary/",$LOGallowed_reports)) or (preg_match("/ALL REPORTS/",$LOGallowed_reports)) )
-            {echo "<LI><a href=\"AST_timeonVDADallSUMMARY_mobile.php\"><FONT CLASS=\"android_standard\">"._QXZ("Real-Time Campaign Summary")."</a></FONT></LI>\n";}
-        if ( (preg_match("/Real-Time Whiteboard Report/",$LOGallowed_reports)) or (preg_match("/ALL REPORTS/",$LOGallowed_reports)) )
-            {echo "<LI><a href=\"AST_rt_whiteboard_rpt_mobile.php\"><FONT CLASS=\"android_standard\">"._QXZ("Real-Time Whiteboard Report")."</a></FONT></LI>\n";}
-        echo "</UL><BR>\n";
-        echo "<B>"._QXZ("Agent Reports")."</B><BR>\n";
-        echo "<UL>\n";
-        if ( (preg_match("/Agent Performance Detail/",$LOGallowed_reports)) or (preg_match("/ALL REPORTS/",$LOGallowed_reports)) )
-            {echo "<LI><a href=\"AST_agent_performance_detail_mobile.php\"><FONT CLASS=\"android_standard\">"._QXZ("Agent Performance Detail")."</a></FONT></LI>\n";}
-        if ( (preg_match("/Team Performance Detail/",$LOGallowed_reports)) or (preg_match("/ALL REPORTS/",$LOGallowed_reports)) )
-            {echo "<LI><a href=\"AST_team_performance_detail_mobile.php\"><FONT CLASS=\"android_standard\">"._QXZ("Team Performance Detail")."</a></FONT></LI>\n";}
-        echo "</UL>\n";
-        echo "</div>";
-        echo "<BR></TD></TR></TABLE>\n";        
-        echo "<BR>\n";
+        if ($LOGview_reports==1) {
+            echo "<TABLE class='admin_stats_table' valign='top'><TR><TD>\n";
+            echo "<FONT CLASS=\"android_standard bold\">";
+            echo "<B><a href='#' id='ReportLink' onClick='ToggleReports()'>SHOW REPORTS</a></B>";
+            echo "<div id='ReportStorageDiv' style='display:none'>";
+            echo "<BR><B>"._QXZ("Real-Time Reports")."</B><BR>\n";
+            echo "<UL>\n";
+            echo "<LI><a href=\"#HourlyCampaignCounts\"><FONT CLASS=\"android_standard\">"._QXZ("Hourly Campaign Counts")."</a></FONT></LI>\n";
+            echo "<LI><a href=\"#SystemSummary\"><FONT CLASS=\"android_standard\">"._QXZ("System Summary")."</a></FONT></LI>\n";
+            if ((preg_match("/Agent Sales Report/", $LOGallowed_reports)) or (preg_match("/ALL REPORTS/", $LOGallowed_reports))) {
+                echo "<LI><a href=\"agent_sales_report_mobile.php\"><FONT CLASS=\"android_standard\">"._QXZ("Agent Sales Report")."</a></FONT></LI>\n";
+            }
+            if ((preg_match("/Real-Time Main Report/", $LOGallowed_reports)) or (preg_match("/ALL REPORTS/", $LOGallowed_reports))) {
+                echo "<LI><a href=\"realtime_report_mobile.php\"><FONT CLASS=\"android_standard\">"._QXZ("Real-Time Main Report")."</a></FONT></LI>\n";
+            }
+            if ((preg_match("/Real-Time Campaign Summary/", $LOGallowed_reports)) or (preg_match("/ALL REPORTS/", $LOGallowed_reports))) {
+                echo "<LI><a href=\"AST_timeonVDADallSUMMARY_mobile.php\"><FONT CLASS=\"android_standard\">"._QXZ("Real-Time Campaign Summary")."</a></FONT></LI>\n";
+            }
+            if ((preg_match("/Real-Time Whiteboard Report/", $LOGallowed_reports)) or (preg_match("/ALL REPORTS/", $LOGallowed_reports))) {
+                echo "<LI><a href=\"AST_rt_whiteboard_rpt_mobile.php\"><FONT CLASS=\"android_standard\">"._QXZ("Real-Time Whiteboard Report")."</a></FONT></LI>\n";
+            }
+            echo "</UL><BR>\n";
+            echo "<B>"._QXZ("Agent Reports")."</B><BR>\n";
+            echo "<UL>\n";
+            if ((preg_match("/Agent Performance Detail/", $LOGallowed_reports)) or (preg_match("/ALL REPORTS/", $LOGallowed_reports))) {
+                echo "<LI><a href=\"AST_agent_performance_detail_mobile.php\"><FONT CLASS=\"android_standard\">"._QXZ("Agent Performance Detail")."</a></FONT></LI>\n";
+            }
+            if ((preg_match("/Team Performance Detail/", $LOGallowed_reports)) or (preg_match("/ALL REPORTS/", $LOGallowed_reports))) {
+                echo "<LI><a href=\"AST_team_performance_detail_mobile.php\"><FONT CLASS=\"android_standard\">"._QXZ("Team Performance Detail")."</a></FONT></LI>\n";
+            }
+            echo "</UL>\n";
+            echo "</div>";
+            echo "<BR></TD></TR></TABLE>\n";
+            echo "<BR>\n";
         }
         echo "<TABLE class='admin_stats_table' cellpadding=6 cellspacing=0>\n";
-        echo "<tr"; if ($SSadmin_row_click > 0) {echo " onclick=\"window.document.location='realtime_report_mobile.php?report_display_type=HTML';\"";} echo ">";
+        echo "<tr";
+        if ($SSadmin_row_click > 0) {
+            echo " onclick=\"window.document.location='realtime_report_mobile.php?report_display_type=HTML';\"";
+        } echo ">";
         echo "<td align='center' valign='middle' bgcolor='#$SSmenu_background' rowspan=2><a href=\"realtime_report_mobile.php?report_display_type=HTML\"><img src=\"images/icon_users.png\" width=42 height=42 border=0></a></td>";
         echo "<td align='center' valign='middle' bgcolor='#$SSmenu_background'><font CLASS=\"android_small bold\" color=\"white\">"._QXZ("Agents Logged In")."</font></td>";
         echo "<td width=3 rowspan=2> &nbsp; </td>";
         echo "<td align='center' valign='middle' bgcolor='#$SSmenu_background' rowspan=2><a href=\"realtime_report_mobile.php?report_display_type=HTML\"><img src=\"images/icon_agentsincalls.png\" width=42 height=42 border=0></a></td>";
         echo "<td align='center' valign='middle' bgcolor='#$SSmenu_background'><font CLASS=\"android_small bold\" color=\"white\">"._QXZ("Agents In Calls")."</font></td>";
         echo "</tr>";
-        echo "<tr"; if ($SSadmin_row_click > 0) {echo " onclick=\"window.document.location='realtime_report_mobile.php?report_display_type=HTML';\"";} echo ">";
+        echo "<tr";
+        if ($SSadmin_row_click > 0) {
+            echo " onclick=\"window.document.location='realtime_report_mobile.php?report_display_type=HTML';\"";
+        } echo ">";
         echo "<td align='center' valign='middle' bgcolor='#$SSmenu_background'><font CLASS=\"android_large\" color=\"white\">$agent_total</font></td>";
         echo "<td align='center' valign='middle' bgcolor='#$SSmenu_background'><font CLASS=\"android_large\" color=\"white\">$agent_incall</font></td>";
         echo "</tr>";
-        echo "<tr"; if ($SSadmin_row_click > 0) {echo " onclick=\"window.document.location='realtime_report_mobile.php?report_display_type=HTML';\"";} echo ">";
+        echo "<tr";
+        if ($SSadmin_row_click > 0) {
+            echo " onclick=\"window.document.location='realtime_report_mobile.php?report_display_type=HTML';\"";
+        } echo ">";
         echo "<td height=3 colspan=5> </td>";
         echo "</tr>";
-        echo "<tr"; if ($SSadmin_row_click > 0) {echo " onclick=\"window.document.location='realtime_report_mobile.php?report_display_type=HTML';\"";} echo ">";
+        echo "<tr";
+        if ($SSadmin_row_click > 0) {
+            echo " onclick=\"window.document.location='realtime_report_mobile.php?report_display_type=HTML';\"";
+        } echo ">";
         echo "<td align='center' valign='middle' bgcolor='#$SSmenu_background' rowspan=2><a href=\"realtime_report_mobile.php?report_display_type=HTML\"><img src=\"images/icon_agentspaused.png\" width=42 height=42 border=0></a></td>";
         echo "<td align='center' valign='middle' bgcolor='#$SSmenu_background'><font CLASS=\"android_small bold\" color=\"white\">"._QXZ("Agents Paused")."</font></td>";
         echo "<td width=3 rowspan=2> &nbsp; </td>";
         echo "<td align='center' valign='middle' bgcolor='#$SSmenu_background' rowspan=2><a href=\"realtime_report_mobile.php?report_display_type=HTML\"><img src=\"images/icon_agentswaiting.png\" width=42 height=42 border=0></a></td>";
         echo "<td align='center' valign='middle' bgcolor='#$SSmenu_background'><font CLASS=\"android_small bold\" color=\"white\">"._QXZ("Agents Waiting")."</font></td>";
         echo "</tr>";
-        echo "<tr"; if ($SSadmin_row_click > 0) {echo " onclick=\"window.document.location='realtime_report_mobile.php?report_display_type=HTML';\"";} echo ">";
+        echo "<tr";
+        if ($SSadmin_row_click > 0) {
+            echo " onclick=\"window.document.location='realtime_report_mobile.php?report_display_type=HTML';\"";
+        } echo ">";
         echo "<td align='center' valign='middle' bgcolor='#$SSmenu_background'><font CLASS=\"android_large\" color=\"white\">$agent_paused</font></td>";
         echo "<td align='center' valign='middle' bgcolor='#$SSmenu_background'><font CLASS=\"android_large\" color=\"white\">$agent_waiting</font></td>";
         echo "</tr>";
-        echo "<tr"; if ($SSadmin_row_click > 0) {echo " onclick=\"window.document.location='realtime_report_mobile.php?report_display_type=HTML';\"";} echo ">";
+        echo "<tr";
+        if ($SSadmin_row_click > 0) {
+            echo " onclick=\"window.document.location='realtime_report_mobile.php?report_display_type=HTML';\"";
+        } echo ">";
         echo "<td height=3 colspan=5>  </td>";
         echo "</tr>";
-        echo "<tr"; if ($SSadmin_row_click > 0) {echo " onclick=\"window.document.location='realtime_report_mobile.php?report_display_type=HTML';\"";} echo ">";
+        echo "<tr";
+        if ($SSadmin_row_click > 0) {
+            echo " onclick=\"window.document.location='realtime_report_mobile.php?report_display_type=HTML';\"";
+        } echo ">";
         echo "<td align='center' valign='middle' bgcolor='#$SSmenu_background' rowspan=2><a href=\"realtime_report_mobile.php?report_display_type=HTML\"><img src=\"images/icon_calls.png\" width=42 height=42 border=0></a></td>";
         echo "<td align='center' valign='middle' bgcolor='#$SSmenu_background'><font CLASS=\"android_small bold\" color=\"white\">"._QXZ("Active Calls")."</font></td>";
         echo "<td width=3 rowspan=2> &nbsp; </td>";
         echo "<td align='center' valign='middle' bgcolor='#$SSmenu_background' rowspan=2><a href=\"realtime_report_mobile.php?report_display_type=HTML\"><img src=\"images/icon_ringing.png\" width=42 height=42 border=0></a></td>";
         echo "<td align='center' valign='middle' bgcolor='#$SSmenu_background'><font CLASS=\"android_small bold\" color=\"white\">"._QXZ("Calls Ringing")."</font></td>";
         echo "</tr>";
-        echo "<tr"; if ($SSadmin_row_click > 0) {echo " onclick=\"window.document.location='realtime_report_mobile.php?report_display_type=HTML';\"";} echo ">";
+        echo "<tr";
+        if ($SSadmin_row_click > 0) {
+            echo " onclick=\"window.document.location='realtime_report_mobile.php?report_display_type=HTML';\"";
+        } echo ">";
         echo "<td align='center' valign='middle' bgcolor='#$SSmenu_background'><font CLASS=\"android_large\" color=\"white\">$agent_incall</font></td>";
         echo "<td align='center' valign='middle' bgcolor='#$SSmenu_background'><font CLASS=\"android_large\" color=\"white\">$ringing_calls</font></td>";
         echo "</tr>";
@@ -880,11 +934,12 @@ if ($ADD==999990)
         echo "<tr bgcolor=#$SSstd_row4_background><td align=right><font class=\"android_standard\">"._QXZ("DIDs").": </font></td><td align=center><font class=\"android_standard bold\">".($dids["Y"]+0)."</font></td><td align=center><font class=\"android_standard bold\">".($dids["N"]+0)."</font></td><td align=center><font class=\"android_standard bold\">".($dids["Y"]+$dids["N"]+0)."</font></td></tr>\n";
         // New voicemailbox code
         $stmt="(SELECT voicemail_id,count(*),messages,old_messages,'vm','vm' from vicidial_voicemail where on_login_report='Y' $LOGadmin_viewable_groupsSQL group by voicemail_id) UNION (SELECT voicemail_id,count(*),messages,old_messages,extension,server_ip from phones where on_login_report='Y' $LOGadmin_viewable_groupsSQL group by voicemail_id) order by voicemail_id;";
-        if ($DB) {echo "|$stmt|\n";}
+        if ($DB) {
+            echo "|$stmt|\n";
+        }
         $rslt=mysql_to_mysqli($stmt, $link);
         $vm_rows=mysqli_num_rows($rslt);
-        if ($vm_rows>0) 
-            {
+        if ($vm_rows>0) {
             echo "<tr>";
             echo "<td align='left' colspan='4'>&nbsp;</td>";  # Padding
             echo "</tr>";
@@ -894,47 +949,49 @@ if ($ADD==999990)
             echo "<td  align='center'><font CLASS=\"android_standard\" color=\"white\">&nbsp; Old &nbsp;</font></td>\n";
             echo "<td  align='center'><font CLASS=\"android_standard\" color=\"white\">&nbsp; Total &nbsp;</font></td>\n";
             echo "</tr>\n";
-            while($row=mysqli_fetch_array($rslt)) 
-                {
+            while($row=mysqli_fetch_array($rslt)) {
                 echo "<tr bgcolor='#$SSstd_row2_background'>\n";
-                if ($row[4] == 'vm')
-                    {
+                if ($row[4] == 'vm') {
                     echo "<td align='right'><font class=\"android_standard\">$row[0]:</font></font></td>\n";
-                    }
-                else
-                    {
+                } else {
                     echo "<td align='right'><font class=\"android_standard\">$row[0]:</font></td>\n";
-                    }
+                }
                 echo "<td align='center'><font class=\"android_standard\">$row[2]</font></td>\n";
                 echo "<td align='center'><font class=\"android_standard\">$row[3]</font></td>\n";
                 echo "<td align='center'><font class=\"android_standard\">".($row[2]+$row[3])."</font></td>\n";
                 echo "</tr>\n";
-                }
             }
+        }
         // End new voicemail box code
         echo "</TABLE></center>\n";
         echo "<BR>\n";
         $today=date("Y-m-d");
-        $yesterday=date("Y-m-d", mktime(0,0,0,date("m"),date("d")-1,date("Y")));
-        $thirtydays=date("Y-m-d", mktime(0,0,0,date("m"),date("d")-29,date("Y")));
+        $yesterday=date("Y-m-d", mktime(0, 0, 0, date("m"), date("d")-1, date("Y")));
+        $thirtydays=date("Y-m-d", mktime(0, 0, 0, date("m"), date("d")-29, date("Y")));
         $total_calls=0;
         $total_inbound=0;
         $total_outbound=0;
         $stmt="SELECT stats_type,sum(total_calls) from vicidial_daily_max_stats where campaign_id!='' and stats_flag='OPEN' and stats_date='$today' $LOGallowed_campaignsSQL group by stats_type;";
-        if ($DB) {echo "|$stmt|\n";}
+        if ($DB) {
+            echo "|$stmt|\n";
+        }
         $rslt=mysql_to_mysqli($stmt, $link);
         $rows_to_print = mysqli_num_rows($rslt);
-        if ($rows_to_print > 0) 
-            {
-            while ($rowx=mysqli_fetch_row($rslt)) 
-                {
+        if ($rows_to_print > 0) {
+            while ($rowx=mysqli_fetch_row($rslt)) {
                 $total_calls += $rowx[1];
-                if (preg_match('/INGROUP/', $rowx[0])) {$total_inbound+=$rowx[1];}
-                if (preg_match('/CAMPAIGN/', $rowx[0])) {$total_outbound+=$rowx[1];}
+                if (preg_match('/INGROUP/', $rowx[0])) {
+                    $total_inbound+=$rowx[1];
+                }
+                if (preg_match('/CAMPAIGN/', $rowx[0])) {
+                    $total_outbound+=$rowx[1];
                 }
             }
+        }
         $stmt="SELECT * from vicidial_daily_max_stats where stats_date='$today' and stats_flag='OPEN' and stats_type='TOTAL' $LOGallowed_campaignsSQL order by stats_date, campaign_id asc";
-        if ($DB) {echo "|$stmt|\n";}
+        if ($DB) {
+            echo "|$stmt|\n";
+        }
         $rslt=mysql_to_mysqli($stmt, $link);
         echo "<center><TABLE class='admin_stats_table' cellspacing=2 cellpadding=1>\n";
         echo "<tr>";
@@ -945,41 +1002,41 @@ if ($ADD==999990)
         echo "<td align='center'><font CLASS=\"android_standard\" color=white>"._QXZ("Total Inbound Calls")." &nbsp;</font></td>";
         echo "<td align='center'><font CLASS=\"android_standard\" color=white>"._QXZ("Total Outbound Calls")." &nbsp;</font></td>";
         echo "<td align='center'><font CLASS=\"android_standard\" color=white>"._QXZ("Maximum Agents")." &nbsp;</font></td>";
-        if (mysqli_num_rows($rslt)>0) 
-            {
-            while ($row=mysqli_fetch_array($rslt)) 
-                {
+        if (mysqli_num_rows($rslt)>0) {
+            while ($row=mysqli_fetch_array($rslt)) {
                 echo "<tr bgcolor='#$SSstd_row2_background'>";
                 echo "<td align='center'><font CLASS=\"android_standard bold\">".($total_calls+0)."</font></td>";
                 echo "<td align='center'><font CLASS=\"android_standard bold\">".($total_inbound+0)."</font></td>";
                 echo "<td align='center'><font CLASS=\"android_standard bold\">".($total_outbound+0)."</font></td>";
                 echo "<td align='center'><font CLASS=\"android_standard bold\">".($row["max_agents"]+0)."</font></td>";
                 echo "</tr>";
-                }
-            } 
-        else 
-            {
+            }
+        } else {
             echo "<tr bgcolor='#$SSstd_row2_background'>";
             echo "<td align='center' colspan='4'><font CLASS=\"android_standard bold\">*** "._QXZ("NO ACTIVITY FOR")." $today ***</font></td>";
             echo "</tr>";
-            }
+        }
         echo "</TABLE></center>\n";
         $total_calls=0;
         $total_inbound=0;
         $total_outbound=0;
         $stmt="SELECT stats_type,sum(total_calls) from vicidial_daily_max_stats where campaign_id!='' and stats_flag='CLOSED' and stats_date='$yesterday' $LOGallowed_campaignsSQL group by stats_type;";
-        if ($DB) {echo "|$stmt|\n";}
+        if ($DB) {
+            echo "|$stmt|\n";
+        }
         $rslt=mysql_to_mysqli($stmt, $link);
         $rows_to_print = mysqli_num_rows($rslt);
-        if ($rows_to_print > 0) 
-            {
-            while ($rowx=mysqli_fetch_row($rslt)) 
-                {
+        if ($rows_to_print > 0) {
+            while ($rowx=mysqli_fetch_row($rslt)) {
                 $total_calls += $rowx[1];
-                if (preg_match('/INGROUP/', $rowx[0])) {$total_inbound+=$rowx[1];}
-                if (preg_match('/CAMPAIGN/', $rowx[0])) {$total_outbound+=$rowx[1];}
+                if (preg_match('/INGROUP/', $rowx[0])) {
+                    $total_inbound+=$rowx[1];
+                }
+                if (preg_match('/CAMPAIGN/', $rowx[0])) {
+                    $total_outbound+=$rowx[1];
                 }
             }
+        }
         echo "<center><TABLE class='admin_stats_table' cellspacing=2 cellpadding=1>\n";
         echo "<tr>";
         echo "<td align='left' colspan='4'><font CLASS=\"android_standard bold\">"._QXZ("Total Stats for Yesterday").":</font></td>";
@@ -990,46 +1047,42 @@ if ($ADD==999990)
         echo "<td align='center'><font CLASS=\"android_standard\" color=white>"._QXZ("Total Outbound Calls")." &nbsp;</font></td>";
         echo "<td align='center'><font CLASS=\"android_standard\" color=white>"._QXZ("Maximum Agents")." &nbsp;</font></td>";
         $stmt="SELECT * from vicidial_daily_max_stats where stats_date='$yesterday' and stats_type='TOTAL' $LOGallowed_campaignsSQL order by stats_date, campaign_id asc";
-        if ($DB) {echo "|$stmt|\n";}
+        if ($DB) {
+            echo "|$stmt|\n";
+        }
         $rslt=mysql_to_mysqli($stmt, $link);
-        if (mysqli_num_rows($rslt)>0) 
-            {
-            while ($row=mysqli_fetch_array($rslt)) 
-                {
+        if (mysqli_num_rows($rslt)>0) {
+            while ($row=mysqli_fetch_array($rslt)) {
                 echo "<tr bgcolor='#$SSstd_row2_background'>";
                 echo "<td align='center'><font CLASS=\"android_standard bold\">".($row["total_calls"]+0)." / ".($total_calls+0)."</font></td>";
                 echo "<td align='center'><font CLASS=\"android_standard bold\">".($total_inbound+0)."</font></td>";
                 echo "<td align='center'><font CLASS=\"android_standard bold\">".($total_outbound+0)."</font></td>";
                 echo "<td align='center'><font CLASS=\"android_standard bold\">".($row["max_agents"]+0)."</font></td>";
                 echo "</tr>";
-                }
-            } 
-        else 
-            {
+            }
+        } else {
             echo "<tr bgcolor='#$SSstd_row2_background'>";
             echo "<td align='center' colspan='4'><font CLASS=\"android_standard bold\">*** "._QXZ("NO ACTIVITY FOR")." $today ***</font></td>";
             echo "</tr>";
-            }
-        echo "</FONT><BR><BR>";
         }
-    else
-        {
+        echo "</FONT><BR><BR>";
+    } else {
         echo "<BR><FONT CLASS=\"android_standard\">";
         echo "<center><TABLE class='admin_stats_table' cellspacing=2>\n";
         echo "<tr>";
         echo "<td align='left' colspan='4'>"._QXZ("Welcome")."</td>";
         echo "</tr>";
         echo "</FONT><BR><BR>";
-        }
     }
+}
 echo "</TD></TR></TABLE></center>\n";
-        echo "<BR>";
-        echo "<TABLE align='center' class='admin_stats_table' cellspacing=2>\n";
-        echo "<tr>";
-        echo "<td>";
-        echo "<canvas id='ingroup_hour_chart'></canvas>";
-        echo "</td></tr>";
-        echo "</table>";
+echo "<BR>";
+echo "<TABLE align='center' class='admin_stats_table' cellspacing=2>\n";
+echo "<tr>";
+echo "<td>";
+echo "<canvas id='ingroup_hour_chart'></canvas>";
+echo "</td></tr>";
+echo "</table>";
 echo "</TD></TR></TABLE></center>\n";
 $ENDtime = date("U");
 $RUNtime = ($ENDtime - $STARTtime);
@@ -1038,8 +1091,9 @@ echo "<TR><TD bgcolor=#$SSmenu_background ALIGN=CENTER>\n";
 echo "<FONT STYLE=\"font-family:HELVETICA;font-size:9;color:white;\"><br><br><!-- RUNTIME: $RUNtime seconds<BR> -->";
 echo _QXZ("VERSION").": $admin_version<BR>";
 echo _QXZ("BUILD").": $build\n";
-if (!preg_match("/_BUILD_/",$SShosted_settings))
-    {echo "<BR><a href=\"$PHP_SELF?ADD=999995\"><font color=white>&copy; 2019 ViciDial Group</font></a><BR><img src=\"images/pixel.gif\">";}
+if (!preg_match("/_BUILD_/", $SShosted_settings)) {
+    echo "<BR><a href=\"$PHP_SELF?ADD=999995\"><font color=white>&copy; 2019 ViciDial Group</font></a><BR><img src=\"images/pixel.gif\">";
+}
 echo "</FONT>\n";
 ?>
 </TD><TD BGCOLOR=#<?php echo $SSframe_background ?>>
@@ -1067,24 +1121,22 @@ $hour_array=array();
 $calls_array=array();
 $hour_stmt="select substr(date_hour,1,16) as dhour, sum(calls) from vicidial_campaign_hour_counts where type='CALLS' $LOGallowed_campaignsSQL group by dhour order by dhour";
 $hour_rslt=mysqli_query($link, $hour_stmt);
-while ($row=mysqli_fetch_row($hour_rslt)) 
-    {
+while ($row=mysqli_fetch_row($hour_rslt)) {
     $next_hour=$row[0];
     array_push($hour_array, $row[0]);
     array_push($calls_array, $row[1]);
-    }
-if (count($calls_array)>0)
-    {
+}
+if (count($calls_array)>0) {
     $JS_text.="'".implode("', '", $hour_array)."'";
     $JS_calls.="'".implode("', '", $calls_array)."'";
-    }
+}
 $JS_text.="];\n";
 $JS_calls.="];\n";
 /*
 $campaign_stmt="select distinct campaign_id from vicidial_campaign_hour_counts where $LOGallowed_campaignsSQL";
 $campaign_rslt=mysqli_query($link, $campaign_stmt);
 $campaign_array=array();
-while ($campaign_row=mysqli_fetch_row($campaign_rslt)) 
+while ($campaign_row=mysqli_fetch_row($campaign_rslt))
     {
     array_push($campaign_array, $campaign_row[0]);
     }
@@ -1099,12 +1151,11 @@ echo $JS_text.$JS_calls;
 $ingroup_array=array();
 $ingroup_stmt="select distinct closer_campaigns from vicidial_campaigns $whereLOGallowed_campaignsSQL";
 $ingroup_rslt=mysqli_query($link, $ingroup_stmt);
-while ($ingroup_row=mysqli_fetch_row($ingroup_rslt)) 
-    {
+while ($ingroup_row=mysqli_fetch_row($ingroup_rslt)) {
     $closer_campaigns=preg_replace('/ -$/', '', $ingroup_row[0]);
     $campaign_ingroups=explode(" ", $closer_campaigns);
     $ingroup_array=array_merge($ingroup_array, $campaign_ingroups);
-    }
+}
 $allowed_ingroups=array_unique($ingroup_array);
 $JS_text="var INGROUPS_HOURS=[";
 $JS_calls="var ingroup_calls_hours=[";
@@ -1113,17 +1164,15 @@ $ingroup_calls_array=array();
 echo "// $hour_stmt\n";
 $hour_stmt="select substr(date_hour,1,16) as dhour, sum(calls) from vicidial_ingroup_hour_counts where type='CALLS' and group_id in ('".implode("', '", $allowed_ingroups)."') group by dhour order by dhour";
 $hour_rslt=mysqli_query($link, $hour_stmt);
-while ($row=mysqli_fetch_row($hour_rslt)) 
-    {
+while ($row=mysqli_fetch_row($hour_rslt)) {
     $next_hour=$row[0];
     array_push($ingroup_hour_array, $row[0]);
     array_push($ingroup_calls_array, $row[1]);
-    }
-if (count($ingroup_calls_array)>0)
-    {
+}
+if (count($ingroup_calls_array)>0) {
     $JS_text.="'".implode("', '", $ingroup_hour_array)."'";
     $JS_calls.="'".implode("', '", $ingroup_calls_array)."'";
-    }
+}
 $JS_text.="]\n";
 $JS_calls.="]\n";
 echo "// $hour_stmt\n";
@@ -1226,9 +1275,8 @@ function LoadHourlyCharts() {
         // document.getElementById('campaign_hour_chart').innerHTML="<TABLE class='admin_stats_table' cellspacing=2><tr bgcolor=black><td align='center'><font CLASS=\"android_standard\">&nbsp;  &nbsp;</font></td></table>";
         }
 <?php
-if ($voodoo)
-{
-?>
+if ($voodoo) {
+    ?>
     if (ingroup_calls_hours.length>0)
         {
         HourlyIngroupChartData = {
@@ -1313,99 +1361,94 @@ if ($voodoo)
 }
 </script>
 <?php
-if ( ($SSnocache_admin=='1') or ( ($SSadmin_modify_refresh > 1) and ($modify_footer_refresh > 0) and (strlen($modify_url)>10) ) )
-    {
+if (($SSnocache_admin=='1') or (($SSadmin_modify_refresh > 1) and ($modify_footer_refresh > 0) and (strlen($modify_url)>10))) {
     echo "<head>\n";
-    if ($SSnocache_admin=='1')
-        {
+    if ($SSnocache_admin=='1') {
         echo "<META HTTP-EQUIV=\"Pragma\" CONTENT=\"no-cache\">\n";
         echo "<META HTTP-EQUIV=\"Expires\" CONTENT=\"-1\">\n";
         echo "<META HTTP-EQUIV=\"CACHE-CONTROL\" CONTENT=\"NO-CACHE\">\n";
-        }
-    if ( ($SSadmin_modify_refresh > 1) and ($modify_footer_refresh > 0) and (strlen($modify_url)>10) )
-        {
+    }
+    if (($SSadmin_modify_refresh > 1) and ($modify_footer_refresh > 0) and (strlen($modify_url)>10)) {
         echo "<META HTTP-EQUIV=\"REFRESH\" CONTENT=\"$SSadmin_modify_refresh;URL=$modify_url\">\n";
-        }
+    }
     echo "</head>\n";
-    }
-echo "</html>\n";
+}
+    echo "</html>\n";
 exit;
-function complete_leads($DB,$link,$dial_statuses,$camp_lists,$call_count_limit,$single_status,$campaign_id)
+function complete_leads($DB, $link, $dial_statuses, $camp_lists, $call_count_limit, $single_status, $campaign_id)
 {
-if (isset($camp_lists))
-    {
-    if (strlen($camp_lists)>1)
-        {
-        if (strlen($dial_statuses)>2)
-            {
-            $dial_statuses = preg_replace("/ -$/","",$dial_statuses);
-            $Dstatuses = explode(" ", $dial_statuses);
-            $Ds_to_print = (count($Dstatuses) - 0);
-            $Dsql = '';
-            $o=0;
-            while ($Ds_to_print > $o) 
-                {
-                $o++;
-                $Dsql .= "'$Dstatuses[$o]',";
+    if (isset($camp_lists)) {
+        if (strlen($camp_lists)>1) {
+            if (strlen($dial_statuses)>2) {
+                $dial_statuses = preg_replace("/ -$/", "", $dial_statuses);
+                $Dstatuses = explode(" ", $dial_statuses);
+                $Ds_to_print = (count($Dstatuses) - 0);
+                $Dsql = '';
+                $o=0;
+                while ($Ds_to_print > $o) {
+                    $o++;
+                    $Dsql .= "'$Dstatuses[$o]',";
                 }
-            $Dsql = preg_replace("/,$/","",$Dsql);
-            if (strlen($Dsql) < 2) {$Dsql = "''";}
-            $CCLsql = "(called_count < 0) or";
-            if ($call_count_limit > 0)
-                {$CCLsql = "(called_count >= $call_count_limit) or";}
-            $complete_statuses='';
-            $stmt="SELECT status from vicidial_statuses where completed='Y';";
-            $rslt=mysql_to_mysqli($stmt, $link);
-            $statuses_to_print = mysqli_num_rows($rslt);
-            $q=0;
-            while ($statuses_to_print > $q) 
-                {
-                $rowx=mysqli_fetch_row($rslt);
-                $complete_statuses.="'$rowx[0]',";
-                $q++;
+                $Dsql = preg_replace("/,$/", "", $Dsql);
+                if (strlen($Dsql) < 2) {
+                    $Dsql = "''";
                 }
-            $stmt="SELECT status from vicidial_campaign_statuses where completed='Y' $LOGallowed_campaignsSQL;";
-            $rslt=mysql_to_mysqli($stmt, $link);
-            $statuses_to_print = mysqli_num_rows($rslt);
-            $q=0;
-            while ($statuses_to_print > $q) 
-                {
-                $rowx=mysqli_fetch_row($rslt);
-                $complete_statuses.="'$rowx[0]',";
-                $q++;
+                $CCLsql = "(called_count < 0) or";
+                if ($call_count_limit > 0) {
+                    $CCLsql = "(called_count >= $call_count_limit) or";
                 }
-            $complete_statuses = preg_replace("/,$/","",$complete_statuses);
-            if (strlen($complete_statuses) < 2) {$complete_statuses = "''";}
-            $CSsql = "status IN($complete_statuses)";
-            $stmt="SELECT count(*) FROM vicidial_list where ( (status IN($Dsql)) and (list_id IN($camp_lists)) and ( $CCLsql ($CSsql) ) );";
-            if ($DB) {echo "$stmt\n";}
-            $rslt=mysql_to_mysqli($stmt, $link);
-            $rslt_rows = mysqli_num_rows($rslt);
-            if ($rslt_rows)
-                {
-                $rowx=mysqli_fetch_row($rslt);
-                $complete_leads = $rowx[0];
+                $complete_statuses='';
+                $stmt="SELECT status from vicidial_statuses where completed='Y';";
+                $rslt=mysql_to_mysqli($stmt, $link);
+                $statuses_to_print = mysqli_num_rows($rslt);
+                $q=0;
+                while ($statuses_to_print > $q) {
+                    $rowx=mysqli_fetch_row($rslt);
+                    $complete_statuses.="'$rowx[0]',";
+                    $q++;
                 }
-            else {$complete_leads = '0';}
-            if ($DB > 0) {echo "|$DB|\n";}
-            if ($single_status > 0)
-                {return $complete_leads;}
-            else
-                {echo "There are $complete_leads completed leads in those lists\n";}
+                $stmt="SELECT status from vicidial_campaign_statuses where completed='Y' $LOGallowed_campaignsSQL;";
+                $rslt=mysql_to_mysqli($stmt, $link);
+                $statuses_to_print = mysqli_num_rows($rslt);
+                $q=0;
+                while ($statuses_to_print > $q) {
+                    $rowx=mysqli_fetch_row($rslt);
+                    $complete_statuses.="'$rowx[0]',";
+                    $q++;
+                }
+                $complete_statuses = preg_replace("/,$/", "", $complete_statuses);
+                if (strlen($complete_statuses) < 2) {
+                    $complete_statuses = "''";
+                }
+                $CSsql = "status IN($complete_statuses)";
+                $stmt="SELECT count(*) FROM vicidial_list where ( (status IN($Dsql)) and (list_id IN($camp_lists)) and ( $CCLsql ($CSsql) ) );";
+                if ($DB) {
+                    echo "$stmt\n";
+                }
+                $rslt=mysql_to_mysqli($stmt, $link);
+                $rslt_rows = mysqli_num_rows($rslt);
+                if ($rslt_rows) {
+                    $rowx=mysqli_fetch_row($rslt);
+                    $complete_leads = $rowx[0];
+                } else {
+                    $complete_leads = '0';
+                }
+                if ($DB > 0) {
+                    echo "|$DB|\n";
+                }
+                if ($single_status > 0) {
+                    return $complete_leads;
+                } else {
+                    echo "There are $complete_leads completed leads in those lists\n";
+                }
+            } else {
+                echo _QXZ("no dial statuses selected for this campaign")."\n";
             }
-        else
-            {
-            echo _QXZ("no dial statuses selected for this campaign")."\n";
-            }
+        } else {
+            echo _QXZ("no active lists selected for this campaign")."\n";
         }
-    else
-        {
+    } else {
         echo _QXZ("no active lists selected for this campaign")."\n";
-        }
-    }
-else
-    {
-    echo _QXZ("no active lists selected for this campaign")."\n";
     }
 }
 ?>

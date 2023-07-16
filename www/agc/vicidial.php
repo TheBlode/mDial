@@ -42,70 +42,135 @@ $one_mysql_log=0;
 $DB=0;
 require_once("dbconnect_mysqli.php");
 require_once("functions.php");
-if (isset($_GET["DB"]))                            {$DB=$_GET["DB"];}
-        elseif (isset($_POST["DB"]))            {$DB=$_POST["DB"];}
-if (isset($_GET["JS_browser_width"]))                {$JS_browser_width=$_GET["JS_browser_width"];}
-        elseif (isset($_POST["JS_browser_width"]))  {$JS_browser_width=$_POST["JS_browser_width"];}
-if (isset($_GET["JS_browser_height"]))                {$JS_browser_height=$_GET["JS_browser_height"];}
-        elseif (isset($_POST["JS_browser_height"])) {$JS_browser_height=$_POST["JS_browser_height"];}
-if (isset($_GET["phone_login"]))                {$phone_login=$_GET["phone_login"];}
-        elseif (isset($_POST["phone_login"]))   {$phone_login=$_POST["phone_login"];}
-if (isset($_GET["phone_pass"]))                    {$phone_pass=$_GET["phone_pass"];}
-        elseif (isset($_POST["phone_pass"]))    {$phone_pass=$_POST["phone_pass"];}
-if (isset($_GET["VD_login"]))                    {$VD_login=$_GET["VD_login"];}
-        elseif (isset($_POST["VD_login"]))      {$VD_login=$_POST["VD_login"];}
-if (isset($_GET["VD_pass"]))                    {$VD_pass=$_GET["VD_pass"];}
-        elseif (isset($_POST["VD_pass"]))       {$VD_pass=$_POST["VD_pass"];}
-if (isset($_GET["VD_campaign"]))                {$VD_campaign=$_GET["VD_campaign"];}
-        elseif (isset($_POST["VD_campaign"]))   {$VD_campaign=$_POST["VD_campaign"];}
-if (isset($_GET["VD_language"]))                {$VD_language=$_GET["VD_language"];}
-        elseif (isset($_POST["VD_language"]))   {$VD_language=$_POST["VD_language"];}
-if (isset($_GET["relogin"]))                    {$relogin=$_GET["relogin"];}
-        elseif (isset($_POST["relogin"]))       {$relogin=$_POST["relogin"];}
-if (isset($_GET["MGR_override"]))                {$MGR_override=$_GET["MGR_override"];}
-        elseif (isset($_POST["MGR_override"]))  {$MGR_override=$_POST["MGR_override"];}
-if (isset($_GET["admin_test"]))                    {$admin_test=$_GET["admin_test"];}
-        elseif (isset($_POST["admin_test"]))    {$admin_test=$_POST["admin_test"];}
-if (isset($_GET["LOGINvarONE"]))                {$LOGINvarONE=$_GET["LOGINvarONE"];}
-        elseif (isset($_POST["LOGINvarONE"]))    {$LOGINvarONE=$_POST["LOGINvarONE"];}
-if (isset($_GET["LOGINvarTWO"]))                {$LOGINvarTWO=$_GET["LOGINvarTWO"];}
-        elseif (isset($_POST["LOGINvarTWO"]))    {$LOGINvarTWO=$_POST["LOGINvarTWO"];}
-if (isset($_GET["LOGINvarTHREE"]))                {$LOGINvarTHREE=$_GET["LOGINvarTHREE"];}
-        elseif (isset($_POST["LOGINvarTHREE"]))    {$LOGINvarTHREE=$_POST["LOGINvarTHREE"];}
-if (isset($_GET["LOGINvarFOUR"]))                {$LOGINvarFOUR=$_GET["LOGINvarFOUR"];}
-        elseif (isset($_POST["LOGINvarFOUR"]))    {$LOGINvarFOUR=$_POST["LOGINvarFOUR"];}
-if (isset($_GET["LOGINvarFIVE"]))                {$LOGINvarFIVE=$_GET["LOGINvarFIVE"];}
-        elseif (isset($_POST["LOGINvarFIVE"]))    {$LOGINvarFIVE=$_POST["LOGINvarFIVE"];}
-if (isset($_GET["hide_relogin_fields"]))                {$hide_relogin_fields=$_GET["hide_relogin_fields"];}
-        elseif (isset($_POST["hide_relogin_fields"]))    {$hide_relogin_fields=$_POST["hide_relogin_fields"];}
-if (isset($_GET["set_pass"]))                    {$set_pass=$_GET["set_pass"];}
-        elseif (isset($_POST["set_pass"]))        {$set_pass=$_POST["set_pass"];}
-if (isset($_GET["new_pass1"]))                    {$new_pass1=$_GET["new_pass1"];}
-        elseif (isset($_POST["new_pass1"]))        {$new_pass1=$_POST["new_pass1"];}
-if (isset($_GET["new_pass2"]))                    {$new_pass2=$_GET["new_pass2"];}
-        elseif (isset($_POST["new_pass2"]))        {$new_pass2=$_POST["new_pass2"];}
-if (!isset($phone_login)) 
-    {
-    if (isset($_GET["pl"]))            {$phone_login=$_GET["pl"];}
-        elseif (isset($_POST["pl"]))   {$phone_login=$_POST["pl"];}
+if (isset($_GET["DB"])) {
+    $DB=$_GET["DB"];
+} elseif (isset($_POST["DB"])) {
+    $DB=$_POST["DB"];
+}
+if (isset($_GET["JS_browser_width"])) {
+    $JS_browser_width=$_GET["JS_browser_width"];
+} elseif (isset($_POST["JS_browser_width"])) {
+    $JS_browser_width=$_POST["JS_browser_width"];
+}
+if (isset($_GET["JS_browser_height"])) {
+    $JS_browser_height=$_GET["JS_browser_height"];
+} elseif (isset($_POST["JS_browser_height"])) {
+    $JS_browser_height=$_POST["JS_browser_height"];
+}
+if (isset($_GET["phone_login"])) {
+    $phone_login=$_GET["phone_login"];
+} elseif (isset($_POST["phone_login"])) {
+    $phone_login=$_POST["phone_login"];
+}
+if (isset($_GET["phone_pass"])) {
+    $phone_pass=$_GET["phone_pass"];
+} elseif (isset($_POST["phone_pass"])) {
+    $phone_pass=$_POST["phone_pass"];
+}
+if (isset($_GET["VD_login"])) {
+    $VD_login=$_GET["VD_login"];
+} elseif (isset($_POST["VD_login"])) {
+    $VD_login=$_POST["VD_login"];
+}
+if (isset($_GET["VD_pass"])) {
+    $VD_pass=$_GET["VD_pass"];
+} elseif (isset($_POST["VD_pass"])) {
+    $VD_pass=$_POST["VD_pass"];
+}
+if (isset($_GET["VD_campaign"])) {
+    $VD_campaign=$_GET["VD_campaign"];
+} elseif (isset($_POST["VD_campaign"])) {
+    $VD_campaign=$_POST["VD_campaign"];
+}
+if (isset($_GET["VD_language"])) {
+    $VD_language=$_GET["VD_language"];
+} elseif (isset($_POST["VD_language"])) {
+    $VD_language=$_POST["VD_language"];
+}
+if (isset($_GET["relogin"])) {
+    $relogin=$_GET["relogin"];
+} elseif (isset($_POST["relogin"])) {
+    $relogin=$_POST["relogin"];
+}
+if (isset($_GET["MGR_override"])) {
+    $MGR_override=$_GET["MGR_override"];
+} elseif (isset($_POST["MGR_override"])) {
+    $MGR_override=$_POST["MGR_override"];
+}
+if (isset($_GET["admin_test"])) {
+    $admin_test=$_GET["admin_test"];
+} elseif (isset($_POST["admin_test"])) {
+    $admin_test=$_POST["admin_test"];
+}
+if (isset($_GET["LOGINvarONE"])) {
+    $LOGINvarONE=$_GET["LOGINvarONE"];
+} elseif (isset($_POST["LOGINvarONE"])) {
+    $LOGINvarONE=$_POST["LOGINvarONE"];
+}
+if (isset($_GET["LOGINvarTWO"])) {
+    $LOGINvarTWO=$_GET["LOGINvarTWO"];
+} elseif (isset($_POST["LOGINvarTWO"])) {
+    $LOGINvarTWO=$_POST["LOGINvarTWO"];
+}
+if (isset($_GET["LOGINvarTHREE"])) {
+    $LOGINvarTHREE=$_GET["LOGINvarTHREE"];
+} elseif (isset($_POST["LOGINvarTHREE"])) {
+    $LOGINvarTHREE=$_POST["LOGINvarTHREE"];
+}
+if (isset($_GET["LOGINvarFOUR"])) {
+    $LOGINvarFOUR=$_GET["LOGINvarFOUR"];
+} elseif (isset($_POST["LOGINvarFOUR"])) {
+    $LOGINvarFOUR=$_POST["LOGINvarFOUR"];
+}
+if (isset($_GET["LOGINvarFIVE"])) {
+    $LOGINvarFIVE=$_GET["LOGINvarFIVE"];
+} elseif (isset($_POST["LOGINvarFIVE"])) {
+    $LOGINvarFIVE=$_POST["LOGINvarFIVE"];
+}
+if (isset($_GET["hide_relogin_fields"])) {
+    $hide_relogin_fields=$_GET["hide_relogin_fields"];
+} elseif (isset($_POST["hide_relogin_fields"])) {
+    $hide_relogin_fields=$_POST["hide_relogin_fields"];
+}
+if (isset($_GET["set_pass"])) {
+    $set_pass=$_GET["set_pass"];
+} elseif (isset($_POST["set_pass"])) {
+    $set_pass=$_POST["set_pass"];
+}
+if (isset($_GET["new_pass1"])) {
+    $new_pass1=$_GET["new_pass1"];
+} elseif (isset($_POST["new_pass1"])) {
+    $new_pass1=$_POST["new_pass1"];
+}
+if (isset($_GET["new_pass2"])) {
+    $new_pass2=$_GET["new_pass2"];
+} elseif (isset($_POST["new_pass2"])) {
+    $new_pass2=$_POST["new_pass2"];
+}
+if (!isset($phone_login)) {
+    if (isset($_GET["pl"])) {
+        $phone_login=$_GET["pl"];
+    } elseif (isset($_POST["pl"])) {
+        $phone_login=$_POST["pl"];
     }
-if (!isset($phone_pass))
-    {
-    if (isset($_GET["pp"]))            {$phone_pass=$_GET["pp"];}
-        elseif (isset($_POST["pp"]))   {$phone_pass=$_POST["pp"];}
+}
+if (!isset($phone_pass)) {
+    if (isset($_GET["pp"])) {
+        $phone_pass=$_GET["pp"];
+    } elseif (isset($_POST["pp"])) {
+        $phone_pass=$_POST["pp"];
     }
-if (isset($VD_campaign))
-    {
-    $VD_campaign = mb_strtoupper($VD_campaign,'utf-8');
-    $VD_campaign = preg_replace("/\s/i",'',$VD_campaign);
-    }
-if (!isset($flag_channels))
-    {
+}
+if (isset($VD_campaign)) {
+    $VD_campaign = mb_strtoupper($VD_campaign, 'utf-8');
+    $VD_campaign = preg_replace("/\s/i", '', $VD_campaign);
+}
+if (!isset($flag_channels)) {
     $flag_channels=0;
     $flag_string='';
-    }
-$DB=preg_replace("/[^0-9a-z]/","",$DB);
-$VD_login = preg_replace('/[^-_0-9\p{L}]/u','',$VD_login);
+}
+$DB=preg_replace("/[^0-9a-z]/", "", $DB);
+$VD_login = preg_replace('/[^-_0-9\p{L}]/u', '', $VD_login);
 $forever_stop=0;
 $isdst = date("I");
 $StarTtimE = date("U");
@@ -115,10 +180,10 @@ $tsNOW_TIME = date("YmdHis");
 $FILE_TIME = date("Ymd-His");
 $loginDATE = date("Ymd");
 $CIDdate = date("ymdHis");
-$month_old = mktime(11, 0, 0, date("m"), date("d")-2,  date("Y"));
-$past_month_date = date("Y-m-d H:i:s",$month_old);
-$minutes_old = mktime(date("H"), date("i")-2, date("s"), date("m"), date("d"),  date("Y"));
-$past_minutes_date = date("Y-m-d H:i:s",$minutes_old);
+$month_old = mktime(11, 0, 0, date("m"), date("d")-2, date("Y"));
+$past_month_date = date("Y-m-d H:i:s", $month_old);
+$minutes_old = mktime(date("H"), date("i")-2, date("s"), date("m"), date("d"), date("Y"));
+$past_minutes_date = date("Y-m-d H:i:s", $minutes_old);
 $JS_date = $StarTtimE."000"; # milliseconds since epoch or "16,3,31,8,56,1,0"   year,month,day,hour,minute,second,millisecond
 $webphone_width = 460;
 $webphone_height = 500;
@@ -126,10 +191,11 @@ $VUselected_language = '';
 $random = (rand(1000000, 9999999) + 10000000);
 $stmt = "SELECT use_non_latin,vdc_header_date_format,vdc_customer_date_format,vdc_header_phone_format,webroot_writable,timeclock_end_of_day,vtiger_url,enable_vtiger_integration,outbound_autodial_active,enable_second_webform,user_territories_active,static_agent_url,custom_fields_enabled,pllb_grouping_limit,qc_features_active,allow_emails,callback_time_24hour,enable_languages,language_method,meetme_enter_login_filename,meetme_enter_leave3way_filename,enable_third_webform,default_language,active_modules,allow_chats,chat_url,default_phone_code,agent_screen_colors,manual_auto_next,agent_xfer_park_3way,admin_web_directory,agent_script,agent_push_events,agent_push_url,agent_logout_link,agentonly_callback_campaign_lock,manual_dial_validation,mute_recordings,enable_second_script,enable_first_webform,recording_buttons,outbound_cid_any,browser_call_alerts,manual_dial_phone_strip,require_password_length,pass_hash_enabled,agent_hidden_sound_seconds,agent_hidden_sound,agent_hidden_sound_volume,agent_screen_timer,agent_hide_hangup,allow_web_debug,max_logged_in_agents,login_kickall,agent_notifications,inbound_credits FROM system_settings;";
 $rslt=mysql_to_mysqli($stmt, $link);
-    if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01001',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+if ($mel > 0) {
+    mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01001', $VD_login, $server_ip, $session_name, $one_mysql_log);
+}
 $qm_conf_ct = mysqli_num_rows($rslt);
-if ($qm_conf_ct > 0)
-    {
+if ($qm_conf_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $non_latin =                        $row[0];
     $vdc_header_date_format =            $row[1];
@@ -187,79 +253,80 @@ if ($qm_conf_ct > 0)
     $SSlogin_kickall =                    $row[53];
     $SSagent_notifications =            $row[54];
     $SSinbound_credits =                $row[55];
-    if ( ($SSagent_hidden_sound == '---NONE---') or ($SSagent_hidden_sound == '') ) {$SSagent_hidden_sound_seconds=0;}
+    if (($SSagent_hidden_sound == '---NONE---') or ($SSagent_hidden_sound == '')) {
+        $SSagent_hidden_sound_seconds=0;
     }
-else
-    {
+} else {
     echo _QXZ("ERROR: System Settings missing")."\n";
     exit;
-    }
-if ($SSallow_web_debug < 1) {$DB=0;}
+}
+if ($SSallow_web_debug < 1) {
+    $DB=0;
+}
 $stmt="SELECT user,selected_language,force_change_password from vicidial_users where user='$VD_login';";
-if ($DB) {echo "|$stmt|\n";}
+if ($DB) {
+    echo "|$stmt|\n";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
-    if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01081',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+if ($mel > 0) {
+    mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01081', $VD_login, $server_ip, $session_name, $one_mysql_log);
+}
 $sl_ct = mysqli_num_rows($rslt);
-if ($sl_ct > 0)
-    {
+if ($sl_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $VUuser =                    $row[0];
     $VUselected_language =        $row[1];
     $VUforce_change_password =    $row[2];
-    }
-$VD_login=preg_replace("/\<|\>|\'|\"|\\\\|;| /","",$VD_login);
-$VD_pass=preg_replace("/\<|\>|\'|\"|\\\\|;| /","",$VD_pass);
-$VD_language = preg_replace("/\<|\>|\'|\"|\\\\|;| /","",$VD_language);
-$set_pass=preg_replace("/\<|\>|\'|\"|\\\\|;| /","",$set_pass);
-$new_pass1=preg_replace("/\<|\>|\'|\"|\\\\|;| /","",$new_pass1);
-$new_pass2=preg_replace("/\<|\>|\'|\"|\\\\|;| /","",$new_pass2);
-$JS_browser_width=preg_replace("/[^0-9a-z]/","",$JS_browser_width);
-$JS_browser_height=preg_replace("/[^0-9a-z]/","",$JS_browser_height);
-$relogin=preg_replace("/[^0-9a-zA-Z]/","",$relogin);
-$MGR_override=preg_replace("/[^0-9a-zA-Z]/","",$MGR_override);
-if ($non_latin < 1)
-    {
-    $VD_login=preg_replace("/[^-_0-9a-zA-Z]/","",$VD_login);
-    $VD_pass=preg_replace("/[^-\.\+\/\=_0-9a-zA-Z]/","",$VD_pass);
-    $new_pass1=preg_replace("/[^-_0-9a-zA-Z]/","",$new_pass1);
-    $new_pass2=preg_replace("/[^-_0-9a-zA-Z]/","",$new_pass2);
-    $phone_login=preg_replace("/[^\,0-9a-zA-Z]/","",$phone_login);
-    $phone_pass=preg_replace("/[^-_0-9a-zA-Z]/","",$phone_pass);
-    $VD_campaign = preg_replace("/[^-_0-9a-zA-Z]/","",$VD_campaign);
-    $admin_test = preg_replace("/[^0-9a-zA-Z]/","",$admin_test);
-    $LOGINvarONE=preg_replace("/[^-_0-9a-zA-Z]/","",$LOGINvarONE);
-    $LOGINvarTWO=preg_replace("/[^-_0-9a-zA-Z]/","",$LOGINvarTWO);
-    $LOGINvarTHREE=preg_replace("/[^-_0-9a-zA-Z]/","",$LOGINvarTHREE);
-    $LOGINvarFOUR=preg_replace("/[^-_0-9a-zA-Z]/","",$LOGINvarFOUR);
-    $LOGINvarFIVE=preg_replace("/[^-_0-9a-zA-Z]/","",$LOGINvarFIVE);
-    $hide_relogin_fields=preg_replace("/[^-_0-9a-zA-Z]/","",$hide_relogin_fields);
-    }
-else
-    {
-    $VD_login = preg_replace('/[^-_0-9\p{L}]/u','',$VD_login);
-    $VD_pass = preg_replace('/[^-\.\+\/\=_0-9\p{L}]/u','',$VD_pass);
-    $new_pass1=preg_replace("/[^-_0-9\p{L}]/u","",$new_pass1);
-    $new_pass2=preg_replace("/[^-_0-9\p{L}]/u","",$new_pass2);
-    $phone_login=preg_replace("/[^\,0-9\p{L}]/u","",$phone_login);
-    $phone_pass=preg_replace("/[^-_0-9\p{L}]/u","",$phone_pass);
-    $VD_campaign = preg_replace("/[^-_0-9\p{L}]/u","",$VD_campaign);
-    $admin_test = preg_replace("/[^0-9\p{L}]/u","",$admin_test);
-    $LOGINvarONE=preg_replace("/[^-_0-9\p{L}]/u","",$LOGINvarONE);
-    $LOGINvarTWO=preg_replace("/[^-_0-9\p{L}]/u","",$LOGINvarTWO);
-    $LOGINvarTHREE=preg_replace("/[^-_0-9\p{L}]/u","",$LOGINvarTHREE);
-    $LOGINvarFOUR=preg_replace("/[^-_0-9\p{L}]/u","",$LOGINvarFOUR);
-    $LOGINvarFIVE=preg_replace("/[^-_0-9\p{L}]/u","",$LOGINvarFIVE);
-    $hide_relogin_fields=preg_replace("/[^-_0-9\p{L}]/u","",$hide_relogin_fields);
-    }
-if ($force_logout)
-    {
+}
+$VD_login=preg_replace("/\<|\>|\'|\"|\\\\|;| /", "", $VD_login);
+$VD_pass=preg_replace("/\<|\>|\'|\"|\\\\|;| /", "", $VD_pass);
+$VD_language = preg_replace("/\<|\>|\'|\"|\\\\|;| /", "", $VD_language);
+$set_pass=preg_replace("/\<|\>|\'|\"|\\\\|;| /", "", $set_pass);
+$new_pass1=preg_replace("/\<|\>|\'|\"|\\\\|;| /", "", $new_pass1);
+$new_pass2=preg_replace("/\<|\>|\'|\"|\\\\|;| /", "", $new_pass2);
+$JS_browser_width=preg_replace("/[^0-9a-z]/", "", $JS_browser_width);
+$JS_browser_height=preg_replace("/[^0-9a-z]/", "", $JS_browser_height);
+$relogin=preg_replace("/[^0-9a-zA-Z]/", "", $relogin);
+$MGR_override=preg_replace("/[^0-9a-zA-Z]/", "", $MGR_override);
+if ($non_latin < 1) {
+    $VD_login=preg_replace("/[^-_0-9a-zA-Z]/", "", $VD_login);
+    $VD_pass=preg_replace("/[^-\.\+\/\=_0-9a-zA-Z]/", "", $VD_pass);
+    $new_pass1=preg_replace("/[^-_0-9a-zA-Z]/", "", $new_pass1);
+    $new_pass2=preg_replace("/[^-_0-9a-zA-Z]/", "", $new_pass2);
+    $phone_login=preg_replace("/[^\,0-9a-zA-Z]/", "", $phone_login);
+    $phone_pass=preg_replace("/[^-_0-9a-zA-Z]/", "", $phone_pass);
+    $VD_campaign = preg_replace("/[^-_0-9a-zA-Z]/", "", $VD_campaign);
+    $admin_test = preg_replace("/[^0-9a-zA-Z]/", "", $admin_test);
+    $LOGINvarONE=preg_replace("/[^-_0-9a-zA-Z]/", "", $LOGINvarONE);
+    $LOGINvarTWO=preg_replace("/[^-_0-9a-zA-Z]/", "", $LOGINvarTWO);
+    $LOGINvarTHREE=preg_replace("/[^-_0-9a-zA-Z]/", "", $LOGINvarTHREE);
+    $LOGINvarFOUR=preg_replace("/[^-_0-9a-zA-Z]/", "", $LOGINvarFOUR);
+    $LOGINvarFIVE=preg_replace("/[^-_0-9a-zA-Z]/", "", $LOGINvarFIVE);
+    $hide_relogin_fields=preg_replace("/[^-_0-9a-zA-Z]/", "", $hide_relogin_fields);
+} else {
+    $VD_login = preg_replace('/[^-_0-9\p{L}]/u', '', $VD_login);
+    $VD_pass = preg_replace('/[^-\.\+\/\=_0-9\p{L}]/u', '', $VD_pass);
+    $new_pass1=preg_replace("/[^-_0-9\p{L}]/u", "", $new_pass1);
+    $new_pass2=preg_replace("/[^-_0-9\p{L}]/u", "", $new_pass2);
+    $phone_login=preg_replace("/[^\,0-9\p{L}]/u", "", $phone_login);
+    $phone_pass=preg_replace("/[^-_0-9\p{L}]/u", "", $phone_pass);
+    $VD_campaign = preg_replace("/[^-_0-9\p{L}]/u", "", $VD_campaign);
+    $admin_test = preg_replace("/[^0-9\p{L}]/u", "", $admin_test);
+    $LOGINvarONE=preg_replace("/[^-_0-9\p{L}]/u", "", $LOGINvarONE);
+    $LOGINvarTWO=preg_replace("/[^-_0-9\p{L}]/u", "", $LOGINvarTWO);
+    $LOGINvarTHREE=preg_replace("/[^-_0-9\p{L}]/u", "", $LOGINvarTHREE);
+    $LOGINvarFOUR=preg_replace("/[^-_0-9\p{L}]/u", "", $LOGINvarFOUR);
+    $LOGINvarFIVE=preg_replace("/[^-_0-9\p{L}]/u", "", $LOGINvarFIVE);
+    $hide_relogin_fields=preg_replace("/[^-_0-9\p{L}]/u", "", $hide_relogin_fields);
+}
+if ($force_logout) {
     echo _QXZ("You have now logged out. Thank you")."\n";
     exit;
-    }
+}
 $conf_silent_prefix        = '5';    # vicidial_conferences prefix to enter silently and muted for recording
 $dtmf_silent_prefix        = '7';    # vicidial_conferences prefix to enter silently
 $HKuser_level            = '1';    # minimum vicidial user_level for HotKeys
-$campaign_login_list    = '1';    # show drop-down list of campaigns at login    
+$campaign_login_list    = '1';    # show drop-down list of campaigns at login
 $manual_dial_preview    = '1';    # allow preview lead option when manual dial
 $multi_line_comments    = '1';    # set to 1 to allow multi-line comment box
 $user_login_first        = '0';    # set to 1 to have the vicidial_user login before the phone login
@@ -267,7 +334,7 @@ $view_scripts            = '1';    # set to 1 to show the SCRIPTS tab
 $dispo_check_all_pause    = '0';    # set to 1 to allow for persistent pause after dispo
 $callholdstatus            = '1';    # set to 1 to show calls on hold count
 $agentcallsstatus        = '0';    # set to 1 to show agent status and call dialed count
-   $campagentstatctmax    = '3';    # Number of seconds for campaign call and agent stats
+$campagentstatctmax    = '3';    # Number of seconds for campaign call and agent stats
 $show_campname_pulldown    = '1';    # set to 1 to show campaign name on login pulldown
 $webform_sessionname    = '1';    # set to 1 to include the session_name in webform URL
 $local_consult_xfers    = '1';    # set to 1 to send consultative transfers from original server
@@ -315,10 +382,9 @@ $INSERT_head_js            = '';    # inserted after first javascript function
 $INSERT_first_onload    = '';    # inserted at the beginning of the first section of the onload function
 $INSERT_window_onload    = '';    # inserted at the end of the onload function
 $INSERT_agent_events    = '';    # inserted within the agent_events function
-if (file_exists('options.php'))
-    {
+if (file_exists('options.php')) {
     require_once('options.php');
-    }
+}
 $SSmenu_background='015B91';
 $SSframe_background='D9E6FE';
 $SSstd_row1_background='9BB9FB';
@@ -330,15 +396,17 @@ $SSalt_row1_background='BDFFBD';
 $SSalt_row2_background='99FF99';
 $SSalt_row3_background='CCFFCC';
 $browser_alert_sounds_list = 'bark_dog,beep_double,beep_five,beep_up,bell_double,bell_school,bird,blaster1,blaster2,buzz1,buzz2,cash_register,chat_alert,click_single,click_double,click_quiet,close_encounter,confirmation,ding,droplet,droplet_double,elephant,email_alert,hold_tone,horn_bike,horn_car,horn_car_triple,horn_clown,horn_double,horn_train,meow_cat,scream_wilhelm,silence_quick,siren,slide_down,slide_up,swish,teleport1,teleport2,ticking_two,ticking_four,ticking_six,whip,whistle_up,whistle_two,whistle_three,whoosh,xylophone1,xylophone2,xylophone3,xylophone4,20Hz_tone';
-if ($agent_screen_colors != 'default')
-    {
+if ($agent_screen_colors != 'default') {
     $stmt = "SELECT menu_background,frame_background,std_row1_background,std_row2_background,std_row3_background,std_row4_background,std_row5_background,alt_row1_background,alt_row2_background,alt_row3_background,web_logo FROM vicidial_screen_colors where colors_id='$agent_screen_colors';";
     $rslt=mysql_to_mysqli($stmt, $link);
-        if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01088',$VD_login,$server_ip,$session_name,$one_mysql_log);}
-    if ($DB) {echo "$stmt\n";}
+    if ($mel > 0) {
+        mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01088', $VD_login, $server_ip, $session_name, $one_mysql_log);
+    }
+    if ($DB) {
+        echo "$stmt\n";
+    }
     $qm_conf_ct = mysqli_num_rows($rslt);
-    if ($qm_conf_ct > 0)
-        {
+    if ($qm_conf_ct > 0) {
         $row=mysqli_fetch_row($rslt);
         $SSmenu_background =        $row[0];
         $SSframe_background =        $row[1];
@@ -351,30 +419,30 @@ if ($agent_screen_colors != 'default')
         $SSalt_row2_background =    $row[8];
         $SSalt_row3_background =    $row[9];
         $SSweb_logo =                $row[10];
-        }
     }
+}
 $Mhead_color =    $SSstd_row5_background;
 $Mmain_bgcolor = $SSmenu_background;
 $selected_logo = "./images/vicidial_admin_web_logo.png";
 $logo_new=0;
 $logo_old=0;
-if (file_exists('../$admin_web_directory/images/vicidial_admin_web_logo.png')) {$logo_new++;}
-if (file_exists('vicidial_admin_web_logo.gif')) {$logo_old++;}
-if ($SSweb_logo=='default_new')
-    {
+if (file_exists('../$admin_web_directory/images/vicidial_admin_web_logo.png')) {
+    $logo_new++;
+}
+if (file_exists('vicidial_admin_web_logo.gif')) {
+    $logo_old++;
+}
+if ($SSweb_logo=='default_new') {
     $selected_logo = "./images/vicidial_admin_web_logo.png";
-    }
-if ( ($SSweb_logo=='default_old') and ($logo_old > 0) )
-    {
+}
+if (($SSweb_logo=='default_old') and ($logo_old > 0)) {
     $selected_logo = "../$admin_web_directory/vicidial_admin_web_logo.gif";
-    }
-if ( ($SSweb_logo!='default_new') and ($SSweb_logo!='default_old') )
-    {
-    if (file_exists("../$admin_web_directory/images/vicidial_admin_web_logo$SSweb_logo")) 
-        {
+}
+if (($SSweb_logo!='default_new') and ($SSweb_logo!='default_old')) {
+    if (file_exists("../$admin_web_directory/images/vicidial_admin_web_logo$SSweb_logo")) {
         $selected_logo = "../$admin_web_directory/images/vicidial_admin_web_logo$SSweb_logo";
-        }
     }
+}
 $hide_gender=0;
 $dialRegExten_enabled=0;
 $US='_';
@@ -383,33 +451,42 @@ $DS='-';
 $date = date("r");
 $ip = getenv("REMOTE_ADDR");
 $browser = getenv("HTTP_USER_AGENT");
-$browser=preg_replace("/\'|\"|\\\\/","",$browser);
+$browser=preg_replace("/\'|\"|\\\\/", "", $browser);
 $script_name = getenv("SCRIPT_NAME");
 $server_name = getenv("SERVER_NAME");
 $server_port = getenv("SERVER_PORT");
 $PHP_SELF=$_SERVER['PHP_SELF'];
-$PHP_SELF = preg_replace('/\.php.*/i','.php',$PHP_SELF);
+$PHP_SELF = preg_replace('/\.php.*/i', '.php', $PHP_SELF);
 $CL=':';
-if (preg_match("/443/i",$server_port)) {$HTTPprotocol = 'https://';}
-  else {$HTTPprotocol = 'http://';}
-if (($server_port == '80') or ($server_port == '443') ) {$server_port='';}
-else {$server_port = "$CL$server_port";}
+if (preg_match("/443/i", $server_port)) {
+    $HTTPprotocol = 'https://';
+} else {
+    $HTTPprotocol = 'http://';
+}
+if (($server_port == '80') or ($server_port == '443')) {
+    $server_port='';
+} else {
+    $server_port = "$CL$server_port";
+}
 $FQDN = "$server_name$server_port";
-$chat_URL = preg_replace("/LOCALFQDN/",$FQDN,$chat_URL);
-$agent_push_url = preg_replace("/LOCALFQDN/",$FQDN,$agent_push_url);
+$chat_URL = preg_replace("/LOCALFQDN/", $FQDN, $chat_URL);
+$agent_push_url = preg_replace("/LOCALFQDN/", $FQDN, $agent_push_url);
 $agcPAGE = "$HTTPprotocol$server_name$server_port$script_name";
-$agcDIR = preg_replace('/vicidial\.php/i','',$agcPAGE);
-$agcDIR = preg_replace("/$SSagent_script/i",'',$agcDIR);
-if (strlen($static_agent_url) > 5)
-    {$agcPAGE = $static_agent_url;}
-if (strlen($VUselected_language) < 1)
-    {$VUselected_language = $default_language;}
+$agcDIR = preg_replace('/vicidial\.php/i', '', $agcPAGE);
+$agcDIR = preg_replace("/$SSagent_script/i", '', $agcDIR);
+if (strlen($static_agent_url) > 5) {
+    $agcPAGE = $static_agent_url;
+}
+if (strlen($VUselected_language) < 1) {
+    $VUselected_language = $default_language;
+}
 $vdc_form_display = 'vdc_form_display.php';
-if (preg_match("/cf_encrypt/",$active_modules))
-    {$vdc_form_display = 'vdc_form_display_encrypt.php';}
-header ("Content-type: text/html; charset=utf-8");
-header ("Cache-Control: no-cache, must-revalidate");  // HTTP/1.1
-header ("Pragma: no-cache");                          // HTTP/1.0
+if (preg_match("/cf_encrypt/", $active_modules)) {
+    $vdc_form_display = 'vdc_form_display_encrypt.php';
+}
+header("Content-type: text/html; charset=utf-8");
+header("Cache-Control: no-cache, must-revalidate");  // HTTP/1.1
+header("Pragma: no-cache");                          // HTTP/1.0
 echo '<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -423,106 +500,118 @@ echo '<?xml version="1.0" encoding="UTF-8"?>
 ';
 echo "<!-- VERSION: $version     "._QXZ("BUILD:")." $build -->\n";
 echo "<!-- BROWSER: $BROWSER_WIDTH x $BROWSER_HEIGHT     $JS_browser_width x $JS_browser_height -->\n";
-if ($campaign_login_list > 0)
-    {
+if ($campaign_login_list > 0) {
     $camp_form_code  = "<select size=\"1\" name=\"VD_campaign\" id=\"VD_campaign\" onfocus=\"login_allowable_campaigns()\">\n";
     $camp_form_code .= "<option value=\"\"></option>\n";
     $LOGallowed_campaignsSQL='';
-    if ($relogin == 'YES')
-        {
+    if ($relogin == 'YES') {
         $stmt="SELECT user_group from vicidial_users where user='$VD_login' and active='Y' and api_only_user != '1';";
-        if ($non_latin > 0) {$rslt=mysql_to_mysqli("SET NAMES 'UTF8'", $link);}
+        if ($non_latin > 0) {
+            $rslt=mysql_to_mysqli("SET NAMES 'UTF8'", $link);
+        }
         $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01002',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+        if ($mel > 0) {
+            mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01002', $VD_login, $server_ip, $session_name, $one_mysql_log);
+        }
         $cl_user_ct = mysqli_num_rows($rslt);
-        if ($cl_user_ct > 0)
-            {
+        if ($cl_user_ct > 0) {
             $row=mysqli_fetch_row($rslt);
             $VU_user_group=$row[0];
             $stmt="SELECT allowed_campaigns from vicidial_user_groups where user_group='$VU_user_group';";
             $rslt=mysql_to_mysqli($stmt, $link);
-                    if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01003',$VD_login,$server_ip,$session_name,$one_mysql_log);}
-            $row=mysqli_fetch_row($rslt);
-            if ( (!preg_match("/ALL-CAMPAIGNS/i",$row[0])) )
-                {
-                $LOGallowed_campaignsSQL = preg_replace('/\s-/i','',$row[0]);
-                $LOGallowed_campaignsSQL = preg_replace('/\s/i',"','",$LOGallowed_campaignsSQL);
-                $LOGallowed_campaignsSQL = "and campaign_id IN('$LOGallowed_campaignsSQL')";
-                }
+            if ($mel > 0) {
+                mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01003', $VD_login, $server_ip, $session_name, $one_mysql_log);
             }
-        else
-            {
+            $row=mysqli_fetch_row($rslt);
+            if ((!preg_match("/ALL-CAMPAIGNS/i", $row[0]))) {
+                $LOGallowed_campaignsSQL = preg_replace('/\s-/i', '', $row[0]);
+                $LOGallowed_campaignsSQL = preg_replace('/\s/i', "','", $LOGallowed_campaignsSQL);
+                $LOGallowed_campaignsSQL = "and campaign_id IN('$LOGallowed_campaignsSQL')";
+            }
+        } else {
             echo "<select size=1 name=VD_campaign id=VD_campaign onFocus=\"login_allowable_campaigns()\">\n";
             echo "<option value=\"\">-- "._QXZ("USER LOGIN ERROR")." --</option>\n";
             echo "</select>\n";
-            }
         }
-    if ($MGR_override > 0)
-        {
-        if (isset($_GET["MGR_login$loginDATE"]))                {$MGR_login=$_GET["MGR_login$loginDATE"];}
-                elseif (isset($_POST["MGR_login$loginDATE"]))    {$MGR_login=$_POST["MGR_login$loginDATE"];}
-        if (isset($_GET["MGR_pass$loginDATE"]))                    {$MGR_pass=$_GET["MGR_pass$loginDATE"];}
-                elseif (isset($_POST["MGR_pass$loginDATE"]))    {$MGR_pass=$_POST["MGR_pass$loginDATE"];}
-        $MGR_login = preg_replace("/\<|\>|\'|\"|\\\\|;| /","",$MGR_login);
-        $MGR_pass = preg_replace("/\<|\>|\'|\"|\\\\|;| /","",$MGR_pass);
+    }
+    if ($MGR_override > 0) {
+        if (isset($_GET["MGR_login$loginDATE"])) {
+            $MGR_login=$_GET["MGR_login$loginDATE"];
+        } elseif (isset($_POST["MGR_login$loginDATE"])) {
+            $MGR_login=$_POST["MGR_login$loginDATE"];
+        }
+        if (isset($_GET["MGR_pass$loginDATE"])) {
+            $MGR_pass=$_GET["MGR_pass$loginDATE"];
+        } elseif (isset($_POST["MGR_pass$loginDATE"])) {
+            $MGR_pass=$_POST["MGR_pass$loginDATE"];
+        }
+        $MGR_login = preg_replace("/\<|\>|\'|\"|\\\\|;| /", "", $MGR_login);
+        $MGR_pass = preg_replace("/\<|\>|\'|\"|\\\\|;| /", "", $MGR_pass);
         $MGR_auth=0;
-        $auth_message = user_authorization($MGR_login,$MGR_pass,'MGR',0,0,0,0,'vicidial_mgr_ovrd');
-        if (preg_match("/^GOOD/",$auth_message))
-            {$MGR_auth=1;}
-        if($MGR_auth>0)
-            {
+        $auth_message = user_authorization($MGR_login, $MGR_pass, 'MGR', 0, 0, 0, 0, 'vicidial_mgr_ovrd');
+        if (preg_match("/^GOOD/", $auth_message)) {
+            $MGR_auth=1;
+        }
+        if($MGR_auth>0) {
             $stmt="UPDATE vicidial_users SET shift_override_flag='1' where user='$VD_login';";
-            if ($DB) {echo "|$stmt|\n";}
+            if ($DB) {
+                echo "|$stmt|\n";
+            }
             $rslt=mysql_to_mysqli($stmt, $link);
-            if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01059',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+            if ($mel > 0) {
+                mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01059', $VD_login, $server_ip, $session_name, $one_mysql_log);
+            }
             echo "<!-- Shift Override entered for $VD_login by $MGR_login -->\n";
             $SQL_log = "$stmt|";
-            $SQL_log = preg_replace('/;/','',$SQL_log);
+            $SQL_log = preg_replace('/;/', '', $SQL_log);
             $SQL_log = addslashes($SQL_log);
             $stmt="INSERT INTO vicidial_admin_log set event_date='$NOW_TIME', user='$MGR_login', ip_address='$ip', event_section='AGENT', event_type='OVERRIDE', record_id='$VD_login', event_code='MANAGER OVERRIDE OF AGENT SHIFT ENFORCEMENT', event_sql=\"$SQL_log\", event_notes='user: $VD_login';";
-            if ($DB) {echo "|$stmt|\n";}
+            if ($DB) {
+                echo "|$stmt|\n";
+            }
             $rslt=mysql_to_mysqli($stmt, $link);
-            if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01060',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+            if ($mel > 0) {
+                mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01060', $VD_login, $server_ip, $session_name, $one_mysql_log);
             }
         }
+    }
     $stmt="SELECT campaign_id,campaign_name from vicidial_campaigns where active='Y' $LOGallowed_campaignsSQL order by campaign_id;";
-    if ($non_latin > 0) {$rslt=mysql_to_mysqli("SET NAMES 'UTF8'", $link);}
+    if ($non_latin > 0) {
+        $rslt=mysql_to_mysqli("SET NAMES 'UTF8'", $link);
+    }
     $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01004',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+    if ($mel > 0) {
+        mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01004', $VD_login, $server_ip, $session_name, $one_mysql_log);
+    }
     $camps_to_print = mysqli_num_rows($rslt);
     $o=0;
-    while ($camps_to_print > $o) 
-        {
+    while ($camps_to_print > $o) {
         $rowx=mysqli_fetch_row($rslt);
-        if ($show_campname_pulldown)
-            {$campname = " - $rowx[1]";}
-        else
-            {$campname = '';}
-        if ($VD_campaign)
-            {
-            if ( (preg_match("/$VD_campaign/i",$rowx[0])) and (strlen($VD_campaign) == strlen($rowx[0])) )
-                {$camp_form_code .= "<option value=\"$rowx[0]\" selected=\"selected\">$rowx[0]$campname</option>\n";}
-            else
-                {
-                if (!preg_match('/login_allowable_campaigns/',$camp_form_code))
-                    {$camp_form_code .= "<option value=\"$rowx[0]\">$rowx[0]$campname</option>\n";}
+        if ($show_campname_pulldown) {
+            $campname = " - $rowx[1]";
+        } else {
+            $campname = '';
+        }
+        if ($VD_campaign) {
+            if ((preg_match("/$VD_campaign/i", $rowx[0])) and (strlen($VD_campaign) == strlen($rowx[0]))) {
+                $camp_form_code .= "<option value=\"$rowx[0]\" selected=\"selected\">$rowx[0]$campname</option>\n";
+            } else {
+                if (!preg_match('/login_allowable_campaigns/', $camp_form_code)) {
+                    $camp_form_code .= "<option value=\"$rowx[0]\">$rowx[0]$campname</option>\n";
                 }
             }
-        else
-            {
-            if (!preg_match('/login_allowable_campaigns/',$camp_form_code))
-                    {$camp_form_code .= "<option value=\"$rowx[0]\">$rowx[0]$campname</option>\n";}
+        } else {
+            if (!preg_match('/login_allowable_campaigns/', $camp_form_code)) {
+                $camp_form_code .= "<option value=\"$rowx[0]\">$rowx[0]$campname</option>\n";
             }
-        $o++;
         }
+        $o++;
+    }
     $camp_form_code .= "</select>\n";
-    }
-else
-    {
+} else {
     $camp_form_code = "<input type=\"text\" name=\"vd_campaign\" size=\"10\" maxlength=\"20\" value=\"$VD_campaign\" />\n";
-    }
-if ($LogiNAJAX > 0)
-    {
+}
+if ($LogiNAJAX > 0) {
     ?>
     <script type="text/javascript">
     <!-- 
@@ -530,9 +619,8 @@ if ($LogiNAJAX > 0)
     var BrowseHeight = 0;
     function browser_dimensions() 
         {
-    <?php 
-        if (preg_match('/MSIE/',$browser)) 
-            {
+    <?php
+        if (preg_match('/MSIE/', $browser)) {
             echo "    if (document.documentElement && document.documentElement.clientHeight)\n";
             echo "            {BrowseWidth = document.documentElement.clientWidth;}\n";
             echo "        else if (document.body)\n";
@@ -541,12 +629,10 @@ if ($LogiNAJAX > 0)
             echo "            {BrowseHeight = document.documentElement.clientHeight;}\n";
             echo "        else if (document.body)\n";
             echo "            {BrowseHeight = document.body.clientHeight;}\n";
-            }
-        else 
-            {
+        } else {
             echo "BrowseWidth = window.innerWidth;\n";
             echo "        BrowseHeight = window.innerHeight;\n";
-            }
+        }
     ?>
         document.vicidial_form.JS_browser_width.value = BrowseWidth;
         document.vicidial_form.JS_browser_height.value = BrowseHeight;
@@ -608,9 +694,7 @@ if ($LogiNAJAX > 0)
                 }
             }
     <?php
-    }
-else
-    {
+} else {
     ?>
     <script type="text/javascript">
     <!-- 
@@ -619,9 +703,8 @@ else
         var nothing=0;
         }
     <?php
-    }
-if ($login_submit_once > 0)
-    {
+}
+if ($login_submit_once > 0) {
     ?>
     var submit_clicks=0;
     var image_loading = new Image();
@@ -653,26 +736,25 @@ if ($login_submit_once > 0)
     $LoginLoadingBox .= "<br />\n<font class=\"skb_text\">"._QXZ("Logging in")."...</font>\n";
     $LoginLoadingBox .= "<br /><br />\n";
     $LoginLoadingBox .= "<img src=\"./images/"._QXZ("agent_loading_animation.gif")."\" height=\"103px\" width=\"103px\" alt=\""._QXZ("Loading...")."\" />\n</span>\n";
-    }
-else
-    {
+} else {
     $LOGINformSUBtrigger='';
     $LoginLoadingBox='';
-?>
+    ?>
     // -->
     </script>
 <?php
-    }
+}
 $grey_link='';
-if ($link_to_grey_version > 0)
-    {$grey_link = "<font class=\"sb_text\"> | </font><a href=\"./vicidial-grey.php?pl=$phone_login&pp=$phone_pass&VD_login=$VD_login&VD_pass=$VD_pass\"> <font class=\"sb_text\">"._QXZ("Old Agent Screen")."</font></a>";}
-if ($relogin == 'YES')
-    {
+if ($link_to_grey_version > 0) {
+    $grey_link = "<font class=\"sb_text\"> | </font><a href=\"./vicidial-grey.php?pl=$phone_login&pp=$phone_pass&VD_login=$VD_login&VD_pass=$VD_pass\"> <font class=\"sb_text\">"._QXZ("Old Agent Screen")."</font></a>";
+}
+if ($relogin == 'YES') {
     echo "<title>"._QXZ("Agent web client: Re-Login")."</title>\n";
     echo "</head>\n";
     echo "<body onresize=\"browser_dimensions();\" onload=\"browser_dimensions();\" style=\"background-color:white\">\n";
-    if ($hide_timeclock_link < 1)
-        {echo "<a href=\"./timeclock.php?referrer=agent&amp;pl=$phone_login&amp;pp=$phone_pass&amp;VD_login=$VD_login&amp;VD_pass=$VD_pass\"> <font class=\"sb_text\">"._QXZ("Timeclock")."</font></a>$grey_link<br />\n";}
+    if ($hide_timeclock_link < 1) {
+        echo "<a href=\"./timeclock.php?referrer=agent&amp;pl=$phone_login&amp;pp=$phone_pass&amp;VD_login=$VD_login&amp;VD_pass=$VD_pass\"> <font class=\"sb_text\">"._QXZ("Timeclock")."</font></a>$grey_link<br />\n";
+    }
     echo "<table width=\"100%\"><tr><td></td>\n";
     echo "<!-- INTERNATIONALIZATION-LINKS-PLACEHOLDER-VICIDIAL -->\n";
     echo "</tr></table>\n";
@@ -686,48 +768,42 @@ if ($relogin == 'YES')
     echo "<input type=\"hidden\" name=\"LOGINvarTHREE\" id=\"LOGINvarTHREE\" value=\"$LOGINvarTHREE\" />\n";
     echo "<input type=\"hidden\" name=\"LOGINvarFOUR\" id=\"LOGINvarFOUR\" value=\"$LOGINvarFOUR\" />\n";
     echo "<input type=\"hidden\" name=\"LOGINvarFIVE\" id=\"LOGINvarFIVE\" value=\"$LOGINvarFIVE\" />\n";
-    if (preg_match("/^YES$|^READONLY_LOGIN$|^READONLY_LOGINPHONE$/",$hide_relogin_fields))
-        {
+    if (preg_match("/^YES$|^READONLY_LOGIN$|^READONLY_LOGINPHONE$/", $hide_relogin_fields)) {
         echo "<input type=\"hidden\" name=\"hide_relogin_fields\" id=\"hide_relogin_fields\" value=\"$hide_relogin_fields\" />\n";
         echo "<input type=\"hidden\" name=\"phone_login\" id=\"phone_login\" value=\"$phone_login\" />\n";
         echo "<input type=\"hidden\" name=\"phone_pass\" id=\"phone_pass\" value=\"$phone_pass\" />\n";
         echo "<input type=\"hidden\" name=\"VD_login\" id=\"VD_login\" value=\"$VD_login\" />\n";
         echo "<input type=\"hidden\" name=\"VD_pass\" id=\"VD_pass\" value=\"$VD_pass\" />\n";
-        }
-    if (preg_match("/^READONLY_PHONE$/",$hide_relogin_fields))
-        {
+    }
+    if (preg_match("/^READONLY_PHONE$/", $hide_relogin_fields)) {
         echo "<input type=\"hidden\" name=\"hide_relogin_fields\" id=\"hide_relogin_fields\" value=\"\" />\n"; # RESET, as this is one-time
         echo "<input type=\"hidden\" name=\"phone_login\" id=\"phone_login\" value=\"$phone_login\" />\n";
         echo "<input type=\"hidden\" name=\"phone_pass\" id=\"phone_pass\" value=\"$phone_pass\" />\n";
-        }
+    }
     echo "<br /><br /><br /><center><table width=\"460px\" cellpadding=\"3\" cellspacing=\"0\" bgcolor=\"#$SSframe_background\"><tr bgcolor=\"white\">";
     echo "<td align=\"left\" valign=\"bottom\" bgcolor=\"#$SSmenu_background\" width=\"170\"><img src=\"$selected_logo\" border=\"0\" height=\"45\" width=\"170\" alt=\"Agent Screen\" /></td>";
     echo "<td align=\"center\" valign=\"middle\" bgcolor=\"#$SSmenu_background\"> <font class=\"sh_text_white\">"._QXZ("Re-Login")."</font> </td>";
     echo "</tr>\n";
     echo "<tr><td align=\"left\" colspan=\"2\"><font size=\"1\"> &nbsp; </font></td></tr>\n";
-    if (preg_match("/^READONLY_PHONE$/",$hide_relogin_fields))
-        {
+    if (preg_match("/^READONLY_PHONE$/", $hide_relogin_fields)) {
         echo "<tr><td align=\"right\"><font class=\"skb_text\">"._QXZ("Phone Login:")."</font> </td>";
         echo "<td align=\"left\"><b>$phone_login</b></td></tr>\n";
         echo "<tr><td align=\"right\"><font class=\"skb_text\">"._QXZ("User Login").":</font>  </td>";
         echo "<td align=\"left\"><input type=\"text\" name=\"VD_login\" size=\"20\" maxlength=\"20\" value=\"$VD_login\" /></td></tr>\n";
         echo "<tr><td align=\"right\"><font class=\"skb_text\">"._QXZ("User Password:")."</font>  </td>";
         echo "<td align=\"left\"><input type=\"password\" name=\"VD_pass\" size=\"20\" maxlength=\"100\" value=\"$VD_pass\" /></td></tr>\n";
-        }
-    if (preg_match("/^READONLY_LOGIN$/",$hide_relogin_fields))
-        {
+    }
+    if (preg_match("/^READONLY_LOGIN$/", $hide_relogin_fields)) {
         echo "<tr><td align=\"right\"><font class=\"skb_text\">"._QXZ("User Login").":</font>  </td>";
         echo "<td align=\"left\"><b>$VD_login</b></td></tr>\n";
-        }
-    if (preg_match("/^READONLY_LOGINPHONE$/",$hide_relogin_fields))
-        {
+    }
+    if (preg_match("/^READONLY_LOGINPHONE$/", $hide_relogin_fields)) {
         echo "<tr><td align=\"right\"><font class=\"skb_text\">"._QXZ("User Login").":</font>  </td>";
         echo "<td align=\"left\"><b>$VD_login</b></td></tr>\n";
         echo "<tr><td align=\"right\"><font class=\"skb_text\">"._QXZ("Phone Login:")."</font> </td>";
         echo "<td align=\"left\"><b>$phone_login</b></td></tr>\n";
-        }
-    if (!preg_match("/^YES$|^READONLY_LOGIN$|^READONLY_PHONE$|^READONLY_LOGINPHONE$/",$hide_relogin_fields))
-        {
+    }
+    if (!preg_match("/^YES$|^READONLY_LOGIN$|^READONLY_PHONE$|^READONLY_LOGINPHONE$/", $hide_relogin_fields)) {
         echo "<tr><td align=\"right\"><font class=\"skb_text\">"._QXZ("Phone Login:")."</font> </td>";
         echo "<td align=\"left\"><input type=\"text\" name=\"phone_login\" size=\"20\" maxlength=\"20\" value=\"$phone_login\" /></td></tr>\n";
         echo "<tr><td align=\"right\"><font class=\"skb_text\">"._QXZ("Phone Password:")."</font>  </td>";
@@ -736,13 +812,14 @@ if ($relogin == 'YES')
         echo "<td align=\"left\"><input type=\"text\" name=\"VD_login\" size=\"20\" maxlength=\"20\" value=\"$VD_login\" /></td></tr>\n";
         echo "<tr><td align=\"right\"><font class=\"skb_text\">"._QXZ("User Password:")."</font>  </td>";
         echo "<td align=\"left\"><input type=\"password\" name=\"VD_pass\" size=\"20\" maxlength=\"100\" value=\"$VD_pass\" /></td></tr>\n";
-        }
+    }
     echo "<tr><td align=\"right\" valign=\"top\"><font class=\"skb_text\">"._QXZ("Campaign:")."</font>  </td>";
     echo "<td align=\"left\"><font class=\"skb_text\"><span id=\"LogiNCamPaigns\">$camp_form_code</span></font></td></tr>\n";
-    if ($login_submit_once > 0)
-        {echo "<tr><td align=\"center\" colspan=\"2\"><input type=\"submit\" id=\"login_sub\" name=\"login_sub\" value=\""._QXZ("SUBMIT")."\" onclick=\"login_click()\"> &nbsp; \n";}
-    else
-        {echo "<tr><td align=\"center\" colspan=\"2\"><input type=\"submit\" name=\"SUBMIT\" value=\""._QXZ("SUBMIT")."\" /> &nbsp; \n";}
+    if ($login_submit_once > 0) {
+        echo "<tr><td align=\"center\" colspan=\"2\"><input type=\"submit\" id=\"login_sub\" name=\"login_sub\" value=\""._QXZ("SUBMIT")."\" onclick=\"login_click()\"> &nbsp; \n";
+    } else {
+        echo "<tr><td align=\"center\" colspan=\"2\"><input type=\"submit\" name=\"SUBMIT\" value=\""._QXZ("SUBMIT")."\" /> &nbsp; \n";
+    }
     echo "<span id=\"LogiNReseT\"><input type=\"button\" value=\""._QXZ("Refresh Campaign List")."\" onclick=\"login_allowable_campaigns()\"></span></td></tr>\n";
     echo "<tr><td align=\"left\" colspan=\"2\"><font class=\"body_tiny\"><br />"._QXZ("VERSION:")." $version &nbsp; &nbsp; &nbsp; "._QXZ("BUILD:")." $build</font></td></tr>\n";
     echo "</table>\n";
@@ -754,16 +831,15 @@ if ($relogin == 'YES')
     echo "</body>\n\n";
     echo "</html>\n\n";
     exit;
-    }
-if ($user_login_first == 1)
-    {
-    if ( (strlen($VD_login)<1) or (strlen($VD_pass)<1) or (strlen($VD_campaign)<1) )
-        {
+}
+if ($user_login_first == 1) {
+    if ((strlen($VD_login)<1) or (strlen($VD_pass)<1) or (strlen($VD_campaign)<1)) {
         echo "<title>"._QXZ("Agent web client: Campaign Login")."</title>\n";
         echo "</head>\n";
         echo "<body onresize=\"browser_dimensions();\" onload=\"browser_dimensions();\">\n";
-        if ($hide_timeclock_link < 1)
-            {echo "<a href=\"./timeclock.php?referrer=agent&amp;pl=$phone_login&amp;pp=$phone_pass&amp;VD_login=$VD_login&amp;VD_pass=$VD_pass\"> <font class=\"sb_text\">"._QXZ("Timeclock")."</font></a>$grey_link<br />\n";}
+        if ($hide_timeclock_link < 1) {
+            echo "<a href=\"./timeclock.php?referrer=agent&amp;pl=$phone_login&amp;pp=$phone_pass&amp;VD_login=$VD_login&amp;VD_pass=$VD_pass\"> <font class=\"sb_text\">"._QXZ("Timeclock")."</font></a>$grey_link<br />\n";
+        }
         echo "<table width=\"100%\"><tr><td></td>\n";
         echo "<!-- INTERNATIONALIZATION-LINKS-PLACEHOLDER-VICIDIAL -->\n";
         echo "</tr></table>\n";
@@ -789,10 +865,11 @@ if ($user_login_first == 1)
         echo "<td align=\"left\"><input type=\"password\" name=\"VD_pass\" size=\"20\" maxlength=\"100\" value=\"$VD_pass\" /></td></tr>\n";
         echo "<tr><td align=\"right\" valign=\"top\"><font class=\"skb_text\">"._QXZ("Campaign:")."</font>  </td>";
         echo "<td align=\"left\"><font class=\"skb_text\"><span id=\"LogiNCamPaigns\">$camp_form_code</span></font></td></tr>\n";
-        if ($login_submit_once > 0)
-            {echo "<tr><td align=\"center\" colspan=\"2\"><input type=\"submit\" id=\"login_sub\" name=\"login_sub\" value=\""._QXZ("SUBMIT")."\" onclick=\"login_click()\"> &nbsp; \n";}
-        else
-            {echo "<tr><td align=\"center\" colspan=\"2\"><input type=\"submit\" name=\"SUBMIT\" value=\""._QXZ("SUBMIT")."\" /> &nbsp; \n";}
+        if ($login_submit_once > 0) {
+            echo "<tr><td align=\"center\" colspan=\"2\"><input type=\"submit\" id=\"login_sub\" name=\"login_sub\" value=\""._QXZ("SUBMIT")."\" onclick=\"login_click()\"> &nbsp; \n";
+        } else {
+            echo "<tr><td align=\"center\" colspan=\"2\"><input type=\"submit\" name=\"SUBMIT\" value=\""._QXZ("SUBMIT")."\" /> &nbsp; \n";
+        }
         echo "<span id=\"LogiNReseT\"></span></td></tr>\n";
         echo "<tr><td align=\"left\" colspan=\"2\"><font class=\"body_tiny\"><br />"._QXZ("VERSION:")." $version &nbsp; &nbsp; &nbsp; "._QXZ("BUILD:")." $build</font></td></tr>\n";
         echo "</table>\n";
@@ -804,25 +881,26 @@ if ($user_login_first == 1)
         echo "</body>\n\n";
         echo "</html>\n\n";
         exit;
-        }
-    else
-        {
-        if ( (strlen($phone_login)<2) or (strlen($phone_pass)<2) )
-            {
+    } else {
+        if ((strlen($phone_login)<2) or (strlen($phone_pass)<2)) {
             $stmt="SELECT phone_login,phone_pass from vicidial_users where user='$VD_login' and user_level > 0 and active='Y' and api_only_user != '1';";
-            if ($DB) {echo "|$stmt|\n";}
+            if ($DB) {
+                echo "|$stmt|\n";
+            }
             $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01005',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+            if ($mel > 0) {
+                mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01005', $VD_login, $server_ip, $session_name, $one_mysql_log);
+            }
             $row=mysqli_fetch_row($rslt);
             $phone_login=$row[0];
             $phone_pass=$row[1];
-            if ( (strlen($phone_login) < 1) or (strlen($phone_pass) < 1) )
-                {
+            if ((strlen($phone_login) < 1) or (strlen($phone_pass) < 1)) {
                 echo "<title>"._QXZ("Agent web client:  Login")."</title>\n";
                 echo "</head>\n";
                 echo "<body onresize=\"browser_dimensions();\"  onLoad=\"browser_dimensions();\">\n";
-                if ($hide_timeclock_link < 1)
-                    {echo "<a href=\"./timeclock.php?referrer=agent&amp;pl=$phone_login&amp;pp=$phone_pass&amp;VD_login=$VD_login&amp;VD_pass=$VD_pass\"> <font class=\"sb_text\">"._QXZ("Timeclock")."</font></a>$grey_link<br />\n";}
+                if ($hide_timeclock_link < 1) {
+                    echo "<a href=\"./timeclock.php?referrer=agent&amp;pl=$phone_login&amp;pp=$phone_pass&amp;VD_login=$VD_login&amp;VD_pass=$VD_pass\"> <font class=\"sb_text\">"._QXZ("Timeclock")."</font></a>$grey_link<br />\n";
+                }
                 echo "<table width=\"100%\"><tr><td></td>\n";
                 echo "<!-- INTERNATIONALIZATION-LINKS-PLACEHOLDER-VICIDIAL -->\n";
                 echo "</tr></table>\n";
@@ -851,10 +929,11 @@ if ($user_login_first == 1)
                 echo "<td align=\"left\"><input type=\"password\" name=\"VD_pass\" size=\"20\" maxlength=\"100\" value=\"$VD_pass\" /></td></tr>\n";
                 echo "<tr><td align=\"right\" valign=\"top\"><font class=\"skb_text\">"._QXZ("Campaign:")."</font>  </td>";
                 echo "<td align=\"left\"><font class=\"skb_text\"><span id=\"LogiNCamPaigns\">$camp_form_code</span></font></td></tr>\n";
-                if ($login_submit_once > 0)
-                    {echo "<tr><td align=\"center\" colspan=\"2\"><input type=\"submit\" id=\"login_sub\" name=\"login_sub\" value=\""._QXZ("SUBMIT")."\" onclick=\"login_click()\"> &nbsp; \n";}
-                else
-                    {echo "<tr><td align=\"center\" colspan=\"2\"><input type=\"submit\" name=\"SUBMIT\" value=\""._QXZ("SUBMIT")."\" /> &nbsp; \n";}
+                if ($login_submit_once > 0) {
+                    echo "<tr><td align=\"center\" colspan=\"2\"><input type=\"submit\" id=\"login_sub\" name=\"login_sub\" value=\""._QXZ("SUBMIT")."\" onclick=\"login_click()\"> &nbsp; \n";
+                } else {
+                    echo "<tr><td align=\"center\" colspan=\"2\"><input type=\"submit\" name=\"SUBMIT\" value=\""._QXZ("SUBMIT")."\" /> &nbsp; \n";
+                }
                 echo "<span id=\"LogiNReseT\"></span></td></tr>\n";
                 echo "<tr><td align=\"left\" colspan=\"2\"><font class=\"body_tiny\"><br />"._QXZ("VERSION:")." $version &nbsp; &nbsp; &nbsp; "._QXZ("BUILD:")." $build</font></td></tr>\n";
                 echo "</table>\n";
@@ -866,17 +945,17 @@ if ($user_login_first == 1)
                 echo "</body>\n\n";
                 echo "</html>\n\n";
                 exit;
-                }
             }
         }
     }
-if ( (strlen($phone_login)<2) or (strlen($phone_pass)<2) )
-    {
+}
+if ((strlen($phone_login)<2) or (strlen($phone_pass)<2)) {
     echo "<title>"._QXZ("Agent web client:  Phone Login")."</title>\n";
     echo "</head>\n";
     echo "<body onresize=\"browser_dimensions();\"  onload=\"browser_dimensions();\">\n";
-    if ($hide_timeclock_link < 1)
-        {echo "<a href=\"./timeclock.php?referrer=agent&amp;pl=$phone_login&amp;pp=$phone_pass&amp;VD_login=$VD_login&amp;VD_pass=$VD_pass\"> <font class=\"sb_text\">"._QXZ("Timeclock")."</font></a>$grey_link<br />\n";}
+    if ($hide_timeclock_link < 1) {
+        echo "<a href=\"./timeclock.php?referrer=agent&amp;pl=$phone_login&amp;pp=$phone_pass&amp;VD_login=$VD_login&amp;VD_pass=$VD_pass\"> <font class=\"sb_text\">"._QXZ("Timeclock")."</font></a>$grey_link<br />\n";
+    }
     echo "<table width=100%><tr><td></td>\n";
     echo "<!-- INTERNATIONALIZATION-LINKS-PLACEHOLDER-VICIDIAL -->\n";
     echo "</tr></table>\n";
@@ -899,10 +978,11 @@ if ( (strlen($phone_login)<2) or (strlen($phone_pass)<2) )
     echo "<td align=\"left\"><input type=\"text\" name=\"phone_login\" size=\"10\" maxlength=\"20\" value=\"\" /></td></tr>\n";
     echo "<tr><td align=\"right\"><font class=\"skb_text\">"._QXZ("Phone Password:")."</font>  </td>";
     echo "<td align=\"left\"><input type=\"password\" name=\"phone_pass\" size=\"10\" maxlength=\"100\" value=\"\" /></td></tr>\n";
-    if ($login_submit_once > 0)
-        {echo "<tr><td align=\"center\" colspan=\"2\"><input type=\"submit\" id=\"login_sub\" name=\"login_sub\" value=\""._QXZ("SUBMIT")."\" onclick=\"login_click()\"> &nbsp; \n";}
-    else
-        {echo "<tr><td align=\"center\" colspan=\"2\"><input type=\"submit\" name=\"SUBMIT\" value=\""._QXZ("SUBMIT")."\" /> &nbsp; \n";}
+    if ($login_submit_once > 0) {
+        echo "<tr><td align=\"center\" colspan=\"2\"><input type=\"submit\" id=\"login_sub\" name=\"login_sub\" value=\""._QXZ("SUBMIT")."\" onclick=\"login_click()\"> &nbsp; \n";
+    } else {
+        echo "<tr><td align=\"center\" colspan=\"2\"><input type=\"submit\" name=\"SUBMIT\" value=\""._QXZ("SUBMIT")."\" /> &nbsp; \n";
+    }
     echo "<span id=\"LogiNReseT\"></span></td></tr>\n";
     echo "<tr><td align=\"left\" colspan=\"2\"><font class=\"body_tiny\"><br />"._QXZ("VERSION:")." $version &nbsp; &nbsp; &nbsp; "._QXZ("BUILD:")." $build</font></td></tr>\n";
     echo "</table>\n";
@@ -914,71 +994,66 @@ if ( (strlen($phone_login)<2) or (strlen($phone_pass)<2) )
     echo "</body>\n\n";
     echo "</html>\n\n";
     exit;
+} else {
+    if ($WeBRooTWritablE > 0) {
+        $fp = fopen("./vicidial_auth_entries.txt", "w");
     }
-else
-    {
-    if ($WeBRooTWritablE > 0)
-        {$fp = fopen ("./vicidial_auth_entries.txt", "w");}
     $VDloginDISPLAY=0;
-    if ( (strlen($VD_login)<2) or (strlen($VD_pass)<2) or (strlen($VD_campaign)<2) )
-        {
+    if ((strlen($VD_login)<2) or (strlen($VD_pass)<2) or (strlen($VD_campaign)<2)) {
         $VDloginDISPLAY=1;
-        }
-    else
-        {
+    } else {
         $auth=0;
-        $auth_message = user_authorization($VD_login,$VD_pass,'',1,0,1,0,'vicidial');
-        if (preg_match("/^GOOD/",$auth_message))
-            {
+        $auth_message = user_authorization($VD_login, $VD_pass, '', 1, 0, 1, 0, 'vicidial');
+        if (preg_match("/^GOOD/", $auth_message)) {
             $auth=1;
-            $pass_hash = preg_replace("/GOOD\|/",'',$auth_message);
-            }
-        if($auth>0)
-            {
-            if ($VD_login != "$VUuser") 
-                {
+            $pass_hash = preg_replace("/GOOD\|/", '', $auth_message);
+        }
+        if($auth>0) {
+            if ($VD_login != "$VUuser") {
                 $auth=0;
                 $auth_message='ERRCASE';
-                }
             }
-        if($auth>0)
-            {
-            if ($SSmax_logged_in_agents > 0) 
-                {
+        }
+        if($auth>0) {
+            if ($SSmax_logged_in_agents > 0) {
                 $stmt="SELECT max_logged_in_agents from vicidial_campaigns where campaign_id='$VD_campaign' $LOGallowed_campaignsSQL;";
-                if ($non_latin > 0) {$rslt=mysql_to_mysqli("SET NAMES 'UTF8'", $link);}
+                if ($non_latin > 0) {
+                    $rslt=mysql_to_mysqli("SET NAMES 'UTF8'", $link);
+                }
                 $rslt=mysql_to_mysqli($stmt, $link);
-                    if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01099',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+                if ($mel > 0) {
+                    mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01099', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                }
                 $camps_to_print = mysqli_num_rows($rslt);
-                if ($camps_to_print > 0) 
-                    {
+                if ($camps_to_print > 0) {
                     $max_logged_in_agents=999999999;
                     $rowx=mysqli_fetch_row($rslt);
-                    $rowx[0]=preg_replace("/[^0-9]/","",$rowx[0]);
-                    if (strlen($rowx[0]) > 0)
-                        {$max_logged_in_agents = $rowx[0];}
+                    $rowx[0]=preg_replace("/[^0-9]/", "", $rowx[0]);
+                    if (strlen($rowx[0]) > 0) {
+                        $max_logged_in_agents = $rowx[0];
+                    }
                     $stmt = "SELECT count(*) FROM vicidial_live_agents where campaign_id='$VD_campaign' and user!='$VD_login';";
                     $rslt=mysql_to_mysqli($stmt, $link);
-                        if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01100',$VD_login,$server_ip,$session_name,$one_mysql_log);}
-                    if ($DB) {echo "$stmt\n";}
+                    if ($mel > 0) {
+                        mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01100', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                    }
+                    if ($DB) {
+                        echo "$stmt\n";
+                    }
                     $mvla_ct = mysqli_num_rows($rslt);
-                    if ($mvla_ct > 0)
-                        {
+                    if ($mvla_ct > 0) {
                         $rowx=mysqli_fetch_row($rslt);
                         $vla_camp_agents =    $rowx[0];
-                        }
-                    if ( ($max_logged_in_agents <= $vla_camp_agents) and ($max_logged_in_agents > 0) )
-                        {
+                    }
+                    if (($max_logged_in_agents <= $vla_camp_agents) and ($max_logged_in_agents > 0)) {
                         $auth=0;
                         $auth_message='ERRCAMPAGENTS';
-                        }
                     }
                 }
             }
-        if($auth>0)
-            {
-            if ($VUforce_change_password == 'Y')
-                {
+        }
+        if($auth>0) {
+            if ($VUforce_change_password == 'Y') {
                 echo "<script  type=\"text/javascript\">\n";
                 echo "function pwdChanged(pwd_field_str, pwd_len_field) \n";
                 echo "    {\n";
@@ -991,63 +1066,65 @@ else
                 echo "        {document.getElementById(pwd_len_field).innerHTML = \"<font color=black><b>\" + pwd_len + \" "._QXZ("characters")."</b></font>\";}\n";
                 echo "    }\n";
                 echo "</script>\n";
-                if ($DB > 0)
-                    {$DBoutput = "<!-- 1: $new_pass1   2: $new_pass2   set: $set_pass -->\n";}
+                if ($DB > 0) {
+                    $DBoutput = "<!-- 1: $new_pass1   2: $new_pass2   set: $set_pass -->\n";
+                }
                 $set_pass_message = _QXZ("You are required to change your password. Please enter a new password below");
-                if ($set_pass == '1')
-                    {
+                if ($set_pass == '1') {
                     $set_pass=2;
-                    if ($new_pass1 != $new_pass2)
-                        {
+                    if ($new_pass1 != $new_pass2) {
                         $set_pass_message = _QXZ("You must confirm your new password by typing it in twice");
                         $set_pass=1;
-                        }
-                    if (strlen($new_pass1) < $SSrequire_password_length)
-                        {
+                    }
+                    if (strlen($new_pass1) < $SSrequire_password_length) {
                         $set_pass_message = _QXZ("Your password is not long enough").', '.$SSrequire_password_length.' '._QXZ("characters minimum");
                         $set_pass=1;
-                        }
-                    if ($set_pass == '2')
-                        {
+                    }
+                    if ($set_pass == '2') {
                         $pass_hash='';
                         $pass_hashSQL='';
                         $pass_querySQL="and pass='$new_pass1'";
-                        if ($SSpass_hash_enabled > 0)
-                            {
-                            if (strlen($new_pass1) > 1)
-                                {
-                                $pass = preg_replace("/\'|\"|\\\\|;| /","",$new_pass1);
+                        if ($SSpass_hash_enabled > 0) {
+                            if (strlen($new_pass1) > 1) {
+                                $pass = preg_replace("/\'|\"|\\\\|;| /", "", $new_pass1);
                                 $pass_hash = exec("../agc/bp.pl --pass=$pass");
-                                $pass_hash = preg_replace("/PHASH: |\n|\r|\t| /",'',$pass_hash);
+                                $pass_hash = preg_replace("/PHASH: |\n|\r|\t| /", '', $pass_hash);
                                 $pass_hashSQL = ",pass_hash='$pass_hash'";
                                 $pass_querySQL = "and pass_hash='$pass_hash'";
-                                }
-                            $new_pass1='';
                             }
+                            $new_pass1='';
+                        }
                         $stmt="SELECT count(*) from vicidial_users where user='$VD_login' $pass_querySQL;";
-                        if ($DB) {echo "|$stmt|\n";}
+                        if ($DB) {
+                            echo "|$stmt|\n";
+                        }
                         $rslt=mysql_to_mysqli($stmt, $link);
-                            if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01093',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+                        if ($mel > 0) {
+                            mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01093', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                        }
                         $row=mysqli_fetch_row($rslt);
                         $dup_password=$row[0];
-                        if ($dup_password > 0)
-                            {
+                        if ($dup_password > 0) {
                             $set_pass_message = _QXZ("You cannot use the same password as your last password");
                             $set_pass=1;
-                            }
                         }
-                    if ($set_pass == '2')
-                        {
+                    }
+                    if ($set_pass == '2') {
                         $stmt="UPDATE vicidial_users SET force_change_password='N',pass='$new_pass1' $pass_hashSQL where user='$VD_login';";
-                        if ($DB) {echo "$stmt\n";}
+                        if ($DB) {
+                            echo "$stmt\n";
+                        }
                         $rslt=mysql_to_mysqli($stmt, $link);
-                                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01094',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+                        if ($mel > 0) {
+                            mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01094', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                        }
                         $VUpassword_affected_rows = mysqli_affected_rows($link);
                         echo "<title>"._QXZ("Agent web client: Change Password")."</title>\n";
                         echo "</head>\n";
                         echo "<body onresize=\"browser_dimensions();\" onload=\"browser_dimensions();\">\n";
-                        if ($hide_timeclock_link < 1)
-                            {echo "<a href=\"./timeclock.php?referrer=agent&amp;pl=$phone_login&amp;pp=$phone_pass&amp;VD_login=$VD_login&amp;VD_pass=$VD_pass\"> <font class=\"sb_text\">"._QXZ("Timeclock")."</font></a><br /><br />\n";}
+                        if ($hide_timeclock_link < 1) {
+                            echo "<a href=\"./timeclock.php?referrer=agent&amp;pl=$phone_login&amp;pp=$phone_pass&amp;VD_login=$VD_login&amp;VD_pass=$VD_pass\"> <font class=\"sb_text\">"._QXZ("Timeclock")."</font></a><br /><br />\n";
+                        }
                         echo "<table width=\"100%\"><tr><td></td>\n";
                         echo "<!-- INTERNATIONALIZATION-LINKS-PLACEHOLDER-VICIDIAL -->\n";
                         echo "<!-- USER PASSWORD CHANGED: |$VUpassword_affected_rows| -->\n";
@@ -1073,10 +1150,11 @@ else
                         echo "<td align=\"left\" valign=\"bottom\" bgcolor=\"#$SSmenu_background\" width=\"170\"><img src=\"$selected_logo\" border=\"0\" height=\"45\" width=\"170\" alt=\"Agent Screen\" /></td>";
                         echo "<td align=\"center\" valign=\"middle\" bgcolor=\"#$SSmenu_background\"> <font class=\"sh_text_white\">"._QXZ("Password has been changed successfully")."</font> </td>";
                         echo "</tr>\n";
-                        if ($login_submit_once > 0)
-                            {echo "<tr><td align=\"center\" colspan=\"2\"><input type=\"submit\" id=\"login_sub\" name=\"login_sub\" value=\""._QXZ("CLICK HERE TO LOG IN")."\" onclick=\"login_click()\"> &nbsp; \n";}
-                        else
-                            {echo "<tr><td align=\"center\" colspan=\"2\"><input type=\"submit\" name=\"SUBMIT\" value=\""._QXZ("CLICK HERE TO LOG IN")."\" /> &nbsp; \n";}
+                        if ($login_submit_once > 0) {
+                            echo "<tr><td align=\"center\" colspan=\"2\"><input type=\"submit\" id=\"login_sub\" name=\"login_sub\" value=\""._QXZ("CLICK HERE TO LOG IN")."\" onclick=\"login_click()\"> &nbsp; \n";
+                        } else {
+                            echo "<tr><td align=\"center\" colspan=\"2\"><input type=\"submit\" name=\"SUBMIT\" value=\""._QXZ("CLICK HERE TO LOG IN")."\" /> &nbsp; \n";
+                        }
                         echo "<span id=\"LogiNReseT\"></span></td></tr>\n";
                         echo "<tr><td align=\"left\" colspan=\"2\"><font class=\"body_tiny\"><br />"._QXZ("VERSION:")." $version &nbsp; &nbsp; &nbsp; "._QXZ("BUILD:")." $build</font></td></tr>\n";
                         echo "</table>\n";
@@ -1088,17 +1166,17 @@ else
                         echo "</body>\n\n";
                         echo "</html>\n\n";
                         exit;
-                        }
                     }
-                if ( ($set_pass == '0') or (strlen($set_pass) < 1) )
-                    {
+                }
+                if (($set_pass == '0') or (strlen($set_pass) < 1)) {
                     $set_pass=1;
-                    }
+                }
                 echo "<title>"._QXZ("Agent web client: Change Password")."</title>\n";
                 echo "</head>\n";
                 echo "<body onresize=\"browser_dimensions();\" onload=\"browser_dimensions();\">\n";
-                if ($hide_timeclock_link < 1)
-                    {echo "<a href=\"./timeclock.php?referrer=agent&amp;pl=$phone_login&amp;pp=$phone_pass&amp;VD_login=$VD_login&amp;VD_pass=$VD_pass\"> <font class=\"sb_text\">"._QXZ("Timeclock")."</font></a><br /><br />\n";}
+                if ($hide_timeclock_link < 1) {
+                    echo "<a href=\"./timeclock.php?referrer=agent&amp;pl=$phone_login&amp;pp=$phone_pass&amp;VD_login=$VD_login&amp;VD_pass=$VD_pass\"> <font class=\"sb_text\">"._QXZ("Timeclock")."</font></a><br /><br />\n";
+                }
                 echo "<table width=\"100%\"><tr><td></td>\n";
                 echo "<!-- INTERNATIONALIZATION-LINKS-PLACEHOLDER-VICIDIAL -->\n";
                 echo "$DBoutput";
@@ -1128,10 +1206,11 @@ else
                 echo "<td align=\"left\"><input type=\"password\" name=\"new_pass1\" id=\"new_pass1\" size=\"60\" maxlength=\"100\" onkeyup=\"return pwdChanged('new_pass1','pass_length1');\" /> &nbsp; <font size=1 face=\"Arial,Helvetica\"><span id=\"pass_length1\"></font></td></tr>\n";
                 echo "<tr><td align=\"right\"><font class=\"skb_text\">"._QXZ("Confirm New Password").":  </font> </td>";
                 echo "<td align=\"left\"><input type=\"password\" name=\"new_pass2\" id=\"new_pass2\" size=\"60\" maxlength=\"100\" onkeyup=\"return pwdChanged('new_pass2','pass_length2');\" /> &nbsp; <font size=1 face=\"Arial,Helvetica\"><span id=\"pass_length2\"></font></td></tr>\n";
-                if ($login_submit_once > 0)
-                    {echo "<tr><td align=\"center\" colspan=\"2\"><input type=\"submit\" id=\"login_sub\" name=\"login_sub\" value=\""._QXZ("SUBMIT")."\" onclick=\"login_click()\"> &nbsp; \n";}
-                else
-                    {echo "<tr><td align=\"center\" colspan=\"2\"><input type=\"submit\" name=\"SUBMIT\" value=\""._QXZ("SUBMIT")."\" /> &nbsp; \n";}
+                if ($login_submit_once > 0) {
+                    echo "<tr><td align=\"center\" colspan=\"2\"><input type=\"submit\" id=\"login_sub\" name=\"login_sub\" value=\""._QXZ("SUBMIT")."\" onclick=\"login_click()\"> &nbsp; \n";
+                } else {
+                    echo "<tr><td align=\"center\" colspan=\"2\"><input type=\"submit\" name=\"SUBMIT\" value=\""._QXZ("SUBMIT")."\" /> &nbsp; \n";
+                }
                 echo "<span id=\"LogiNReseT\"></span></td></tr>\n";
                 echo "<tr><td align=\"left\" colspan=\"2\"><font class=\"body_tiny\"><br />"._QXZ("VERSION:")." $version &nbsp; &nbsp; &nbsp; "._QXZ("BUILD:")." $build</font></td></tr>\n";
                 echo "</table>\n";
@@ -1143,10 +1222,12 @@ else
                 echo "</body>\n\n";
                 echo "</html>\n\n";
                 exit;
-                }
+            }
             $stmt="SELECT full_name,user_level,hotkeys_active,agent_choose_ingroups,scheduled_callbacks,agentonly_callbacks,agentcall_manual,vicidial_recording,vicidial_transfers,closer_default_blended,user_group,vicidial_recording_override,alter_custphone_override,alert_enabled,agent_shift_enforcement_override,shift_override_flag,allow_alerts,closer_campaigns,agent_choose_territories,custom_one,custom_two,custom_three,custom_four,custom_five,agent_call_log_view_override,agent_choose_blended,agent_lead_search_override,preset_contact_search,max_inbound_calls,wrapup_seconds_override,email,user_choose_language,ready_max_logout,mute_recordings,max_inbound_filter_enabled,status_group_id,manual_dial_filter,inbound_credits from vicidial_users where user='$VD_login' and active='Y' and api_only_user != '1';";
             $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01007',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+            if ($mel > 0) {
+                mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01007', $VD_login, $server_ip, $session_name, $one_mysql_log);
+            }
             $row=mysqli_fetch_row($rslt);
             $LOGfullname =                            $row[0];
             $user_level =                            $row[1];
@@ -1186,48 +1267,65 @@ else
             $VU_status_group_id =                    $row[35];
             $VU_manual_dial_filter =                $row[36];
             $VU_inbound_credits =                    $row[37];
-            if ( ($VU_alert_enabled > 0) and ($VU_allow_alerts > 0) ) {$VU_alert_enabled = 'ON';}
-            else {$VU_alert_enabled = 'OFF';}
+            if (($VU_alert_enabled > 0) and ($VU_allow_alerts > 0)) {
+                $VU_alert_enabled = 'ON';
+            } else {
+                $VU_alert_enabled = 'OFF';
+            }
             $AgentAlert_allowed = $VU_allow_alerts;
             $stmt="SELECT forced_timeclock_login,shift_enforcement,group_shifts,agent_status_viewable_groups,agent_status_view_time,agent_call_log_view,agent_xfer_consultative,agent_xfer_dial_override,agent_xfer_vm_transfer,agent_xfer_blind_transfer,agent_xfer_dial_with_customer,agent_xfer_park_customer_dial,agent_fullscreen,webphone_url_override,webphone_dialpad_override,webphone_systemkey_override,admin_viewable_groups,agent_xfer_park_3way,webphone_layout,script_id from vicidial_user_groups where user_group='$VU_user_group';";
             $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01052',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+            if ($mel > 0) {
+                mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01052', $VD_login, $server_ip, $session_name, $one_mysql_log);
+            }
             $row=mysqli_fetch_row($rslt);
             $forced_timeclock_login =    $row[0];
             $shift_enforcement =        $row[1];
-            $LOGgroup_shiftsSQL = preg_replace('/\s\s/i','',$row[2]);
-            $LOGgroup_shiftsSQL = preg_replace('/\s/i',"','",$LOGgroup_shiftsSQL);
+            $LOGgroup_shiftsSQL = preg_replace('/\s\s/i', '', $row[2]);
+            $LOGgroup_shiftsSQL = preg_replace('/\s/i', "','", $LOGgroup_shiftsSQL);
             $LOGgroup_shiftsSQL = "shift_id IN('$LOGgroup_shiftsSQL')";
             $agent_status_viewable_groups = $row[3];
-            $agent_status_viewable_groupsSQL = preg_replace('/\s\s/i','',$agent_status_viewable_groups);
-            $agent_status_viewable_groupsSQL = preg_replace('/\s/i',"','",$agent_status_viewable_groupsSQL);
+            $agent_status_viewable_groupsSQL = preg_replace('/\s\s/i', '', $agent_status_viewable_groups);
+            $agent_status_viewable_groupsSQL = preg_replace('/\s/i', "','", $agent_status_viewable_groupsSQL);
             $agent_status_viewable_groupsSQL = "user_group IN('$agent_status_viewable_groupsSQL')";
             $agent_status_view = 0;
-            if (strlen($agent_status_viewable_groups) > 2)
-                {$agent_status_view = 1;}
+            if (strlen($agent_status_viewable_groups) > 2) {
+                $agent_status_view = 1;
+            }
             $agent_status_view_time=0;
-            if ($row[4] == 'Y')
-                {$agent_status_view_time=1;}
-            if ($row[5] == 'Y')
-                {$agent_call_log_view=1;}
-            if ($row[6] == 'Y')
-                {$agent_xfer_consultative=1;}
-            if ($row[7] == 'Y')
-                {$agent_xfer_dial_override=1;}
-            if ($row[8] == 'Y')
-                {$agent_xfer_vm_transfer=1;}
-            if ($row[9] == 'Y')
-                {$agent_xfer_blind_transfer=1;}
-            if ($row[10] == 'Y')
-                {$agent_xfer_dial_with_customer=1;}
-            if ($row[11] == 'Y')
-                {$agent_xfer_park_customer_dial=1;}
-            if ( ($row[17] == 'Y') and ($SSagent_xfer_park_3way > 0) )
-                {$agent_xfer_park_3way=1;}
-            if ($VU_agent_call_log_view_override == 'Y')
-                {$agent_call_log_view=1;}
-            if ($VU_agent_call_log_view_override == 'N')
-                {$agent_call_log_view=0;}
+            if ($row[4] == 'Y') {
+                $agent_status_view_time=1;
+            }
+            if ($row[5] == 'Y') {
+                $agent_call_log_view=1;
+            }
+            if ($row[6] == 'Y') {
+                $agent_xfer_consultative=1;
+            }
+            if ($row[7] == 'Y') {
+                $agent_xfer_dial_override=1;
+            }
+            if ($row[8] == 'Y') {
+                $agent_xfer_vm_transfer=1;
+            }
+            if ($row[9] == 'Y') {
+                $agent_xfer_blind_transfer=1;
+            }
+            if ($row[10] == 'Y') {
+                $agent_xfer_dial_with_customer=1;
+            }
+            if ($row[11] == 'Y') {
+                $agent_xfer_park_customer_dial=1;
+            }
+            if (($row[17] == 'Y') and ($SSagent_xfer_park_3way > 0)) {
+                $agent_xfer_park_3way=1;
+            }
+            if ($VU_agent_call_log_view_override == 'Y') {
+                $agent_call_log_view=1;
+            }
+            if ($VU_agent_call_log_view_override == 'N') {
+                $agent_call_log_view=0;
+            }
             $agent_fullscreen =                $row[12];
             $webphone_url =                    $row[13];
             $webphone_dialpad_override =    $row[14];
@@ -1240,130 +1338,132 @@ else
             $whereLOGadmin_viewable_groupsSQL='';
             $valLOGadmin_viewable_groupsSQL='';
             $vmLOGadmin_viewable_groupsSQL='';
-            if ( (!preg_match('/\-\-ALL\-\-/i',$admin_viewable_groups)) and (strlen($admin_viewable_groups) > 3) )
-                {
-                $rawLOGadmin_viewable_groupsSQL = preg_replace("/ -/",'',$admin_viewable_groups);
-                $rawLOGadmin_viewable_groupsSQL = preg_replace("/ /","','",$rawLOGadmin_viewable_groupsSQL);
+            if ((!preg_match('/\-\-ALL\-\-/i', $admin_viewable_groups)) and (strlen($admin_viewable_groups) > 3)) {
+                $rawLOGadmin_viewable_groupsSQL = preg_replace("/ -/", '', $admin_viewable_groups);
+                $rawLOGadmin_viewable_groupsSQL = preg_replace("/ /", "','", $rawLOGadmin_viewable_groupsSQL);
                 $LOGadmin_viewable_groupsSQL = "and user_group IN('---ALL---','$rawLOGadmin_viewable_groupsSQL')";
                 $whereLOGadmin_viewable_groupsSQL = "where user_group IN('---ALL---','$rawLOGadmin_viewable_groupsSQL')";
                 $valLOGadmin_viewable_groupsSQL = "and val.user_group IN('---ALL---','$rawLOGadmin_viewable_groupsSQL')";
                 $vmLOGadmin_viewable_groupsSQL = "and vm.user_group IN('---ALL---','$rawLOGadmin_viewable_groupsSQL')";
-                }
-            else 
-                {$admin_viewable_groupsALL=1;}
-            if ( ($webphone_dialpad_override != 'DISABLED') and (strlen($webphone_dialpad_override) > 0) )
-                {$webphone_dialpad = $webphone_dialpad_override;}
-            if ( (strlen($VD_language)>0) and ($VU_user_choose_language == '1') )
-                {
+            } else {
+                $admin_viewable_groupsALL=1;
+            }
+            if (($webphone_dialpad_override != 'DISABLED') and (strlen($webphone_dialpad_override) > 0)) {
+                $webphone_dialpad = $webphone_dialpad_override;
+            }
+            if ((strlen($VD_language)>0) and ($VU_user_choose_language == '1')) {
                 $LANGUAGEactive=0;
-                if ($VD_language == 'default English')
-                    {$LANGUAGEactive=1;}
-                else
-                    {
+                if ($VD_language == 'default English') {
+                    $LANGUAGEactive=1;
+                } else {
                     $stmt="SELECT count(*) FROM vicidial_languages where language_id='$VD_language' and active='Y' $LOGadmin_viewable_groupsSQL;";
-                    if ($DB) {echo "|$stmt|\n";}
+                    if ($DB) {
+                        echo "|$stmt|\n";
+                    }
                     $rslt=mysql_to_mysqli($stmt, $link);
-                        if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01082',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+                    if ($mel > 0) {
+                        mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01082', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                    }
                     $row=mysqli_fetch_row($rslt);
                     $LANGUAGEactive=$row[0];
-                    }
-                if ($LANGUAGEactive > 0)
-                    {
+                }
+                if ($LANGUAGEactive > 0) {
                     $stmt="UPDATE vicidial_users SET selected_language='$VD_language' where user='$VD_login';";
-                    if ($DB) {echo "$stmt\n";}
+                    if ($DB) {
+                        echo "$stmt\n";
+                    }
                     $rslt=mysql_to_mysqli($stmt, $link);
-                            if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01083',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+                    if ($mel > 0) {
+                        mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01083', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                    }
                     $VUlanguage_affected_rows = mysqli_affected_rows($link);
                     echo "<!-- USER LANGUAGE OVERRIDE: |$VUselected_language|$VD_language| -->\n";
                     $VUselected_language=$VD_language;
-                    }
                 }
-            if ( (preg_match('/Y/',$forced_timeclock_login)) or ( (preg_match('/ADMIN_EXEMPT/',$forced_timeclock_login)) and ($VU_user_level < 8) ) )
-                {
+            }
+            if ((preg_match('/Y/', $forced_timeclock_login)) or ((preg_match('/ADMIN_EXEMPT/', $forced_timeclock_login)) and ($VU_user_level < 8))) {
                 $last_agent_event='';
                 $HHMM = date("Hi");
-                $HHteod = substr($timeclock_end_of_day,0,2);
-                $MMteod = substr($timeclock_end_of_day,2,2);
-                if ($HHMM < $timeclock_end_of_day)
-                    {$EoD = mktime($HHteod, $MMteod, 10, date("m"), date("d")-1, date("Y"));}
-                else
-                    {$EoD = mktime($HHteod, $MMteod, 10, date("m"), date("d"), date("Y"));}
+                $HHteod = substr($timeclock_end_of_day, 0, 2);
+                $MMteod = substr($timeclock_end_of_day, 2, 2);
+                if ($HHMM < $timeclock_end_of_day) {
+                    $EoD = mktime($HHteod, $MMteod, 10, date("m"), date("d")-1, date("Y"));
+                } else {
+                    $EoD = mktime($HHteod, $MMteod, 10, date("m"), date("d"), date("Y"));
+                }
                 $EoDdate = date("Y-m-d H:i:s", $EoD);
                 $stmt="SELECT event from vicidial_timeclock_log where user='$VD_login' and event_epoch >= '$EoD' order by timeclock_id desc limit 1;";
                 $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01053',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+                if ($mel > 0) {
+                    mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01053', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                }
                 $events_to_parse = mysqli_num_rows($rslt);
-                if ($events_to_parse > 0)
-                    {
+                if ($events_to_parse > 0) {
                     $rowx=mysqli_fetch_row($rslt);
                     $last_agent_event = $rowx[0];
-                    }
-                if ($DB>0) {echo "|$stmt|$events_to_parse|$last_agent_event|";}
-                if ( (strlen($last_agent_event)<2) or (preg_match('/LOGOUT/',$last_agent_event)) )
-                    {
+                }
+                if ($DB>0) {
+                    echo "|$stmt|$events_to_parse|$last_agent_event|";
+                }
+                if ((strlen($last_agent_event)<2) or (preg_match('/LOGOUT/', $last_agent_event))) {
                     $VDloginDISPLAY=1;
                     $VDdisplayMESSAGE = _QXZ("YOU MUST LOG IN TO THE TIMECLOCK FIRST")."<br />";
-                    }
                 }
-            if ( ( (preg_match("/START|ALL/",$shift_enforcement)) and (!preg_match("/OFF/",$VU_agent_shift_enforcement_override)) ) or (preg_match("/START|ALL/",$VU_agent_shift_enforcement_override)) )
-                {
+            }
+            if (((preg_match("/START|ALL/", $shift_enforcement)) and (!preg_match("/OFF/", $VU_agent_shift_enforcement_override))) or (preg_match("/START|ALL/", $VU_agent_shift_enforcement_override))) {
                 $shift_ok=0;
-                if ( (strlen($LOGgroup_shiftsSQL) < 3) and ($VU_shift_override_flag < 1) )
-                    {
+                if ((strlen($LOGgroup_shiftsSQL) < 3) and ($VU_shift_override_flag < 1)) {
                     $VDloginDISPLAY=1;
                     $VDdisplayMESSAGE = _QXZ("ERROR: There are no Shifts enabled for your user group")."<br />";
-                    }
-                else
-                    {
+                } else {
                     $HHMM = date("Hi");
                     $wday = date("w");
                     $stmt="SELECT shift_id,shift_start_time,shift_length,shift_weekdays from vicidial_shifts where $LOGgroup_shiftsSQL order by shift_id";
                     $rslt=mysql_to_mysqli($stmt, $link);
-                        if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01056',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+                    if ($mel > 0) {
+                        mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01056', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                    }
                     $shifts_to_print = mysqli_num_rows($rslt);
                     $o=0;
-                    while ( ($shifts_to_print > $o) and ($shift_ok < 1) )
-                        {
+                    while (($shifts_to_print > $o) and ($shift_ok < 1)) {
                         $rowx=mysqli_fetch_row($rslt);
                         $shift_id =            $rowx[0];
                         $shift_start_time =    $rowx[1];
                         $shift_length =        $rowx[2];
                         $shift_weekdays =    $rowx[3];
-                        if (preg_match("/$wday/i",$shift_weekdays))
-                            {
-                            $HHshift_length = substr($shift_length,0,2);
-                            $MMshift_length = substr($shift_length,3,2);
-                            $HHshift_start_time = substr($shift_start_time,0,2);
-                            $MMshift_start_time = substr($shift_start_time,2,2);
+                        if (preg_match("/$wday/i", $shift_weekdays)) {
+                            $HHshift_length = substr($shift_length, 0, 2);
+                            $MMshift_length = substr($shift_length, 3, 2);
+                            $HHshift_start_time = substr($shift_start_time, 0, 2);
+                            $MMshift_start_time = substr($shift_start_time, 2, 2);
                             $HHshift_end_time = ($HHshift_length + $HHshift_start_time);
                             $MMshift_end_time = ($MMshift_length + $MMshift_start_time);
-                            if ($MMshift_end_time > 59)
-                                {
+                            if ($MMshift_end_time > 59) {
                                 $MMshift_end_time = ($MMshift_end_time - 60);
                                 $HHshift_end_time++;
-                                }
-                            if ($HHshift_end_time > 23)
-                                {$HHshift_end_time = ($HHshift_end_time - 24);}
-                            $HHshift_end_time = sprintf("%02s", $HHshift_end_time);    
-                            $MMshift_end_time = sprintf("%02s", $MMshift_end_time);    
-                            $shift_end_time = "$HHshift_end_time$MMshift_end_time";
-                            if ( 
-                                ( ($HHMM >= $shift_start_time) and ($HHMM < $shift_end_time) ) or
-                                ( ($HHMM < $shift_start_time) and ($HHMM < $shift_end_time) and ($shift_end_time <= $shift_start_time) ) or
-                                ( ($HHMM >= $shift_start_time) and ($HHMM >= $shift_end_time) and ($shift_end_time <= $shift_start_time) )
-                               )
-                                {$shift_ok++;}
                             }
-                        $o++;
+                            if ($HHshift_end_time > 23) {
+                                $HHshift_end_time = ($HHshift_end_time - 24);
+                            }
+                            $HHshift_end_time = sprintf("%02s", $HHshift_end_time);
+                            $MMshift_end_time = sprintf("%02s", $MMshift_end_time);
+                            $shift_end_time = "$HHshift_end_time$MMshift_end_time";
+                            if (
+                                (($HHMM >= $shift_start_time) and ($HHMM < $shift_end_time)) or
+                                (($HHMM < $shift_start_time) and ($HHMM < $shift_end_time) and ($shift_end_time <= $shift_start_time)) or
+                                (($HHMM >= $shift_start_time) and ($HHMM >= $shift_end_time) and ($shift_end_time <= $shift_start_time))
+                            ) {
+                                $shift_ok++;
+                            }
                         }
-                    if ( ($shift_ok < 1) and ($VU_shift_override_flag < 1) )
-                        {
+                        $o++;
+                    }
+                    if (($shift_ok < 1) and ($VU_shift_override_flag < 1)) {
                         $VDloginDISPLAY=1;
                         $VDdisplayMESSAGE = _QXZ("ERROR: You are not allowed to log in outside of your shift")."<br />";
-                        }
                     }
-                if ( ($shift_ok < 1) and ($VU_shift_override_flag < 1) and ($VDloginDISPLAY > 0) )
-                    {
+                }
+                if (($shift_ok < 1) and ($VU_shift_override_flag < 1) and ($VDloginDISPLAY > 0)) {
                     $VDdisplayMESSAGE.= "<br /><br />"._QXZ("MANAGER OVERRIDE:")."<br />\n";
                     $VDdisplayMESSAGE.= "<form action=\"$PHP_SELF\" method=\"post\">\n";
                     $VDdisplayMESSAGE.= "<input type=\"hidden\" name=\"MGR_override\" value=\"1\" />\n";
@@ -1382,8 +1482,8 @@ else
                     $VDdisplayMESSAGE.= "Manager Login: <input type=\"text\" name=\"MGR_login$loginDATE\" size=\"10\" maxlength=\"20\" /><br />\n";
                     $VDdisplayMESSAGE.= "Manager Password: <input type=\"password\" name=\"MGR_pass$loginDATE\" size=\"10\" maxlength=\"100\" /><br />\n";
                     $VDdisplayMESSAGE.= "<input type=\"submit\" name=\"SUBMIT\" value=\""._QXZ("SUBMIT")."\" /></form>\n";
-                    }
                 }
+            }
             $label_title =                _QXZ(" Title");
             $label_first_name =            _QXZ("First");
             $label_middle_initial =        _QXZ("MI");
@@ -1421,62 +1521,134 @@ else
             $stmt="SELECT label_title,label_first_name,label_middle_initial,label_last_name,label_address1,label_address2,label_address3,label_city,label_state,label_province,label_postal_code,label_vendor_lead_code,label_gender,label_phone_number,label_phone_code,label_alt_phone,label_security_phrase,label_email,label_comments,label_lead_id,label_list_id,label_entry_date,label_gmt_offset_now,label_source_id,label_called_since_last_reset,label_status,label_user,label_date_of_birth,label_country_code,label_last_local_call_time,label_called_count,label_rank,label_owner,label_entry_list_id from system_settings;";
             $rslt=mysql_to_mysqli($stmt, $link);
             $row=mysqli_fetch_row($rslt);
-            if (strlen($row[0])>0)    {$label_title =                $row[0];}
-            if (strlen($row[1])>0)    {$label_first_name =        $row[1];}
-            if (strlen($row[2])>0)    {$label_middle_initial =    $row[2];}
-            if (strlen($row[3])>0)    {$label_last_name =            $row[3];}
-            if (strlen($row[4])>0)    {$label_address1 =            $row[4];}
-            if (strlen($row[5])>0)    {$label_address2 =            $row[5];}
-            if (strlen($row[6])>0)    {$label_address3 =            $row[6];}
-            if (strlen($row[7])>0)    {$label_city =                $row[7];}
-            if (strlen($row[8])>0)    {$label_state =                $row[8];}
-            if (strlen($row[9])>0)    {$label_province =            $row[9];}
-            if (strlen($row[10])>0) {$label_postal_code =        $row[10];}
-            if (strlen($row[11])>0) {$label_vendor_lead_code =    $row[11];}
-            if (strlen($row[12])>0) {$label_gender =            $row[12];}
-            if (strlen($row[13])>0) {$label_phone_number =        $row[13];}
-            if (strlen($row[14])>0) {$label_phone_code =        $row[14];}
-            if (strlen($row[15])>0) {$label_alt_phone =            $row[15];}
-            if (strlen($row[16])>0) {$label_security_phrase =    $row[16];}
-            if (strlen($row[17])>0) {$label_email =                $row[17];}
-            if (strlen($row[18])>0) {$label_comments =            $row[18];}
-            if (strlen($row[19])>0) {$label_lead_id =            $row[19];}
-            if (strlen($row[20])>0) {$label_list_id =            $row[20];}
-            if (strlen($row[21])>0) {$label_entry_date =        $row[21];}
-            if (strlen($row[22])>0) {$label_gmt_offset_now =    $row[22];}
-            if (strlen($row[23])>0) {$label_source_id =            $row[23];}
-            if (strlen($row[24])>0) {$label_called_since_last_reset = $row[24];}
-            if (strlen($row[25])>0) {$label_status =            $row[25];}
-            if (strlen($row[26])>0) {$label_user =                $row[26];}
-            if (strlen($row[27])>0) {$label_date_of_birth =        $row[27];}
-            if (strlen($row[28])>0) {$label_country_code =        $row[28];}
-            if (strlen($row[29])>0) {$label_last_local_call_time =    $row[29];}
-            if (strlen($row[30])>0) {$label_called_count =        $row[30];}
-            if (strlen($row[31])>0) {$label_rank =                $row[31];}
-            if (strlen($row[32])>0) {$label_owner =                $row[32];}
-            if (strlen($row[33])>0) {$label_entry_list_id =        $row[33];}
-            if ($label_gender == '---HIDE---')
-                {$hide_gender=1;}
-            if ($WeBRooTWritablE > 0)
-                {
-                fwrite ($fp, "vdweb|GOOD|$date|$browser|\n");
+            if (strlen($row[0])>0) {
+                $label_title =                $row[0];
+            }
+            if (strlen($row[1])>0) {
+                $label_first_name =        $row[1];
+            }
+            if (strlen($row[2])>0) {
+                $label_middle_initial =    $row[2];
+            }
+            if (strlen($row[3])>0) {
+                $label_last_name =            $row[3];
+            }
+            if (strlen($row[4])>0) {
+                $label_address1 =            $row[4];
+            }
+            if (strlen($row[5])>0) {
+                $label_address2 =            $row[5];
+            }
+            if (strlen($row[6])>0) {
+                $label_address3 =            $row[6];
+            }
+            if (strlen($row[7])>0) {
+                $label_city =                $row[7];
+            }
+            if (strlen($row[8])>0) {
+                $label_state =                $row[8];
+            }
+            if (strlen($row[9])>0) {
+                $label_province =            $row[9];
+            }
+            if (strlen($row[10])>0) {
+                $label_postal_code =        $row[10];
+            }
+            if (strlen($row[11])>0) {
+                $label_vendor_lead_code =    $row[11];
+            }
+            if (strlen($row[12])>0) {
+                $label_gender =            $row[12];
+            }
+            if (strlen($row[13])>0) {
+                $label_phone_number =        $row[13];
+            }
+            if (strlen($row[14])>0) {
+                $label_phone_code =        $row[14];
+            }
+            if (strlen($row[15])>0) {
+                $label_alt_phone =            $row[15];
+            }
+            if (strlen($row[16])>0) {
+                $label_security_phrase =    $row[16];
+            }
+            if (strlen($row[17])>0) {
+                $label_email =                $row[17];
+            }
+            if (strlen($row[18])>0) {
+                $label_comments =            $row[18];
+            }
+            if (strlen($row[19])>0) {
+                $label_lead_id =            $row[19];
+            }
+            if (strlen($row[20])>0) {
+                $label_list_id =            $row[20];
+            }
+            if (strlen($row[21])>0) {
+                $label_entry_date =        $row[21];
+            }
+            if (strlen($row[22])>0) {
+                $label_gmt_offset_now =    $row[22];
+            }
+            if (strlen($row[23])>0) {
+                $label_source_id =            $row[23];
+            }
+            if (strlen($row[24])>0) {
+                $label_called_since_last_reset = $row[24];
+            }
+            if (strlen($row[25])>0) {
+                $label_status =            $row[25];
+            }
+            if (strlen($row[26])>0) {
+                $label_user =                $row[26];
+            }
+            if (strlen($row[27])>0) {
+                $label_date_of_birth =        $row[27];
+            }
+            if (strlen($row[28])>0) {
+                $label_country_code =        $row[28];
+            }
+            if (strlen($row[29])>0) {
+                $label_last_local_call_time =    $row[29];
+            }
+            if (strlen($row[30])>0) {
+                $label_called_count =        $row[30];
+            }
+            if (strlen($row[31])>0) {
+                $label_rank =                $row[31];
+            }
+            if (strlen($row[32])>0) {
+                $label_owner =                $row[32];
+            }
+            if (strlen($row[33])>0) {
+                $label_entry_list_id =        $row[33];
+            }
+            if ($label_gender == '---HIDE---') {
+                $hide_gender=1;
+            }
+            if ($WeBRooTWritablE > 0) {
+                fwrite($fp, "vdweb|GOOD|$date|$browser|\n");
                 fclose($fp);
-                }
+            }
             $user_abb = "$VD_login$VD_login$VD_login$VD_login";
-            while ( (strlen($user_abb) > 4) and ($forever_stop < 200) )
-                {$user_abb = preg_replace("/^\./i","",$user_abb);   $forever_stop++;}
+            while ((strlen($user_abb) > 4) and ($forever_stop < 200)) {
+                $user_abb = preg_replace("/^\./i", "", $user_abb);
+                $forever_stop++;
+            }
             $stmt="SELECT allowed_campaigns from vicidial_user_groups where user_group='$VU_user_group';";
             $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01008',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+            if ($mel > 0) {
+                mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01008', $VD_login, $server_ip, $session_name, $one_mysql_log);
+            }
             $row=mysqli_fetch_row($rslt);
             $LOGallowed_campaigns        =$row[0];
-            if ( (!preg_match("/\s$VD_campaign\s/i",$LOGallowed_campaigns)) and (!preg_match("/ALL-CAMPAIGNS/i",$LOGallowed_campaigns)) )
-                {
+            if ((!preg_match("/\s$VD_campaign\s/i", $LOGallowed_campaigns)) and (!preg_match("/ALL-CAMPAIGNS/i", $LOGallowed_campaigns))) {
                 echo "<title>"._QXZ("Agent web client: Campaign Login")."</title>\n";
                 echo "</head>\n";
                 echo "<body onresize=\"browser_dimensions();\" onload=\"browser_dimensions();\">\n";
-                if ($hide_timeclock_link < 1)
-                    {echo "<a href=\"./timeclock.php?referrer=agent&amp;pl=$phone_login&amp;pp=$phone_pass&amp;VD_login=$VD_login&amp;VD_pass=$VD_pass\"> <font class=\"sb_text\">"._QXZ("Timeclock")."</font></a>$grey_link<br />\n";}
+                if ($hide_timeclock_link < 1) {
+                    echo "<a href=\"./timeclock.php?referrer=agent&amp;pl=$phone_login&amp;pp=$phone_pass&amp;VD_login=$VD_login&amp;VD_pass=$VD_pass\"> <font class=\"sb_text\">"._QXZ("Timeclock")."</font></a>$grey_link<br />\n";
+                }
                 echo "<table width=\"100%\"><tr><td></td>\n";
                 echo "<!-- INTERNATIONALIZATION-LINKS-PLACEHOLDER-VICIDIAL -->\n";
                 echo "</tr></table>\n";
@@ -1496,10 +1668,11 @@ else
                 echo "<font class=\"skb_text\">"._QXZ("Login").": <input type=\"text\" name=\"VD_login\" size=\"20\" maxlength=\"20\" value=\"$VD_login\" />\n<br />";
                 echo "<font class=\"skb_text\">"._QXZ("Password").": <input type=\"password\" name=\"VD_pass\" size=\"20\" maxlength=\"100\" value=\"$VD_pass\" /><br />\n";
                 echo "<font class=\"skb_text\">"._QXZ("Campaign").": <span id=\"LogiNCamPaigns\">$camp_form_code</span><br />\n";
-                if ($login_submit_once > 0)
-                    {echo "<input type=\"submit\" id=\"login_sub\" name=\"login_sub\" value=\""._QXZ("SUBMIT")."\" onclick=\"login_click()\"> &nbsp; \n";}
-                else
-                    {echo "<input type=\"submit\" name=\"SUBMIT\" value=\""._QXZ("SUBMIT")."\" /> &nbsp; \n";}
+                if ($login_submit_once > 0) {
+                    echo "<input type=\"submit\" id=\"login_sub\" name=\"login_sub\" value=\""._QXZ("SUBMIT")."\" onclick=\"login_click()\"> &nbsp; \n";
+                } else {
+                    echo "<input type=\"submit\" name=\"SUBMIT\" value=\""._QXZ("SUBMIT")."\" /> &nbsp; \n";
+                }
                 echo "<span id=\"LogiNReseT\"></span>\n";
                 echo "</form>\n\n";
                 echo "\n\n";
@@ -1509,15 +1682,18 @@ else
                 echo "</body>\n\n";
                 echo "</html>\n\n";
                 exit;
-                }
+            }
             $stmt="SELECT count(*) FROM vicidial_campaigns where campaign_id='$VD_campaign' and active='Y';";
-            if ($DB) {echo "|$stmt|\n";}
+            if ($DB) {
+                echo "|$stmt|\n";
+            }
             $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01009',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+            if ($mel > 0) {
+                mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01009', $VD_login, $server_ip, $session_name, $one_mysql_log);
+            }
             $row=mysqli_fetch_row($rslt);
             $CAMPactive=$row[0];
-            if($CAMPactive>0)
-                {
+            if($CAMPactive>0) {
                 $VARstatuses='';
                 $VARstatusnames='';
                 $VARSELstatuses='';
@@ -1540,12 +1716,15 @@ else
                 $cVARSALEstatusesLIST='';
                 $stmt="SELECT status,status_name,scheduled_callback,selectable,min_sec,max_sec,sale FROM vicidial_statuses WHERE status != 'NEW' order by status limit 500;";
                 $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01010',$VD_login,$server_ip,$session_name,$one_mysql_log);}
-                if ($DB) {echo "$stmt\n";}
+                if ($mel > 0) {
+                    mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01010', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                }
+                if ($DB) {
+                    echo "$stmt\n";
+                }
                 $VD_statuses_ct = mysqli_num_rows($rslt);
                 $i=0;
-                while ($i < $VD_statuses_ct)
-                    {
+                while ($i < $VD_statuses_ct) {
                     $row=mysqli_fetch_row($rslt);
                     $statuses[$i] =        $row[0];
                     $status_names[$i] =    $row[1];
@@ -1554,7 +1733,9 @@ else
                     $MINsec[$i] =        $row[4];
                     $MAXsec[$i] =        $row[5];
                     $SALEstatuses[$i] =    $row[6];
-                    if ($TEST_all_statuses > 0) {$SELstatuses[$i]='Y';}
+                    if ($TEST_all_statuses > 0) {
+                        $SELstatuses[$i]='Y';
+                    }
                     $VARstatuses = "$VARstatuses'$statuses[$i]',";
                     $VARstatusnames = "$VARstatusnames'$status_names[$i]',";
                     $VARSELstatuses = "$VARSELstatuses'$SELstatuses[$i]',";
@@ -1562,24 +1743,29 @@ else
                     $VARSALEstatuses = "$VARSALEtatuses'$SALEstatuses[$i]',";
                     $VARMINstatuses = "$VARMINstatuses'$MINsec[$i]',";
                     $VARMAXstatuses = "$VARMAXstatuses'$MAXsec[$i]',";
-                    if ($CBstatuses[$i] == 'Y')
-                        {$VARCBstatusesLIST .= " $statuses[$i]";}
-                    if ($SELstatuses[$i] == 'Y')
-                        {$VARSELstatuses_ct++;}
-                    if ($SALEstatuses[$i] == 'Y')
-                        {$VARSALEstatusesLIST .= " $statuses[$i]";}
-                    $i++;
+                    if ($CBstatuses[$i] == 'Y') {
+                        $VARCBstatusesLIST .= " $statuses[$i]";
                     }
-                if (strlen($VU_status_group_id) > 0)
-                    {
+                    if ($SELstatuses[$i] == 'Y') {
+                        $VARSELstatuses_ct++;
+                    }
+                    if ($SALEstatuses[$i] == 'Y') {
+                        $VARSALEstatusesLIST .= " $statuses[$i]";
+                    }
+                    $i++;
+                }
+                if (strlen($VU_status_group_id) > 0) {
                     $stmt="SELECT status,status_name,scheduled_callback,selectable,min_sec,max_sec,sale FROM vicidial_campaign_statuses WHERE status != 'NEW' and campaign_id='$VU_status_group_id' order by status limit 500;";
                     $rslt=mysql_to_mysqli($stmt, $link);
-                    if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01093',$VD_login,$server_ip,$session_name,$one_mysql_log);}
-                    if ($DB) {echo "$stmt\n";}
+                    if ($mel > 0) {
+                        mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01093', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                    }
+                    if ($DB) {
+                        echo "$stmt\n";
+                    }
                     $VU_statuses_ct = mysqli_num_rows($rslt);
                     $k=0;
-                    while ($k < $VU_statuses_ct)
-                        {
+                    while ($k < $VU_statuses_ct) {
                         $row=mysqli_fetch_row($rslt);
                         $statuses[$i] =        $row[0];
                         $status_names[$i] =    $row[1];
@@ -1588,7 +1774,9 @@ else
                         $MINsec[$i] =        $row[4];
                         $MAXsec[$i] =        $row[5];
                         $SALEstatuses[$i] =    $row[6];
-                        if ($TEST_all_statuses > 0) {$SELstatuses[$i]='Y';}
+                        if ($TEST_all_statuses > 0) {
+                            $SELstatuses[$i]='Y';
+                        }
                         $VARstatuses = "$VARstatuses'$statuses[$i]',";
                         $VARstatusnames = "$VARstatusnames'$status_names[$i]',";
                         $VARSELstatuses = "$VARSELstatuses'$SELstatuses[$i]',";
@@ -1596,24 +1784,30 @@ else
                         $VARSALEstatuses = "$VARSALEstatuses'$SALEstatuses[$i]',";
                         $VARMINstatuses = "$VARMINstatuses'$MINsec[$i]',";
                         $VARMAXstatuses = "$VARMAXstatuses'$MAXsec[$i]',";
-                        if ($CBstatuses[$i] == 'Y')
-                            {$VARCBstatusesLIST .= " $statuses[$i]";}
-                        if ($SELstatuses[$i] == 'Y')
-                            {$VARSELstatuses_ct++;}
-                        if ($SALEstatuses[$i] == 'Y')
-                            {$VARSALEstatusesLIST .= " $statuses[$i]";}
+                        if ($CBstatuses[$i] == 'Y') {
+                            $VARCBstatusesLIST .= " $statuses[$i]";
+                        }
+                        if ($SELstatuses[$i] == 'Y') {
+                            $VARSELstatuses_ct++;
+                        }
+                        if ($SALEstatuses[$i] == 'Y') {
+                            $VARSALEstatusesLIST .= " $statuses[$i]";
+                        }
                         $i++;
                         $k++;
-                        }
                     }
+                }
                 $stmt="SELECT status,status_name,scheduled_callback,selectable,min_sec,max_sec,sale FROM vicidial_campaign_statuses WHERE status != 'NEW' and campaign_id='$VD_campaign' order by status limit 500;";
                 $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01011',$VD_login,$server_ip,$session_name,$one_mysql_log);}
-                if ($DB) {echo "$stmt\n";}
+                if ($mel > 0) {
+                    mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01011', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                }
+                if ($DB) {
+                    echo "$stmt\n";
+                }
                 $VD_statuses_camp = mysqli_num_rows($rslt);
                 $j=0;
-                while ($j < $VD_statuses_camp)
-                    {
+                while ($j < $VD_statuses_camp) {
                     $row=mysqli_fetch_row($rslt);
                     $statuses[$i] =        $row[0];
                     $status_names[$i] =    $row[1];
@@ -1622,7 +1816,9 @@ else
                     $MINsec[$i] =        $row[4];
                     $MAXsec[$i] =        $row[5];
                     $SALEstatuses[$i] =    $row[6];
-                    if ($TEST_all_statuses > 0) {$SELstatuses[$i]='Y';}
+                    if ($TEST_all_statuses > 0) {
+                        $SELstatuses[$i]='Y';
+                    }
                     $cVARstatuses = "$cVARstatuses'$statuses[$i]',";
                     $cVARstatusnames = "$cVARstatusnames'$status_names[$i]',";
                     $cVARSELstatuses = "$cVARSELstatuses'$SELstatuses[$i]',";
@@ -1630,15 +1826,18 @@ else
                     $cVARSALEstatuses = "$cVARSALEstatuses'$SALEstatuses[$i]',";
                     $cVARMINstatuses = "$cVARMINstatuses'$MINsec[$i]',";
                     $cVARMAXstatuses = "$cVARMAXstatuses'$MAXsec[$i]',";
-                    if ($CBstatuses[$i] == 'Y')
-                        {$cVARCBstatusesLIST .= " $statuses[$i]";}
-                    if ($SELstatuses[$i] == 'Y')
-                        {$cVARSELstatuses_ct++;}
-                    if ($SALEstatuses[$i] == 'Y')
-                        {$cVARSALEstatusesLIST .= " $statuses[$i]";}
+                    if ($CBstatuses[$i] == 'Y') {
+                        $cVARCBstatusesLIST .= " $statuses[$i]";
+                    }
+                    if ($SELstatuses[$i] == 'Y') {
+                        $cVARSELstatuses_ct++;
+                    }
+                    if ($SALEstatuses[$i] == 'Y') {
+                        $cVARSALEstatusesLIST .= " $statuses[$i]";
+                    }
                     $i++;
                     $j++;
-                    }
+                }
                 $VARstatuses = substr("$VARstatuses", 0, -1);
                 $VARstatusnames = substr("$VARstatusnames", 0, -1);
                 $VARSELstatuses = substr("$VARSELstatuses", 0, -1);
@@ -1659,15 +1858,18 @@ else
                 $cVARSALEstatusesLIST .= " ";
                 $stmt="SELECT hotkey,status,status_name FROM vicidial_campaign_hotkeys WHERE selectable='Y' and status != 'NEW' and campaign_id='$VD_campaign' order by hotkey limit 9;";
                 $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01012',$VD_login,$server_ip,$session_name,$one_mysql_log);}
-                if ($DB) {echo "$stmt\n";}
+                if ($mel > 0) {
+                    mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01012', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                }
+                if ($DB) {
+                    echo "$stmt\n";
+                }
                 $HK_statuses_camp = mysqli_num_rows($rslt);
                 $w=0;
                 $HKboxA='';
                 $HKboxB='';
                 $HKboxC='';
-                while ($w < $HK_statuses_camp)
-                    {
+                while ($w < $HK_statuses_camp) {
                     $row=mysqli_fetch_row($rslt);
                     $HKhotkey[$w] =$row[0];
                     $HKstatus[$w] =$row[1];
@@ -1675,21 +1877,28 @@ else
                     $HKhotkeys = "$HKhotkeys'$HKhotkey[$w]',";
                     $HKstatuses = "$HKstatuses'$HKstatus[$w]',";
                     $HKstatusnames = "$HKstatusnames'$HKstatus_name[$w]',";
-                    if ($w < 3)
-                        {$HKboxA = "$HKboxA <font class=\"skb_text\">$HKhotkey[$w]</font> - $HKstatus[$w] - $HKstatus_name[$w]<br />";}
-                    if ( ($w >= 3) and ($w < 6) )
-                        {$HKboxB = "$HKboxB <font class=\"skb_text\">$HKhotkey[$w]</font> - $HKstatus[$w] - $HKstatus_name[$w]<br />";}
-                    if ($w >= 6)
-                        {$HKboxC = "$HKboxC <font class=\"skb_text\">$HKhotkey[$w]</font> - $HKstatus[$w] - $HKstatus_name[$w]<br />";}
-                    $w++;
+                    if ($w < 3) {
+                        $HKboxA = "$HKboxA <font class=\"skb_text\">$HKhotkey[$w]</font> - $HKstatus[$w] - $HKstatus_name[$w]<br />";
                     }
-                $HKhotkeys = substr("$HKhotkeys", 0, -1); 
-                $HKstatuses = substr("$HKstatuses", 0, -1); 
-                $HKstatusnames = substr("$HKstatusnames", 0, -1); 
+                    if (($w >= 3) and ($w < 6)) {
+                        $HKboxB = "$HKboxB <font class=\"skb_text\">$HKhotkey[$w]</font> - $HKstatus[$w] - $HKstatus_name[$w]<br />";
+                    }
+                    if ($w >= 6) {
+                        $HKboxC = "$HKboxC <font class=\"skb_text\">$HKhotkey[$w]</font> - $HKstatus[$w] - $HKstatus_name[$w]<br />";
+                    }
+                    $w++;
+                }
+                $HKhotkeys = substr("$HKhotkeys", 0, -1);
+                $HKstatuses = substr("$HKstatuses", 0, -1);
+                $HKstatusnames = substr("$HKstatusnames", 0, -1);
                 $stmt="SELECT park_ext,park_file_name,web_form_address,allow_closers,auto_dial_level,dial_timeout,dial_prefix,campaign_cid,campaign_vdad_exten,campaign_rec_exten,campaign_recording,campaign_rec_filename,campaign_script,get_call_launch,am_message_exten,xferconf_a_dtmf,xferconf_a_number,xferconf_b_dtmf,xferconf_b_number,alt_number_dialing,scheduled_callbacks,wrapup_seconds,wrapup_message,closer_campaigns,use_internal_dnc,allcalls_delay,omit_phone_code,agent_pause_codes_active,no_hopper_leads_logins,campaign_allow_inbound,manual_dial_list_id,default_xfer_group,xfer_groups,disable_alter_custphone,display_queue_count,manual_dial_filter,agent_clipboard_copy,use_campaign_dnc,three_way_call_cid,dial_method,three_way_dial_prefix,web_form_target,vtiger_screen_login,agent_allow_group_alias,default_group_alias,quick_transfer_button,prepopulate_transfer_preset,view_calls_in_queue,view_calls_in_queue_launch,call_requeue_button,pause_after_each_call,no_hopper_dialing,agent_dial_owner_only,agent_display_dialable_leads,web_form_address_two,agent_select_territories,crm_popup_login,crm_login_address,timer_action,timer_action_message,timer_action_seconds,start_call_url,dispo_call_url,xferconf_c_number,xferconf_d_number,xferconf_e_number,use_custom_cid,scheduled_callbacks_alert,scheduled_callbacks_count,manual_dial_override,blind_monitor_warning,blind_monitor_message,blind_monitor_filename,timer_action_destination,enable_xfer_presets,hide_xfer_number_to_dial,manual_dial_prefix,customer_3way_hangup_logging,customer_3way_hangup_seconds,customer_3way_hangup_action,ivr_park_call,manual_preview_dial,api_manual_dial,manual_dial_call_time_check,my_callback_option,per_call_notes,agent_lead_search,agent_lead_search_method,queuemetrics_phone_environment,auto_pause_precall,auto_pause_precall_code,auto_resume_precall,manual_dial_cid,custom_3way_button_transfer,callback_days_limit,disable_dispo_screen,disable_dispo_status,screen_labels,status_display_fields,pllb_grouping,pllb_grouping_limit,in_group_dial,in_group_dial_select,pause_after_next_call,owner_populate,manual_dial_lead_id,dead_max,dispo_max,pause_max,dead_max_dispo,dispo_max_dispo,max_inbound_calls,manual_dial_search_checkbox,hide_call_log_info,timer_alt_seconds,wrapup_bypass,wrapup_after_hotkey,callback_active_limit,callback_active_limit_override,comments_all_tabs,comments_dispo_screen,comments_callback_screen,qc_comment_history,show_previous_callback,clear_script,manual_dial_search_filter,web_form_address_three,manual_dial_override_field,status_display_ingroup,customer_gone_seconds,agent_display_fields,manual_dial_timeout,manual_auto_next,manual_auto_show,allow_required_fields,dead_to_dispo,agent_xfer_validation,ready_max_logout,callback_display_days,three_way_record_stop,hangup_xfer_record_start,max_inbound_calls_outcome,manual_auto_next_options,agent_screen_time_display,pause_max_dispo,script_top_dispo,routing_initiated_recordings,dead_trigger_seconds,dead_trigger_action,dead_trigger_repeat,dead_trigger_filename,scheduled_callbacks_force_dial,callback_hours_block,callback_display_days,scheduled_callbacks_timezones_container,three_way_volume_buttons,manual_dial_validation,mute_recordings,leave_vm_no_dispo,leave_vm_message_group_id,campaign_script_two,browser_alert_sound,browser_alert_volume,three_way_record_stop_exception,pause_max_exceptions,transfer_button_launch,leave_3way_start_recording,leave_3way_start_recording_exception,calls_waiting_vl_one,calls_waiting_vl_two,in_man_dial_next_ready_seconds,in_man_dial_next_ready_seconds_override,transfer_no_dispo,local_call_time,pause_max_url,agent_hide_hangup,ig_xfer_list_sort,script_tab_frame_size,user_group_script,agent_hangup_route,agent_hangup_value,agent_hangup_ig_override,show_confetti,custom_one,custom_two,custom_three,custom_four,custom_five,allow_chats,dead_stop_recording FROM vicidial_campaigns where campaign_id = '$VD_campaign';";
                 $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01013',$VD_login,$server_ip,$session_name,$one_mysql_log);}
-                if ($DB) {echo "$stmt\n";}
+                if ($mel > 0) {
+                    mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01013', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                }
+                if ($DB) {
+                    echo "$stmt\n";
+                }
                 $row=mysqli_fetch_row($rslt);
                 $park_ext =                    $row[0];
                 $park_file_name =            $row[1];
@@ -1881,354 +2090,504 @@ else
                 $camp_custom_five =            $row[187];
                 $campaign_chat_enabled =    $row[188];
                 $dead_stop_recording =        $row[189];
-                if ( (strlen($UGscript_id) > 0) and ($user_group_script == 'ENABLED') )
-                    {
+                if ((strlen($UGscript_id) > 0) and ($user_group_script == 'ENABLED')) {
                     echo "<!-- SCRIPT USER GROUP OVERRIDE: |$campaign_script|$user_group_script($UGscript_id)| -->\n";
                     $campaign_script = $UGscript_id;
-                    }
-                $camp_script_name='Agent Script';   $camp_script_color='#FFF5EC';
+                }
+                $camp_script_name='Agent Script';
+                $camp_script_color='#FFF5EC';
                 $stmt="SELECT script_name,script_color FROM vicidial_scripts WHERE script_id='$campaign_script';";
                 $rslt=mysql_to_mysqli($stmt, $link);
-                        if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01101',$VD_login,$server_ip,$session_name,$one_mysql_log);}
-                if ($DB) {echo "$stmt\n";}
+                if ($mel > 0) {
+                    mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01101', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                }
+                if ($DB) {
+                    echo "$stmt\n";
+                }
                 $script_ct = mysqli_num_rows($rslt);
-                if ($script_ct > 0)
-                    {
+                if ($script_ct > 0) {
                     $row=mysqli_fetch_row($rslt);
                     $camp_script_name =        $row[0];
-                    if (strlen($row[1]) > 0)
-                        {$camp_script_color =    $row[1];}
+                    if (strlen($row[1]) > 0) {
+                        $camp_script_color =    $row[1];
                     }
-                $agent_hide_hangup_ACTIVE=0;   $agent_hide_hangup_ACTIVE_style='';
-                if ( ($agent_hide_hangup == 'Y') and ($SSagent_hide_hangup > 0) )
-                    {$agent_hide_hangup_ACTIVE=1;   $agent_hide_hangup_ACTIVE_style=';visibility:hidden';}
-                if ( (strlen($VU_manual_dial_filter) > 0) and ($VU_manual_dial_filter != 'DISABLED') )
-                    {
+                }
+                $agent_hide_hangup_ACTIVE=0;
+                $agent_hide_hangup_ACTIVE_style='';
+                if (($agent_hide_hangup == 'Y') and ($SSagent_hide_hangup > 0)) {
+                    $agent_hide_hangup_ACTIVE=1;
+                    $agent_hide_hangup_ACTIVE_style=';visibility:hidden';
+                }
+                if ((strlen($VU_manual_dial_filter) > 0) and ($VU_manual_dial_filter != 'DISABLED')) {
                     echo "<!-- MANUAL DIAL FILTER USER OVERRIDE: |$manual_dial_filter($VU_manual_dial_filter)| -->\n";
                     $manual_dial_filter = $VU_manual_dial_filter;
-                    }
-                if ($dial_method != 'INBOUND_MAN') {$in_man_dial_next_ready_seconds=0;}
+                }
+                if ($dial_method != 'INBOUND_MAN') {
+                    $in_man_dial_next_ready_seconds=0;
+                }
                 $LTWSRcontainer_entry='';
-                if ( (strlen($leave_3way_start_recording_exception) > 1) and ($leave_3way_start_recording_exception != 'DISABLED') )
-                    {
+                if ((strlen($leave_3way_start_recording_exception) > 1) and ($leave_3way_start_recording_exception != 'DISABLED')) {
                     $stmt = "SELECT container_entry FROM vicidial_settings_containers where container_id='$leave_3way_start_recording_exception';";
                     $rslt=mysql_to_mysqli($stmt, $link);
-                        if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01096',$user,$server_ip,$session_name,$one_mysql_log);}
-                    if ($DB) {echo "$stmt\n";}
+                    if ($mel > 0) {
+                        mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01096', $user, $server_ip, $session_name, $one_mysql_log);
+                    }
+                    if ($DB) {
+                        echo "$stmt\n";
+                    }
                     $SCinfo_ct = mysqli_num_rows($rslt);
-                    if ($SCinfo_ct > 0)
-                        {
+                    if ($SCinfo_ct > 0) {
                         $row=mysqli_fetch_row($rslt);
                         $LTWSRcontainer_entry =    $row[0];
-                        $LTWSRcontainer_entry = preg_replace("/\r|\t|\'|\"/",'',$LTWSRcontainer_entry);
-                        $LTWSRcontainer_entry = preg_replace("/\n/",'x',$LTWSRcontainer_entry);
-                        if (strlen($LTWSRcontainer_entry) > 2) {$LTWSRcontainer_entry = 'x'.$LTWSRcontainer_entry.'x';}
-                        echo "<!-- LEAVE 3WAY START REC EXCEPTION: |$leave_3way_start_recording_exception($LTWSRcontainer_entry)| -->\n";
+                        $LTWSRcontainer_entry = preg_replace("/\r|\t|\'|\"/", '', $LTWSRcontainer_entry);
+                        $LTWSRcontainer_entry = preg_replace("/\n/", 'x', $LTWSRcontainer_entry);
+                        if (strlen($LTWSRcontainer_entry) > 2) {
+                            $LTWSRcontainer_entry = 'x'.$LTWSRcontainer_entry.'x';
                         }
+                        echo "<!-- LEAVE 3WAY START REC EXCEPTION: |$leave_3way_start_recording_exception($LTWSRcontainer_entry)| -->\n";
                     }
+                }
                 $TWRSEcontainer_entry='';
-                if ( (strlen($three_way_record_stop_exception) > 1) and ($three_way_record_stop_exception != 'DISABLED') )
-                    {
+                if ((strlen($three_way_record_stop_exception) > 1) and ($three_way_record_stop_exception != 'DISABLED')) {
                     $stmt = "SELECT container_entry FROM vicidial_settings_containers where container_id='$three_way_record_stop_exception';";
                     $rslt=mysql_to_mysqli($stmt, $link);
-                        if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01092',$user,$server_ip,$session_name,$one_mysql_log);}
-                    if ($DB) {echo "$stmt\n";}
+                    if ($mel > 0) {
+                        mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01092', $user, $server_ip, $session_name, $one_mysql_log);
+                    }
+                    if ($DB) {
+                        echo "$stmt\n";
+                    }
                     $SCinfo_ct = mysqli_num_rows($rslt);
-                    if ($SCinfo_ct > 0)
-                        {
+                    if ($SCinfo_ct > 0) {
                         $row=mysqli_fetch_row($rslt);
                         $TWRSEcontainer_entry =    $row[0];
-                        $TWRSEcontainer_entry = preg_replace("/\r|\t|\'|\"/",'',$TWRSEcontainer_entry);
-                        $TWRSEcontainer_entry = preg_replace("/\n/",'x',$TWRSEcontainer_entry);
-                        if (strlen($TWRSEcontainer_entry) > 2) {$TWRSEcontainer_entry = 'x'.$TWRSEcontainer_entry.'x';}
-                        echo "<!-- 3WAY STOP REC EXCEPTION: |$three_way_record_stop_exception($TWRSEcontainer_entry)| -->\n";
+                        $TWRSEcontainer_entry = preg_replace("/\r|\t|\'|\"/", '', $TWRSEcontainer_entry);
+                        $TWRSEcontainer_entry = preg_replace("/\n/", 'x', $TWRSEcontainer_entry);
+                        if (strlen($TWRSEcontainer_entry) > 2) {
+                            $TWRSEcontainer_entry = 'x'.$TWRSEcontainer_entry.'x';
                         }
+                        echo "<!-- 3WAY STOP REC EXCEPTION: |$three_way_record_stop_exception($TWRSEcontainer_entry)| -->\n";
                     }
-                if ($leave_vm_no_dispo == 'ENABLED')
-                    {$leave_vm_no_dispo = 'VMNOHANG';}
-                else
-                    {$leave_vm_no_dispo = '';}
+                }
+                if ($leave_vm_no_dispo == 'ENABLED') {
+                    $leave_vm_no_dispo = 'VMNOHANG';
+                } else {
+                    $leave_vm_no_dispo = '';
+                }
                 $transfer_no_dispoLOCAL=0;
                 $transfer_no_dispoEXTERNAL=0;
                 $transfer_no_dispoLEAVE3WAY=0;
-                if (preg_match("/LOCAL/",$transfer_no_dispo)) {$transfer_no_dispoLOCAL=1;}
-                if (preg_match("/EXTERNAL/",$transfer_no_dispo)) {$transfer_no_dispoEXTERNAL=1;}
-                if (preg_match("/LEAVE3WAY/",$transfer_no_dispo)) {$transfer_no_dispoLEAVE3WAY=1;}
-                if ($SSmute_recordings < 1)
-                    {$mute_recordings='N';}
-                else
-                    {
-                    if ($VU_mute_recordings != 'DISABLED')
-                        {$mute_recordings = $VU_mute_recordings;}
+                if (preg_match("/LOCAL/", $transfer_no_dispo)) {
+                    $transfer_no_dispoLOCAL=1;
+                }
+                if (preg_match("/EXTERNAL/", $transfer_no_dispo)) {
+                    $transfer_no_dispoEXTERNAL=1;
+                }
+                if (preg_match("/LEAVE3WAY/", $transfer_no_dispo)) {
+                    $transfer_no_dispoLEAVE3WAY=1;
+                }
+                if ($SSmute_recordings < 1) {
+                    $mute_recordings='N';
+                } else {
+                    if ($VU_mute_recordings != 'DISABLED') {
+                        $mute_recordings = $VU_mute_recordings;
                     }
-                if ($SSmanual_dial_validation == '2') {$manual_dial_validation='Y';}
-                if ($SSmanual_dial_validation == '0') {$manual_dial_validation='N';}
+                }
+                if ($SSmanual_dial_validation == '2') {
+                    $manual_dial_validation='Y';
+                }
+                if ($SSmanual_dial_validation == '0') {
+                    $manual_dial_validation='N';
+                }
                 $scheduled_callbacks_timezones_enabled=0;
-                if ( ($scheduled_callbacks_timezones_container != 'DISABLED') and (strlen($scheduled_callbacks_timezones_container) > 0) )
-                    {$scheduled_callbacks_timezones_enabled++;}
+                if (($scheduled_callbacks_timezones_container != 'DISABLED') and (strlen($scheduled_callbacks_timezones_container) > 0)) {
+                    $scheduled_callbacks_timezones_enabled++;
+                }
                 $MI_PAUSE = 0;
-                if (preg_match("/MI_PAUSE/",$max_inbound_calls_outcome))
-                    {$MI_PAUSE = 1;}
-                if ($VU_ready_max_logout >= 0)
-                    {$ready_max_logout = $VU_ready_max_logout;}
-                if ($dead_to_dispo == 'ENABLED')
-                    {$dead_to_dispo = 1;}
-                else
-                    {$dead_to_dispo = 0;}
-                if ( ($SSmanual_auto_next < 1) or ( ($dial_method != 'INBOUND_MAN') and ($dial_method != 'MANUAL') ) )
-                    {$manual_auto_next = 0;}
-                if ( ($manual_dial_timeout < 1) or (strlen($manual_dial_timeout) < 1) )
-                    {$manual_dial_timeout = $dial_timeout;}
-                if ( (strlen($customer_gone_seconds) < 1) or ($customer_gone_seconds < 1) )
-                    {$customer_gone_seconds=30;}
+                if (preg_match("/MI_PAUSE/", $max_inbound_calls_outcome)) {
+                    $MI_PAUSE = 1;
+                }
+                if ($VU_ready_max_logout >= 0) {
+                    $ready_max_logout = $VU_ready_max_logout;
+                }
+                if ($dead_to_dispo == 'ENABLED') {
+                    $dead_to_dispo = 1;
+                } else {
+                    $dead_to_dispo = 0;
+                }
+                if (($SSmanual_auto_next < 1) or (($dial_method != 'INBOUND_MAN') and ($dial_method != 'MANUAL'))) {
+                    $manual_auto_next = 0;
+                }
+                if (($manual_dial_timeout < 1) or (strlen($manual_dial_timeout) < 1)) {
+                    $manual_dial_timeout = $dial_timeout;
+                }
+                if ((strlen($customer_gone_seconds) < 1) or ($customer_gone_seconds < 1)) {
+                    $customer_gone_seconds=30;
+                }
                 $customer_gone_seconds_negative = ($customer_gone_seconds * -1);
-                if ( ($callback_active_limit_override == 'Y') and ($callback_active_limit > 0) )
-                    {
-                    $temp_cb_act_lmt_ovrd = preg_replace("/[^0-9]/",'',$VU_custom_three);
-                    if (strlen($temp_cb_act_lmt_ovrd) > 0)
-                    $callback_active_limit = $temp_cb_act_lmt_ovrd;
+                if (($callback_active_limit_override == 'Y') and ($callback_active_limit > 0)) {
+                    $temp_cb_act_lmt_ovrd = preg_replace("/[^0-9]/", '', $VU_custom_three);
+                    if (strlen($temp_cb_act_lmt_ovrd) > 0) {
+                        $callback_active_limit = $temp_cb_act_lmt_ovrd;
                     }
-                if ($VU_wrapup_seconds_override >= 0)
-                    {$wrapup_seconds = $VU_wrapup_seconds_override;}
-                if ( ($pause_max < 10) or (strlen($pause_max)<2) )
-                    {$pause_max=0;}
-                if ( ($pause_max > 9) and ($pause_max <= $dial_timeout) )
-                    {$pause_max = ($dial_timeout + 10);}
-                if ( (strlen($pause_max_exceptions) > 1) and ($pause_max > 10) )
-                    {
+                }
+                if ($VU_wrapup_seconds_override >= 0) {
+                    $wrapup_seconds = $VU_wrapup_seconds_override;
+                }
+                if (($pause_max < 10) or (strlen($pause_max)<2)) {
+                    $pause_max=0;
+                }
+                if (($pause_max > 9) and ($pause_max <= $dial_timeout)) {
+                    $pause_max = ($dial_timeout + 10);
+                }
+                if ((strlen($pause_max_exceptions) > 1) and ($pause_max > 10)) {
                     $stmt = "SELECT container_entry FROM vicidial_settings_containers where container_id='$pause_max_exceptions';";
                     $rslt=mysql_to_mysqli($stmt, $link);
-                        if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01095',$user,$server_ip,$session_name,$one_mysql_log);}
-                    if ($DB) {echo "$stmt\n";}
+                    if ($mel > 0) {
+                        mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01095', $user, $server_ip, $session_name, $one_mysql_log);
+                    }
+                    if ($DB) {
+                        echo "$stmt\n";
+                    }
                     $SCinfo_ct = mysqli_num_rows($rslt);
-                    if ($SCinfo_ct > 0)
-                        {
+                    if ($SCinfo_ct > 0) {
                         $row=mysqli_fetch_row($rslt);
                         $PMEcontainer_entry =    $row[0];
-                        $PMEcontainer_entry = preg_replace("/\r|\t|\'|\"/",'',$PMEcontainer_entry);
-                        $PMEcontainer_entry = preg_replace("/\n/",'-',$PMEcontainer_entry);
-                        if (strlen($PMEcontainer_entry) > 2) {$PMEcontainer_entry = '-'.$PMEcontainer_entry.'-';}
-                        echo "<!-- PAUSE MAX EXEPTION CODES: |$pause_max_exceptions($PMEcontainer_entry)| -->\n";
+                        $PMEcontainer_entry = preg_replace("/\r|\t|\'|\"/", '', $PMEcontainer_entry);
+                        $PMEcontainer_entry = preg_replace("/\n/", '-', $PMEcontainer_entry);
+                        if (strlen($PMEcontainer_entry) > 2) {
+                            $PMEcontainer_entry = '-'.$PMEcontainer_entry.'-';
                         }
+                        echo "<!-- PAUSE MAX EXEPTION CODES: |$pause_max_exceptions($PMEcontainer_entry)| -->\n";
                     }
+                }
                 $pause_max_url_trigger=0;
-                if ( (strlen($pause_max_url) > 5) and ($pause_max > 10) ) {$pause_max_url_trigger=1;}
-                if ( ($queuemetrics_pe_phone_append > 0) and (strlen($qm_phone_environment)>0) )
-                    {$qm_phone_environment .= "-$qm_extension";}
+                if ((strlen($pause_max_url) > 5) and ($pause_max > 10)) {
+                    $pause_max_url_trigger=1;
+                }
+                if (($queuemetrics_pe_phone_append > 0) and (strlen($qm_phone_environment)>0)) {
+                    $qm_phone_environment .= "-$qm_extension";
+                }
                 $status_display_NAME=0;
                 $status_display_CALLID=0;
                 $status_display_LEADID=0;
                 $status_display_LISTID=0;
-                if (preg_match("/NAME/",$status_display_fields))
-                    {$status_display_NAME=1;}
-                if (preg_match("/CALLID/",$status_display_fields))
-                    {$status_display_CALLID=1;}
-                if (preg_match("/LEADID/",$status_display_fields))
-                    {$status_display_LEADID=1;}
-                if (preg_match("/LISTID/",$status_display_fields))
-                    {$status_display_LISTID=1;}
-                if ( (strlen($leave_vm_message_group_id) > 1) and ($leave_vm_message_group_id != '---NONE---') )
-                    {
+                if (preg_match("/NAME/", $status_display_fields)) {
+                    $status_display_NAME=1;
+                }
+                if (preg_match("/CALLID/", $status_display_fields)) {
+                    $status_display_CALLID=1;
+                }
+                if (preg_match("/LEADID/", $status_display_fields)) {
+                    $status_display_LEADID=1;
+                }
+                if (preg_match("/LISTID/", $status_display_fields)) {
+                    $status_display_LISTID=1;
+                }
+                if ((strlen($leave_vm_message_group_id) > 1) and ($leave_vm_message_group_id != '---NONE---')) {
                     $leave_vm_message_group_exists=0;
                     $stmt="SELECT count(*) from leave_vm_message_groups where leave_vm_message_group_id='$leave_vm_message_group_id' and active='Y';";
                     $rslt=mysql_to_mysqli($stmt, $link);
-                    if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01089',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+                    if ($mel > 0) {
+                        mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01089', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                    }
                     $vmmg_count = mysqli_num_rows($rslt);
-                    if ($vmmg_count > 0)
-                        {
+                    if ($vmmg_count > 0) {
                         $row=mysqli_fetch_row($rslt);
-                        if (strlen($row[0])>0)    {$leave_vm_message_group_exists=1;}
+                        if (strlen($row[0])>0) {
+                            $leave_vm_message_group_exists=1;
                         }
-                    if ($leave_vm_message_group_exists > 0)
-                        {
+                    }
+                    if ($leave_vm_message_group_exists > 0) {
                         $stmt="SELECT count(*) from leave_vm_message_groups_entries where leave_vm_message_group_id='$leave_vm_message_group_id';";
                         $rslt=mysql_to_mysqli($stmt, $link);
-                        if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01090',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+                        if ($mel > 0) {
+                            mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01090', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                        }
                         $vmmge_count = mysqli_num_rows($rslt);
-                        if ($vmmge_count > 0)
-                            {
+                        if ($vmmge_count > 0) {
                             $row=mysqli_fetch_row($rslt);
-                            if (strlen($row[0])>0)    {$leave_vm_message_group_exists = $row[0];}
+                            if (strlen($row[0])>0) {
+                                $leave_vm_message_group_exists = $row[0];
                             }
                         }
                     }
-                if ( ($screen_labels != '--SYSTEM-SETTINGS--') and (strlen($screen_labels)>1) )
-                    {
+                }
+                if (($screen_labels != '--SYSTEM-SETTINGS--') and (strlen($screen_labels)>1)) {
                     $stmt="SELECT label_title,label_first_name,label_middle_initial,label_last_name,label_address1,label_address2,label_address3,label_city,label_state,label_province,label_postal_code,label_vendor_lead_code,label_gender,label_phone_number,label_phone_code,label_alt_phone,label_security_phrase,label_email,label_comments,label_lead_id,label_list_id,label_entry_date,label_gmt_offset_now,label_source_id,label_called_since_last_reset,label_status,label_user,label_date_of_birth,label_country_code,label_last_local_call_time,label_called_count,label_rank,label_owner,label_entry_list_id from vicidial_screen_labels where label_id='$screen_labels' and active='Y' limit 1;";
                     $rslt=mysql_to_mysqli($stmt, $link);
-                    if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01073',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+                    if ($mel > 0) {
+                        mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01073', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                    }
                     $screenlabels_count = mysqli_num_rows($rslt);
-                    if ($screenlabels_count > 0)
-                        {
+                    if ($screenlabels_count > 0) {
                         $row=mysqli_fetch_row($rslt);
-                        if (strlen($row[0])>0)    {$label_title =                $row[0];}
-                        if (strlen($row[1])>0)    {$label_first_name =        $row[1];}
-                        if (strlen($row[2])>0)    {$label_middle_initial =    $row[2];}
-                        if (strlen($row[3])>0)    {$label_last_name =            $row[3];}
-                        if (strlen($row[4])>0)    {$label_address1 =            $row[4];}
-                        if (strlen($row[5])>0)    {$label_address2 =            $row[5];}
-                        if (strlen($row[6])>0)    {$label_address3 =            $row[6];}
-                        if (strlen($row[7])>0)    {$label_city =                $row[7];}
-                        if (strlen($row[8])>0)    {$label_state =                $row[8];}
-                        if (strlen($row[9])>0)    {$label_province =            $row[9];}
-                        if (strlen($row[10])>0) {$label_postal_code =        $row[10];}
-                        if (strlen($row[11])>0) {$label_vendor_lead_code =    $row[11];}
-                        if (strlen($row[12])>0) {$label_gender =            $row[12];   $hide_gender=0;}
-                        if (strlen($row[13])>0) {$label_phone_number =        $row[13];}
-                        if (strlen($row[14])>0) {$label_phone_code =        $row[14];}
-                        if (strlen($row[15])>0) {$label_alt_phone =            $row[15];}
-                        if (strlen($row[16])>0) {$label_security_phrase =    $row[16];}
-                        if (strlen($row[17])>0) {$label_email =                $row[17];}
-                        if (strlen($row[18])>0) {$label_comments =            $row[18];}
-                        if (strlen($row[19])>0) {$label_lead_id =            $row[19];}
-                        if (strlen($row[20])>0) {$label_list_id =            $row[20];}
-                        if (strlen($row[21])>0) {$label_entry_date =        $row[21];}
-                        if (strlen($row[22])>0) {$label_gmt_offset_now =    $row[22];}
-                        if (strlen($row[23])>0) {$label_source_id =            $row[23];}
-                        if (strlen($row[24])>0) {$label_called_since_last_reset = $row[24];}
-                        if (strlen($row[25])>0) {$label_status =            $row[25];}
-                        if (strlen($row[26])>0) {$label_user =                $row[26];}
-                        if (strlen($row[27])>0) {$label_date_of_birth =        $row[27];}
-                        if (strlen($row[28])>0) {$label_country_code =        $row[28];}
-                        if (strlen($row[29])>0) {$label_last_local_call_time =    $row[29];}
-                        if (strlen($row[30])>0) {$label_called_count =        $row[30];}
-                        if (strlen($row[31])>0) {$label_rank =                $row[31];}
-                        if (strlen($row[32])>0) {$label_owner =                $row[32];}
-                        if (strlen($row[33])>0) {$label_entry_list_id =        $row[33];}
-                        if ($label_gender == '---HIDE---')
-                            {$hide_gender=1;}
+                        if (strlen($row[0])>0) {
+                            $label_title =                $row[0];
+                        }
+                        if (strlen($row[1])>0) {
+                            $label_first_name =        $row[1];
+                        }
+                        if (strlen($row[2])>0) {
+                            $label_middle_initial =    $row[2];
+                        }
+                        if (strlen($row[3])>0) {
+                            $label_last_name =            $row[3];
+                        }
+                        if (strlen($row[4])>0) {
+                            $label_address1 =            $row[4];
+                        }
+                        if (strlen($row[5])>0) {
+                            $label_address2 =            $row[5];
+                        }
+                        if (strlen($row[6])>0) {
+                            $label_address3 =            $row[6];
+                        }
+                        if (strlen($row[7])>0) {
+                            $label_city =                $row[7];
+                        }
+                        if (strlen($row[8])>0) {
+                            $label_state =                $row[8];
+                        }
+                        if (strlen($row[9])>0) {
+                            $label_province =            $row[9];
+                        }
+                        if (strlen($row[10])>0) {
+                            $label_postal_code =        $row[10];
+                        }
+                        if (strlen($row[11])>0) {
+                            $label_vendor_lead_code =    $row[11];
+                        }
+                        if (strlen($row[12])>0) {
+                            $label_gender =            $row[12];
+                            $hide_gender=0;
+                        }
+                        if (strlen($row[13])>0) {
+                            $label_phone_number =        $row[13];
+                        }
+                        if (strlen($row[14])>0) {
+                            $label_phone_code =        $row[14];
+                        }
+                        if (strlen($row[15])>0) {
+                            $label_alt_phone =            $row[15];
+                        }
+                        if (strlen($row[16])>0) {
+                            $label_security_phrase =    $row[16];
+                        }
+                        if (strlen($row[17])>0) {
+                            $label_email =                $row[17];
+                        }
+                        if (strlen($row[18])>0) {
+                            $label_comments =            $row[18];
+                        }
+                        if (strlen($row[19])>0) {
+                            $label_lead_id =            $row[19];
+                        }
+                        if (strlen($row[20])>0) {
+                            $label_list_id =            $row[20];
+                        }
+                        if (strlen($row[21])>0) {
+                            $label_entry_date =        $row[21];
+                        }
+                        if (strlen($row[22])>0) {
+                            $label_gmt_offset_now =    $row[22];
+                        }
+                        if (strlen($row[23])>0) {
+                            $label_source_id =            $row[23];
+                        }
+                        if (strlen($row[24])>0) {
+                            $label_called_since_last_reset = $row[24];
+                        }
+                        if (strlen($row[25])>0) {
+                            $label_status =            $row[25];
+                        }
+                        if (strlen($row[26])>0) {
+                            $label_user =                $row[26];
+                        }
+                        if (strlen($row[27])>0) {
+                            $label_date_of_birth =        $row[27];
+                        }
+                        if (strlen($row[28])>0) {
+                            $label_country_code =        $row[28];
+                        }
+                        if (strlen($row[29])>0) {
+                            $label_last_local_call_time =    $row[29];
+                        }
+                        if (strlen($row[30])>0) {
+                            $label_called_count =        $row[30];
+                        }
+                        if (strlen($row[31])>0) {
+                            $label_rank =                $row[31];
+                        }
+                        if (strlen($row[32])>0) {
+                            $label_owner =                $row[32];
+                        }
+                        if (strlen($row[33])>0) {
+                            $label_entry_list_id =        $row[33];
+                        }
+                        if ($label_gender == '---HIDE---') {
+                            $hide_gender=1;
                         }
                     }
+                }
                 $launch_scb_force_dial=0;
-                if ( ($VC_scheduled_callbacks=='Y') and ($VU_scheduled_callbacks=='1') )
-                    {
+                if (($VC_scheduled_callbacks=='Y') and ($VU_scheduled_callbacks=='1')) {
                     $scheduled_callbacks='1';
-                    if ($scheduled_callbacks_force_dial == 'Y')
-                        {
+                    if ($scheduled_callbacks_force_dial == 'Y') {
                         $campaignCBsql = '';
                         $campaignCBhoursSQL = '';
                         $campaignCBdisplaydaysSQL = '';
-                        if ($agentonly_callback_campaign_lock > 0)
-                            {$campaignCBsql = "and campaign_id='$VD_campaign'";}
-                        if ($callback_hours_block > 0)
-                            {
-                            $x_hours_ago = date("Y-m-d H:i:s", mktime(date("H")-$callback_hours_block,date("i"),date("s"),date("m"),date("d"),date("Y")));
+                        if ($agentonly_callback_campaign_lock > 0) {
+                            $campaignCBsql = "and campaign_id='$VD_campaign'";
+                        }
+                        if ($callback_hours_block > 0) {
+                            $x_hours_ago = date("Y-m-d H:i:s", mktime(date("H")-$callback_hours_block, date("i"), date("s"), date("m"), date("d"), date("Y")));
                             $campaignCBhoursSQL = "and entry_time < \"$x_hours_ago\"";
-                            }
-                        if ($callback_display_days > 0)
-                            {
-                            $x_days_from_now = date("Y-m-d H:i:s", mktime(0,0,0,date("m"),date("d")+$callback_display_days,date("Y")));
+                        }
+                        if ($callback_display_days > 0) {
+                            $x_days_from_now = date("Y-m-d H:i:s", mktime(0, 0, 0, date("m"), date("d")+$callback_display_days, date("Y")));
                             $campaignCBdisplaydaysSQL = "and callback_time < \"$x_days_from_now\"";
-                            }
+                        }
                         $stmt = "SELECT count(*) from vicidial_callbacks where recipient='USERONLY' and user='$VD_login' $campaignCBsql $campaignCBhoursSQL $campaignCBdisplaydaysSQL and status IN('LIVE');";
-                        if ($DB) {echo "$stmt\n";}
+                        if ($DB) {
+                            echo "$stmt\n";
+                        }
                         $rslt=mysql_to_mysqli($stmt, $link);
-                            if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01091',$user,$server_ip,$session_name,$one_mysql_log);}
+                        if ($mel > 0) {
+                            mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01091', $user, $server_ip, $session_name, $one_mysql_log);
+                        }
                         $row=mysqli_fetch_row($rslt);
                         $launch_scb_force_dial=$row[0];
-                        }
                     }
+                }
                 $hide_dispo_list=0;
-                if ( ($disable_dispo_screen == 'DISPO_ENABLED') or ($disable_dispo_screen == 'DISPO_SELECT_DISABLED') or (strlen($disable_dispo_status) < 1) )
-                    {
-                    if ($disable_dispo_screen == 'DISPO_SELECT_DISABLED')
-                        {$hide_dispo_list=1;}
+                if (($disable_dispo_screen == 'DISPO_ENABLED') or ($disable_dispo_screen == 'DISPO_SELECT_DISABLED') or (strlen($disable_dispo_status) < 1)) {
+                    if ($disable_dispo_screen == 'DISPO_SELECT_DISABLED') {
+                        $hide_dispo_list=1;
+                    }
                     $disable_dispo_screen=0;
                     $disable_dispo_status='';
-                    }
-                if ( ($disable_dispo_screen == 'DISPO_DISABLED') and (strlen($disable_dispo_status) > 0) )
-                    {$disable_dispo_screen=1;}
-                if ( ($VU_agent_lead_search_override == 'ENABLED') or ($VU_agent_lead_search_override == 'LIVE_CALL_INBOUND') or ($VU_agent_lead_search_override == 'LIVE_CALL_INBOUND_AND_MANUAL') or ($VU_agent_lead_search_override == 'DISABLED') )
-                    {$agent_lead_search = $VU_agent_lead_search_override;}
+                }
+                if (($disable_dispo_screen == 'DISPO_DISABLED') and (strlen($disable_dispo_status) > 0)) {
+                    $disable_dispo_screen=1;
+                }
+                if (($VU_agent_lead_search_override == 'ENABLED') or ($VU_agent_lead_search_override == 'LIVE_CALL_INBOUND') or ($VU_agent_lead_search_override == 'LIVE_CALL_INBOUND_AND_MANUAL') or ($VU_agent_lead_search_override == 'DISABLED')) {
+                    $agent_lead_search = $VU_agent_lead_search_override;
+                }
                 $AllowManualQueueCalls=1;
                 $AllowManualQueueCallsChoice=0;
-                if ($api_manual_dial == 'QUEUE')
-                    {
+                if ($api_manual_dial == 'QUEUE') {
                     $AllowManualQueueCalls=0;
                     $AllowManualQueueCallsChoice=1;
-                    }
-                if ($manual_preview_dial == 'DISABLED')
-                    {$manual_dial_preview = 0;}
-                if ( ($manual_dial_override == 'ALLOW_ALL') and ($agentcall_manual < 1) )
-                    {$agentcall_manual = 1;}
-                if ($manual_dial_override == 'DISABLE_ALL')
-                    {$agentcall_manual = 0;}
-                if ($user_territories_active < 1)
-                    {$agent_select_territories = 0;}
-                if (preg_match("/Y/",$agent_select_territories))
-                    {$agent_select_territories=1;}
-                else
-                    {$agent_select_territories=0;}
-                if (preg_match("/Y/",$agent_display_dialable_leads))
-                    {$agent_display_dialable_leads=1;}
-                else
-                    {$agent_display_dialable_leads=0;}
-                if (preg_match("/Y/",$no_hopper_dialing))
-                    {$no_hopper_dialing=1;}
-                else
-                    {$no_hopper_dialing=0;}
-                if ( (preg_match("/Y/",$call_requeue_button)) and ($auto_dial_level > 0) )
-                    {$call_requeue_button=1;}
-                else
-                    {$call_requeue_button=0;}
-                if ( (preg_match("/AUTO/",$view_calls_in_queue_launch)) and ($auto_dial_level > 0) )
-                    {$view_calls_in_queue_launch=1;}
-                else
-                    {$view_calls_in_queue_launch=0;}
-                if ( (!preg_match("/NONE/",$view_calls_in_queue)) and ($auto_dial_level > 0) )
-                    {$view_calls_in_queue=1;}
-                else
-                    {$view_calls_in_queue=0;}
-                if (preg_match("/Y/",$pause_after_each_call))
-                    {$dispo_check_all_pause=1;}
+                }
+                if ($manual_preview_dial == 'DISABLED') {
+                    $manual_dial_preview = 0;
+                }
+                if (($manual_dial_override == 'ALLOW_ALL') and ($agentcall_manual < 1)) {
+                    $agentcall_manual = 1;
+                }
+                if ($manual_dial_override == 'DISABLE_ALL') {
+                    $agentcall_manual = 0;
+                }
+                if ($user_territories_active < 1) {
+                    $agent_select_territories = 0;
+                }
+                if (preg_match("/Y/", $agent_select_territories)) {
+                    $agent_select_territories=1;
+                } else {
+                    $agent_select_territories=0;
+                }
+                if (preg_match("/Y/", $agent_display_dialable_leads)) {
+                    $agent_display_dialable_leads=1;
+                } else {
+                    $agent_display_dialable_leads=0;
+                }
+                if (preg_match("/Y/", $no_hopper_dialing)) {
+                    $no_hopper_dialing=1;
+                } else {
+                    $no_hopper_dialing=0;
+                }
+                if ((preg_match("/Y/", $call_requeue_button)) and ($auto_dial_level > 0)) {
+                    $call_requeue_button=1;
+                } else {
+                    $call_requeue_button=0;
+                }
+                if ((preg_match("/AUTO/", $view_calls_in_queue_launch)) and ($auto_dial_level > 0)) {
+                    $view_calls_in_queue_launch=1;
+                } else {
+                    $view_calls_in_queue_launch=0;
+                }
+                if ((!preg_match("/NONE/", $view_calls_in_queue)) and ($auto_dial_level > 0)) {
+                    $view_calls_in_queue=1;
+                } else {
+                    $view_calls_in_queue=0;
+                }
+                if (preg_match("/Y/", $pause_after_each_call)) {
+                    $dispo_check_all_pause=1;
+                }
                 $quick_transfer_button_enabled=0;
                 $quick_transfer_button_locked=0;
-                if (preg_match("/IN_GROUP|PRESET_1|PRESET_2|PRESET_3|PRESET_4|PRESET_5/",$quick_transfer_button))
-                    {$quick_transfer_button_enabled=1;}
-                if (preg_match("/LOCKED/",$quick_transfer_button))
-                    {$quick_transfer_button_locked=1;}
+                if (preg_match("/IN_GROUP|PRESET_1|PRESET_2|PRESET_3|PRESET_4|PRESET_5/", $quick_transfer_button)) {
+                    $quick_transfer_button_enabled=1;
+                }
+                if (preg_match("/LOCKED/", $quick_transfer_button)) {
+                    $quick_transfer_button_locked=1;
+                }
                 $custom_3way_button_transfer_enabled=0;
                 $custom_3way_button_transfer_park=0;
                 $custom_3way_button_transfer_view=0;
                 $custom_3way_button_transfer_contacts=0;
-                if (preg_match("/PRESET_|FIELD_/",$custom_3way_button_transfer))
-                    {$custom_3way_button_transfer_enabled=1;}
-                if (preg_match("/PARK_/",$custom_3way_button_transfer))
-                    {$custom_3way_button_transfer_park=1;   $custom_3way_button_transfer_enabled=1;}
-                if (preg_match("/VIEW_PRESET/",$custom_3way_button_transfer))
-                    {$custom_3way_button_transfer_view=1;   $custom_3way_button_transfer_enabled=1;}
-                if ( (preg_match("/VIEW_CONTACTS/",$custom_3way_button_transfer)) and ($enable_xfer_presets == 'CONTACTS') and ($VU_preset_contact_search != 'DISABLED') )
-                    {$custom_3way_button_transfer_contacts=1;   $custom_3way_button_transfer_enabled=1;}
+                if (preg_match("/PRESET_|FIELD_/", $custom_3way_button_transfer)) {
+                    $custom_3way_button_transfer_enabled=1;
+                }
+                if (preg_match("/PARK_/", $custom_3way_button_transfer)) {
+                    $custom_3way_button_transfer_park=1;
+                    $custom_3way_button_transfer_enabled=1;
+                }
+                if (preg_match("/VIEW_PRESET/", $custom_3way_button_transfer)) {
+                    $custom_3way_button_transfer_view=1;
+                    $custom_3way_button_transfer_enabled=1;
+                }
+                if ((preg_match("/VIEW_CONTACTS/", $custom_3way_button_transfer)) and ($enable_xfer_presets == 'CONTACTS') and ($VU_preset_contact_search != 'DISABLED')) {
+                    $custom_3way_button_transfer_contacts=1;
+                    $custom_3way_button_transfer_enabled=1;
+                }
                 $preset_populate='';
                 $prepopulate_transfer_preset_enabled=0;
-                if (preg_match("/PRESET_1|PRESET_2|PRESET_3|PRESET_4|PRESET_5/",$prepopulate_transfer_preset))
-                    {
+                if (preg_match("/PRESET_1|PRESET_2|PRESET_3|PRESET_4|PRESET_5/", $prepopulate_transfer_preset)) {
                     $prepopulate_transfer_preset_enabled=1;
-                    if (preg_match("/PRESET_1/",$prepopulate_transfer_preset))
-                        {$preset_populate = $xferconf_a_number;}
-                    if (preg_match("/PRESET_2/",$prepopulate_transfer_preset))
-                        {$preset_populate = $xferconf_b_number;}
-                    if (preg_match("/PRESET_3/",$prepopulate_transfer_preset))
-                        {$preset_populate = $xferconf_c_number;}
-                    if (preg_match("/PRESET_4/",$prepopulate_transfer_preset))
-                        {$preset_populate = $xferconf_d_number;}
-                    if (preg_match("/PRESET_5/",$prepopulate_transfer_preset))
-                        {$preset_populate = $xferconf_e_number;}
+                    if (preg_match("/PRESET_1/", $prepopulate_transfer_preset)) {
+                        $preset_populate = $xferconf_a_number;
                     }
+                    if (preg_match("/PRESET_2/", $prepopulate_transfer_preset)) {
+                        $preset_populate = $xferconf_b_number;
+                    }
+                    if (preg_match("/PRESET_3/", $prepopulate_transfer_preset)) {
+                        $preset_populate = $xferconf_c_number;
+                    }
+                    if (preg_match("/PRESET_4/", $prepopulate_transfer_preset)) {
+                        $preset_populate = $xferconf_d_number;
+                    }
+                    if (preg_match("/PRESET_5/", $prepopulate_transfer_preset)) {
+                        $preset_populate = $xferconf_e_number;
+                    }
+                }
                 $VARpreset_names='';
                 $VARpreset_numbers='';
                 $VARpreset_dtmfs='';
                 $VARpreset_hide_numbers='';
-                if ($enable_xfer_presets == 'ENABLED')
-                    {
+                if ($enable_xfer_presets == 'ENABLED') {
                     $stmt="SELECT preset_name,preset_number,preset_dtmf,preset_hide_number FROM vicidial_xfer_presets WHERE campaign_id='$VD_campaign' order by preset_name limit 500;";
                     $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01067',$VD_login,$server_ip,$session_name,$one_mysql_log);}
-                    if ($DB) {echo "$stmt\n";}
+                    if ($mel > 0) {
+                        mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01067', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                    }
+                    if ($DB) {
+                        echo "$stmt\n";
+                    }
                     $VD_presets = mysqli_num_rows($rslt);
                     $j=0;
-                    while ($j < $VD_presets)
-                        {
+                    while ($j < $VD_presets) {
                         $row=mysqli_fetch_row($rslt);
                         $preset_names[$j] =            $row[0];
                         $preset_numbers[$j] =        $row[1];
@@ -2239,90 +2598,103 @@ else
                         $VARpreset_dtmfs = "$VARpreset_dtmfs'$preset_dtmfs[$j]',";
                         $VARpreset_hide_numbers = "$VARpreset_hide_numbers'$preset_hide_numbers[$j]',";
                         $j++;
-                        }
+                    }
                     $VARpreset_names = substr("$VARpreset_names", 0, -1);
                     $VARpreset_numbers = substr("$VARpreset_numbers", 0, -1);
                     $VARpreset_dtmfs = substr("$VARpreset_dtmfs", 0, -1);
                     $VARpreset_hide_numbers = substr("$VARpreset_hide_numbers", 0, -1);
                     $VD_preset_names_ct = $j;
-                    if ($j < 1)
-                        {$enable_xfer_presets='DISABLED';}
+                    if ($j < 1) {
+                        $enable_xfer_presets='DISABLED';
                     }
+                }
                 $default_group_alias_cid='';
-                if (strlen($default_group_alias)>1)
-                    {
+                if (strlen($default_group_alias)>1) {
                     $stmt = "select caller_id_number from groups_alias where group_alias_id='$default_group_alias';";
-                    if ($DB) {echo "$stmt\n";}
+                    if ($DB) {
+                        echo "$stmt\n";
+                    }
                     $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01055',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+                    if ($mel > 0) {
+                        mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01055', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                    }
                     $VDIG_cidnum_ct = mysqli_num_rows($rslt);
-                    if ($VDIG_cidnum_ct > 0)
-                        {
+                    if ($VDIG_cidnum_ct > 0) {
                         $row=mysqli_fetch_row($rslt);
                         $default_group_alias_cid    = $row[0];
-                        }
                     }
+                }
                 $stmt = "select group_web_vars from vicidial_campaign_agents where campaign_id='$VD_campaign' and user='$VD_login';";
-                if ($DB) {echo "$stmt\n";}
+                if ($DB) {
+                    echo "$stmt\n";
+                }
                 $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01056',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+                if ($mel > 0) {
+                    mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01056', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                }
                 $VDIG_cidogwv = mysqli_num_rows($rslt);
-                if ($VDIG_cidogwv > 0)
-                    {
+                if ($VDIG_cidogwv > 0) {
                     $row=mysqli_fetch_row($rslt);
                     $default_web_vars =    $row[0];
-                    }
-                if ( (!preg_match('/DISABLED/',$VU_vicidial_recording_override)) and ($VU_vicidial_recording > 0) )
-                    {
+                }
+                if ((!preg_match('/DISABLED/', $VU_vicidial_recording_override)) and ($VU_vicidial_recording > 0)) {
                     $campaign_recording = $VU_vicidial_recording_override;
                     echo "<!-- USER RECORDING OVERRIDE: |$VU_vicidial_recording_override|$campaign_recording| -->\n";
-                    }
-                if ($VU_vicidial_recording=='0')
-                    {$campaign_recording='NEVER';}
-                if ($VU_alter_custphone_override=='ALLOW_ALTER')
-                    {$disable_alter_custphone='N';}
-                if (strlen($manual_dial_prefix) < 1)
-                    {$manual_dial_prefix = $dial_prefix;}
-                if (strlen($three_way_dial_prefix) < 1)
-                    {$three_way_dial_prefix = $dial_prefix;}
-                if ( ($alt_number_dialing=='Y') or ($alt_number_dialing=='SELECTED') or ($alt_number_dialing=='SELECTED_TIMER_ALT') or ($alt_number_dialing=='SELECTED_TIMER_ADDR3') or ($alt_number_dialing=='UNSELECTED') or ($alt_number_dialing=='UNSELECTED_TIMER_ALT') or ($alt_number_dialing=='UNSELECTED_TIMER_ADDR3') )
-                    {$alt_phone_dialing='1';}
-                else
-                    {
+                }
+                if ($VU_vicidial_recording=='0') {
+                    $campaign_recording='NEVER';
+                }
+                if ($VU_alter_custphone_override=='ALLOW_ALTER') {
+                    $disable_alter_custphone='N';
+                }
+                if (strlen($manual_dial_prefix) < 1) {
+                    $manual_dial_prefix = $dial_prefix;
+                }
+                if (strlen($three_way_dial_prefix) < 1) {
+                    $three_way_dial_prefix = $dial_prefix;
+                }
+                if (($alt_number_dialing=='Y') or ($alt_number_dialing=='SELECTED') or ($alt_number_dialing=='SELECTED_TIMER_ALT') or ($alt_number_dialing=='SELECTED_TIMER_ADDR3') or ($alt_number_dialing=='UNSELECTED') or ($alt_number_dialing=='UNSELECTED_TIMER_ALT') or ($alt_number_dialing=='UNSELECTED_TIMER_ADDR3')) {
+                    $alt_phone_dialing='1';
+                } else {
                     $alt_phone_dialing='0';
                     $DefaulTAlTDiaL='0';
-                    }
-                if ($display_queue_count=='N')
-                    {$callholdstatus='0';}
-                if ( ($dial_method == 'INBOUND_MAN') or ($outbound_autodial_active < 1) )
-                    {$VU_closer_default_blended=0;}
-                $closer_campaigns = preg_replace("/^ | -$/","",$closer_campaigns);
-                $closer_campaigns = preg_replace("/ /","','",$closer_campaigns);
-                $ADcloser_campaigns = preg_replace("/'/",'',$closer_campaigns);
+                }
+                if ($display_queue_count=='N') {
+                    $callholdstatus='0';
+                }
+                if (($dial_method == 'INBOUND_MAN') or ($outbound_autodial_active < 1)) {
+                    $VU_closer_default_blended=0;
+                }
+                $closer_campaigns = preg_replace("/^ | -$/", "", $closer_campaigns);
+                $closer_campaigns = preg_replace("/ /", "','", $closer_campaigns);
+                $ADcloser_campaigns = preg_replace("/'/", '', $closer_campaigns);
                 $closer_campaigns = "'$closer_campaigns'";
-                $ADcloser_campaignsARY = explode(',',$ADcloser_campaigns);
+                $ADcloser_campaignsARY = explode(',', $ADcloser_campaigns);
                 $ADcloser_campaignsARYct = count($ADcloser_campaignsARY);
                 $ADc=0;
                 $ADcloser_campaigns='';
-                while ($ADc < $ADcloser_campaignsARYct)
-                    {
-                    if (preg_match("/AGENTDIRECT/i",$ADcloser_campaignsARY[$ADc]))
-                        {$ADcloser_campaigns .= "'$ADcloser_campaignsARY[$ADc]',";}
-                    $ADc++;
+                while ($ADc < $ADcloser_campaignsARYct) {
+                    if (preg_match("/AGENTDIRECT/i", $ADcloser_campaignsARY[$ADc])) {
+                        $ADcloser_campaigns .= "'$ADcloser_campaignsARY[$ADc]',";
                     }
-                if (strlen($ADcloser_campaigns) > 3)
-                    {$ADcloser_campaigns = preg_replace("/,$/","",$ADcloser_campaigns);}
-                if ( (preg_match('/Y/',$agent_pause_codes_active)) or (preg_match('/FORCE/',$agent_pause_codes_active)) )
-                    {
+                    $ADc++;
+                }
+                if (strlen($ADcloser_campaigns) > 3) {
+                    $ADcloser_campaigns = preg_replace("/,$/", "", $ADcloser_campaigns);
+                }
+                if ((preg_match('/Y/', $agent_pause_codes_active)) or (preg_match('/FORCE/', $agent_pause_codes_active))) {
                     $stmt="SELECT pause_code,pause_code_name,require_mgr_approval FROM vicidial_pause_codes WHERE campaign_id='$VD_campaign' order by pause_code limit 100;";
                     $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01014',$VD_login,$server_ip,$session_name,$one_mysql_log);}
-                    if ($DB) {echo "$stmt\n";}
+                    if ($mel > 0) {
+                        mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01014', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                    }
+                    if ($DB) {
+                        echo "$stmt\n";
+                    }
                     $VD_pause_codes = mysqli_num_rows($rslt);
                     $j=0;
                     $mgrapr_ct=0;
-                    while ($j < $VD_pause_codes)
-                        {
+                    while ($j < $VD_pause_codes) {
                         $row=mysqli_fetch_row($rslt);
                         $pause_codes[$i] =            $row[0];
                         $pause_code_names[$i] =        $row[1];
@@ -2330,66 +2702,63 @@ else
                         $VARpause_codes = "$VARpause_codes'$pause_codes[$i]',";
                         $VARpause_code_names = "$VARpause_code_names'$pause_code_names[$i]',";
                         $VARpause_code_mgrapr = "$VARpause_code_mgrapr'$pause_code_mgrapr[$i]',";
-                        if ($pause_code_mgrapr[$i] == 'YES') {$mgrapr_ct++;}
+                        if ($pause_code_mgrapr[$i] == 'YES') {
+                            $mgrapr_ct++;
+                        }
                         $i++;
                         $j++;
-                        }
+                    }
                     $VD_pause_codes_ct = ($VD_pause_codes_ct+$VD_pause_codes);
                     $VARpause_codes = substr("$VARpause_codes", 0, -1);
                     $VARpause_code_names = substr("$VARpause_code_names", 0, -1);
                     $VARpause_code_mgrapr = substr("$VARpause_code_mgrapr", 0, -1);
-                    }
+                }
                 $VARingroups="''";
                 $VARingroup_handlers="''";
                 $VARphonegroups="''";
                 $VARemailgroups="''";
                 $VARchatgroups="''";
-                if ( ($campaign_allow_inbound == 'Y') and ($dial_method != 'MANUAL') )
-                    {
-                    if ( ($VU_max_inbound_calls > 0) or ($CP_max_inbound_calls > 0) )
-                        {
+                if (($campaign_allow_inbound == 'Y') and ($dial_method != 'MANUAL')) {
+                    if (($VU_max_inbound_calls > 0) or ($CP_max_inbound_calls > 0)) {
                         $max_inbound_calls = $CP_max_inbound_calls;
-                        if ($VU_max_inbound_calls > 0)
-                            {$max_inbound_calls = $VU_max_inbound_calls;}
+                        if ($VU_max_inbound_calls > 0) {
+                            $max_inbound_calls = $VU_max_inbound_calls;
+                        }
                         $stmt = "SELECT sum(calls_today),sum(calls_today_filtered) FROM vicidial_inbound_group_agents where user='$VD_login' and group_type='C';";
                         $rslt=mysql_to_mysqli($stmt, $link);
-                            if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01080',$VD_login,$server_ip,$session_name,$one_mysql_log);}
-                        if ($DB) {echo "\n<!-- $rowx[0]|$stmt -->";}
+                        if ($mel > 0) {
+                            mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01080', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                        }
+                        if ($DB) {
+                            echo "\n<!-- $rowx[0]|$stmt -->";
+                        }
                         $vigagt_ct = mysqli_num_rows($rslt);
-                        if ($vigagt_ct > 0)
-                            {
+                        if ($vigagt_ct > 0) {
                             $row=mysqli_fetch_row($rslt);
                             $max_inbound_count =        $row[0];
-                            if ($VU_max_inbound_filter_enabled > 0)
-                                {$max_inbound_count =        $row[1];}
-                            if ($max_inbound_count >= $max_inbound_calls)
-                                {
-                                if (preg_match("/ALLOW_AGENTDIRECT/",$max_inbound_calls_outcome))
-                                    {
+                            if ($VU_max_inbound_filter_enabled > 0) {
+                                $max_inbound_count =        $row[1];
+                            }
+                            if ($max_inbound_count >= $max_inbound_calls) {
+                                if (preg_match("/ALLOW_AGENTDIRECT/", $max_inbound_calls_outcome)) {
                                     $closer_campaigns = $ADcloser_campaigns;
                                     echo "<!-- Max Inbound Calls trigger(AD allowed): |$max_inbound_count|$max_inbound_calls|$max_inbound_calls_outcome| -->\n";
-                                    }
-                                else
-                                    {
+                                } else {
                                     $closer_campaigns = "''";
                                     echo "<!-- Max Inbound Calls trigger: |$max_inbound_count|$max_inbound_calls| -->\n";
-                                    }
                                 }
                             }
                         }
-                    if ( ($VU_inbound_credits >= 0) and ($VU_inbound_credits < 1) && ($SSinbound_credits > 0) )
-                        {
-                        if (preg_match("/ALLOW_AGENTDIRECT/",$max_inbound_calls_outcome))
-                            {
+                    }
+                    if (($VU_inbound_credits >= 0) and ($VU_inbound_credits < 1) && ($SSinbound_credits > 0)) {
+                        if (preg_match("/ALLOW_AGENTDIRECT/", $max_inbound_calls_outcome)) {
                             $closer_campaigns = $ADcloser_campaigns;
                             echo "<!-- Inbound Calls Credits zero trigger(AD allowed): |$VU_inbound_credits|$SSinbound_credits|$max_inbound_calls_outcome| -->\n";
-                            }
-                        else
-                            {
+                        } else {
                             $closer_campaigns = "''";
                             echo "<!-- Inbound Calls Credits zero trigger: |$VU_inbound_credits|$SSinbound_credits| -->\n";
-                            }
                         }
+                    }
                     $VARingroups='';
                     $VARingroup_handlers='';
                     $VARphonegroups='';
@@ -2397,149 +2766,170 @@ else
                     $VARchatgroups='';
                     $stmt="SELECT group_id,group_handling from vicidial_inbound_groups where active = 'Y' and group_id IN($closer_campaigns) order by group_id limit 800;";
                     $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01015',$VD_login,$server_ip,$session_name,$one_mysql_log);}
-                    if ($DB) {echo "$stmt\n";}
+                    if ($mel > 0) {
+                        mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01015', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                    }
+                    if ($DB) {
+                        echo "$stmt\n";
+                    }
                     $closer_ct = mysqli_num_rows($rslt);
                     $INgrpCT=0;
                     $EMAILgrpCT=0;
                     $CHATgrpCT=0;
                     $PHONEgrpCT=0;
-                    while ($INgrpCT < $closer_ct)
-                        {
+                    while ($INgrpCT < $closer_ct) {
                         $row=mysqli_fetch_row($rslt);
                         $closer_groups[$INgrpCT] =$row[0];
                         $closer_group_handling[$INgrpCT] =$row[1]; // PHONE OR EMAIL OR CHAT - this is important
                         $VARingroups = "$VARingroups'$closer_groups[$INgrpCT]',";
                         $VARingroup_handlers = "$VARingroup_handlers'$closer_group_handling[$INgrpCT]',";
-                        if ($row[1]=="EMAIL") // Make a list of ingroups for email handling groups, chat handling groups and one for phones, so there is no overlap
-                            {
+                        if ($row[1]=="EMAIL") { // Make a list of ingroups for email handling groups, chat handling groups and one for phones, so there is no overlap
                             $VARemailgroups = "$VARemailgroups'$closer_groups[$INgrpCT]',";
                             $VARemailgroupsURL = $VARemailgroupsURL."&email_group_ids[]=$closer_groups[$INgrpCT]";
                             $EMAILgrpCT++;
-                            } 
-                        else if ($row[1]=="CHAT") 
-                            {
+                        } elseif ($row[1]=="CHAT") {
                             $VARchatgroups = "$VARchatgroups'$closer_groups[$INgrpCT]',";
                             $VARchatgroupsURL = $VARchatgroupsURL."&chat_group_ids[]=$closer_groups[$INgrpCT]";
                             $CHATgrpCT++;
-                            }
-                        else 
-                            {
+                        } else {
                             $VARphonegroups = "$VARphonegroups'$closer_groups[$INgrpCT]',";
                             $VARphonegroupsURL = $VARphonegroupsURL."&phone_group_ids[]=$closer_groups[$INgrpCT]";
                             $PHONEgrpCT++;
-                            }
-                        $INgrpCT++;
                         }
-                    $VARingroups = substr("$VARingroups", 0, -1); 
-                    $VARingroup_handlers = substr("$VARingroup_handlers", 0, -1); 
-                    $VARphonegroups = substr("$VARphonegroups", 0, -1); 
-                    $VARemailgroups = substr("$VARemailgroups", 0, -1); 
-                    $VARchatgroups = substr("$VARchatgroups", 0, -1); 
+                        $INgrpCT++;
                     }
-                else
-                    {$closer_campaigns = "''";}
+                    $VARingroups = substr("$VARingroups", 0, -1);
+                    $VARingroup_handlers = substr("$VARingroup_handlers", 0, -1);
+                    $VARphonegroups = substr("$VARphonegroups", 0, -1);
+                    $VARemailgroups = substr("$VARemailgroups", 0, -1);
+                    $VARchatgroups = substr("$VARchatgroups", 0, -1);
+                } else {
+                    $closer_campaigns = "''";
+                }
                 $in_group_dial_display=0;
-                if ($in_group_dial != 'DISABLED')
-                    {
+                if ($in_group_dial != 'DISABLED') {
                     $in_group_dial_display=1;
-                    if ($in_group_dial_select == 'CAMPAIGN_SELECTED')
-                        {
+                    if ($in_group_dial_select == 'CAMPAIGN_SELECTED') {
                         $VARdialingroups='';
                         $stmt="select group_id from vicidial_inbound_groups where active = 'Y' and group_id IN($closer_campaigns) order by group_id limit 800;";
                         $rslt=mysql_to_mysqli($stmt, $link);
-                            if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01076',$VD_login,$server_ip,$session_name,$one_mysql_log);}
-                        if ($DB) {echo "$stmt\n";}
+                        if ($mel > 0) {
+                            mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01076', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                        }
+                        if ($DB) {
+                            echo "$stmt\n";
+                        }
                         $dialcloser_ct = mysqli_num_rows($rslt);
                         $dialINgrpCT=0;
-                        while ($dialINgrpCT < $dialcloser_ct)
-                            {
+                        while ($dialINgrpCT < $dialcloser_ct) {
                             $row=mysqli_fetch_row($rslt);
                             $dial_closer_groups[$dialINgrpCT] =$row[0];
                             $VARdialingroups = "$VARdialingroups'$dial_closer_groups[$dialINgrpCT]',";
                             $dialINgrpCT++;
-                            }
-                        $VARdialingroups = substr("$VARdialingroups", 0, -1); 
                         }
-                    if ($in_group_dial_select == 'ALL_USER_GROUP')
-                        {
+                        $VARdialingroups = substr("$VARdialingroups", 0, -1);
+                    }
+                    if ($in_group_dial_select == 'ALL_USER_GROUP') {
                         $VARdialingroups='';
                         $stmt="select group_id from vicidial_inbound_groups where active = 'Y' and user_group IN('---ALL---','$user_group') order by group_id limit 800;";
                         $rslt=mysql_to_mysqli($stmt, $link);
-                            if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01077',$VD_login,$server_ip,$session_name,$one_mysql_log);}
-                        if ($DB) {echo "$stmt\n";}
+                        if ($mel > 0) {
+                            mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01077', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                        }
+                        if ($DB) {
+                            echo "$stmt\n";
+                        }
                         $dialcloser_ct = mysqli_num_rows($rslt);
                         $dialINgrpCT=0;
-                        while ($dialINgrpCT < $dialcloser_ct)
-                            {
+                        while ($dialINgrpCT < $dialcloser_ct) {
                             $row=mysqli_fetch_row($rslt);
                             $dial_closer_groups[$dialINgrpCT] =$row[0];
                             $VARdialingroups = "$VARdialingroups'$dial_closer_groups[$dialINgrpCT]',";
                             $dialINgrpCT++;
-                            }
-                        $VARdialingroups = substr("$VARdialingroups", 0, -1); 
                         }
+                        $VARdialingroups = substr("$VARdialingroups", 0, -1);
                     }
+                }
                 $VARterritories='';
-                if ($agent_select_territories > 0)
-                    {
+                if ($agent_select_territories > 0) {
                     $stmt="SELECT territory from vicidial_user_territories where user='$VD_login';";
                     $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01062',$VD_login,$server_ip,$session_name,$one_mysql_log);}
-                    if ($DB) {echo "$stmt\n";}
+                    if ($mel > 0) {
+                        mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01062', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                    }
+                    if ($DB) {
+                        echo "$stmt\n";
+                    }
                     $territory_ct = mysqli_num_rows($rslt);
                     $territoryCT=0;
-                    while ($territoryCT < $territory_ct)
-                        {
+                    while ($territoryCT < $territory_ct) {
                         $row=mysqli_fetch_row($rslt);
                         $territories[$territoryCT] =$row[0];
                         $VARterritories = "$VARterritories'$territories[$territoryCT]',";
                         $territoryCT++;
-                        }
-                    $VARterritories = substr("$VARterritories", 0, -1); 
-                    echo "<!-- $territory_ct  $territoryCT |$stmt| -->\n";
                     }
-                $xfer_groups = preg_replace("/^ | -$/","",$xfer_groups);
-                $xfer_groups = preg_replace("/ /","','",$xfer_groups);
+                    $VARterritories = substr("$VARterritories", 0, -1);
+                    echo "<!-- $territory_ct  $territoryCT |$stmt| -->\n";
+                }
+                $xfer_groups = preg_replace("/^ | -$/", "", $xfer_groups);
+                $xfer_groups = preg_replace("/ /", "','", $xfer_groups);
                 $xfer_groups = "'$xfer_groups'";
                 $VARxfergroups="''";
-                if ($allow_closers == 'Y')
-                    {
+                if ($allow_closers == 'Y') {
                     $xfer_list_sortSQL = 'order by group_id';
-                    if ($ig_xfer_list_sort == 'GROUP_ID_UP')        {$xfer_list_sortSQL = 'order by group_id';}
-                    if ($ig_xfer_list_sort == 'GROUP_ID_DOWN')        {$xfer_list_sortSQL = 'order by group_id desc';}
-                    if ($ig_xfer_list_sort == 'GROUP_NAME_UP')        {$xfer_list_sortSQL = 'order by group_name';}
-                    if ($ig_xfer_list_sort == 'GROUP_NAME_DOWN')    {$xfer_list_sortSQL = 'order by group_name desc';}
-                    if ($ig_xfer_list_sort == 'PRIORITY_UP')        {$xfer_list_sortSQL = 'order by queue_priority';}
-                    if ($ig_xfer_list_sort == 'PRIORITY_DOWN')        {$xfer_list_sortSQL = 'order by queue_priority desc';}
+                    if ($ig_xfer_list_sort == 'GROUP_ID_UP') {
+                        $xfer_list_sortSQL = 'order by group_id';
+                    }
+                    if ($ig_xfer_list_sort == 'GROUP_ID_DOWN') {
+                        $xfer_list_sortSQL = 'order by group_id desc';
+                    }
+                    if ($ig_xfer_list_sort == 'GROUP_NAME_UP') {
+                        $xfer_list_sortSQL = 'order by group_name';
+                    }
+                    if ($ig_xfer_list_sort == 'GROUP_NAME_DOWN') {
+                        $xfer_list_sortSQL = 'order by group_name desc';
+                    }
+                    if ($ig_xfer_list_sort == 'PRIORITY_UP') {
+                        $xfer_list_sortSQL = 'order by queue_priority';
+                    }
+                    if ($ig_xfer_list_sort == 'PRIORITY_DOWN') {
+                        $xfer_list_sortSQL = 'order by queue_priority desc';
+                    }
                     $VARxfergroups='';
                     $stmt="SELECT group_id,group_name from vicidial_inbound_groups where active = 'Y' and group_id IN($xfer_groups) $xfer_list_sortSQL limit 800;";
                     $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01016',$VD_login,$server_ip,$session_name,$one_mysql_log);}
-                    if ($DB) {echo "$stmt\n";}
+                    if ($mel > 0) {
+                        mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01016', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                    }
+                    if ($DB) {
+                        echo "$stmt\n";
+                    }
                     $xfer_ct = mysqli_num_rows($rslt);
                     $XFgrpCT=0;
-                    while ($XFgrpCT < $xfer_ct)
-                        {
+                    while ($XFgrpCT < $xfer_ct) {
                         $row=mysqli_fetch_row($rslt);
                         $VARxfergroups = "$VARxfergroups'$row[0]',";
                         $VARxfergroupsnames = "$VARxfergroupsnames'$row[1]',";
-                        if ($row[0] == "$default_xfer_group") {$default_xfer_group_name = $row[1];}
-                        $XFgrpCT++;
+                        if ($row[0] == "$default_xfer_group") {
+                            $default_xfer_group_name = $row[1];
                         }
-                    $VARxfergroups = substr("$VARxfergroups", 0, -1); 
-                    $VARxfergroupsnames = substr("$VARxfergroupsnames", 0, -1); 
+                        $XFgrpCT++;
                     }
-                if (preg_match('/Y/',$agent_allow_group_alias))
-                    {
+                    $VARxfergroups = substr("$VARxfergroups", 0, -1);
+                    $VARxfergroupsnames = substr("$VARxfergroupsnames", 0, -1);
+                }
+                if (preg_match('/Y/', $agent_allow_group_alias)) {
                     $stmt="SELECT group_alias_id,group_alias_name,caller_id_number FROM groups_alias WHERE active='Y' order by group_alias_id limit 1000;";
                     $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01054',$VD_login,$server_ip,$session_name,$one_mysql_log);}
-                    if ($DB) {echo "$stmt\n";}
+                    if ($mel > 0) {
+                        mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01054', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                    }
+                    if ($DB) {
+                        echo "$stmt\n";
+                    }
                     $VD_group_aliases = mysqli_num_rows($rslt);
                     $j=0;
-                    while ($j < $VD_group_aliases)
-                        {
+                    while ($j < $VD_group_aliases) {
                         $row=mysqli_fetch_row($rslt);
                         $group_alias_id[$i] =    $row[0];
                         $group_alias_name[$i] = $row[1];
@@ -2549,62 +2939,70 @@ else
                         $VARcaller_id_numbers = "$VARcaller_id_numbers'$caller_id_number[$i]',";
                         $i++;
                         $j++;
-                        }
-                    $VD_group_aliases_ct = ($VD_group_aliases_ct+$VD_group_aliases);
-                    $VARgroup_alias_ids = substr("$VARgroup_alias_ids", 0, -1); 
-                    $VARgroup_alias_names = substr("$VARgroup_alias_names", 0, -1); 
-                    $VARcaller_id_numbers = substr("$VARcaller_id_numbers", 0, -1); 
                     }
+                    $VD_group_aliases_ct = ($VD_group_aliases_ct+$VD_group_aliases);
+                    $VARgroup_alias_ids = substr("$VARgroup_alias_ids", 0, -1);
+                    $VARgroup_alias_names = substr("$VARgroup_alias_names", 0, -1);
+                    $VARcaller_id_numbers = substr("$VARcaller_id_numbers", 0, -1);
+                }
                 $stmt="SELECT count(*) FROM vicidial_hopper where campaign_id = '$VD_campaign' and status='READY';";
                 $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01017',$VD_login,$server_ip,$session_name,$one_mysql_log);}
-                if ($DB) {echo "$stmt\n";}
+                if ($mel > 0) {
+                    mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01017', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                }
+                if ($DB) {
+                    echo "$stmt\n";
+                }
                 $row=mysqli_fetch_row($rslt);
                 $campaign_leads_to_call = $row[0];
                 echo "<!-- $campaign_leads_to_call - leads left to call in hopper -->\n";
-                }
-            else
-                {
+            } else {
                 $VDloginDISPLAY=1;
                 $VDdisplayMESSAGE = _QXZ("Campaign not active, please try again")."<br />";
-                }
             }
-        else
-            {
-            if ($WeBRooTWritablE > 0)
-                {
-                fwrite ($fp, "vdweb|FAIL|$date|$browser|\n");
+        } else {
+            if ($WeBRooTWritablE > 0) {
+                fwrite($fp, "vdweb|FAIL|$date|$browser|\n");
                 fclose($fp);
-                }
+            }
             $VDloginDISPLAY=1;
             $VDdisplayMESSAGE = _QXZ("Login incorrect, please try again")."<br />";
-            if ($auth_message == 'LOCK')
-                {$VDdisplayMESSAGE = _QXZ("Too many login attempts, try again in 15 minutes")."<br />";}
-            if ($auth_message == 'ERRNETWORK')
-                {$VDdisplayMESSAGE = _QXZ("Too many network errors, please contact your administrator")."<br />";}
-            if ($auth_message == 'ERRSERVERS')
-                {$VDdisplayMESSAGE = _QXZ("No available servers, please contact your administrator")."<br />";}
-            if ($auth_message == 'ERRPHONES')
-                {$VDdisplayMESSAGE = _QXZ("No available phones, please contact your administrator")."<br />";}
-            if ($auth_message == 'ERRDUPLICATE')
-                {$VDdisplayMESSAGE = _QXZ("You are already logged in, please log out of your other session first")."<br />";}
-            if ($auth_message == 'ERRAGENTS')
-                {$VDdisplayMESSAGE = _QXZ("Too many agents logged in, please contact your administrator")."<br />";}
-            if ($auth_message == 'ERRCAMPAGENTS')
-                {$VDdisplayMESSAGE = _QXZ("Too many agents logged in to this campaign, please contact your manager")."<br />";}
-            if ($auth_message == 'ERRCASE')
-                {$VDdisplayMESSAGE = _QXZ("Login incorrect, user names are case sensitive")."<br />";}
-            if ($auth_message == 'IPBLOCK')
-                {$VDdisplayMESSAGE = _QXZ("Your IP Address is not allowed").": $ip<br />";}
+            if ($auth_message == 'LOCK') {
+                $VDdisplayMESSAGE = _QXZ("Too many login attempts, try again in 15 minutes")."<br />";
+            }
+            if ($auth_message == 'ERRNETWORK') {
+                $VDdisplayMESSAGE = _QXZ("Too many network errors, please contact your administrator")."<br />";
+            }
+            if ($auth_message == 'ERRSERVERS') {
+                $VDdisplayMESSAGE = _QXZ("No available servers, please contact your administrator")."<br />";
+            }
+            if ($auth_message == 'ERRPHONES') {
+                $VDdisplayMESSAGE = _QXZ("No available phones, please contact your administrator")."<br />";
+            }
+            if ($auth_message == 'ERRDUPLICATE') {
+                $VDdisplayMESSAGE = _QXZ("You are already logged in, please log out of your other session first")."<br />";
+            }
+            if ($auth_message == 'ERRAGENTS') {
+                $VDdisplayMESSAGE = _QXZ("Too many agents logged in, please contact your administrator")."<br />";
+            }
+            if ($auth_message == 'ERRCAMPAGENTS') {
+                $VDdisplayMESSAGE = _QXZ("Too many agents logged in to this campaign, please contact your manager")."<br />";
+            }
+            if ($auth_message == 'ERRCASE') {
+                $VDdisplayMESSAGE = _QXZ("Login incorrect, user names are case sensitive")."<br />";
+            }
+            if ($auth_message == 'IPBLOCK') {
+                $VDdisplayMESSAGE = _QXZ("Your IP Address is not allowed").": $ip<br />";
             }
         }
-    if ($VDloginDISPLAY)
-        {
+    }
+    if ($VDloginDISPLAY) {
         echo "<title>"._QXZ("Agent web client: Campaign Login")."</title>\n";
         echo "</head>\n";
         echo "<body onresize=\"browser_dimensions();\"  onload=\"browser_dimensions();\">\n";
-        if ($hide_timeclock_link < 1)
-            {echo "<a href=\"./timeclock.php?referrer=agent&amp;pl=$phone_login&amp;pp=$phone_pass&amp;VD_login=$VD_login&amp;VD_pass=$VD_pass\"> <font class=\"sb_text\">"._QXZ("Timeclock")."</font></a>$grey_link<br />\n";}
+        if ($hide_timeclock_link < 1) {
+            echo "<a href=\"./timeclock.php?referrer=agent&amp;pl=$phone_login&amp;pp=$phone_pass&amp;VD_login=$VD_login&amp;VD_pass=$VD_pass\"> <font class=\"sb_text\">"._QXZ("Timeclock")."</font></a>$grey_link<br />\n";
+        }
         echo "<table width=\"100%\"><tr><td></td>\n";
         echo "<!-- INTERNATIONALIZATION-LINKS-PLACEHOLDER-VICIDIAL -->\n";
         echo "</tr></table>\n";
@@ -2632,10 +3030,11 @@ else
         echo "<td align=\"left\"><input type=\"password\" name=\"VD_pass\" size=\"20\" maxlength=\"100\" value=\"$VD_pass\" /></td></tr>\n";
         echo "<tr><td align=\"right\" valign=\"top\"><font class=\"skb_text\">"._QXZ("Campaign:")."</font>  </td>";
         echo "<td align=\"left\"><font class=\"skb_text\"><span id=\"LogiNCamPaigns\">$camp_form_code</span></font></td></tr>\n";
-        if ($login_submit_once > 0)
-            {echo "<tr><td align=\"center\" colspan=\"2\"><input type=\"submit\" id=\"login_sub\" name=\"login_sub\" value=\""._QXZ("SUBMIT")."\" onclick=\"login_click()\"> &nbsp; \n";}
-        else
-            {echo "<tr><td align=\"center\" colspan=\"2\"><input type=\"submit\" name=\"SUBMIT\" value=\""._QXZ("SUBMIT")."\" /> &nbsp; \n";}
+        if ($login_submit_once > 0) {
+            echo "<tr><td align=\"center\" colspan=\"2\"><input type=\"submit\" id=\"login_sub\" name=\"login_sub\" value=\""._QXZ("SUBMIT")."\" onclick=\"login_click()\"> &nbsp; \n";
+        } else {
+            echo "<tr><td align=\"center\" colspan=\"2\"><input type=\"submit\" name=\"SUBMIT\" value=\""._QXZ("SUBMIT")."\" /> &nbsp; \n";
+        }
         echo "<span id=\"LogiNReseT\"></span></td></tr>\n";
         echo "<tr><td align=\"left\" colspan=\"2\"><font class=\"body_tiny\"><br />"._QXZ("VERSION:")." $version &nbsp; &nbsp; &nbsp; "._QXZ("BUILD:")." $build</font></td></tr>\n";
         echo "</table>\n";
@@ -2647,66 +3046,72 @@ else
         echo "</body>\n\n";
         echo "</html>\n\n";
         exit;
-        }
+    }
     $original_phone_login = $phone_login;
-        $alias_found=0;
+    $alias_found=0;
     $stmt="select count(*) from phones_alias where alias_id = '$phone_login';";
     $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01018',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+    if ($mel > 0) {
+        mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01018', $VD_login, $server_ip, $session_name, $one_mysql_log);
+    }
     $alias_ct = mysqli_num_rows($rslt);
-    if ($alias_ct > 0)
-        {
+    if ($alias_ct > 0) {
         $row=mysqli_fetch_row($rslt);
         $alias_found = $row[0];
-        }
-    if ($alias_found > 0)
-        {
+    }
+    if ($alias_found > 0) {
         $stmt="select alias_name,logins_list from phones_alias where alias_id = '$phone_login' limit 1;";
         $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01019',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+        if ($mel > 0) {
+            mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01019', $VD_login, $server_ip, $session_name, $one_mysql_log);
+        }
         $alias_ct = mysqli_num_rows($rslt);
-        if ($alias_ct > 0)
-            {
+        if ($alias_ct > 0) {
             $row=mysqli_fetch_row($rslt);
             $alias_name = $row[0];
             $phone_login = $row[1];
-            }
         }
+    }
     $pa=0;
-    if ( (preg_match('/,/i',$phone_login)) and (strlen($phone_login) > 2) )
-        {
+    if ((preg_match('/,/i', $phone_login)) and (strlen($phone_login) > 2)) {
         $phoneSQL = "(";
-        $phones_auto = explode(',',$phone_login);
+        $phones_auto = explode(',', $phone_login);
         $phones_auto_ct = count($phones_auto);
-        while($pa < $phones_auto_ct)
-            {
-            if ($pa > 0)
-                {$phoneSQL .= " or ";}
+        while($pa < $phones_auto_ct) {
+            if ($pa > 0) {
+                $phoneSQL .= " or ";
+            }
             $desc = ($phones_auto_ct - $pa - 1); # traverse in reverse order
             $phoneSQL .= "(login='$phones_auto[$desc]' and pass='$phone_pass')";
             $pa++;
-            }
-        $phoneSQL .= ")";
         }
-    else {$phoneSQL = "login='$phone_login' and pass='$phone_pass'";}
+        $phoneSQL .= ")";
+    } else {
+        $phoneSQL = "login='$phone_login' and pass='$phone_pass'";
+    }
     $authphone=0;
     $active_agentSQL = "and active_agent_login_server='Y'";
-    if ($admin_test == 'YES')
-        {$active_agentSQL='';}
+    if ($admin_test == 'YES') {
+        $active_agentSQL='';
+    }
     $stmt="SELECT count(*) from phones,servers where $phoneSQL and phones.active = 'Y' and phones.server_ip=servers.server_ip $active_agentSQL;";
-    if ($DB) {echo "|$stmt|\n";}
+    if ($DB) {
+        echo "|$stmt|\n";
+    }
     echo "<!-- server query: $admin_test|$stmt| -->\n";
     $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01020',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+    if ($mel > 0) {
+        mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01020', $VD_login, $server_ip, $session_name, $one_mysql_log);
+    }
     $row=mysqli_fetch_row($rslt);
     $authphone=$row[0];
-    if (!$authphone)
-        {
+    if (!$authphone) {
         echo "<title>"._QXZ("Agent web client: Phone Login Error")."</title>\n";
         echo "</head>\n";
         echo "<body onresize=\"browser_dimensions();\"  onload=\"browser_dimensions();\">\n";
-        if ($hide_timeclock_link < 1)
-            {echo "<a href=\"./timeclock.php?referrer=agent&amp;pl=$phone_login&amp;pp=$phone_pass&amp;VD_login=$VD_login&amp;VD_pass=$VD_pass\"> <font class=\"sb_text\">"._QXZ("Timeclock")."</font></a>$grey_link<br />\n";}
+        if ($hide_timeclock_link < 1) {
+            echo "<a href=\"./timeclock.php?referrer=agent&amp;pl=$phone_login&amp;pp=$phone_pass&amp;VD_login=$VD_login&amp;VD_pass=$VD_pass\"> <font class=\"sb_text\">"._QXZ("Timeclock")."</font></a>$grey_link<br />\n";
+        }
         echo "<table width=\"100%\"><tr><td></td>\n";
         echo "<!-- INTERNATIONALIZATION-LINKS-PLACEHOLDER-VICIDIAL -->\n";
         echo "</tr></table>\n";
@@ -2732,10 +3137,11 @@ else
         echo "<td align=\"left\"><input type=\"text\" name=\"phone_login\" size=\"20\" maxlength=\"20\" value=\"$phone_login\"></td></tr>\n";
         echo "<tr><td align=\"right\"><font class=\"skb_text\">"._QXZ("Phone Password:")."</font>  </td>";
         echo "<td align=\"left\"><input type=\"password\" name=\"phone_pass\" size=20 maxlength=100 value=\"$phone_pass\"></td></tr>\n";
-        if ($login_submit_once > 0)
-            {echo "<tr><td align=\"center\" colspan=\"2\"><input type=\"submit\" id=\"login_sub\" name=\"login_sub\" value=\""._QXZ("SUBMIT")."\" onclick=\"login_click()\"> &nbsp; \n";}
-        else
-            {echo "<tr><td align=\"center\" colspan=\"2\"><input type=\"submit\" name=\"SUBMIT\" value=\""._QXZ("SUBMIT")."\" /></td></tr>\n";}
+        if ($login_submit_once > 0) {
+            echo "<tr><td align=\"center\" colspan=\"2\"><input type=\"submit\" id=\"login_sub\" name=\"login_sub\" value=\""._QXZ("SUBMIT")."\" onclick=\"login_click()\"> &nbsp; \n";
+        } else {
+            echo "<tr><td align=\"center\" colspan=\"2\"><input type=\"submit\" name=\"SUBMIT\" value=\""._QXZ("SUBMIT")."\" /></td></tr>\n";
+        }
         echo "<tr><td align=\"left\" colspan=\"2\"><font class=\"body_tiny\"><br />"._QXZ("VERSION:")." $version &nbsp; &nbsp; &nbsp; "._QXZ("BUILD:")." $build</font></td></tr>\n";
         echo "</table>\n";
         echo "</form>\n\n";
@@ -2746,11 +3152,8 @@ else
         echo "</body>\n\n";
         echo "</html>\n\n";
         exit;
-        }
-    else
-        {
-        if ($pa > 0)
-            {
+    } else {
+        if ($pa > 0) {
             $pb=0;
             $pb_login='';
             $pb_server_ip='';
@@ -2758,121 +3161,158 @@ else
             $pb_log='';
             $pb_valid_server_ips='';
             $pb_force_set=0;
-            while ( ($pb < $phones_auto_ct) and ($pb_force_set < 1) )
-                {
+            while (($pb < $phones_auto_ct) and ($pb_force_set < 1)) {
                 $stmtn="SELECT count(*) from phones where login = '$phones_auto[$pb]';";
-                if ($DB) {echo "|$stmtx|\n";}
-                if ($non_latin > 0) {$rslt=mysql_to_mysqli("SET NAMES 'UTF8'", $link);}
+                if ($DB) {
+                    echo "|$stmtx|\n";
+                }
+                if ($non_latin > 0) {
+                    $rslt=mysql_to_mysqli("SET NAMES 'UTF8'", $link);
+                }
                 $rslt=mysql_to_mysqli($stmtn, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01084',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+                if ($mel > 0) {
+                    mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01084', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                }
                 $rown=mysqli_fetch_row($rslt);
-                if ($rown[0] > 0)
-                    {
+                if ($rown[0] > 0) {
                     $stmtx="SELECT server_ip from phones where login = '$phones_auto[$pb]';";
-                    if ($DB) {echo "|$stmtx|\n";}
-                    $rslt=mysql_to_mysqli($stmtx, $link);
-                    if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01021',$VD_login,$server_ip,$session_name,$one_mysql_log);}
-                    $rowx=mysqli_fetch_row($rslt);
+                    if ($DB) {
+                        echo "|$stmtx|\n";
                     }
-                else
-                    {$rowx[0]='0.0.0.0';}
+                    $rslt=mysql_to_mysqli($stmtx, $link);
+                    if ($mel > 0) {
+                        mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01021', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                    }
+                    $rowx=mysqli_fetch_row($rslt);
+                } else {
+                    $rowx[0]='0.0.0.0';
+                }
                 $stmt="SELECT count(*) from vicidial_live_agents where server_ip = '$rowx[0]' and extension NOT LIKE \"R%\";";
-                if ($DB) {echo "|$stmt|\n";}
+                if ($DB) {
+                    echo "|$stmt|\n";
+                }
                 $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01022',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+                if ($mel > 0) {
+                    mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01022', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                }
                 $row=mysqli_fetch_row($rslt);
                 $stmt="SELECT count(*) from servers where server_ip = '$rowx[0]' and active='Y' $active_agentSQL;";
-                if ($DB) {echo "|$stmt|\n";}
+                if ($DB) {
+                    echo "|$stmt|\n";
+                }
                 $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01023',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+                if ($mel > 0) {
+                    mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01023', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                }
                 $rowy=mysqli_fetch_row($rslt);
                 $stmt="SELECT count(*) FROM vicidial_conferences where server_ip='$rowx[0]' and ((extension='') or (extension is null));";
-                if ($DB) {echo "|$stmt|\n";}
+                if ($DB) {
+                    echo "|$stmt|\n";
+                }
                 $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01085',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+                if ($mel > 0) {
+                    mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01085', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                }
                 $rowys=mysqli_fetch_row($rslt);
                 $twin_not_live=0;
-                if ($rowy[0] > 0)
-                    {
+                if ($rowy[0] > 0) {
                     $stmt="SELECT active_twin_server_ip from servers where server_ip = '$rowx[0]';";
-                    if ($DB) {echo "|$stmt|\n";}
+                    if ($DB) {
+                        echo "|$stmt|\n";
+                    }
                     $rslt=mysql_to_mysqli($stmt, $link);
-                    if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01070',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+                    if ($mel > 0) {
+                        mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01070', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                    }
                     $rowyy=mysqli_fetch_row($rslt);
-                    if (strlen($rowyy[0]) > 4)
-                        {
+                    if (strlen($rowyy[0]) > 4) {
                         $stmt="SELECT count(*) from server_updater where server_ip = '$rowyy[0]' and last_update > '$past_minutes_date';";
-                        if ($DB) {echo "|$stmt|\n";}
+                        if ($DB) {
+                            echo "|$stmt|\n";
+                        }
                         $rslt=mysql_to_mysqli($stmt, $link);
-                        if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01071',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+                        if ($mel > 0) {
+                            mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01071', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                        }
                         $rowyz=mysqli_fetch_row($rslt);
-                        if ($rowyz[0] < 1) {$twin_not_live=1;}
+                        if ($rowyz[0] < 1) {
+                            $twin_not_live=1;
                         }
                     }
+                }
                 $stmt="SELECT count(*) from server_updater where server_ip = '$rowx[0]' and last_update > '$past_minutes_date';";
-                if ($DB) {echo "|$stmt|\n";}
+                if ($DB) {
+                    echo "|$stmt|\n";
+                }
                 $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01024',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+                if ($mel > 0) {
+                    mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01024', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                }
                 $rowz=mysqli_fetch_row($rslt);
                 $pb_log .= "$phones_auto[$pb]|$rowx[0]|$row[0]|$rowy[0]|$rowys[0]|$rowz[0]|$twin_not_live|   ";
-                if ( ($rowy[0] > 0) and ($rowys[0] > 0) and ($rowz[0] > 0) and ($twin_not_live < 1) )
-                    {
-                    if ( ($pllb_grouping == 'ONE_SERVER_ONLY') or ($pllb_grouping == 'CASCADING') )
-                        {
-                        if ($pllb_grouping == 'ONE_SERVER_ONLY')
-                            {
+                if (($rowy[0] > 0) and ($rowys[0] > 0) and ($rowz[0] > 0) and ($twin_not_live < 1)) {
+                    if (($pllb_grouping == 'ONE_SERVER_ONLY') or ($pllb_grouping == 'CASCADING')) {
+                        if ($pllb_grouping == 'ONE_SERVER_ONLY') {
                             $stmt="SELECT count(*) from vicidial_live_agents where server_ip = '$rowx[0]' and campaign_id='$VD_campaign' and extension NOT LIKE \"R%\";";
-                            if ($DB) {echo "|$stmt|\n";}
+                            if ($DB) {
+                                echo "|$stmt|\n";
+                            }
                             $rslt=mysql_to_mysqli($stmt, $link);
-                            if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01074',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+                            if ($mel > 0) {
+                                mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01074', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                            }
                             $rowG=mysqli_fetch_row($rslt);
-                            if ($rowG[0] > 0)
-                                {
+                            if ($rowG[0] > 0) {
                                 $pb_count=$row[0];
                                 $pb_server_ip=$rowx[0];
                                 $phone_login=$phones_auto[$pb];
                                 $pb_force_set++;
                                 echo "<!--      PLLB: ONE_SERVER_ONLY|$pb_server_ip|$pb_count| -->\n";
-                                }
                             }
-                        else
-                            {
+                        } else {
                             $stmt="SELECT count(*) from vicidial_live_agents where server_ip = '$rowx[0]' and campaign_id='$VD_campaign' and extension NOT LIKE \"R%\";";
-                            if ($DB) {echo "|$stmt|\n";}
+                            if ($DB) {
+                                echo "|$stmt|\n";
+                            }
                             $rslt=mysql_to_mysqli($stmt, $link);
-                            if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01075',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+                            if ($mel > 0) {
+                                mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01075', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                            }
                             $rowG=mysqli_fetch_row($rslt);
                             echo "<!--      PLLB CASCADING CHECK: |$pllb_grouping|$rowx[0]|$rowG[0]|$pllb_grouping_limit|   |$row[0]|$SSpllb_grouping_limit| -->\n";
-                            if ( ($rowG[0] > 0) and ($rowG[0] < $pllb_grouping_limit) and ($row[0] < $SSpllb_grouping_limit) )
-                                {
+                            if (($rowG[0] > 0) and ($rowG[0] < $pllb_grouping_limit) and ($row[0] < $SSpllb_grouping_limit)) {
                                 $pb_count=$row[0];
                                 $pb_server_ip=$rowx[0];
                                 $phone_login=$phones_auto[$pb];
                                 $pb_force_set++;
                                 echo "<!--      PLLB: CASCADING|$pb_server_ip|$pb_count| -->\n";
-                                }
-                            }
-                        }
-                    if ($DB > 0) {echo "($pb_count <> $row[0]) $pb|$pb_force_set|$phones_auto[$pb]|$pb_server_ip|$pb_count| -->\n";}
-                    if ($pb_force_set < 1)
-                        {
-                        if ( ($pb_count >= $row[0]) or (strlen($pb_server_ip) < 4) )
-                            {
-                            $pb_count=$row[0];
-                            $pb_server_ip=$rowx[0];
-                            $phone_login=$phones_auto[$pb];
                             }
                         }
                     }
-                $pb++;
+                    if ($DB > 0) {
+                        echo "($pb_count <> $row[0]) $pb|$pb_force_set|$phones_auto[$pb]|$pb_server_ip|$pb_count| -->\n";
+                    }
+                    if ($pb_force_set < 1) {
+                        if (($pb_count >= $row[0]) or (strlen($pb_server_ip) < 4)) {
+                            $pb_count=$row[0];
+                            $pb_server_ip=$rowx[0];
+                            $phone_login=$phones_auto[$pb];
+                        }
+                    }
                 }
-            echo "<!-- Phones balance selection: $phone_login|$pb_server_ip|$past_minutes_date|$pb_force_set|     |$pb_log -->\n";
+                $pb++;
             }
+            echo "<!-- Phones balance selection: $phone_login|$pb_server_ip|$past_minutes_date|$pb_force_set|     |$pb_log -->\n";
+        }
         echo "<title>Agent web client</title>\n";
         $stmt="SELECT extension,dialplan_number,voicemail_id,phone_ip,computer_ip,server_ip,login,pass,status,active,phone_type,fullname,company,picture,messages,old_messages,protocol,local_gmt,ASTmgrUSERNAME,ASTmgrSECRET,login_user,login_pass,login_campaign,park_on_extension,conf_on_extension,VICIDIAL_park_on_extension,VICIDIAL_park_on_filename,monitor_prefix,recording_exten,voicemail_exten,voicemail_dump_exten,ext_context,dtmf_send_extension,call_out_number_group,client_browser,install_directory,local_web_callerID_URL,VICIDIAL_web_URL,AGI_call_logging_enabled,user_switching_enabled,conferencing_enabled,admin_hangup_enabled,admin_hijack_enabled,admin_monitor_enabled,call_parking_enabled,updater_check_enabled,AFLogging_enabled,QUEUE_ACTION_enabled,CallerID_popup_enabled,voicemail_button_enabled,enable_fast_refresh,fast_refresh_rate,enable_persistant_mysql,auto_dial_next_number,VDstop_rec_after_each_call,DBX_server,DBX_database,DBX_user,DBX_pass,DBX_port,DBY_server,DBY_database,DBY_user,DBY_pass,DBY_port,outbound_cid,enable_sipsak_messages,email,template_id,conf_override,phone_context,phone_ring_timeout,conf_secret,is_webphone,use_external_server_ip,codecs_list,webphone_dialpad,phone_ring_timeout,on_hook_agent,webphone_auto_answer,webphone_dialbox,webphone_mute,webphone_volume,webphone_debug,webphone_layout,webphone_settings from phones where login='$phone_login' and pass='$phone_pass' and active = 'Y';";
-        if ($DB) {echo "|$stmt|\n";}
+        if ($DB) {
+            echo "|$stmt|\n";
+        }
         $rslt=mysql_to_mysqli($stmt, $link);
-            if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01025',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+        if ($mel > 0) {
+            mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01025', $VD_login, $server_ip, $session_name, $one_mysql_log);
+        }
         $row=mysqli_fetch_row($rslt);
         $extension=$row[0];
         $dialplan_number=$row[1];
@@ -2950,272 +3390,327 @@ else
         $webphone_debug=$row[83];
         $webphone_layout=$row[84];
         $webphone_settings=$row[85];
-        if (strlen($webphone_layout_override)>0)
-            {$webphone_layout = $webphone_layout_override;}
+        if (strlen($webphone_layout_override)>0) {
+            $webphone_layout = $webphone_layout_override;
+        }
         $login_context = $ext_context;
-        if (strlen($meetme_enter_login_filename) > 0)
-            {$login_context = 'meetme-enter-login';}
-        if ( ($phone_login == 'nophone') or ($on_hook_agent == 'Y') )
-            {
+        if (strlen($meetme_enter_login_filename) > 0) {
+            $login_context = 'meetme-enter-login';
+        }
+        if (($phone_login == 'nophone') or ($on_hook_agent == 'Y')) {
             $no_empty_session_warnings=1;
-            }
-        if ($PhonESComPIP == '1')
-            {
-            if (strlen($computer_ip) < 4)
-                {
+        }
+        if ($PhonESComPIP == '1') {
+            if (strlen($computer_ip) < 4) {
                 $stmt="UPDATE phones SET computer_ip='$ip' where login='$phone_login' and pass='$phone_pass' and active = 'Y';";
-                if ($DB) {echo "|$stmt|\n";}
+                if ($DB) {
+                    echo "|$stmt|\n";
+                }
                 $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01026',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+                if ($mel > 0) {
+                    mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01026', $VD_login, $server_ip, $session_name, $one_mysql_log);
                 }
             }
-        if ($PhonESComPIP == '2')
-            {
+        }
+        if ($PhonESComPIP == '2') {
             $stmt="UPDATE phones SET computer_ip='$ip' where login='$phone_login' and pass='$phone_pass' and active = 'Y';";
-            if ($DB) {echo "|$stmt|\n";}
+            if ($DB) {
+                echo "|$stmt|\n";
+            }
             $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01027',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+            if ($mel > 0) {
+                mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01027', $VD_login, $server_ip, $session_name, $one_mysql_log);
             }
-        if ($clientDST)
-            {
+        }
+        if ($clientDST) {
             $local_gmt = ($local_gmt + $isdst);
-            }
+        }
         $stmt="SELECT asterisk_version,web_socket_url,external_web_socket_url from servers where server_ip='$server_ip';";
-        if ($DB) {echo "|$stmt|\n";}
+        if ($DB) {
+            echo "|$stmt|\n";
+        }
         $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01028',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+        if ($mel > 0) {
+            mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01028', $VD_login, $server_ip, $session_name, $one_mysql_log);
+        }
         $row=mysqli_fetch_row($rslt);
         $asterisk_version =            $row[0];
         $web_socket_url =            $row[1];
         $external_web_socket_url =    $row[2];
-        if ( ($use_external_server_ip=='Y') and (strlen($external_web_socket_url) > 5) )
-            {$web_socket_url = $external_web_socket_url;}
-        $major_version = explode('.',$asterisk_version);
-        if ($major_version[0] >= 13)
-            {
-            if ( ($volumecontrol_active > 0) and ($ast13_volume_override < 1) )
-                {
+        if (($use_external_server_ip=='Y') and (strlen($external_web_socket_url) > 5)) {
+            $web_socket_url = $external_web_socket_url;
+        }
+        $major_version = explode('.', $asterisk_version);
+        if ($major_version[0] >= 13) {
+            if (($volumecontrol_active > 0) and ($ast13_volume_override < 1)) {
                 echo "<!-- ASTERISK 13 VOLUME CONTROLS DISABLED:  |$asterisk_version($major_version[0])|$volumecontrol_active|$ast13_volume_override| -->\n";
                 $volumecontrol_active=0;
-                }
             }
-        if ($protocol == 'EXTERNAL')
-            {
+        }
+        if ($protocol == 'EXTERNAL') {
             $protocol = 'Local';
             $extension = "$dialplan_number$AT$ext_context";
-            }
-        if (preg_match("/Zap/i",$protocol))
-            {
-            if (preg_match("/^1\.0|^1\.2|^1\.4\.1|^1\.4\.20|^1\.4\.21/i",$asterisk_version))
-                {$do_nothing=1;}
-            else
-                {
+        }
+        if (preg_match("/Zap/i", $protocol)) {
+            if (preg_match("/^1\.0|^1\.2|^1\.4\.1|^1\.4\.20|^1\.4\.21/i", $asterisk_version)) {
+                $do_nothing=1;
+            } else {
                 $protocol = 'DAHDI';
-                }
             }
+        }
         $SIP_user = "$protocol/$extension";
         $SIP_user_DiaL = "$protocol/$extension";
         $qm_extension = "$extension";
-        if ( (preg_match('/8300/',$dialplan_number)) and (strlen($dialplan_number)<5) and ($protocol == 'Local') )
-            {
+        if ((preg_match('/8300/', $dialplan_number)) and (strlen($dialplan_number)<5) and ($protocol == 'Local')) {
             $SIP_user = "$protocol/$extension$VD_login";
             $qm_extension = "$extension$VD_login";
-            }
-        if ( (strlen($park_ext)>0) && (strlen($park_file_name)>0) )
-            {
+        }
+        if ((strlen($park_ext)>0) && (strlen($park_file_name)>0)) {
             $VICIDiaL_park_on_extension = "$park_ext";
             $VICIDiaL_park_on_filename = "$park_file_name";
             echo "<!-- CAMPAIGN CUSTOM PARKING:  |$VICIDiaL_park_on_extension|$VICIDiaL_park_on_filename| -->\n";
-            }
+        }
         echo "<!-- CAMPAIGN DEFAULT PARKING: |$VICIDiaL_park_on_extension|$VICIDiaL_park_on_filename| -->\n";
-        if (strlen($web_form_address)>0)
-            {
+        if (strlen($web_form_address)>0) {
             $VICIDiaL_web_form_address = "$web_form_address";
             echo "<!-- CAMPAIGN CUSTOM WEB FORM:   |$VICIDiaL_web_form_address| -->\n";
-            }
-        else
-            {
+        } else {
             $VICIDiaL_web_form_address = "$VICIDiaL_web_URL";
             print "<!-- CAMPAIGN DEFAULT WEB FORM:  |$VICIDiaL_web_form_address| -->\n";
             $VICIDiaL_web_form_address_enc = rawurlencode($VICIDiaL_web_form_address);
-            }
+        }
         $VICIDiaL_web_form_address_enc = rawurlencode($VICIDiaL_web_form_address);
-        if (strlen($web_form_address_two)>0)
-            {
+        if (strlen($web_form_address_two)>0) {
             $VICIDiaL_web_form_address_two = "$web_form_address_two";
             echo "<!-- CAMPAIGN CUSTOM WEB FORM 2:   |$VICIDiaL_web_form_address_two| -->\n";
-            }
-        else
-            {
+        } else {
             $VICIDiaL_web_form_address_two = "$VICIDiaL_web_form_address";
             echo "<!-- CAMPAIGN DEFAULT WEB FORM 2:  |$VICIDiaL_web_form_address_two| -->\n";
             $VICIDiaL_web_form_address_two_enc = rawurlencode($VICIDiaL_web_form_address_two);
-            }
+        }
         $VICIDiaL_web_form_address_two_enc = rawurlencode($VICIDiaL_web_form_address_two);
-        if (strlen($web_form_address_three)>0)
-            {
+        if (strlen($web_form_address_three)>0) {
             $VICIDiaL_web_form_address_three = "$web_form_address_three";
             echo "<!-- CAMPAIGN CUSTOM WEB FORM 3:   |$VICIDiaL_web_form_address_three| -->\n";
-            }
-        else
-            {
+        } else {
             $VICIDiaL_web_form_address_three = "$VICIDiaL_web_form_address";
             echo "<!-- CAMPAIGN DEFAULT WEB FORM 3:  |$VICIDiaL_web_form_address_three| -->\n";
             $VICIDiaL_web_form_address_three_enc = rawurlencode($VICIDiaL_web_form_address_three);
-            }
+        }
         $VICIDiaL_web_form_address_three_enc = rawurlencode($VICIDiaL_web_form_address_three);
-        if ($allow_closers=="Y")
-            {
+        if ($allow_closers=="Y") {
             $VICIDiaL_allow_closers = 1;
             echo "<!-- CAMPAIGN ALLOWS CLOSERS:    |$VICIDiaL_allow_closers| -->\n";
-            }
-        else
-            {
+        } else {
             $VICIDiaL_allow_closers = 0;
             echo "<!-- CAMPAIGN ALLOWS NO CLOSERS: |$VICIDiaL_allow_closers| -->\n";
-            }
+        }
         $session_ext = preg_replace("/[^a-z0-9]/i", "", $extension);
-        if (strlen($session_ext) > 10) {$session_ext = substr($session_ext, 0, 10);}
-        $session_rand = (rand(1,9999999) + 10000000);
+        if (strlen($session_ext) > 10) {
+            $session_ext = substr($session_ext, 0, 10);
+        }
+        $session_rand = (rand(1, 9999999) + 10000000);
         $session_name = "$StarTtimE$US$session_ext$session_rand";
-        if ($webform_sessionname)
-            {$webform_sessionname = "&session_name=$session_name";}
-        else
-            {$webform_sessionname = '';}
+        if ($webform_sessionname) {
+            $webform_sessionname = "&session_name=$session_name";
+        } else {
+            $webform_sessionname = '';
+        }
         $stmt="DELETE from web_client_sessions where start_time < '$past_month_date' and extension='$extension' and server_ip = '$server_ip' and program = 'vicidial';";
-        if ($DB) {echo "|$stmt|\n";}
+        if ($DB) {
+            echo "|$stmt|\n";
+        }
         $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01029',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+        if ($mel > 0) {
+            mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01029', $VD_login, $server_ip, $session_name, $one_mysql_log);
+        }
         $stmt="INSERT INTO web_client_sessions values('$extension','$server_ip','vicidial','$NOW_TIME','$session_name');";
-        if ($DB) {echo "|$stmt|\n";}
+        if ($DB) {
+            echo "|$stmt|\n";
+        }
         $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01030',$VD_login,$server_ip,$session_name,$one_mysql_log);}
-        if ( ( ($campaign_allow_inbound == 'Y') and ($dial_method != 'MANUAL') ) || ($campaign_leads_to_call > 0) || (preg_match('/Y/',$no_hopper_leads_logins)) )
-            {
+        if ($mel > 0) {
+            mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01030', $VD_login, $server_ip, $session_name, $one_mysql_log);
+        }
+        if ((($campaign_allow_inbound == 'Y') and ($dial_method != 'MANUAL')) || ($campaign_leads_to_call > 0) || (preg_match('/Y/', $no_hopper_leads_logins))) {
             $stmt="SELECT conf_exten FROM vicidial_conferences where extension='$SIP_user' and server_ip = '$server_ip' LIMIT 1;";
             $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01032',$VD_login,$server_ip,$session_name,$one_mysql_log);}
-            if ($DB) {echo "$stmt\n";}
+            if ($mel > 0) {
+                mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01032', $VD_login, $server_ip, $session_name, $one_mysql_log);
+            }
+            if ($DB) {
+                echo "$stmt\n";
+            }
             $prev_login_ct = mysqli_num_rows($rslt);
             $i=0;
-            while ($i < $prev_login_ct)
-                {
+            while ($i < $prev_login_ct) {
                 $row=mysqli_fetch_row($rslt);
                 $session_id =$row[0];
                 $i++;
-                }
-            if ($prev_login_ct > 0)
-                {echo "<!-- USING PREVIOUS MEETME ROOM - $session_id - $NOW_TIME - $SIP_user -->\n";}
-            else
-                {
+            }
+            if ($prev_login_ct > 0) {
+                echo "<!-- USING PREVIOUS MEETME ROOM - $session_id - $NOW_TIME - $SIP_user -->\n";
+            } else {
                 $stmt="SELECT count(*) FROM vicidial_conferences where server_ip='$server_ip' and ((extension='') or (extension is null));";
-                if ($DB) {echo "$stmt\n";}
+                if ($DB) {
+                    echo "$stmt\n";
+                }
                 $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01033',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+                if ($mel > 0) {
+                    mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01033', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                }
                 $row=mysqli_fetch_row($rslt);
-                if ($row[0] > 0)
-                    {
+                if ($row[0] > 0) {
                     $stmt="UPDATE vicidial_conferences set extension='$SIP_user', leave_3way='0' where server_ip='$server_ip' and ((extension='') or (extension is null)) limit 1;";
-                        if ($format=='debug') {echo "\n<!-- $stmt -->";}
+                    if ($format=='debug') {
+                        echo "\n<!-- $stmt -->";
+                    }
                     $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01034',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+                    if ($mel > 0) {
+                        mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01034', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                    }
                     $stmt="SELECT conf_exten from vicidial_conferences where server_ip='$server_ip' and ( (extension='$SIP_user') or (extension='$VD_login') );";
-                        if ($format=='debug') {echo "\n<!-- $stmt -->";}
+                    if ($format=='debug') {
+                        echo "\n<!-- $stmt -->";
+                    }
                     $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01035',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+                    if ($mel > 0) {
+                        mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01035', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                    }
                     $row=mysqli_fetch_row($rslt);
                     $session_id = $row[0];
-                    }
-                echo "<!-- USING NEW MEETME ROOM - $session_id - $NOW_TIME - $SIP_user -->\n";
                 }
+                echo "<!-- USING NEW MEETME ROOM - $session_id - $NOW_TIME - $SIP_user -->\n";
+            }
             $stmt="UPDATE vicidial_list set status='ERI', user='' where status IN('QUEUE','INCALL') and user ='$VD_login';";
-            if ($DB) {echo "$stmt\n";}
+            if ($DB) {
+                echo "$stmt\n";
+            }
             $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01036',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+            if ($mel > 0) {
+                mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01036', $VD_login, $server_ip, $session_name, $one_mysql_log);
+            }
             $vlERIaffected_rows = mysqli_affected_rows($link);
             echo "<!-- old QUEUE and INCALL reverted list:   |$vlERIaffected_rows| -->\n";
             $stmt="DELETE from vicidial_hopper where status IN('QUEUE','INCALL','DONE') and user ='$VD_login';";
-            if ($DB) {echo "$stmt\n";}
+            if ($DB) {
+                echo "$stmt\n";
+            }
             $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01037',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+            if ($mel > 0) {
+                mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01037', $VD_login, $server_ip, $session_name, $one_mysql_log);
+            }
             $vhICaffected_rows = mysqli_affected_rows($link);
             echo "<!-- old QUEUE and INCALL reverted hopper: |$vhICaffected_rows| -->\n";
             $stmt="DELETE from vicidial_live_agents where user ='$VD_login';";
-            if ($DB) {echo "$stmt\n";}
+            if ($DB) {
+                echo "$stmt\n";
+            }
             $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01038',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+            if ($mel > 0) {
+                mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01038', $VD_login, $server_ip, $session_name, $one_mysql_log);
+            }
             $vlaLIaffected_rows = mysqli_affected_rows($link);
             echo "<!-- old vicidial_live_agents records cleared: |$vlaLIaffected_rows| -->\n";
             $stmt="DELETE from vicidial_live_inbound_agents where user ='$VD_login';";
-            if ($DB) {echo "$stmt\n";}
+            if ($DB) {
+                echo "$stmt\n";
+            }
             $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01039',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+            if ($mel > 0) {
+                mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01039', $VD_login, $server_ip, $session_name, $one_mysql_log);
+            }
             $vliaLIaffected_rows = mysqli_affected_rows($link);
             echo "<!-- old vicidial_live_inbound_agents records cleared: |$vliaLIaffected_rows| -->\n";
             $stmt="UPDATE routing_initiated_recordings set processed='2' where user='$VD_login' and processed='0';";
-            if ($DB) {echo "$stmt\n";}
+            if ($DB) {
+                echo "$stmt\n";
+            }
             $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01086',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+            if ($mel > 0) {
+                mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01086', $VD_login, $server_ip, $session_name, $one_mysql_log);
+            }
             $RIRaffected_rows = mysqli_affected_rows($link);
             echo "<!-- routing_initiated_recordings invalidated:   |$RIRaffected_rows| -->\n";
             $VULhostname = php_uname('n');
             $VULservername = $_SERVER['SERVER_NAME'];
-            if (strlen($VULhostname)<1) {$VULhostname='X';}
-            if (strlen($VULservername)<1) {$VULservername='X';}
+            if (strlen($VULhostname)<1) {
+                $VULhostname='X';
+            }
+            if (strlen($VULservername)<1) {
+                $VULservername='X';
+            }
             $stmt="SELECT webserver_id FROM vicidial_webservers where webserver='$VULservername' and hostname='$VULhostname' LIMIT 1;";
             $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01080',$VD_login,$server_ip,$session_name,$one_mysql_log);}
-            if ($DB) {echo "$stmt\n";}
+            if ($mel > 0) {
+                mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01080', $VD_login, $server_ip, $session_name, $one_mysql_log);
+            }
+            if ($DB) {
+                echo "$stmt\n";
+            }
             $webserver_id_ct = mysqli_num_rows($rslt);
-            if ($webserver_id_ct > 0)
-                {
+            if ($webserver_id_ct > 0) {
                 $row=mysqli_fetch_row($rslt);
                 $webserver_id = $row[0];
-                }
-            else
-                {
+            } else {
                 $stmt="INSERT INTO vicidial_webservers (webserver,hostname) values('$VULservername','$VULhostname');";
-                if ($DB) {echo "$stmt\n";}
+                if ($DB) {
+                    echo "$stmt\n";
+                }
                 $rslt=mysql_to_mysqli($stmt, $link);
-                        if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01081',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+                if ($mel > 0) {
+                    mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01081', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                }
                 $affected_rows = mysqli_affected_rows($link);
                 $webserver_id = mysqli_insert_id($link);
                 echo "<!-- vicidial_webservers record inserted: |$affected_rows|$webserver_id| -->\n";
-                }
+            }
             $stmt="SELECT url_id FROM vicidial_urls where url='$agcPAGE' LIMIT 1;";
             $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01082',$VD_login,$server_ip,$session_name,$one_mysql_log);}
-            if ($DB) {echo "$stmt\n";}
+            if ($mel > 0) {
+                mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01082', $VD_login, $server_ip, $session_name, $one_mysql_log);
+            }
+            if ($DB) {
+                echo "$stmt\n";
+            }
             $url_id_ct = mysqli_num_rows($rslt);
-            if ($url_id_ct > 0)
-                {
+            if ($url_id_ct > 0) {
                 $row=mysqli_fetch_row($rslt);
                 $url_id = $row[0];
-                }
-            else
-                {
+            } else {
                 $stmt="INSERT INTO vicidial_urls (url) values('$agcPAGE');";
-                if ($DB) {echo "$stmt\n";}
+                if ($DB) {
+                    echo "$stmt\n";
+                }
                 $rslt=mysql_to_mysqli($stmt, $link);
-                        if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01083',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+                if ($mel > 0) {
+                    mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01083', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                }
                 $affected_rows = mysqli_affected_rows($link);
                 $url_id = mysqli_insert_id($link);
                 echo "<!-- vicidial_urls record inserted: |$affected_rows|$url_id| -->\n";
-                }
+            }
             $vul_data = "$vlERIaffected_rows|$vhICaffected_rows|$vlaLIaffected_rows|$vliaLIaffected_rows";
             $stmt = "INSERT INTO vicidial_user_log (user,event,campaign_id,event_date,event_epoch,user_group,session_id,server_ip,extension,computer_ip,browser,data,phone_login,server_phone,phone_ip,webserver,login_url,browser_width,browser_height) values('$VD_login','LOGIN','$VD_campaign','$NOW_TIME','$StarTtimE','$VU_user_group','$session_id','$server_ip','$protocol/$extension','$ip','$browser','$vul_data','$original_phone_login','$phone_login','LOOKUP','$webserver_id','$url_id','$JS_browser_width','$JS_browser_height');";
-            if ($DB) {echo "|$stmt|\n";}
+            if ($DB) {
+                echo "|$stmt|\n";
+            }
             $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01031',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+            if ($mel > 0) {
+                mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01031', $VD_login, $server_ip, $session_name, $one_mysql_log);
+            }
             $VICIDiaL_is_logged_in=1;
             $SIqueryCID = "S$CIDdate$session_id";
             $stmt = "SELECT enable_queuemetrics_logging,queuemetrics_server_ip,queuemetrics_dbname,queuemetrics_login,queuemetrics_pass,queuemetrics_log_id,vicidial_agent_disable,allow_sipsak_messages,queuemetrics_loginout,queuemetrics_addmember_enabled,queuemetrics_pe_phone_append,queuemetrics_pause_type FROM system_settings;";
             $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01040',$VD_login,$server_ip,$session_name,$one_mysql_log);}
-            if ($DB) {echo "$stmt\n";}
+            if ($mel > 0) {
+                mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01040', $VD_login, $server_ip, $session_name, $one_mysql_log);
+            }
+            if ($DB) {
+                echo "$stmt\n";
+            }
             $qm_conf_ct = mysqli_num_rows($rslt);
-            if ($qm_conf_ct > 0)
-                {
+            if ($qm_conf_ct > 0) {
                 $row=mysqli_fetch_row($rslt);
                 $enable_queuemetrics_logging =        $row[0];
                 $queuemetrics_server_ip    =            $row[1];
@@ -3229,142 +3724,182 @@ else
                 $queuemetrics_addmember_enabled =    $row[9];
                 $queuemetrics_pe_phone_append =        $row[10];
                 $queuemetrics_pause_type =            $row[11];
-                }
-            if ( ($enable_sipsak_messages > 0) and ($allow_sipsak_messages > 0) and (preg_match("/SIP/i",$protocol)) )
-                {
-                $extension = preg_replace("/\'|\"|\\\\|;/","",$extension);
-                $phone_ip = preg_replace("/\'|\"|\\\\|;/","",$phone_ip);
+            }
+            if (($enable_sipsak_messages > 0) and ($allow_sipsak_messages > 0) and (preg_match("/SIP/i", $protocol))) {
+                $extension = preg_replace("/\'|\"|\\\\|;/", "", $extension);
+                $phone_ip = preg_replace("/\'|\"|\\\\|;/", "", $phone_ip);
                 $SIPSAK_prefix = 'LIN-';
                 echo "<!-- sending login sipsak message: $SIPSAK_prefix$VD_campaign -->\n";
                 passthru("/usr/local/bin/sipsak -M -O desktop -B \"$SIPSAK_prefix$VD_campaign\" -r 5060 -s sip:$extension@$phone_ip > /dev/null");
                 $SIqueryCID = "$SIPSAK_prefix$VD_campaign$DS$CIDdate";
-                }
-            if ($SSlogin_kickall > 0)
-                {
+            }
+            if ($SSlogin_kickall > 0) {
                 $local_DEF = 'Local/5555';
                 $local_AMP = '@';
                 $kick_local_channel = "$local_DEF$session_id$local_AMP$ext_context";
                 $queryCID = "ULKA3459$StarTtime";
                 $login_kickall_stmt="INSERT INTO vicidial_manager values('','','$NOW_TIME','NEW','N','$server_ip','','Originate','$queryCID','Channel: $kick_local_channel','Context: $ext_context','Exten: 8300','Priority: 1','Callerid: $queryCID','','','','$VD_login','$phone_login');";
-                if ($DB) {echo "$login_kickall_stmt\n";}
+                if ($DB) {
+                    echo "$login_kickall_stmt\n";
+                }
                 $rslt=mysql_to_mysqli($login_kickall_stmt, $link);
-                    if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01102',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+                if ($mel > 0) {
+                    mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01102', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                }
                 $affected_rows = mysqli_affected_rows($link);
                 echo "<!-- kickall command issued: $session_id from phone: $phone_login -->\n";
                 sleep(2);
-                }
+            }
             $WebPhonEurl='';
             $webphone_content='';
             $TEMP_SIP_user_DiaL = $SIP_user_DiaL;
-            if ($on_hook_agent == 'Y')
-                {$TEMP_SIP_user_DiaL = 'Local/8300@default';}
+            if ($on_hook_agent == 'Y') {
+                $TEMP_SIP_user_DiaL = 'Local/8300@default';
+            }
             $agent_login_data="||$NOW_TIME|NEW|N|$server_ip||Originate|$SIqueryCID|Channel: $SIP_user_DiaL|Context: $login_context|Exten: $session_id|Priority: 1|Callerid: \"$SIqueryCID\" <$campaign_cid>|||||";
             $agent_login_stmt="INSERT INTO vicidial_manager values('','','$NOW_TIME','NEW','N','$server_ip','','Originate','$SIqueryCID','Channel: $TEMP_SIP_user_DiaL','Context: $login_context','Exten: $session_id','Priority: 1','Callerid: \"$SIqueryCID\" <$campaign_cid>','','','','','');";
             $stmt = "INSERT INTO vicidial_user_dial_log SET caller_code='$SIqueryCID',user='$VD_login',call_date='$NOW_TIME',call_type='APL',notes='$session_id $login_context $TEMP_SIP_user_DiaL';";
-            if ($DB) {echo "$stmt\n";}
+            if ($DB) {
+                echo "$stmt\n";
+            }
             $rslt=mysql_to_mysqli($stmt, $link);
-            if ( ($is_webphone != 'Y') and ($is_webphone != 'Y_API_LAUNCH') )
-                {
-                if ($DB) {echo "$agent_login_stmt\n";}
+            if (($is_webphone != 'Y') and ($is_webphone != 'Y_API_LAUNCH')) {
+                if ($DB) {
+                    echo "$agent_login_stmt\n";
+                }
                 $rslt=mysql_to_mysqli($agent_login_stmt, $link);
-                    if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01041',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+                if ($mel > 0) {
+                    mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01041', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                }
                 $affected_rows = mysqli_affected_rows($link);
                 echo "<!-- call placed to session_id: $session_id from phone: $SIP_user $SIP_user_DiaL -->\n";
-                }
-            else
-                {
-                $codecs_list = preg_replace("/ /",'',$codecs_list);
-                $codecs_list = preg_replace("/-/",'',$codecs_list);
-                $codecs_list = preg_replace("/&/",'',$codecs_list);
+            } else {
+                $codecs_list = preg_replace("/ /", '', $codecs_list);
+                $codecs_list = preg_replace("/-/", '', $codecs_list);
+                $codecs_list = preg_replace("/&/", '', $codecs_list);
                 $webphone_server_ip = $server_ip;
-                if ($use_external_server_ip=='Y')
-                    {
+                if ($use_external_server_ip=='Y') {
                     $stmt="SELECT external_server_ip FROM servers where server_ip='$server_ip' LIMIT 1;";
                     $rslt=mysql_to_mysqli($stmt, $link);
-                        if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01065',$VD_login,$server_ip,$session_name,$one_mysql_log);}
-                    if ($DB) {echo "$stmt\n";}
+                    if ($mel > 0) {
+                        mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01065', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                    }
+                    if ($DB) {
+                        echo "$stmt\n";
+                    }
                     $exip_ct = mysqli_num_rows($rslt);
-                    if ($exip_ct > 0)
-                        {
+                    if ($exip_ct > 0) {
                         $row=mysqli_fetch_row($rslt);
                         $webphone_server_ip =$row[0];
-                        }
                     }
-                if (strlen($webphone_url) < 6)
-                    {
+                }
+                if (strlen($webphone_url) < 6) {
                     $stmt="SELECT webphone_url FROM system_settings LIMIT 1;";
                     $rslt=mysql_to_mysqli($stmt, $link);
-                        if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01066',$VD_login,$server_ip,$session_name,$one_mysql_log);}
-                    if ($DB) {echo "$stmt\n";}
+                    if ($mel > 0) {
+                        mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01066', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                    }
+                    if ($DB) {
+                        echo "$stmt\n";
+                    }
                     $wu_ct = mysqli_num_rows($rslt);
-                    if ($wu_ct > 0)
-                        {
+                    if ($wu_ct > 0) {
                         $row=mysqli_fetch_row($rslt);
                         $webphone_url =$row[0];
-                        }
                     }
-                if (strlen($system_key) < 1)
-                    {
+                }
+                if (strlen($system_key) < 1) {
                     $stmt="SELECT webphone_systemkey FROM system_settings LIMIT 1;";
                     $rslt=mysql_to_mysqli($stmt, $link);
-                        if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01068',$VD_login,$server_ip,$session_name,$one_mysql_log);}
-                    if ($DB) {echo "$stmt\n";}
+                    if ($mel > 0) {
+                        mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01068', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                    }
+                    if ($DB) {
+                        echo "$stmt\n";
+                    }
                     $wsk_ct = mysqli_num_rows($rslt);
-                    if ($wsk_ct > 0)
-                        {
+                    if ($wsk_ct > 0) {
                         $row=mysqli_fetch_row($rslt);
                         $system_key =$row[0];
-                        }
                     }
+                }
                 $webphone_settings_scrubbed = '';
-                if (strlen($webphone_settings) > 0) 
-                    {
+                if (strlen($webphone_settings) > 0) {
                     $stmt="SELECT container_entry FROM vicidial_settings_containers WHERE container_id='$webphone_settings';";
                     $rslt=mysql_to_mysqli($stmt, $link);
-                    if (mysqli_num_rows($rslt) > 0)
-                        {
+                    if (mysqli_num_rows($rslt) > 0) {
                         $row=mysqli_fetch_row($rslt);
                         $webphone_settings_entry = $row[0];
-                        $webphone_settings_lines = preg_split('/\r\n|\r|\n/',$webphone_settings_entry);
-                        foreach( $webphone_settings_lines as $line )
-                            {
-                            if ( strpos($line, '#') === 0 ) 
-                                {
+                        $webphone_settings_lines = preg_split('/\r\n|\r|\n/', $webphone_settings_entry);
+                        foreach($webphone_settings_lines as $line) {
+                            if (strpos($line, '#') === 0) {
                                 $line = substr($line, 0, strpos($line, '#'));
-                                }
-                            $line = preg_replace('~"[^"]*"(*SKIP)(*F)|\s+~',"",$line);
-                            if ($line != '')
-                                {
+                            }
+                            $line = preg_replace('~"[^"]*"(*SKIP)(*F)|\s+~', "", $line);
+                            if ($line != '') {
                                 $webphone_settings_scrubbed = $webphone_settings_scrubbed . $line . '\n';
-                                if (preg_match("/dialRegExten/i",$line))
-                                    {
+                                if (preg_match("/dialRegExten/i", $line)) {
                                     $temp_line = $line;
-                                    $temp_line = preg_replace("/.*:/","",$temp_line);
-                                    $dialRegExten_enabled = preg_replace("/[^0-9]/","",$temp_line);
-                                    }
+                                    $temp_line = preg_replace("/.*:/", "", $temp_line);
+                                    $dialRegExten_enabled = preg_replace("/[^0-9]/", "", $temp_line);
                                 }
                             }
                         }
                     }
+                }
                 $webphone_options='INITIAL_LOAD';
-                if ($webphone_dialpad == 'Y') {$webphone_options .= "--DIALPAD_Y";}
-                if ($webphone_dialpad == 'N') {$webphone_options .= "--DIALPAD_N";}
-                if ($webphone_dialpad == 'TOGGLE') {$webphone_options .= "--DIALPAD_TOGGLE";}
-                if ($webphone_dialpad == 'TOGGLE_OFF') {$webphone_options .= "--DIALPAD_OFF_TOGGLE";}
-                if ($webphone_auto_answer == 'Y') {$webphone_options .= "--AUTOANSWER_Y";}
-                if ($webphone_auto_answer == 'N') {$webphone_options .= "--AUTOANSWER_N";}
-                if ($webphone_dialbox == 'Y') {$webphone_options .= "--DIALBOX_Y";}
-                if ($webphone_dialbox == 'N') {$webphone_options .= "--DIALBOX_N";}
-                if ($webphone_mute == 'Y') {$webphone_options .= "--MUTE_Y";}
-                if ($webphone_mute == 'N') {$webphone_options .= "--MUTE_N";}
-                if ($webphone_volume == 'Y') {$webphone_options .= "--VOLUME_Y";}
-                if ($webphone_volume == 'N') {$webphone_options .= "--VOLUME_N";}
-                if ($webphone_debug == 'Y') {$webphone_options .= "--DEBUG";}
-                if (strlen($web_socket_url) > 5) {$webphone_options .= "--WEBSOCKETURL$web_socket_url";}
-                if (strlen($webphone_layout) > 0) {$webphone_options .= "--WEBPHONELAYOUT$webphone_layout";}
-                if (strlen($session_id) > 0) { $webphone_options .= "--SESSION$session_id";}
-                if (strlen($webphone_settings_scrubbed) > 0) {$webphone_options .= "--SETTINGS$webphone_settings_scrubbed";}
-                $webphone_url = preg_replace("/LOCALFQDN/",$FQDN,$webphone_url);
+                if ($webphone_dialpad == 'Y') {
+                    $webphone_options .= "--DIALPAD_Y";
+                }
+                if ($webphone_dialpad == 'N') {
+                    $webphone_options .= "--DIALPAD_N";
+                }
+                if ($webphone_dialpad == 'TOGGLE') {
+                    $webphone_options .= "--DIALPAD_TOGGLE";
+                }
+                if ($webphone_dialpad == 'TOGGLE_OFF') {
+                    $webphone_options .= "--DIALPAD_OFF_TOGGLE";
+                }
+                if ($webphone_auto_answer == 'Y') {
+                    $webphone_options .= "--AUTOANSWER_Y";
+                }
+                if ($webphone_auto_answer == 'N') {
+                    $webphone_options .= "--AUTOANSWER_N";
+                }
+                if ($webphone_dialbox == 'Y') {
+                    $webphone_options .= "--DIALBOX_Y";
+                }
+                if ($webphone_dialbox == 'N') {
+                    $webphone_options .= "--DIALBOX_N";
+                }
+                if ($webphone_mute == 'Y') {
+                    $webphone_options .= "--MUTE_Y";
+                }
+                if ($webphone_mute == 'N') {
+                    $webphone_options .= "--MUTE_N";
+                }
+                if ($webphone_volume == 'Y') {
+                    $webphone_options .= "--VOLUME_Y";
+                }
+                if ($webphone_volume == 'N') {
+                    $webphone_options .= "--VOLUME_N";
+                }
+                if ($webphone_debug == 'Y') {
+                    $webphone_options .= "--DEBUG";
+                }
+                if (strlen($web_socket_url) > 5) {
+                    $webphone_options .= "--WEBSOCKETURL$web_socket_url";
+                }
+                if (strlen($webphone_layout) > 0) {
+                    $webphone_options .= "--WEBPHONELAYOUT$webphone_layout";
+                }
+                if (strlen($session_id) > 0) {
+                    $webphone_options .= "--SESSION$session_id";
+                }
+                if (strlen($webphone_settings_scrubbed) > 0) {
+                    $webphone_options .= "--SETTINGS$webphone_settings_scrubbed";
+                }
+                $webphone_url = preg_replace("/LOCALFQDN/", $FQDN, $webphone_url);
                 $b64_phone_login =        base64_encode($extension);
                 $b64_phone_pass =        base64_encode($conf_secret);
                 $b64_session_name =        base64_encode($session_name);
@@ -3375,188 +3910,221 @@ else
                 $b64_options =            base64_encode($webphone_options);
                 $b64_system_key =        base64_encode($system_key);
                 $WebPhonEurl = "$webphone_url?phone_login=$b64_phone_login&phone_login=$b64_phone_login&phone_pass=$b64_phone_pass&server_ip=$b64_server_ip&callerid=$b64_callerid&protocol=$b64_protocol&codecs=$b64_codecs&options=$b64_options&system_key=$b64_system_key";
-                if ($is_webphone == 'Y')
-                    {
-                    if ($webphone_location == 'bar')
-                        {
+                if ($is_webphone == 'Y') {
+                    if ($webphone_location == 'bar') {
                         $webphone_content = "<iframe src=\"$WebPhonEurl\" style=\"width:" . $webphone_width . "px;height:" . $webphone_height . "px;background-color:transparent;z-index:17;\" scrolling=\"no\" frameborder=\"0\" allowtransparency=\"true\" id=\"webphone\" name=\"webphone\" width=\"" . $webphone_width . "px\" height=\"" . $webphone_height . "px\" allow=\"microphone *; speakers *;\"> </iframe>";
-                        }
-                    else
-                        {
+                    } else {
                         $webphone_content = "<iframe src=\"$WebPhonEurl\" style=\"width:" . $webphone_width . "px;height:" . $webphone_height . "px;background-color:transparent;z-index:17;\" scrolling=\"auto\" frameborder=\"0\" allowtransparency=\"true\" id=\"webphone\" name=\"webphone\" width=\"" . $webphone_width . "px\" height=\"" . $webphone_height . "px\" allow=\"microphone *; speakers *;\"> </iframe>";
-                        }
                     }
                 }
+            }
             $stmt="DELETE from vicidial_session_data where user='$VD_login';";
-            if ($DB) {echo "|$stmt|\n";}
+            if ($DB) {
+                echo "|$stmt|\n";
+            }
             $rslt=mysql_to_mysqli($stmt, $link);
-                    if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01078',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+            if ($mel > 0) {
+                mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01078', $VD_login, $server_ip, $session_name, $one_mysql_log);
+            }
             $stmt="INSERT INTO vicidial_session_data SET session_name='$session_name',user='$VD_login',campaign_id='$VD_campaign',server_ip='$server_ip',conf_exten='$session_id',extension='$extension',login_time='$NOW_TIME',webphone_url='$WebPhonEurl',agent_login_call='$agent_login_data';";
-            if ($DB) {echo "|$stmt|\n";}
+            if ($DB) {
+                echo "|$stmt|\n";
+            }
             $rslt=mysql_to_mysqli($stmt, $link);
-                    if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01079',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+            if ($mel > 0) {
+                mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01079', $VD_login, $server_ip, $session_name, $one_mysql_log);
+            }
             $stmt="SELECT campaign_weight,calls_today,campaign_grade FROM vicidial_campaign_agents where user='$VD_login' and campaign_id = '$VD_campaign';";
             $rslt=mysql_to_mysqli($stmt, $link);
-            if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01042',$VD_login,$server_ip,$session_name,$one_mysql_log);}
-            if ($DB) {echo "$stmt\n";}
+            if ($mel > 0) {
+                mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01042', $VD_login, $server_ip, $session_name, $one_mysql_log);
+            }
+            if ($DB) {
+                echo "$stmt\n";
+            }
             $vca_ct = mysqli_num_rows($rslt);
-            if ($vca_ct > 0)
-                {
+            if ($vca_ct > 0) {
                 $row=mysqli_fetch_row($rslt);
                 $campaign_weight =    $row[0];
                 $calls_today =        $row[1];
                 $campaign_grade =    $row[2];
                 $i++;
-                }
-            else
-                {
+            } else {
                 $campaign_weight =    '0';
                 $calls_today =        '0';
                 $campaign_grade =    '1';
                 $stmt="INSERT INTO vicidial_campaign_agents (user,campaign_id,campaign_rank,campaign_weight,calls_today,campaign_grade) values('$VD_login','$VD_campaign','0','0','$calls_today','$campaign_grade');";
-                if ($DB) {echo "$stmt\n";}
+                if ($DB) {
+                    echo "$stmt\n";
+                }
                 $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01043',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+                if ($mel > 0) {
+                    mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01043', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                }
                 $affected_rows = mysqli_affected_rows($link);
                 echo "<!-- new vicidial_campaign_agents record inserted: |$affected_rows| -->\n";
-                }
-            if ($auto_dial_level > 0)
-                {
+            }
+            if ($auto_dial_level > 0) {
                 echo "<!-- campaign is set to auto_dial_level: $auto_dial_level -->\n";
                 $closer_chooser_string='';
                 $stmt="INSERT INTO vicidial_live_agents (user,server_ip,conf_exten,extension,status,lead_id,campaign_id,uniqueid,callerid,channel,random_id,last_call_time,last_update_time,last_call_finish,closer_campaigns,user_level,campaign_weight,calls_today,last_state_change,outbound_autodial,manager_ingroup_set,on_hook_ring_time,on_hook_agent,last_inbound_call_time,last_inbound_call_finish,campaign_grade,pause_code,last_inbound_call_time_filtered,last_inbound_call_finish_filtered) values('$VD_login','$server_ip','$session_id','$SIP_user','PAUSED','','$VD_campaign','','','','$random','$NOW_TIME','$tsNOW_TIME','$NOW_TIME','$closer_chooser_string','$user_level','$campaign_weight','$calls_today','$NOW_TIME','Y','N','$phone_ring_timeout','$on_hook_agent','$NOW_TIME','$NOW_TIME','$campaign_grade','LOGIN','$NOW_TIME','$NOW_TIME');";
-                if ($DB) {echo "$stmt\n";}
+                if ($DB) {
+                    echo "$stmt\n";
+                }
                 $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01044',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+                if ($mel > 0) {
+                    mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01044', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                }
                 $affected_rows = mysqli_affected_rows($link);
                 echo "<!-- new vicidial_live_agents record inserted: |$affected_rows| -->\n";
                 $stmt="INSERT IGNORE INTO vicidial_live_agents_details set latency='0',web_ip='$ip',update_date=NOW(),user='$VD_login';";
-                    if ($format=='debug') {echo "\n<!-- $stmt -->";}
+                if ($format=='debug') {
+                    echo "\n<!-- $stmt -->";
+                }
                 $rslt=mysql_to_mysqli($stmt, $link);
-                    if ($mel > 0) {$errno = mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'03103',$user,$server_ip,$session_name,$one_mysql_log);}
-                if ($enable_queuemetrics_logging > 0)
-                    {
+                if ($mel > 0) {
+                    $errno = mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '03103', $user, $server_ip, $session_name, $one_mysql_log);
+                }
+                if ($enable_queuemetrics_logging > 0) {
                     $QM_LOGIN = 'AGENTLOGIN';
                     $QM_PHONE = "$VD_login@agents";
-                    if ( ($queuemetrics_loginout=='CALLBACK') or ($queuemetrics_loginout=='NONE') )
-                        {
+                    if (($queuemetrics_loginout=='CALLBACK') or ($queuemetrics_loginout=='NONE')) {
                         $QM_LOGIN = 'AGENTCALLBACKLOGIN';
                         $QM_PHONE = "$SIP_user_DiaL";
+                    }
+                    if ((strlen($queuemetrics_server_ip)>0) and (strlen($queuemetrics_login)>0) and (strlen($queuemetrics_pass)>0) and (strlen($queuemetrics_dbname)>0)) {
+                        $linkB=mysqli_connect("$queuemetrics_server_ip", "$queuemetrics_login", "$queuemetrics_pass");
+                        if (!$linkB) {
+                            die(_QXZ("Could not connect to Queuemetrics: ")."$queuemetrics_server_ip|$queuemetrics_login" . mysqli_connect_error());
                         }
-                    if ( (strlen($queuemetrics_server_ip)>0) and (strlen($queuemetrics_login)>0) and (strlen($queuemetrics_pass)>0) and (strlen($queuemetrics_dbname)>0) )
-                         {
-                         $linkB=mysqli_connect("$queuemetrics_server_ip", "$queuemetrics_login", "$queuemetrics_pass");
-                         if (!$linkB) {die(_QXZ("Could not connect to Queuemetrics: ")."$queuemetrics_server_ip|$queuemetrics_login" . mysqli_connect_error());}
-                         }
-                    else
-                         {
-                         die(_QXZ("Invalid Queuemetrics DB Credentials").": $queuemetrics_server_ip|$queuemetrics_login|PASS|$queuemetrics_dbname");
-                         }
+                    } else {
+                        die(_QXZ("Invalid Queuemetrics DB Credentials").": $queuemetrics_server_ip|$queuemetrics_login|PASS|$queuemetrics_dbname");
+                    }
                     mysqli_select_db($linkB, "$queuemetrics_dbname");
-                    if ( ($queuemetrics_pe_phone_append > 0) and (strlen($qm_phone_environment)>0) )
-                        {$qm_phone_environment .= "-$qm_extension";}
-                    if ($queuemetrics_loginout!='NONE')
-                        {
+                    if (($queuemetrics_pe_phone_append > 0) and (strlen($qm_phone_environment)>0)) {
+                        $qm_phone_environment .= "-$qm_extension";
+                    }
+                    if ($queuemetrics_loginout!='NONE') {
                         $stmt = "INSERT INTO queue_log SET `partition`='P01',time_id='$StarTtimE',call_id='NONE',queue='NONE',agent='Agent/$VD_login',verb='$QM_LOGIN',data1='$QM_PHONE',serverid='$queuemetrics_log_id',data4='$qm_phone_environment';";
-                        if ($DB) {echo "$stmt\n";}
+                        if ($DB) {
+                            echo "$stmt\n";
+                        }
                         $rslt=mysql_to_mysqli($stmt, $linkB);
-                        if ($mel > 0) {mysql_error_logging($NOW_TIME,$linkB,$mel,$stmt,'01045',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+                        if ($mel > 0) {
+                            mysql_error_logging($NOW_TIME, $linkB, $mel, $stmt, '01045', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                        }
                         $affected_rows = mysqli_affected_rows($linkB);
                         echo "<!-- queue_log $QM_LOGIN entry added: $VD_login|$affected_rows|$QM_PHONE -->\n";
-                        }
+                    }
                     $pause_typeSQL='';
-                    if ($queuemetrics_pause_type > 0)
-                        {$pause_typeSQL=",data5='AGENT'";}
+                    if ($queuemetrics_pause_type > 0) {
+                        $pause_typeSQL=",data5='AGENT'";
+                    }
                     $stmt = "INSERT INTO queue_log SET `partition`='P01',time_id='$StarTtimE',call_id='NONE',queue='NONE',agent='Agent/$VD_login',verb='PAUSEALL',serverid='$queuemetrics_log_id',data4='$qm_phone_environment' $pause_typeSQL;";
-                    if ($DB) {echo "$stmt\n";}
+                    if ($DB) {
+                        echo "$stmt\n";
+                    }
                     $rslt=mysql_to_mysqli($stmt, $linkB);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$linkB,$mel,$stmt,'01046',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+                    if ($mel > 0) {
+                        mysql_error_logging($NOW_TIME, $linkB, $mel, $stmt, '01046', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                    }
                     $affected_rows = mysqli_affected_rows($linkB);
                     echo "<!-- queue_log PAUSE entry added: $VD_login|$affected_rows -->\n";
-                    if ($queuemetrics_addmember_enabled > 0)
-                        {
+                    if ($queuemetrics_addmember_enabled > 0) {
                         $stmt = "INSERT INTO queue_log SET `partition`='P01',time_id='$StarTtimE',call_id='NONE',queue='$VD_campaign',agent='Agent/$VD_login',verb='ADDMEMBER2',data1='$QM_PHONE',serverid='$queuemetrics_log_id',data4='$qm_phone_environment';";
-                        if ($DB) {echo "$stmt\n";}
+                        if ($DB) {
+                            echo "$stmt\n";
+                        }
                         $rslt=mysql_to_mysqli($stmt, $linkB);
-                    if ($mel > 0) {mysql_error_logging($NOW_TIME,$linkB,$mel,$stmt,'01069',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+                        if ($mel > 0) {
+                            mysql_error_logging($NOW_TIME, $linkB, $mel, $stmt, '01069', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                        }
                         $affected_rows = mysqli_affected_rows($linkB);
                         echo "<!-- queue_log ADDMEMBER2 entry added: $VD_login|$affected_rows -->\n";
-                        }
+                    }
                     mysqli_close($linkB);
                     mysqli_select_db($link, "$VARDB_database");
-                    }
-                if ( ($campaign_allow_inbound == 'Y') and ($dial_method != 'MANUAL') )
-                    {
-                    print "<!-- CLOSER-type campaign -->\n";
-                    }
                 }
-            else
-                {
+                if (($campaign_allow_inbound == 'Y') and ($dial_method != 'MANUAL')) {
+                    print "<!-- CLOSER-type campaign -->\n";
+                }
+            } else {
                 print "<!-- campaign is set to manual dial: $auto_dial_level -->\n";
                 $stmt="INSERT INTO vicidial_live_agents (user,server_ip,conf_exten,extension,status,lead_id,campaign_id,uniqueid,callerid,channel,random_id,last_call_time,last_update_time,last_call_finish,user_level,campaign_weight,calls_today,last_state_change,outbound_autodial,manager_ingroup_set,on_hook_ring_time,on_hook_agent,campaign_grade,last_inbound_call_time_filtered,last_inbound_call_finish_filtered) values('$VD_login','$server_ip','$session_id','$SIP_user','PAUSED','','$VD_campaign','','','','$random','$NOW_TIME','$tsNOW_TIME','$NOW_TIME','$user_level', '$campaign_weight', '$calls_today','$NOW_TIME','N','N','$phone_ring_timeout','$on_hook_agent','$campaign_grade','$NOW_TIME','$NOW_TIME');";
-                if ($DB) {echo "$stmt\n";}
+                if ($DB) {
+                    echo "$stmt\n";
+                }
                 $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01047',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+                if ($mel > 0) {
+                    mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01047', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                }
                 $affected_rows = mysqli_affected_rows($link);
                 echo "<!-- new vicidial_live_agents record inserted: |$affected_rows| -->\n";
-                if ($enable_queuemetrics_logging > 0)
-                    {
+                if ($enable_queuemetrics_logging > 0) {
                     $QM_LOGIN = 'AGENTLOGIN';
                     $QM_PHONE = "$VD_login@agents";
-                    if ( ($queuemetrics_loginout=='CALLBACK') or ($queuemetrics_loginout=='NONE') )
-                        {
+                    if (($queuemetrics_loginout=='CALLBACK') or ($queuemetrics_loginout=='NONE')) {
                         $QM_LOGIN = 'AGENTCALLBACKLOGIN';
                         $QM_PHONE = "$SIP_user_DiaL";
+                    }
+                    if ((strlen($queuemetrics_server_ip)>0) and (strlen($queuemetrics_login)>0) and (strlen($queuemetrics_pass)>0) and (strlen($queuemetrics_dbname)>0)) {
+                        $linkB=mysqli_connect("$queuemetrics_server_ip", "$queuemetrics_login", "$queuemetrics_pass");
+                        if (!$linkB) {
+                            die(_QXZ("Could not connect to Queuemetrics: ")."$queuemetrics_server_ip|$queuemetrics_login" . mysqli_connect_error());
                         }
-                    if ( (strlen($queuemetrics_server_ip)>0) and (strlen($queuemetrics_login)>0) and (strlen($queuemetrics_pass)>0) and (strlen($queuemetrics_dbname)>0) )
-                         {
-                         $linkB=mysqli_connect("$queuemetrics_server_ip", "$queuemetrics_login", "$queuemetrics_pass");
-                         if (!$linkB) {die(_QXZ("Could not connect to Queuemetrics: ")."$queuemetrics_server_ip|$queuemetrics_login" . mysqli_connect_error());}
-                         }
-                    else
-                         {
-                         die(_QXZ("Invalid Queuemetrics DB Credentials").": $queuemetrics_server_ip|$queuemetrics_login|PASS|$queuemetrics_dbname");
-                         }
+                    } else {
+                        die(_QXZ("Invalid Queuemetrics DB Credentials").": $queuemetrics_server_ip|$queuemetrics_login|PASS|$queuemetrics_dbname");
+                    }
                     mysqli_select_db($linkB, "$queuemetrics_dbname");
-                    if ($queuemetrics_loginout!='NONE')
-                        {
+                    if ($queuemetrics_loginout!='NONE') {
                         $stmt = "INSERT INTO queue_log SET `partition`='P01',time_id='$StarTtimE',call_id='NONE',queue='$VD_campaign',agent='Agent/$VD_login',verb='$QM_LOGIN',data1='$QM_PHONE',serverid='$queuemetrics_log_id',data4='$qm_phone_environment';";
-                        if ($DB) {echo "$stmt\n";}
+                        if ($DB) {
+                            echo "$stmt\n";
+                        }
                         $rslt=mysql_to_mysqli($stmt, $linkB);
-                        if ($mel > 0) {mysql_error_logging($NOW_TIME,$linkB,$mel,$stmt,'01048',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+                        if ($mel > 0) {
+                            mysql_error_logging($NOW_TIME, $linkB, $mel, $stmt, '01048', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                        }
                         $affected_rows = mysqli_affected_rows($linkB);
                         echo "<!-- queue_log $QM_LOGIN entry added: $VD_login|$affected_rows|$QM_PHONE -->\n";
-                        }
+                    }
                     $pause_typeSQL='';
-                    if ($queuemetrics_pause_type > 0)
-                        {$pause_typeSQL=",data5='AGENT'";}
+                    if ($queuemetrics_pause_type > 0) {
+                        $pause_typeSQL=",data5='AGENT'";
+                    }
                     $stmt = "INSERT INTO queue_log SET `partition`='P01',time_id='$StarTtimE',call_id='NONE',queue='NONE',agent='Agent/$VD_login',verb='PAUSEALL',serverid='$queuemetrics_log_id',data4='$qm_phone_environment' $pause_typeSQL;";
-                    if ($DB) {echo "$stmt\n";}
+                    if ($DB) {
+                        echo "$stmt\n";
+                    }
                     $rslt=mysql_to_mysqli($stmt, $linkB);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$linkB,$mel,$stmt,'01049',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+                    if ($mel > 0) {
+                        mysql_error_logging($NOW_TIME, $linkB, $mel, $stmt, '01049', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                    }
                     $affected_rows = mysqli_affected_rows($linkB);
                     echo "<!-- queue_log PAUSE entry added: $VD_login|$affected_rows -->\n";
-                    if ($queuemetrics_addmember_enabled > 0)
-                        {
+                    if ($queuemetrics_addmember_enabled > 0) {
                         $stmt = "INSERT INTO queue_log SET `partition`='P01',time_id='$StarTtimE',call_id='NONE',queue='$VD_campaign',agent='Agent/$VD_login',verb='ADDMEMBER2',data1='$QM_PHONE',serverid='$queuemetrics_log_id',data4='$qm_phone_environment';";
-                        if ($DB) {echo "$stmt\n";}
+                        if ($DB) {
+                            echo "$stmt\n";
+                        }
                         $rslt=mysql_to_mysqli($stmt, $linkB);
-                    if ($mel > 0) {mysql_error_logging($NOW_TIME,$linkB,$mel,$stmt,'01072',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+                        if ($mel > 0) {
+                            mysql_error_logging($NOW_TIME, $linkB, $mel, $stmt, '01072', $VD_login, $server_ip, $session_name, $one_mysql_log);
+                        }
                         $affected_rows = mysqli_affected_rows($linkB);
                         echo "<!-- queue_log ADDMEMBER2 entry added: $VD_login|$affected_rows -->\n";
-                        }
+                    }
                     mysqli_close($linkB);
                     mysqli_select_db($link, "$VARDB_database");
-                    }
                 }
             }
-        else
-            {
+        } else {
             echo "<title>"._QXZ("Agent web client: Campaign Login")."</title>\n";
             echo "</head>\n";
             echo "<body onresize=\"browser_dimensions();\" onload=\"browser_dimensions();\">\n";
-            if ($hide_timeclock_link < 1)
-                {echo "<a href=\"./timeclock.php?referrer=agent&amp;pl=$phone_login&amp;pp=$phone_pass&amp;VD_login=$VD_login&amp;VD_pass=$VD_pass\"> <font class=\"sb_text\">"._QXZ("Timeclock")."</font></a>$grey_link<br />\n";}
+            if ($hide_timeclock_link < 1) {
+                echo "<a href=\"./timeclock.php?referrer=agent&amp;pl=$phone_login&amp;pp=$phone_pass&amp;VD_login=$VD_login&amp;VD_pass=$VD_pass\"> <font class=\"sb_text\">"._QXZ("Timeclock")."</font></a>$grey_link<br />\n";
+            }
             echo "<table width=\"100%\"><tr><td></td>\n";
             echo "<!-- INTERNATIONALIZATION-LINKS-PLACEHOLDER-VICIDIAL -->\n";
             echo "</tr></table>\n";
@@ -3576,10 +4144,11 @@ else
             echo "<font class=\"skb_text\">"._QXZ("Login:")." <input type=\"text\" name=\"VD_login\" size=\"20\" maxlength=\"20\" value=\"$VD_login\" />\n<br />";
             echo "<font class=\"skb_text\">"._QXZ("Password:")." <input type=\"password\" name=\"VD_pass\" size=\"20\" maxlength=\"100\" value=\"$VD_pass\" /><br />\n";
             echo "<font class=\"skb_text\">"._QXZ("Campaign:")." <span id=\"LogiNCamPaigns\">$camp_form_code</span><br />\n";
-            if ($login_submit_once > 0)
-                {echo "<input type=\"submit\" id=\"login_sub\" name=\"login_sub\" value=\""._QXZ("SUBMIT")."\" onclick=\"login_click()\"> &nbsp; \n";}
-            else
-                {echo "<input type=\"submit\" name=\"SUBMIT\" value=\""._QXZ("SUBMIT")."\" /> &nbsp; \n";}
+            if ($login_submit_once > 0) {
+                echo "<input type=\"submit\" id=\"login_sub\" name=\"login_sub\" value=\""._QXZ("SUBMIT")."\" onclick=\"login_click()\"> &nbsp; \n";
+            } else {
+                echo "<input type=\"submit\" name=\"SUBMIT\" value=\""._QXZ("SUBMIT")."\" /> &nbsp; \n";
+            }
             echo "<span id=\"LogiNReseT\"></span>\n";
             echo "</table>\n";
             echo "</form>\n\n";
@@ -3590,14 +4159,14 @@ else
             echo "</body>\n\n";
             echo "</html>\n\n";
             exit;
-            }
-        if (strlen($session_id) < 1)
-            {
+        }
+        if (strlen($session_id) < 1) {
             echo "<title>"._QXZ("Agent web client: Campaign Login")."</title>\n";
             echo "</head>\n";
             echo "<body onresize=\"browser_dimensions();\" onload=\"browser_dimensions();\">\n";
-            if ($hide_timeclock_link < 1)
-                {echo "<a href=\"./timeclock.php?referrer=agent&amp;pl=$phone_login&amp;pp=$phone_pass&amp;VD_login=$VD_login&amp;VD_pass=$VD_pass\"> <font class=\"sb_text\">"._QXZ("Timeclock")."</font></a>$grey_link<br />\n";}
+            if ($hide_timeclock_link < 1) {
+                echo "<a href=\"./timeclock.php?referrer=agent&amp;pl=$phone_login&amp;pp=$phone_pass&amp;VD_login=$VD_login&amp;VD_pass=$VD_pass\"> <font class=\"sb_text\">"._QXZ("Timeclock")."</font></a>$grey_link<br />\n";
+            }
             echo "<table width=\"100%\"><tr><td></td>\n";
             echo "<!-- INTERNATIONALIZATION-LINKS-PLACEHOLDER-VICIDIAL -->\n";
             echo "</tr></table>\n";
@@ -3617,10 +4186,11 @@ else
             echo "<font class=\"skb_text\">"._QXZ("Login:")." <input type=\"text\" name=\"VD_login\" size=\"20\" maxlength=\"20\" value=\"$VD_login\" />\n<br />";
             echo "<font class=\"skb_text\">"._QXZ("Password:")." <input type=\"password\" name=\"VD_pass\" size=\"20\" maxlength=\"100\" value=\"$VD_pass\" /><br />\n";
             echo "<font class=\"skb_text\">"._QXZ("Campaign:")." <span id=\"LogiNCamPaigns\">$camp_form_code</span><br />\n";
-            if ($login_submit_once > 0)
-                {echo "<input type=\"submit\" id=\"login_sub\" name=\"login_sub\" value=\""._QXZ("SUBMIT")."\" onclick=\"login_click()\"> &nbsp; \n";}
-            else
-                {echo "<input type=\"submit\" name=\"SUBMIT\" value=\""._QXZ("SUBMIT")."\" /> &nbsp; \n";}
+            if ($login_submit_once > 0) {
+                echo "<input type=\"submit\" id=\"login_sub\" name=\"login_sub\" value=\""._QXZ("SUBMIT")."\" onclick=\"login_click()\"> &nbsp; \n";
+            } else {
+                echo "<input type=\"submit\" name=\"SUBMIT\" value=\""._QXZ("SUBMIT")."\" /> &nbsp; \n";
+            }
             echo "<span id=\"LogiNReseT\"></span>\n";
             echo "</table>\n";
             echo "</form>\n\n";
@@ -3631,86 +4201,121 @@ else
             echo "</body>\n\n";
             echo "</html>\n\n";
             exit;
-            }
-        if (preg_match('/MSIE/',$browser)) 
-            {
+        }
+        if (preg_match('/MSIE/', $browser)) {
             $useIE=1;
             echo "<!-- client web browser used: MSIE |$browser|$useIE| -->\n";
-            }
-        else 
-            {
+        } else {
             $useIE=0;
             echo "<!-- client web browser used: W3C-Compliant |$browser|$useIE| -->\n";
-            }
+        }
         $StarTtimE = date("U");
         $NOW_TIME = date("Y-m-d H:i:s");
         $stmt="INSERT INTO vicidial_agent_log (user,server_ip,event_time,campaign_id,pause_epoch,pause_sec,wait_epoch,user_group,sub_status,pause_type) values('$VD_login','$server_ip','$NOW_TIME','$VD_campaign','$StarTtimE','0','$StarTtimE','$VU_user_group','LOGIN','AGENT');";
-        if ($DB) {echo "$stmt\n";}
+        if ($DB) {
+            echo "$stmt\n";
+        }
         $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01050',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+        if ($mel > 0) {
+            mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01050', $VD_login, $server_ip, $session_name, $one_mysql_log);
+        }
         $affected_rows = mysqli_affected_rows($link);
         $agent_log_id = mysqli_insert_id($link);
         echo "<!-- vicidial_agent_log record inserted: |$affected_rows|$agent_log_id| -->\n";
         $stmt="UPDATE vicidial_campaigns set campaign_logindate='$NOW_TIME' where campaign_id='$VD_campaign';";
-        if ($DB) {echo "$stmt\n";}
+        if ($DB) {
+            echo "$stmt\n";
+        }
         $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01064',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+        if ($mel > 0) {
+            mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01064', $VD_login, $server_ip, $session_name, $one_mysql_log);
+        }
         $VCaffected_rows = mysqli_affected_rows($link);
         echo "<!-- vicidial_campaigns campaign_logindate updated: |$VCaffected_rows|$NOW_TIME| -->\n";
-        if ($enable_queuemetrics_logging > 0)
-            {
+        if ($enable_queuemetrics_logging > 0) {
             $StarTtimEpause = ($StarTtimE + 1);
-            if ( (strlen($queuemetrics_server_ip)>0) and (strlen($queuemetrics_login)>0) and (strlen($queuemetrics_pass)>0) and (strlen($queuemetrics_dbname)>0) )
-                 {
-                 $linkB=mysqli_connect("$queuemetrics_server_ip", "$queuemetrics_login", "$queuemetrics_pass");
-                 if (!$linkB) {die(_QXZ("Could not connect to Queuemetrics: ")."$queuemetrics_server_ip|$queuemetrics_login" . mysqli_connect_error());}
-                 }
-            else
-                 {
-                 die(_QXZ("Invalid Queuemetrics DB Credentials").": $queuemetrics_server_ip|$queuemetrics_login|PASS|$queuemetrics_dbname");
-                 }
+            if ((strlen($queuemetrics_server_ip)>0) and (strlen($queuemetrics_login)>0) and (strlen($queuemetrics_pass)>0) and (strlen($queuemetrics_dbname)>0)) {
+                $linkB=mysqli_connect("$queuemetrics_server_ip", "$queuemetrics_login", "$queuemetrics_pass");
+                if (!$linkB) {
+                    die(_QXZ("Could not connect to Queuemetrics: ")."$queuemetrics_server_ip|$queuemetrics_login" . mysqli_connect_error());
+                }
+            } else {
+                die(_QXZ("Invalid Queuemetrics DB Credentials").": $queuemetrics_server_ip|$queuemetrics_login|PASS|$queuemetrics_dbname");
+            }
             mysqli_select_db($linkB, "$queuemetrics_dbname");
             $pause_typeSQL='';
-            if ($queuemetrics_pause_type > 0)
-                {$pause_typeSQL=",data5='AGENT'";}
+            if ($queuemetrics_pause_type > 0) {
+                $pause_typeSQL=",data5='AGENT'";
+            }
             $stmt = "INSERT INTO queue_log SET `partition`='P01',time_id='$StarTtimEpause',call_id='NONE',queue='NONE',agent='Agent/$VD_login',verb='PAUSEREASON',data1='LOGIN',data3='$QM_PHONE',serverid='$queuemetrics_log_id'$pause_typeSQL;";
-            if ($DB) {echo "$stmt\n";}
+            if ($DB) {
+                echo "$stmt\n";
+            }
             $rslt=mysql_to_mysqli($stmt, $linkB);
-        if ($mel > 0) {mysql_error_logging($NOW_TIME,$linkB,$mel,$stmt,'01063',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+            if ($mel > 0) {
+                mysql_error_logging($NOW_TIME, $linkB, $mel, $stmt, '01063', $VD_login, $server_ip, $session_name, $one_mysql_log);
+            }
             $affected_rows = mysqli_affected_rows($linkB);
             echo "<!-- queue_log PAUSEREASON LOGIN entry added: $VD_login|$affected_rows|$QM_PHONE -->\n";
             mysqli_close($linkB);
             mysqli_select_db($link, "$VARDB_database");
-            }
+        }
         $stmt="UPDATE vicidial_live_agents SET agent_log_id='$agent_log_id' where user='$VD_login';";
-        if ($DB) {echo "$stmt\n";}
+        if ($DB) {
+            echo "$stmt\n";
+        }
         $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01061',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+        if ($mel > 0) {
+            mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01061', $VD_login, $server_ip, $session_name, $one_mysql_log);
+        }
         $VLAaffected_rows_update = mysqli_affected_rows($link);
         $stmt="UPDATE vicidial_users SET shift_override_flag='0' where user='$VD_login' and shift_override_flag='1';";
-        if ($DB) {echo "$stmt\n";}
+        if ($DB) {
+            echo "$stmt\n";
+        }
         $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01057',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+        if ($mel > 0) {
+            mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01057', $VD_login, $server_ip, $session_name, $one_mysql_log);
+        }
         $VUaffected_rows = mysqli_affected_rows($link);
         $S='*';
         $D_s_ip = explode('.', $server_ip);
-        if (strlen($D_s_ip[0])<2) {$D_s_ip[0] = "0$D_s_ip[0]";}
-        if (strlen($D_s_ip[0])<3) {$D_s_ip[0] = "0$D_s_ip[0]";}
-        if (strlen($D_s_ip[1])<2) {$D_s_ip[1] = "0$D_s_ip[1]";}
-        if (strlen($D_s_ip[1])<3) {$D_s_ip[1] = "0$D_s_ip[1]";}
-        if (strlen($D_s_ip[2])<2) {$D_s_ip[2] = "0$D_s_ip[2]";}
-        if (strlen($D_s_ip[2])<3) {$D_s_ip[2] = "0$D_s_ip[2]";}
-        if (strlen($D_s_ip[3])<2) {$D_s_ip[3] = "0$D_s_ip[3]";}
-        if (strlen($D_s_ip[3])<3) {$D_s_ip[3] = "0$D_s_ip[3]";}
+        if (strlen($D_s_ip[0])<2) {
+            $D_s_ip[0] = "0$D_s_ip[0]";
+        }
+        if (strlen($D_s_ip[0])<3) {
+            $D_s_ip[0] = "0$D_s_ip[0]";
+        }
+        if (strlen($D_s_ip[1])<2) {
+            $D_s_ip[1] = "0$D_s_ip[1]";
+        }
+        if (strlen($D_s_ip[1])<3) {
+            $D_s_ip[1] = "0$D_s_ip[1]";
+        }
+        if (strlen($D_s_ip[2])<2) {
+            $D_s_ip[2] = "0$D_s_ip[2]";
+        }
+        if (strlen($D_s_ip[2])<3) {
+            $D_s_ip[2] = "0$D_s_ip[2]";
+        }
+        if (strlen($D_s_ip[3])<2) {
+            $D_s_ip[3] = "0$D_s_ip[3]";
+        }
+        if (strlen($D_s_ip[3])<3) {
+            $D_s_ip[3] = "0$D_s_ip[3]";
+        }
         $server_ip_dialstring = "$D_s_ip[0]$S$D_s_ip[1]$S$D_s_ip[2]$S$D_s_ip[3]$S";
         $stmt="SELECT script_id,script_name,script_color FROM vicidial_scripts WHERE active='Y' order by script_id limit 1000;";
         $rslt=mysql_to_mysqli($stmt, $link);
-                if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01051',$VD_login,$server_ip,$session_name,$one_mysql_log);}
-        if ($DB) {echo "$stmt\n";}
+        if ($mel > 0) {
+            mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01051', $VD_login, $server_ip, $session_name, $one_mysql_log);
+        }
+        if ($DB) {
+            echo "$stmt\n";
+        }
         $MM_scripts = mysqli_num_rows($rslt);
         $e=0;
-        while ($e < $MM_scripts)
-            {
+        while ($e < $MM_scripts) {
             $row=mysqli_fetch_row($rslt);
             $MMscriptid[$e] =$row[0];
             $MMscriptname[$e] = urlencode($row[1]);
@@ -3719,10 +4324,10 @@ else
             $MMscriptnames = "$MMscriptnames'$MMscriptname[$e]',";
             $MMscriptcolors = "$MMscriptcolors'$MMscriptcolor[$e]',";
             $e++;
-            }
-        $MMscriptids = substr("$MMscriptids", 0, -1); 
-        $MMscriptnames = substr("$MMscriptnames", 0, -1); 
-        $MMscriptcolors = substr("$MMscriptcolors", 0, -1); 
+        }
+        $MMscriptids = substr("$MMscriptids", 0, -1);
+        $MMscriptnames = substr("$MMscriptnames", 0, -1);
+        $MMscriptcolors = substr("$MMscriptcolors", 0, -1);
         $MAXvendor_lead_code =        '20';
         $MAXphone_code =            '10';
         $MAXphone_number =            '18';
@@ -3742,85 +4347,109 @@ else
         $MAXsecurity_phrase =        '100';
         $stmt = "SHOW COLUMNS FROM vicidial_list;";
         $rslt=mysql_to_mysqli($stmt, $link);
-            if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01087',$VD_login,$server_ip,$session_name,$one_mysql_log);}
-        if ($DB) {echo "$stmt\n";}
+        if ($mel > 0) {
+            mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01087', $VD_login, $server_ip, $session_name, $one_mysql_log);
+        }
+        if ($DB) {
+            echo "$stmt\n";
+        }
         $scvl_ct = mysqli_num_rows($rslt);
         $s=0;
-        while ($scvl_ct > $s)
-            {
+        while ($scvl_ct > $s) {
             $row=mysqli_fetch_row($rslt);
             $vl_field =    $row[0];
-            $vl_type = preg_replace("/[^0-9]/",'',$row[1]);
-            if (strlen($vl_type) > 0)
-                {
-                if ( ($vl_field == 'vendor_lead_code') and ($MAXvendor_lead_code != $vl_type) )
-                    {$MAXvendor_lead_code = $vl_type;}
-                if ( ($vl_field == 'phone_code') and ($MAXphone_code != $vl_type) )
-                    {$MAXphone_code = $vl_type;}
-                if ( ($vl_field == 'phone_number') and ($MAXphone_number != $vl_type) )
-                    {$MAXphone_number = $vl_type;}
-                if ( ($vl_field == 'title') and ($MAXtitle != $vl_type) )
-                    {$MAXtitle = $vl_type;}
-                if ( ($vl_field == 'first_name') and ($MAXfirst_name != $vl_type) )
-                    {$MAXfirst_name = $vl_type;}
-                if ( ($vl_field == 'middle_initial') and ($MAXmiddle_initial != $vl_type) )
-                    {$MAXmiddle_initial = $vl_type;}
-                if ( ($vl_field == 'last_name') and ($MAXlast_name != $vl_type) )
-                    {$MAXlast_name = $vl_type;}
-                if ( ($vl_field == 'address1') and ($MAXaddress1 != $vl_type) )
-                    {$MAXaddress1 = $vl_type;}
-                if ( ($vl_field == 'address2') and ($MAXaddress2 != $vl_type) )
-                    {$MAXaddress2 = $vl_type;}
-                if ( ($vl_field == 'address3') and ($MAXaddress3 != $vl_type) )
-                    {$MAXaddress3 = $vl_type;}
-                if ( ($vl_field == 'city') and ($MAXcity != $vl_type) )
-                    {$MAXcity = $vl_type;}
-                if ( ($vl_field == 'state') and ($MAXstate != $vl_type) )
-                    {$MAXstate = $vl_type;}
-                if ( ($vl_field == 'province') and ($MAXprovince != $vl_type) )
-                    {$MAXprovince = $vl_type;}
-                if ( ($vl_field == 'postal_code') and ($MAXpostal_code != $vl_type) )
-                    {$MAXpostal_code = $vl_type;}
-                if ( ($vl_field == 'alt_phone') and ($MAXalt_phone != $vl_type) )
-                    {$MAXalt_phone = $vl_type;}
-                if ( ($vl_field == 'email') and ($MAXemail != $vl_type) )
-                    {$MAXemail = $vl_type;}
-                if ( ($vl_field == 'security_phrase') and ($MAXsecurity_phrase != $vl_type) )
-                    {$MAXsecurity_phrase = $vl_type;}
+            $vl_type = preg_replace("/[^0-9]/", '', $row[1]);
+            if (strlen($vl_type) > 0) {
+                if (($vl_field == 'vendor_lead_code') and ($MAXvendor_lead_code != $vl_type)) {
+                    $MAXvendor_lead_code = $vl_type;
                 }
-            $s++;
+                if (($vl_field == 'phone_code') and ($MAXphone_code != $vl_type)) {
+                    $MAXphone_code = $vl_type;
+                }
+                if (($vl_field == 'phone_number') and ($MAXphone_number != $vl_type)) {
+                    $MAXphone_number = $vl_type;
+                }
+                if (($vl_field == 'title') and ($MAXtitle != $vl_type)) {
+                    $MAXtitle = $vl_type;
+                }
+                if (($vl_field == 'first_name') and ($MAXfirst_name != $vl_type)) {
+                    $MAXfirst_name = $vl_type;
+                }
+                if (($vl_field == 'middle_initial') and ($MAXmiddle_initial != $vl_type)) {
+                    $MAXmiddle_initial = $vl_type;
+                }
+                if (($vl_field == 'last_name') and ($MAXlast_name != $vl_type)) {
+                    $MAXlast_name = $vl_type;
+                }
+                if (($vl_field == 'address1') and ($MAXaddress1 != $vl_type)) {
+                    $MAXaddress1 = $vl_type;
+                }
+                if (($vl_field == 'address2') and ($MAXaddress2 != $vl_type)) {
+                    $MAXaddress2 = $vl_type;
+                }
+                if (($vl_field == 'address3') and ($MAXaddress3 != $vl_type)) {
+                    $MAXaddress3 = $vl_type;
+                }
+                if (($vl_field == 'city') and ($MAXcity != $vl_type)) {
+                    $MAXcity = $vl_type;
+                }
+                if (($vl_field == 'state') and ($MAXstate != $vl_type)) {
+                    $MAXstate = $vl_type;
+                }
+                if (($vl_field == 'province') and ($MAXprovince != $vl_type)) {
+                    $MAXprovince = $vl_type;
+                }
+                if (($vl_field == 'postal_code') and ($MAXpostal_code != $vl_type)) {
+                    $MAXpostal_code = $vl_type;
+                }
+                if (($vl_field == 'alt_phone') and ($MAXalt_phone != $vl_type)) {
+                    $MAXalt_phone = $vl_type;
+                }
+                if (($vl_field == 'email') and ($MAXemail != $vl_type)) {
+                    $MAXemail = $vl_type;
+                }
+                if (($vl_field == 'security_phrase') and ($MAXsecurity_phrase != $vl_type)) {
+                    $MAXsecurity_phrase = $vl_type;
+                }
             }
+            $s++;
         }
     }
-if ($stretch_dimensions > 0)
-    {
-    if ($agent_status_view < 1)
-        {
-        if ($JS_browser_width >= 510)
-            {$BROWSER_WIDTH = ($JS_browser_width - 80);}
+}
+if ($stretch_dimensions > 0) {
+    if ($agent_status_view < 1) {
+        if ($JS_browser_width >= 510) {
+            $BROWSER_WIDTH = ($JS_browser_width - 80);
         }
-    else
-        {
-        if ($JS_browser_width >= 730)
-            {$BROWSER_WIDTH = ($JS_browser_width - 300);}
+    } else {
+        if ($JS_browser_width >= 730) {
+            $BROWSER_WIDTH = ($JS_browser_width - 300);
         }
-    if ($JS_browser_height >= 340)
-        {$BROWSER_HEIGHT = ($JS_browser_height - 40);}
     }
-if ($agent_fullscreen=='Y')
-    {
+    if ($JS_browser_height >= 340) {
+        $BROWSER_HEIGHT = ($JS_browser_height - 40);
+    }
+}
+if ($agent_fullscreen=='Y') {
     $BROWSER_WIDTH = ($JS_browser_width - 10);
     $BROWSER_HEIGHT = $JS_browser_height;
-    }
+}
 $MASTERwidth=($BROWSER_WIDTH - 340);
 $MASTERheight=($BROWSER_HEIGHT - 200);
-if ($MASTERwidth < 430) {$MASTERwidth = '430';} 
-if ($MASTERheight < 300) {$MASTERheight = '300';} 
-if ($per_call_notes == 'ENABLED')
-    {
-    if ($MASTERheight < 340) {$MASTERheight = '340';} 
+if ($MASTERwidth < 430) {
+    $MASTERwidth = '430';
+}
+if ($MASTERheight < 300) {
+    $MASTERheight = '300';
+}
+if ($per_call_notes == 'ENABLED') {
+    if ($MASTERheight < 340) {
+        $MASTERheight = '340';
     }
-if ($webphone_location == 'bar') {$MASTERwidth = ($MASTERwidth + $webphone_height);}
+}
+if ($webphone_location == 'bar') {
+    $MASTERwidth = ($MASTERwidth + $webphone_height);
+}
 $CAwidth =  ($MASTERwidth + 340);    # 770 - cover all (none-in-session, customer hunngup, etc...)
 $SBwidth =    ($MASTERwidth + 331);    # 761 - SideBar starting point
 $MNwidth =  ($MASTERwidth + 330);    # 760 - main frame
@@ -3858,40 +4487,36 @@ $SCheight =     49;    # 49 - seconds on call display
 $SFheight =     65;    # 65 - height of the script and form contents
 $SRheight =     69;    # 69 - height of the script and form refrech links
 $CHheight =  ($JS_browser_height - 50);
-if ($webphone_location == 'bar') 
-    {
+if ($webphone_location == 'bar') {
     $SCheight = ($SCheight + $webphone_height);
     $SRheight = ($SRheight + $webphone_height);
-    }
+}
 $AVTheight = '0';
-if ($is_webphone) {$AVTheight = '20';}
-if ($script_tab_frame_size == 'LEFT_EDGE') 
-    {
+if ($is_webphone) {
+    $AVTheight = '20';
+}
+if ($script_tab_frame_size == 'LEFT_EDGE') {
     $SPwidth = ($SPwidth + 154);
     $SEwidth = ($SEwidth + 154);
-    }
+}
 $start_recording_GIF = 'vdc_LB_startrecording.gif';
 $start_recording_GIF_off = 'vdc_LB_startrecording_OFF.gif';
 $stop_recording_GIF = 'vdc_LB_stoprecording.gif';
 $stop_recording_GIF_off = 'vdc_LB_stoprecording_OFF.gif';
-if (preg_match("/RECORDING/",$SSrecording_buttons))
-    {
-    if (preg_match("/2xHEIGHT/",$SSrecording_buttons))
-        {
+if (preg_match("/RECORDING/", $SSrecording_buttons)) {
+    if (preg_match("/2xHEIGHT/", $SSrecording_buttons)) {
         $start_recording_GIF = 'vdc_LB_startrecording_altx2.gif';
         $start_recording_GIF_off = 'vdc_LB_startrecording_altx2_OFF.gif';
         $stop_recording_GIF = 'vdc_LB_stoprecording_altx2.gif';
         $stop_recording_GIF_off = 'vdc_LB_stoprecording_altx2_OFF.gif';
-        }
-    else
-        {
+    } else {
         $start_recording_GIF = 'vdc_LB_startrecording_alt.gif';
         $start_recording_GIF_off = 'vdc_LB_startrecording_alt_OFF.gif';
         $stop_recording_GIF = 'vdc_LB_stoprecording_alt.gif';
         $stop_recording_GIF_off = 'vdc_LB_stoprecording_alt_OFF.gif';
-        }
     }
-define ('ADAY', (60*60*24));
+}
+define('ADAY', (60*60*24));
 $CdayARY = getdate();
 $Cmon = $CdayARY['mon'];
 $Cyear = $CdayARY['year'];
@@ -3900,63 +4525,69 @@ $CTODAYmday = date("j");
 $CINC=0;
 $live_days=0;
 $limit_days=999;
-if ($callback_days_limit > 0)
-    {$limit_days=$callback_days_limit;}
+if ($callback_days_limit > 0) {
+    $limit_days=$callback_days_limit;
+}
 $cb_display_days=999;
-if ($callback_display_days > 0)
-    {$cb_display_days=$callback_display_days;}
+if ($callback_display_days > 0) {
+    $cb_display_days=$callback_display_days;
+}
 $ct_holidays='';
 $ct_holiday_dates='|';
 $ct_holiday_dateARY=array();
 $ct_holiday_nameARY=array();
 $stmt = "SELECT ct_holidays FROM vicidial_call_times where call_time_id='$local_call_time';";
 $rslt=mysql_to_mysqli($stmt, $link);
-    if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01097',$VD_login,$server_ip,$session_name,$one_mysql_log);}
-if ($DB) {echo "$stmt\n";}
+if ($mel > 0) {
+    mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01097', $VD_login, $server_ip, $session_name, $one_mysql_log);
+}
+if ($DB) {
+    echo "$stmt\n";
+}
 $ct_conf_ct = mysqli_num_rows($rslt);
-if ($ct_conf_ct > 0)
-    {
+if ($ct_conf_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $ct_holidays =        $row[0];
-    $ct_holidays = preg_replace("/^\||\|$/","','",$ct_holidays);
-    $ct_holidays = preg_replace("/\|/","','",$ct_holidays);
+    $ct_holidays = preg_replace("/^\||\|$/", "','", $ct_holidays);
+    $ct_holidays = preg_replace("/\|/", "','", $ct_holidays);
     $ct_holidays = "'$ct_holidays'";
-    }
-if (strlen($ct_holidays) > 2)
-    {
+}
+if (strlen($ct_holidays) > 2) {
     $stmt = "SELECT holiday_date,holiday_name FROM vicidial_call_time_holidays where holiday_id IN($ct_holidays) and holiday_status='ACTIVE';";
     $rslt=mysql_to_mysqli($stmt, $link);
-        if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01098',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+    if ($mel > 0) {
+        mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01098', $VD_login, $server_ip, $session_name, $one_mysql_log);
+    }
     $hd_conf_ct = mysqli_num_rows($rslt);
-    if ($DB) {echo "$hd_conf_ct|$stmt\n";}
+    if ($DB) {
+        echo "$hd_conf_ct|$stmt\n";
+    }
     $hd_ct=0;
-    while ($hd_conf_ct > $hd_ct)
-        {
+    while ($hd_conf_ct > $hd_ct) {
         $row=mysqli_fetch_row($rslt);
         $ct_holiday_dates .= "$row[0]|";
         $ct_holiday_dateARY[$hd_ct]=$row[0];
         $ct_holiday_nameARY[$hd_ct]=$row[1];
         $hd_ct++;
-        }
-    echo "<!-- ACTIVE HOLIDAYS: $ct_holiday_dates -->\n";
     }
-$Cmonths = Array('0',_QXZ('January'),_QXZ('February'),_QXZ('March'),_QXZ('April'),_QXZ('May'),_QXZ('June'),_QXZ('July'),_QXZ('August'),_QXZ('September'),_QXZ('October'),_QXZ('November'),_QXZ('December'));
-$Cdays = Array(_QXZ('Sun'),_QXZ('Mon'),_QXZ('Tue'),_QXZ('Wed'),_QXZ('Thu'),_QXZ('Fri'),_QXZ('Sat'));
+    echo "<!-- ACTIVE HOLIDAYS: $ct_holiday_dates -->\n";
+}
+$Cmonths = array('0',_QXZ('January'),_QXZ('February'),_QXZ('March'),_QXZ('April'),_QXZ('May'),_QXZ('June'),_QXZ('July'),_QXZ('August'),_QXZ('September'),_QXZ('October'),_QXZ('November'),_QXZ('December'));
+$Cdays = array(_QXZ('Sun'),_QXZ('Mon'),_QXZ('Tue'),_QXZ('Wed'),_QXZ('Thu'),_QXZ('Fri'),_QXZ('Sat'));
 $CCAL_OUT = '';
 $CCAL_OUT .= "<table border=\"0\" cellpadding=\"2\" cellspacing=\"2\">";
-while ($CINC < 12)
-    {
-    if ( ($CINC == 0) || ($CINC == 4) ||($CINC == 8) )
-        {$CCAL_OUT .= "<tr>";}
+while ($CINC < 12) {
+    if (($CINC == 0) || ($CINC == 4) ||($CINC == 8)) {
+        $CCAL_OUT .= "<tr>";
+    }
     $CCAL_OUT .= "<td valign=\"top\">";
     $CYyear = $Cyear;
     $Cmonth=    ($Cmon + $CINC);
-    if ($Cmonth > 12)
-        {
+    if ($Cmonth > 12) {
         $Cmonth = ($Cmonth - 12);
         $CYyear++;
-        }
-    $Cstart= mktime(11,0,0,$Cmonth,1,$CYyear);
+    }
+    $Cstart= mktime(11, 0, 0, $Cmonth, 1, $CYyear);
     $CfirstdayARY = getdate($Cstart);
     $CPRNTDAY = date("Y-m", $Cstart);
     $hDAYcheck = date("Y-m-d", $Cstart);
@@ -3972,42 +4603,39 @@ while ($CINC < 12)
     $CCAL_OUT .= "</font></b></font></div>";
     $CCAL_OUT .= "</td>";
     $CCAL_OUT .= "</tr>";
-    foreach($Cdays as $Cday)
-        {
+    foreach($Cdays as $Cday) {
         $CDCLR="#ffffff";
         $CCAL_OUT .= "<td bordercolor=\"$CDCLR\" $holiday_bg>";
         $CCAL_OUT .= "<div align=\"center\"><font color=\"#000066\"><b><font face=\"Arial, Helvetica, sans-serif\" size=\"1\">";
         $CCAL_OUT .= _QXZ("$Cday", 3);
         $CCAL_OUT .= "</font></b></font></div>";
         $CCAL_OUT .= "</td>";
-        }
-    for( $Ccount=0;$Ccount<(6*7);$Ccount++)
-        {
+    }
+    for($Ccount=0;$Ccount<(6*7);$Ccount++) {
         $Cdayarray = getdate($Cstart);
-        if((($Ccount) % 7) == 0)
-            {
-            if($Cdayarray['mon'] != $CfirstdayARY['mon'])
+        if((($Ccount) % 7) == 0) {
+            if($Cdayarray['mon'] != $CfirstdayARY['mon']) {
                 break;
+            }
             $CCAL_OUT .= "</tr><tr>";
-            }
-        if($Ccount < $CfirstdayARY['wday'] || $Cdayarray['mon'] != $Cmonth)
-            {
+        }
+        if($Ccount < $CfirstdayARY['wday'] || $Cdayarray['mon'] != $Cmonth) {
             $CCAL_OUT .= "<td bordercolor=\"$future_color\" $holiday_bg><font color=\"#000066\"><b><font face=\"Arial, Helvetica, sans-serif\" size=\"1\">&nbsp;</font></b></font></td>";
-            }
-        else
-            {
-            if( ($Cdayarray['mday'] == $CTODAYmday) and ($CPRNTDAY == $CTODAY) )
-                {
+        } else {
+            if(($Cdayarray['mday'] == $CTODAYmday) and ($CPRNTDAY == $CTODAY)) {
                 $CPRNTmday = $Cdayarray['mday'];
-                if ($CPRNTmday < 10) {$CPRNTmday = "0$CPRNTmday";}
-                if ($limit_days > $live_days)
-                    {
+                if ($CPRNTmday < 10) {
+                    $CPRNTmday = "0$CPRNTmday";
+                }
+                if ($limit_days > $live_days) {
                     $CB_date_onclick="onclick=\"CB_date_pick('$CPRNTDAY-$CPRNTmday');return false;\"";
                     $CBL = "<a href=\"#\" $CB_date_onclick>";
                     $CEL = "</a>";
-                    }
-                else
-                    {$CBL='';   $CEL=''; $CB_date_onclick='';}
+                } else {
+                    $CBL='';
+                    $CEL='';
+                    $CB_date_onclick='';
+                }
                 $CCAL_OUT .= "<td bgcolor=\"#FFCCCC\" bordercolor=\"#FFCCCC\" $CB_date_onclick>";
                 $CCAL_OUT .= "<div align=\"center\"><font face=\"Arial, Helvetica, sans-serif\" size=\"1\">";
                 $CCAL_OUT .= "$CBL$Cdayarray[mday]$CEL";
@@ -4015,143 +4643,273 @@ while ($CINC < 12)
                 $CCAL_OUT .= "</td>";
                 $Cstart += ADAY;
                 $live_days++;
-                }
-            else
-                {
+            } else {
                 $holiday_hover='';
                 $CDCLR="#ffffff";
-                if ( ($Cdayarray['mday'] < $CTODAYmday) and ($CPRNTDAY == $CTODAY) )
-                    {
+                if (($Cdayarray['mday'] < $CTODAYmday) and ($CPRNTDAY == $CTODAY)) {
                     $CDCLR="$MAIN_COLOR";
                     $CBL = '';
                     $CEL = '';
                     $CB_date_onclick='';
-                    }
-                else
-                    {
+                } else {
                     $CPRNTmday = $Cdayarray['mday'];
-                    if ($CPRNTmday < 10) {$CPRNTmday = "0$CPRNTmday";}
-                    if (preg_match("/\|$CPRNTDAY-$CPRNTmday\|/",$ct_holiday_dates)) 
-                        {
+                    if ($CPRNTmday < 10) {
+                        $CPRNTmday = "0$CPRNTmday";
+                    }
+                    if (preg_match("/\|$CPRNTDAY-$CPRNTmday\|/", $ct_holiday_dates)) {
                         $hd_loop=0;
-                        while ($hd_loop < $hd_ct)
-                            {
-                            if ($ct_holiday_dateARY[$hd_loop] == "$CPRNTDAY-$CPRNTmday")
-                                {
+                        while ($hd_loop < $hd_ct) {
+                            if ($ct_holiday_dateARY[$hd_loop] == "$CPRNTDAY-$CPRNTmday") {
                                 $holiday_hover="onMouseOver=\"holiday_display('$ct_holiday_nameARY[$hd_loop]');\"; onMouseOut=\"hideDiv('HolidayDisplayDiv');\"";
-                                }
+                            }
                             $CDCLR="#FFCC66";
                             $hd_loop++;
-                            }
                         }
-                    if ($limit_days > $live_days)
-                        {
+                    }
+                    if ($limit_days > $live_days) {
                         $CB_date_onclick="onclick=\"CB_date_pick('$CPRNTDAY-$CPRNTmday');return false;\"";
                         $CBL = "<a href=\"#\" $CB_date_onclick>";
                         $CEL = "</a>";
-                        }
-                    else
-                        {$CBL='';   $CEL=''; $CB_date_onclick='';}
-                    $live_days++;
+                    } else {
+                        $CBL='';
+                        $CEL='';
+                        $CB_date_onclick='';
                     }
+                    $live_days++;
+                }
                 $CCAL_OUT .= "<td bgcolor=\"$CDCLR\" bordercolor=\"$future_color\" $CB_date_onclick $holiday_hover>";
                 $CCAL_OUT .= "<div align=\"center\"><font face=\"Arial, Helvetica, sans-serif\" size=1>";
                 $CCAL_OUT .= "$CBL$Cdayarray[mday]$CEL";
                 $CCAL_OUT .= "</font></div>";
                 $CCAL_OUT .= "</td>";
                 $Cstart += ADAY;
-                }
             }
         }
+    }
     $CCAL_OUT .= "</tr>";
     $CCAL_OUT .= "</table>";
     $CCAL_OUT .= "</td>";
-    if ( ($CINC == 3) || ($CINC == 7) ||($CINC == 11) )
-        {$CCAL_OUT .= "</tr>";}
-    $CINC++;
+    if (($CINC == 3) || ($CINC == 7) ||($CINC == 11)) {
+        $CCAL_OUT .= "</tr>";
     }
+    $CINC++;
+}
 $CCAL_OUT .= "</table>";
 $calls_waiting_vl_oneLABEL='';
 $calls_waiting_vl_twoLABEL='';
-if ( ($calls_waiting_vl_one != 'DISABLED') and (strlen($calls_waiting_vl_one) > 2) )
-    {
+if (($calls_waiting_vl_one != 'DISABLED') and (strlen($calls_waiting_vl_one) > 2)) {
     $calls_waiting_vl_oneLABEL = $calls_waiting_vl_one;
-    if ($calls_waiting_vl_one == 'title') {$calls_waiting_vl_oneLABEL = $label_title;}
-    if ($calls_waiting_vl_one == 'first_name') {$calls_waiting_vl_oneLABEL = $label_first_name;}
-    if ($calls_waiting_vl_one == 'middle_initial') {$calls_waiting_vl_oneLABEL = $label_middle_initial;}
-    if ($calls_waiting_vl_one == 'last_name') {$calls_waiting_vl_oneLABEL = $label_last_name;}
-    if ($calls_waiting_vl_one == 'address1') {$calls_waiting_vl_oneLABEL = $label_address1;}
-    if ($calls_waiting_vl_one == 'address2') {$calls_waiting_vl_oneLABEL = $label_address2;}
-    if ($calls_waiting_vl_one == 'address3') {$calls_waiting_vl_oneLABEL = $label_address3;}
-    if ($calls_waiting_vl_one == 'city') {$calls_waiting_vl_oneLABEL = $label_city;}
-    if ($calls_waiting_vl_one == 'state') {$calls_waiting_vl_oneLABEL = $label_state;}
-    if ($calls_waiting_vl_one == 'province') {$calls_waiting_vl_oneLABEL = $label_province;}
-    if ($calls_waiting_vl_one == 'postal_code') {$calls_waiting_vl_oneLABEL = $label_postal_code;}
-    if ($calls_waiting_vl_one == 'vendor_lead_code') {$calls_waiting_vl_oneLABEL = $label_vendor_lead_code;}
-    if ($calls_waiting_vl_one == 'gender') {$calls_waiting_vl_oneLABEL = $label_gender;}
-    if ($calls_waiting_vl_one == 'phone_number') {$calls_waiting_vl_oneLABEL = $label_phone_number;}
-    if ($calls_waiting_vl_one == 'phone_code') {$calls_waiting_vl_oneLABEL = $label_phone_code;}
-    if ($calls_waiting_vl_one == 'alt_phone') {$calls_waiting_vl_oneLABEL = $label_alt_phone;}
-    if ($calls_waiting_vl_one == 'security_phrase') {$calls_waiting_vl_oneLABEL = $label_security_phrase;}
-    if ($calls_waiting_vl_one == 'email') {$calls_waiting_vl_oneLABEL = $label_email;}
-    if ($calls_waiting_vl_one == 'comments') {$calls_waiting_vl_oneLABEL = $label_comments;}
-    if ($calls_waiting_vl_one == 'entry_date') {$calls_waiting_vl_oneLABEL = $label_entry_date;}
-    if ($calls_waiting_vl_one == 'source_id') {$calls_waiting_vl_oneLABEL = $label_source_id;}
-    if ($calls_waiting_vl_one == 'date_of_birth') {$calls_waiting_vl_oneLABEL = $label_date_of_birth;}
-    if ($calls_waiting_vl_one == 'rank') {$calls_waiting_vl_oneLABEL = $label_rank;}
-    if ($calls_waiting_vl_one == 'owner') {$calls_waiting_vl_oneLABEL = $label_owner;}
-    if ($calls_waiting_vl_one == 'last_local_call_time') {$calls_waiting_vl_oneLABEL = $label_last_local_call_time;}
-    if ($calls_waiting_vl_one == 'entry_list_id') {$calls_waiting_vl_oneLABEL = $label_entry_list_id;}
-    if ($calls_waiting_vl_one == 'list_id') {$calls_waiting_vl_oneLABEL = $label_list_id;}
-    if ($calls_waiting_vl_one == 'lead_id') {$calls_waiting_vl_oneLABEL = $label_lead_id;}
-    if ($calls_waiting_vl_one == 'gmt_offset_now') {$calls_waiting_vl_oneLABEL = $label_gmt_offset_now;}
-    if ($calls_waiting_vl_one == 'called_count') {$calls_waiting_vl_oneLABEL = $label_called_count;}
-    if ($calls_waiting_vl_one == 'status') {$calls_waiting_vl_oneLABEL = $label_status;}
-    if ($calls_waiting_vl_one == 'user') {$calls_waiting_vl_oneLABEL = $label_user;}
-    if ($calls_waiting_vl_one == 'called_since_last_reset') {$calls_waiting_vl_oneLABEL = $label_called_since_last_reset;}
-    if ($calls_waiting_vl_one == 'country_code') {$calls_waiting_vl_oneLABEL = $label_country_code;}
+    if ($calls_waiting_vl_one == 'title') {
+        $calls_waiting_vl_oneLABEL = $label_title;
+    }
+    if ($calls_waiting_vl_one == 'first_name') {
+        $calls_waiting_vl_oneLABEL = $label_first_name;
+    }
+    if ($calls_waiting_vl_one == 'middle_initial') {
+        $calls_waiting_vl_oneLABEL = $label_middle_initial;
+    }
+    if ($calls_waiting_vl_one == 'last_name') {
+        $calls_waiting_vl_oneLABEL = $label_last_name;
+    }
+    if ($calls_waiting_vl_one == 'address1') {
+        $calls_waiting_vl_oneLABEL = $label_address1;
+    }
+    if ($calls_waiting_vl_one == 'address2') {
+        $calls_waiting_vl_oneLABEL = $label_address2;
+    }
+    if ($calls_waiting_vl_one == 'address3') {
+        $calls_waiting_vl_oneLABEL = $label_address3;
+    }
+    if ($calls_waiting_vl_one == 'city') {
+        $calls_waiting_vl_oneLABEL = $label_city;
+    }
+    if ($calls_waiting_vl_one == 'state') {
+        $calls_waiting_vl_oneLABEL = $label_state;
+    }
+    if ($calls_waiting_vl_one == 'province') {
+        $calls_waiting_vl_oneLABEL = $label_province;
+    }
+    if ($calls_waiting_vl_one == 'postal_code') {
+        $calls_waiting_vl_oneLABEL = $label_postal_code;
+    }
+    if ($calls_waiting_vl_one == 'vendor_lead_code') {
+        $calls_waiting_vl_oneLABEL = $label_vendor_lead_code;
+    }
+    if ($calls_waiting_vl_one == 'gender') {
+        $calls_waiting_vl_oneLABEL = $label_gender;
+    }
+    if ($calls_waiting_vl_one == 'phone_number') {
+        $calls_waiting_vl_oneLABEL = $label_phone_number;
+    }
+    if ($calls_waiting_vl_one == 'phone_code') {
+        $calls_waiting_vl_oneLABEL = $label_phone_code;
+    }
+    if ($calls_waiting_vl_one == 'alt_phone') {
+        $calls_waiting_vl_oneLABEL = $label_alt_phone;
+    }
+    if ($calls_waiting_vl_one == 'security_phrase') {
+        $calls_waiting_vl_oneLABEL = $label_security_phrase;
+    }
+    if ($calls_waiting_vl_one == 'email') {
+        $calls_waiting_vl_oneLABEL = $label_email;
+    }
+    if ($calls_waiting_vl_one == 'comments') {
+        $calls_waiting_vl_oneLABEL = $label_comments;
+    }
+    if ($calls_waiting_vl_one == 'entry_date') {
+        $calls_waiting_vl_oneLABEL = $label_entry_date;
+    }
+    if ($calls_waiting_vl_one == 'source_id') {
+        $calls_waiting_vl_oneLABEL = $label_source_id;
+    }
+    if ($calls_waiting_vl_one == 'date_of_birth') {
+        $calls_waiting_vl_oneLABEL = $label_date_of_birth;
+    }
+    if ($calls_waiting_vl_one == 'rank') {
+        $calls_waiting_vl_oneLABEL = $label_rank;
+    }
+    if ($calls_waiting_vl_one == 'owner') {
+        $calls_waiting_vl_oneLABEL = $label_owner;
+    }
+    if ($calls_waiting_vl_one == 'last_local_call_time') {
+        $calls_waiting_vl_oneLABEL = $label_last_local_call_time;
+    }
+    if ($calls_waiting_vl_one == 'entry_list_id') {
+        $calls_waiting_vl_oneLABEL = $label_entry_list_id;
+    }
+    if ($calls_waiting_vl_one == 'list_id') {
+        $calls_waiting_vl_oneLABEL = $label_list_id;
+    }
+    if ($calls_waiting_vl_one == 'lead_id') {
+        $calls_waiting_vl_oneLABEL = $label_lead_id;
+    }
+    if ($calls_waiting_vl_one == 'gmt_offset_now') {
+        $calls_waiting_vl_oneLABEL = $label_gmt_offset_now;
+    }
+    if ($calls_waiting_vl_one == 'called_count') {
+        $calls_waiting_vl_oneLABEL = $label_called_count;
+    }
+    if ($calls_waiting_vl_one == 'status') {
+        $calls_waiting_vl_oneLABEL = $label_status;
+    }
+    if ($calls_waiting_vl_one == 'user') {
+        $calls_waiting_vl_oneLABEL = $label_user;
+    }
+    if ($calls_waiting_vl_one == 'called_since_last_reset') {
+        $calls_waiting_vl_oneLABEL = $label_called_since_last_reset;
+    }
+    if ($calls_waiting_vl_one == 'country_code') {
+        $calls_waiting_vl_oneLABEL = $label_country_code;
+    }
     $calls_waiting_vl_oneLABEL = strtoupper($calls_waiting_vl_oneLABEL);
-    }
-if ( ($calls_waiting_vl_two != 'DISABLED') and (strlen($calls_waiting_vl_two) > 2) )
-    {
+}
+if (($calls_waiting_vl_two != 'DISABLED') and (strlen($calls_waiting_vl_two) > 2)) {
     $calls_waiting_vl_twoLABEL = $calls_waiting_vl_two;
-    if ($calls_waiting_vl_two == 'title') {$calls_waiting_vl_twoLABEL = $label_title;}
-    if ($calls_waiting_vl_two == 'first_name') {$calls_waiting_vl_twoLABEL = $label_first_name;}
-    if ($calls_waiting_vl_two == 'middle_initial') {$calls_waiting_vl_twoLABEL = $label_middle_initial;}
-    if ($calls_waiting_vl_two == 'last_name') {$calls_waiting_vl_twoLABEL = $label_last_name;}
-    if ($calls_waiting_vl_two == 'address1') {$calls_waiting_vl_twoLABEL = $label_address1;}
-    if ($calls_waiting_vl_two == 'address2') {$calls_waiting_vl_twoLABEL = $label_address2;}
-    if ($calls_waiting_vl_two == 'address3') {$calls_waiting_vl_twoLABEL = $label_address3;}
-    if ($calls_waiting_vl_two == 'city') {$calls_waiting_vl_twoLABEL = $label_city;}
-    if ($calls_waiting_vl_two == 'state') {$calls_waiting_vl_twoLABEL = $label_state;}
-    if ($calls_waiting_vl_two == 'province') {$calls_waiting_vl_twoLABEL = $label_province;}
-    if ($calls_waiting_vl_two == 'postal_code') {$calls_waiting_vl_twoLABEL = $label_postal_code;}
-    if ($calls_waiting_vl_two == 'vendor_lead_code') {$calls_waiting_vl_twoLABEL = $label_vendor_lead_code;}
-    if ($calls_waiting_vl_two == 'gender') {$calls_waiting_vl_twoLABEL = $label_gender;}
-    if ($calls_waiting_vl_two == 'phone_number') {$calls_waiting_vl_twoLABEL = $label_phone_number;}
-    if ($calls_waiting_vl_two == 'phone_code') {$calls_waiting_vl_twoLABEL = $label_phone_code;}
-    if ($calls_waiting_vl_two == 'alt_phone') {$calls_waiting_vl_twoLABEL = $label_alt_phone;}
-    if ($calls_waiting_vl_two == 'security_phrase') {$calls_waiting_vl_twoLABEL = $label_security_phrase;}
-    if ($calls_waiting_vl_two == 'email') {$calls_waiting_vl_twoLABEL = $label_email;}
-    if ($calls_waiting_vl_two == 'comments') {$calls_waiting_vl_twoLABEL = $label_comments;}
-    if ($calls_waiting_vl_two == 'entry_date') {$calls_waiting_vl_twoLABEL = $label_entry_date;}
-    if ($calls_waiting_vl_two == 'source_id') {$calls_waiting_vl_twoLABEL = $label_source_id;}
-    if ($calls_waiting_vl_two == 'date_of_birth') {$calls_waiting_vl_twoLABEL = $label_date_of_birth;}
-    if ($calls_waiting_vl_two == 'rank') {$calls_waiting_vl_twoLABEL = $label_rank;}
-    if ($calls_waiting_vl_two == 'owner') {$calls_waiting_vl_twoLABEL = $label_owner;}
-    if ($calls_waiting_vl_two == 'last_local_call_time') {$calls_waiting_vl_twoLABEL = $label_last_local_call_time;}
-    if ($calls_waiting_vl_two == 'entry_list_id') {$calls_waiting_vl_twoLABEL = $label_entry_list_id;}
-    if ($calls_waiting_vl_two == 'list_id') {$calls_waiting_vl_twoLABEL = $label_list_id;}
-    if ($calls_waiting_vl_two == 'lead_id') {$calls_waiting_vl_twoLABEL = $label_lead_id;}
-    if ($calls_waiting_vl_two == 'gmt_offset_now') {$calls_waiting_vl_twoLABEL = $label_gmt_offset_now;}
-    if ($calls_waiting_vl_two == 'called_count') {$calls_waiting_vl_twoLABEL = $label_called_count;}
-    if ($calls_waiting_vl_two == 'status') {$calls_waiting_vl_twoLABEL = $label_status;}
-    if ($calls_waiting_vl_two == 'user') {$calls_waiting_vl_twoLABEL = $label_user;}
-    if ($calls_waiting_vl_two == 'called_since_last_reset') {$calls_waiting_vl_twoLABEL = $label_called_since_last_reset;}
-    if ($calls_waiting_vl_two == 'country_code') {$calls_waiting_vl_twoLABEL = $label_country_code;}
-    $calls_waiting_vl_twoLABEL = strtoupper($calls_waiting_vl_twoLABEL);
+    if ($calls_waiting_vl_two == 'title') {
+        $calls_waiting_vl_twoLABEL = $label_title;
     }
-    echo $INSERT_head_script;
+    if ($calls_waiting_vl_two == 'first_name') {
+        $calls_waiting_vl_twoLABEL = $label_first_name;
+    }
+    if ($calls_waiting_vl_two == 'middle_initial') {
+        $calls_waiting_vl_twoLABEL = $label_middle_initial;
+    }
+    if ($calls_waiting_vl_two == 'last_name') {
+        $calls_waiting_vl_twoLABEL = $label_last_name;
+    }
+    if ($calls_waiting_vl_two == 'address1') {
+        $calls_waiting_vl_twoLABEL = $label_address1;
+    }
+    if ($calls_waiting_vl_two == 'address2') {
+        $calls_waiting_vl_twoLABEL = $label_address2;
+    }
+    if ($calls_waiting_vl_two == 'address3') {
+        $calls_waiting_vl_twoLABEL = $label_address3;
+    }
+    if ($calls_waiting_vl_two == 'city') {
+        $calls_waiting_vl_twoLABEL = $label_city;
+    }
+    if ($calls_waiting_vl_two == 'state') {
+        $calls_waiting_vl_twoLABEL = $label_state;
+    }
+    if ($calls_waiting_vl_two == 'province') {
+        $calls_waiting_vl_twoLABEL = $label_province;
+    }
+    if ($calls_waiting_vl_two == 'postal_code') {
+        $calls_waiting_vl_twoLABEL = $label_postal_code;
+    }
+    if ($calls_waiting_vl_two == 'vendor_lead_code') {
+        $calls_waiting_vl_twoLABEL = $label_vendor_lead_code;
+    }
+    if ($calls_waiting_vl_two == 'gender') {
+        $calls_waiting_vl_twoLABEL = $label_gender;
+    }
+    if ($calls_waiting_vl_two == 'phone_number') {
+        $calls_waiting_vl_twoLABEL = $label_phone_number;
+    }
+    if ($calls_waiting_vl_two == 'phone_code') {
+        $calls_waiting_vl_twoLABEL = $label_phone_code;
+    }
+    if ($calls_waiting_vl_two == 'alt_phone') {
+        $calls_waiting_vl_twoLABEL = $label_alt_phone;
+    }
+    if ($calls_waiting_vl_two == 'security_phrase') {
+        $calls_waiting_vl_twoLABEL = $label_security_phrase;
+    }
+    if ($calls_waiting_vl_two == 'email') {
+        $calls_waiting_vl_twoLABEL = $label_email;
+    }
+    if ($calls_waiting_vl_two == 'comments') {
+        $calls_waiting_vl_twoLABEL = $label_comments;
+    }
+    if ($calls_waiting_vl_two == 'entry_date') {
+        $calls_waiting_vl_twoLABEL = $label_entry_date;
+    }
+    if ($calls_waiting_vl_two == 'source_id') {
+        $calls_waiting_vl_twoLABEL = $label_source_id;
+    }
+    if ($calls_waiting_vl_two == 'date_of_birth') {
+        $calls_waiting_vl_twoLABEL = $label_date_of_birth;
+    }
+    if ($calls_waiting_vl_two == 'rank') {
+        $calls_waiting_vl_twoLABEL = $label_rank;
+    }
+    if ($calls_waiting_vl_two == 'owner') {
+        $calls_waiting_vl_twoLABEL = $label_owner;
+    }
+    if ($calls_waiting_vl_two == 'last_local_call_time') {
+        $calls_waiting_vl_twoLABEL = $label_last_local_call_time;
+    }
+    if ($calls_waiting_vl_two == 'entry_list_id') {
+        $calls_waiting_vl_twoLABEL = $label_entry_list_id;
+    }
+    if ($calls_waiting_vl_two == 'list_id') {
+        $calls_waiting_vl_twoLABEL = $label_list_id;
+    }
+    if ($calls_waiting_vl_two == 'lead_id') {
+        $calls_waiting_vl_twoLABEL = $label_lead_id;
+    }
+    if ($calls_waiting_vl_two == 'gmt_offset_now') {
+        $calls_waiting_vl_twoLABEL = $label_gmt_offset_now;
+    }
+    if ($calls_waiting_vl_two == 'called_count') {
+        $calls_waiting_vl_twoLABEL = $label_called_count;
+    }
+    if ($calls_waiting_vl_two == 'status') {
+        $calls_waiting_vl_twoLABEL = $label_status;
+    }
+    if ($calls_waiting_vl_two == 'user') {
+        $calls_waiting_vl_twoLABEL = $label_user;
+    }
+    if ($calls_waiting_vl_two == 'called_since_last_reset') {
+        $calls_waiting_vl_twoLABEL = $label_called_since_last_reset;
+    }
+    if ($calls_waiting_vl_two == 'country_code') {
+        $calls_waiting_vl_twoLABEL = $label_country_code;
+    }
+    $calls_waiting_vl_twoLABEL = strtoupper($calls_waiting_vl_twoLABEL);
+}
+echo $INSERT_head_script;
 ?>
     <script language="Javascript">
     var needToConfirmExit = true;
@@ -4288,32 +5046,29 @@ if ( ($calls_waiting_vl_two != 'DISABLED') and (strlen($calls_waiting_vl_two) > 
     HKstatusnames = new Array(<?php echo $HKstatusnames ?>);
     var hotkeys = new Array();
     <?php $h=0;
-    while ($HK_statuses_camp > $h)
-        {
-        echo "hotkeys['$HKhotkey[$h]'] = \"$HKstatus[$h] ----- $HKstatus_name[$h]\";\n";
-        $h++;
-        }
-    ?>
+while ($HK_statuses_camp > $h) {
+    echo "hotkeys['$HKhotkey[$h]'] = \"$HKstatus[$h] ----- $HKstatus_name[$h]\";\n";
+    $h++;
+}
+?>
     var HKdispo_display = 0;
     var HKdispo_submit = 0;
     var HKbutton_allowed = 1;
     var HKfinish = 0;
     var scriptnames = new Array();
     <?php $h=0;
-    while ($MM_scripts > $h)
-        {
-        echo "scriptnames['$MMscriptid[$h]'] = \"$MMscriptname[$h]\";\n";
-        $h++;
-        }
-    ?>
+while ($MM_scripts > $h) {
+    echo "scriptnames['$MMscriptid[$h]'] = \"$MMscriptname[$h]\";\n";
+    $h++;
+}
+?>
     var scriptcolors = new Array();
     <?php $h=0;
-    while ($MM_scripts > $h)
-        {
-        echo "scriptcolors['$MMscriptid[$h]'] = \"$MMscriptcolor[$h]\";\n";
-        $h++;
-        }
-    ?>
+while ($MM_scripts > $h) {
+    echo "scriptcolors['$MMscriptid[$h]'] = \"$MMscriptcolor[$h]\";\n";
+    $h++;
+}
+?>
     var view_scripts = '<?php echo $view_scripts ?>';
     var LOGfullname = '<?php echo $LOGfullname ?>';
     var LOGemail = '<?php echo $LOGemail ?>';
@@ -4338,8 +5093,11 @@ if ( ($calls_waiting_vl_two != 'DISABLED') and (strlen($calls_waiting_vl_two) > 
     var server_ip_dialstring = '<?php echo $server_ip_dialstring ?>';
     var asterisk_version = '<?php echo $asterisk_version ?>';
 <?php
-if ($enable_fast_refresh < 1) {echo "\tvar refresh_interval = 1000;\n";}
-    else {echo "\tvar refresh_interval = $fast_refresh_rate;\n";}
+if ($enable_fast_refresh < 1) {
+    echo "\tvar refresh_interval = 1000;\n";
+} else {
+    echo "\tvar refresh_interval = $fast_refresh_rate;\n";
+}
 ?>
     var session_id = '<?php echo $session_id ?>';
     var VICIDiaL_closer_login_checked = 0;
@@ -4373,7 +5131,11 @@ if ($enable_fast_refresh < 1) {echo "\tvar refresh_interval = 1000;\n";}
     var phone_pass = '<?php echo $phone_pass ?>';
     var user = '<?php echo $VD_login ?>';
     var user_abb = '<?php echo $user_abb ?>';
-    var pass = '<?php if (strlen($pass_hash)>12) {echo $pass_hash;} else {echo $VD_pass;} ?>';
+    var pass = '<?php if (strlen($pass_hash)>12) {
+        echo $pass_hash;
+    } else {
+        echo $VD_pass;
+    } ?>';
     var orig_pass = '<?php echo $VD_pass ?>';
     var pass_hash = '<?php echo $pass_hash ?>';
     var campaign = '<?php echo $VD_campaign ?>';
@@ -4683,7 +5445,7 @@ if ($enable_fast_refresh < 1) {echo "\tvar refresh_interval = 1000;\n";}
     var EAalt_phone_active='';
     var EAalt_phone_count='';
     var conf_check_attempts = '<?php echo $conf_check_attempts ?>';
-    var conf_check_attempts_cleanup = '<?php echo ($conf_check_attempts + 2) ?>';
+    var conf_check_attempts_cleanup = '<?php echo($conf_check_attempts + 2) ?>';
     var blind_monitor_warning='<?php echo $blind_monitor_warning ?>';
     var blind_monitor_message="<?php echo $blind_monitor_message ?>";
     var blind_monitor_filename='<?php echo $blind_monitor_filename ?>';
@@ -5063,8 +5825,7 @@ if ($enable_fast_refresh < 1) {echo "\tvar refresh_interval = 1000;\n";}
     var set_timeout_audio_loop = false;
     var latency = 0;
 <?php
-    if ($window_validation > 0)
-        {
+    if ($window_validation > 0) {
         echo "var win_valid_name = '$win_valid_name';\n";
         echo "var val_win_name = window.name;\n";
         echo "if (win_valid_name != val_win_name)\n";
@@ -5075,11 +5836,9 @@ if ($enable_fast_refresh < 1) {echo "\tvar refresh_interval = 1000;\n";}
         echo "\t{\n";
         echo "\tvar invalid_opener=0;\n";
         echo "\t}\n";
-        }
-    else
-        {
+    } else {
         echo "\tvar invalid_opener=0;\n";
-        }
+    }
 ?>
     window.name='vicidial_window';
 // ################################################################################
@@ -8904,13 +9663,12 @@ function set_length(SLnumber,SLlength_goal,SLdirection)
             if ( (document.vicidial_form.LeadLookuP.checked==true) || (manual_dial_search_checkbox == 'SELECTED_LOCK') )
                 {MDLookuPLeaD = 'lookup';}
             <?php
-            if ( ($SSmanual_dial_phone_strip!='DISABLED') and (strlen($SSmanual_dial_phone_strip) > 0) )
-                {
+            if (($SSmanual_dial_phone_strip!='DISABLED') and (strlen($SSmanual_dial_phone_strip) > 0)) {
                 echo "var REGphone_strip = new RegExp(\"^$SSmanual_dial_phone_strip\",'');\n";
                 echo "            MDPhonENumbeRform = MDPhonENumbeRform.replace(REGphone_strip, '');\n";
                 echo "            document.vicidial_form.MDPhonENumbeR.value = MDPhonENumbeRform;\n";
-                }
-            ?>
+            }
+?>
             if (MDPhonENumbeRform == 'XXXXXXXXXX')
                 {MDPhonENumbeRform = document.vicidial_form.MDPhonENumbeRHiddeN.value;}
             if (MDDiaLCodEform.length < 1)
@@ -8987,13 +9745,12 @@ function set_length(SLnumber,SLlength_goal,SLdirection)
         var MDPhonENumbeRform = document.vicidial_form.phone_number.value;
         var MDVendorLeadCode = document.vicidial_form.vendor_lead_code.value;
         <?php
-        if ( ($SSmanual_dial_phone_strip!='DISABLED') and (strlen($SSmanual_dial_phone_strip) > 0) )
-            {
+        if (($SSmanual_dial_phone_strip!='DISABLED') and (strlen($SSmanual_dial_phone_strip) > 0)) {
             echo "var REGphone_strip = new RegExp(\"^$SSmanual_dial_phone_strip\",'');\n";
             echo "        MDPhonENumbeRform = MDPhonENumbeRform.replace(REGphone_strip, '');\n";
             echo "        document.vicidial_form.phone_number.value = MDPhonENumbeRform;\n";
-            }
-        ?>
+        }
+?>
         if ( (MDDiaLCodEform.length < 1) || (MDPhonENumbeRform.length < 5) )
             {
             alert_box("<?php echo _QXZ("YOU MUST ENTER A PHONE NUMBER AND DIAL CODE TO USE FAST DIAL"); ?>");
@@ -15961,9 +16718,8 @@ function set_length(SLnumber,SLlength_goal,SLdirection)
             }
         }
 <?php
-if ($useIE > 0)
-{
-?>
+if ($useIE > 0) {
+    ?>
 // ################################################################################
 // MSIE-only hotkeypress function to bind hotkeys defined in the campaign to dispositions
     function hotkeypress(evt)
@@ -16082,10 +16838,8 @@ if ($useIE > 0)
             }
         }
 <?php
-}
-else
-{
-?>
+} else {
+    ?>
 // ################################################################################
 // W3C-compliant hotkeypress function to bind hotkeys defined in the campaign to dispositions
     function hotkeypress(evt)
@@ -18120,9 +18874,8 @@ function phone_number_format(formatphone) {
         else
             {
     <?php
-    if ($useIE > 0)
-    {
-    ?>
+    if ($useIE > 0) {
+        ?>
             var CallBackTimEHouRFORM = document.getElementById('CBT_hour');
             var CallBackTimEHouR = CallBackTimEHouRFORM[CallBackTimEHouRFORM.selectedIndex].text;
         //    var CallBackTimEHouRIDX = CallBackTimEHouRFORM.value;
@@ -18130,14 +18883,13 @@ function phone_number_format(formatphone) {
             var CallBackTimEMinuteS = CallBackTimEMinuteSFORM[CallBackTimEMinuteSFORM.selectedIndex].text;
         //    var CallBackTimEMinuteSIDX = CallBackTimEMinuteSFORM.value;
         <?php
-        if ($callback_time_24hour < 1)
-        {
-        ?>
+            if ($callback_time_24hour < 1) {
+                ?>
             var CallBackTimEAmpMFORM = document.getElementById('CBT_ampm');
             var CallBackTimEAmpM = CallBackTimEAmpMFORM[CallBackTimEAmpMFORM.selectedIndex].text;
         //    var CallBackTimEAmpMIDX = CallBackTimEAmpMFORM.value;
         <?php
-        }
+            }
         ?>
             CallBackLeadStatus = document.vicidial_form.DispoSelection.value;
         //    alert (CallBackTimEHouR + "|" + CallBackTimEHouRFORM + "|" + CallBackTimEHouRIDX + "|");
@@ -18145,48 +18897,39 @@ function phone_number_format(formatphone) {
         //    alert (CallBackTimEAmpM + "|" + CallBackTimEAmpMFORM + "|" + CallBackTimEAmpMIDX + "|");
             CallBackTimEMinuteSFORM.selectedIndex = '0';
         <?php
-        if ($callback_time_24hour < 1)
-        {
-        ?>
+        if ($callback_time_24hour < 1) {
+            ?>
             CallBackTimEHouRFORM.selectedIndex = '0';
             CallBackTimEAmpMFORM.selectedIndex = '1';
         <?php
-        }
-        else
-        {
-        ?>
+        } else {
+            ?>
             CallBackTimEHouRFORM.selectedIndex = '11';
         <?php
         }
-    }
-    else
-    {
-    ?>
+    } else {
+        ?>
             CallBackTimEHouR = document.vicidial_form.CBT_hour.value;
             CallBackTimEMinuteS = document.vicidial_form.CBT_minute.value;
         <?php
-        if ($callback_time_24hour < 1)
-        {
-        ?>
+            if ($callback_time_24hour < 1) {
+                ?>
             CallBackTimEAmpM = document.vicidial_form.CBT_ampm.value;
             document.vicidial_form.CBT_ampm.value = 'PM';
             document.vicidial_form.CBT_hour.value = '01';
         <?php
-        }
-        else
-        {
-        ?>
+            } else {
+                ?>
             document.vicidial_form.CBT_hour.value = '12';
         <?php
-        }
+            }
         ?>
             CallBackLeadStatus = document.vicidial_form.DispoSelection.value;
             document.vicidial_form.CBT_minute.value = '00';
     <?php
     }
-    if ($callback_time_24hour < 1)
-        {
-    ?>
+    if ($callback_time_24hour < 1) {
+        ?>
             if (CallBackTimEHouR == '12')
                 {
                 if (CallBackTimEAmpM == 'AM')
@@ -18203,8 +18946,8 @@ function phone_number_format(formatphone) {
                     }
                 }
         <?php
-        }
-        ?>
+    }
+?>
             CallBackDatETimE = CallBackDatEForM + " " + CallBackTimEHouR + ":" + CallBackTimEMinuteS + ":00";
             if (document.vicidial_form.CallBackOnlyMe.checked==true)
                 {
@@ -18359,7 +19102,9 @@ function phone_number_format(formatphone) {
 // GLOBAL FUNCTIONS
     function begin_all_refresh()
         {
-        <?php if ( ($HK_statuses_camp > 0) && ($user_level>=$HKuser_level) && ($VU_hotkeys_active > 0) ) {echo "document.onkeypress = hotkeypress;\n";} ?>
+        <?php if (($HK_statuses_camp > 0) && ($user_level>=$HKuser_level) && ($VU_hotkeys_active > 0)) {
+            echo "document.onkeypress = hotkeypress;\n";
+        } ?>
         <?php    echo $INSERT_first_onload; ?>
         all_refresh();
         }
@@ -19200,9 +19945,8 @@ function phone_number_format(formatphone) {
                 }
             }
         <?php
-        if ($SSagent_screen_timer == 'EventSource')
-            {
-        ?>
+        if ($SSagent_screen_timer == 'EventSource') {
+            ?>
         if(typeof(EventSource) !== "undefined") 
             {
             if (!source) 
@@ -19234,18 +19978,14 @@ function phone_number_format(formatphone) {
             {
             setTimeout("all_refresh()", refresh_interval);
             }
-        <?php 
-            }
-        else if ($SSagent_screen_timer == 'setTimeoutAudioLoop')
-            {
+        <?php
+        } elseif ($SSagent_screen_timer == 'setTimeoutAudioLoop') {
             echo "\n        set_timeout_audio_loop = true;\n";
             echo "\n        setTimeout(\"all_refresh()\", refresh_interval);\n";
-            }
-        else
-            {
+        } else {
             echo "\n        setTimeout(\"all_refresh()\", refresh_interval);\n";
-            }
-        ?>
+        }
+?>
         }
     function all_refresh()
         {
@@ -20078,7 +20818,8 @@ $zi=2;
     </td></tr></table>
 </span>
 <!-- ZZZZZZZZZZZZ  header -->
-<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++; echo $zi ?>;" id="Header">
+<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++;
+echo $zi ?>;" id="Header">
     <table border="0" cellpadding="0" cellspacing="0" bgcolor="white" width="<?php echo $MNwidth ?>px" marginwidth="0" marginheight="0" leftmargin="0" topmargin="0" valign="top" align="left">
     <tr valign="top" align="left"><td colspan="3" valign="top" align="left">
     <input type="hidden" name="extension" id="extension" />
@@ -20086,67 +20827,77 @@ $zi=2;
     <input type="hidden" name="FORM_LOADED" id="FORM_LOADED" value="0" />
     <font class="queue_text">
     <?php
-    if ($logged_in_refresh_link > 0)
-        {echo "<a href=\"#\" onclick=\"start_all_refresh();\"><font class=\"queue_text\">"._QXZ("Logged in as User")."</font></a>";}
-    else
-        {echo "<font class=\"queue_text\">"._QXZ("Logged in as User")."</font>";}
-    echo _QXZ(": %1s on Phone: %2s",0,'',$VD_login,$SIP_user); 
-    if ($on_hook_agent == 'Y')
-        {echo "(<a href=\"#\" onclick=\"NoneInSessionCalL();return false;\">"._QXZ("ring")."</a>)";}
-    echo "&nbsp; "._QXZ("to campaign").": $VD_campaign&nbsp; "; 
-    ?> &nbsp; &nbsp; <span id="agentchannelSPAN"></span></font></td>
+    if ($logged_in_refresh_link > 0) {
+        echo "<a href=\"#\" onclick=\"start_all_refresh();\"><font class=\"queue_text\">"._QXZ("Logged in as User")."</font></a>";
+    } else {
+        echo "<font class=\"queue_text\">"._QXZ("Logged in as User")."</font>";
+    }
+    echo _QXZ(": %1s on Phone: %2s", 0, '', $VD_login, $SIP_user);
+if ($on_hook_agent == 'Y') {
+    echo "(<a href=\"#\" onclick=\"NoneInSessionCalL();return false;\">"._QXZ("ring")."</a>)";
+}
+echo "&nbsp; "._QXZ("to campaign").": $VD_campaign&nbsp; ";
+?> &nbsp; &nbsp; <span id="agentchannelSPAN"></span></font></td>
     <td colspan="3" valign="top" align="right"><font class="body_text">
-    <?php if ($territoryCT > 0) {echo "<a href=\"#\" onclick=\"OpeNTerritorYSelectioN();return false;\">"._QXZ("TERRITORIES")."</a> &nbsp; &nbsp; \n";} ?>
-    <?php if ($INgrpCT > 0) {echo "<a href=\"#\" onclick=\"OpeNGrouPSelectioN();return false;\">"._QXZ("GROUPS")."</a> &nbsp; &nbsp; \n";} ?>
+    <?php if ($territoryCT > 0) {
+        echo "<a href=\"#\" onclick=\"OpeNTerritorYSelectioN();return false;\">"._QXZ("TERRITORIES")."</a> &nbsp; &nbsp; \n";
+    } ?>
+    <?php if ($INgrpCT > 0) {
+        echo "<a href=\"#\" onclick=\"OpeNGrouPSelectioN();return false;\">"._QXZ("GROUPS")."</a> &nbsp; &nbsp; \n";
+    } ?>
     <?php    echo "<a href=\"#\" onclick=\"NormalLogout();return false;needToConfirmExit = false;\">"._QXZ("LOGOUT")."</a>\n"; ?>
     </font></td></tr>
     </table>
 </span>
 <!-- ZZZZZZZZZZZZ  tabs -->
-<span style="position:absolute;left:0px;top:13px;z-index:<?php $zi++; echo $zi ?>;" id="Tabs">
+<span style="position:absolute;left:0px;top:13px;z-index:<?php $zi++;
+echo $zi ?>;" id="Tabs">
     <table border="0" bgcolor="#FFFFFF" width="<?php echo $MNwidth ?>px" height="30px">
     <tr valign="top" align="left">
     <td align="left" width="115px" bgcolor="#<?php echo $SSstd_row5_background ?>"><a href="#" onclick="MainPanelToFront('NO','YES');"><img src="<?php echo $selected_logo ?>" alt="MAIN" width="115px" height="30px" border="0" /></a></td>
     <td align="left" width="67px"><a href="#" onclick="ScriptPanelToFront('YES');"><img src="./images/<?php echo _QXZ("vdc_tab_script.gif"); ?>" alt="SCRIPT" width="67px" height="30px" border="0" /></a></td>
-    <?php if ($SSenable_second_script > 0)
-    {echo "<td align=\"left\" width=\"67px\"><a href=\"#\" onclick=\"ScriptPanel2ToFront('YES');\"><img src=\"./images/"._QXZ("vdc_tab_script2.gif")."\" alt=\"SCRIPT 2\" width=\"67px\" height=\"30px\" border=\"0\" /></a></td>\n";}
-    ?>
-    <?php if ($custom_fields_enabled > 0)
-    {echo "<td align=\"left\" width=\"67px\"><a href=\"#\" onclick=\"FormPanelToFront('YES');\"><img src=\"./images/"._QXZ("vdc_tab_form.gif")."\" alt=\"FORM\" width=\"67px\" height=\"30px\" border=\"0\" /></a></td>\n";}
-    ?>
-    <?php if ($email_enabled > 0)
-    {echo "<td align=\"left\" width=\"67px\"><a href=\"#\" onclick=\"EmailPanelToFront('YES');\"><img src=\"./images/"._QXZ("vdc_tab_email.gif")."\" alt=\"EMAIL\" width=\"67px\" height=\"30px\" border=\"0\" /></a></td>\n";}
-    ?>
-    <?php if ($chat_enabled > 0)
-        {
+    <?php if ($SSenable_second_script > 0) {
+        echo "<td align=\"left\" width=\"67px\"><a href=\"#\" onclick=\"ScriptPanel2ToFront('YES');\"><img src=\"./images/"._QXZ("vdc_tab_script2.gif")."\" alt=\"SCRIPT 2\" width=\"67px\" height=\"30px\" border=\"0\" /></a></td>\n";
+    }
+?>
+    <?php if ($custom_fields_enabled > 0) {
+        echo "<td align=\"left\" width=\"67px\"><a href=\"#\" onclick=\"FormPanelToFront('YES');\"><img src=\"./images/"._QXZ("vdc_tab_form.gif")."\" alt=\"FORM\" width=\"67px\" height=\"30px\" border=\"0\" /></a></td>\n";
+    }
+?>
+    <?php if ($email_enabled > 0) {
+        echo "<td align=\"left\" width=\"67px\"><a href=\"#\" onclick=\"EmailPanelToFront('YES');\"><img src=\"./images/"._QXZ("vdc_tab_email.gif")."\" alt=\"EMAIL\" width=\"67px\" height=\"30px\" border=\"0\" /></a></td>\n";
+    }
+?>
+    <?php if ($chat_enabled > 0) {
         echo "<td align=\"left\" width=\"67px\"><a href=\"#\" onclick=\"InternalChatContentsLoad('YES');\"><img src=\"./images/"._QXZ("vdc_tab_chat_internal.gif")."\" name='InternalChatImg' alt=\"CHAT\" width=\"67px\" height=\"30px\" border=\"0\"/></a></td>\n";
-        if ($campaign_chat_enabled=='Y')
-            {
+        if ($campaign_chat_enabled=='Y') {
             echo "<td align=\"left\" width=\"67px\"><a href=\"#\" onclick=\"CustomerChatPanelToFront('1', 'YES');\"><img src=\"./images/"._QXZ("vdc_tab_chat_customer.gif")."\" name='CustomerChatImg' alt=\"CHAT\" width=\"67px\" height=\"30px\" border=\"0\"/></a></td>\n";
-            }
         }
-    ?>
+    }
+?>
     <td width="<?php echo $HSwidth ?>px" valign="middle" align="center"><font class="body_tiny">&nbsp; <span id="status"><?php echo _QXZ("LIVE"); ?></span>&nbsp; &nbsp; <?php echo _QXZ("session ID:"); ?> <span id="sessionIDspan"></span></font><br><font class="body_text">&nbsp; &nbsp;<span id="AgentStatusCalls"></span>&nbsp; &nbsp;<span id="AgentStatusEmails"></span></font></td>
     <td width="109px"><img src="./images/<?php echo _QXZ("agc_live_call_OFF.gif"); ?>" name="livecall" alt="Live Call" width="109px" height="30px" border="0" /></td>
     </tr>
  </table>
 </span>
-<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++; echo $zi ?>;" id="WelcomeBoxA">
+<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++;
+echo $zi ?>;" id="WelcomeBoxA">
     <table border="0" bgcolor="#FFFFFF" width="<?php echo $CAwidth ?>px" height="<?php echo $HKwidth ?>px"><tr><td align="center"><br /><span id="WelcomeBoxAt"><?php echo _QXZ("Agent Screen"); ?></span></td></tr></table>
 </span>
 <!-- BEGIN *********   Here is the main VICIDIAL display panel -->
-<span style="position:absolute;left:0px;top:46px;z-index:<?php $zi++; echo $zi ?>;" id="MainPanel">
+<span style="position:absolute;left:0px;top:46px;z-index:<?php $zi++;
+echo $zi ?>;" id="MainPanel">
     <table border="0" bgcolor="<?php echo $MAIN_COLOR ?>" width="<?php echo $MNwidth ?>px" id="MainTable">
     <tr><td colspan="3">
     <?php
-    if ($webphone_location == 'bar')
-        {
+    if ($webphone_location == 'bar') {
         echo "<img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";
-        }
+    }
     $alt_phone_selected='';
-    if ( ($alt_number_dialing=='SELECTED') or ($alt_number_dialing=='SELECTED_TIMER_ALT') or ($alt_number_dialing=='SELECTED_TIMER_ADDR3') )
-        {$alt_phone_selected='CHECKED';}
-    ?>    
+if (($alt_number_dialing=='SELECTED') or ($alt_number_dialing=='SELECTED_TIMER_ALT') or ($alt_number_dialing=='SELECTED_TIMER_ADDR3')) {
+    $alt_phone_selected='CHECKED';
+}
+?>    
     <span id="post_phone_time_diff_span"><b><font color="red"><span id="post_phone_time_diff_span_contents"></span></font></b></span>
     <font class="body_text"> <?php echo _QXZ("STATUS:"); ?> <span id="MainStatuSSpan"></span><span id=timer_alt_display></span><span id=manual_auto_next_display></span></font></td></tr>
     <tr><td colspan="3"><span id="busycallsdebug"></span></td></tr>
@@ -20160,11 +20911,13 @@ $zi=2;
     <font class="skb_text"><span id="NexTCalLPausE"> <a href="#" onclick="next_call_pause_click();return false;"><?php echo _QXZ("Next Call Pause"); ?></a> <br /></span></font>
     <!--
     <?php
-    if ( ($manual_dial_preview) and ($auto_dial_level==0) )
-        {echo "<font class=\"preview_text\"> <input type=\"checkbox\" name=\"LeadPreview\" size=\"1\" value=\"0\" /> LEAD PREVIEW<br /></font>";}
-    if ( ($alt_phone_dialing) and ($auto_dial_level==0) )
-        {echo "<font class=\"preview_text\"> <input type=\"checkbox\" name=\"DiaLAltPhonE\" size=\"1\" value=\"0\" /> ALT PHONE DIAL<br /></font>";}
-    ?> -->
+if (($manual_dial_preview) and ($auto_dial_level==0)) {
+    echo "<font class=\"preview_text\"> <input type=\"checkbox\" name=\"LeadPreview\" size=\"1\" value=\"0\" /> LEAD PREVIEW<br /></font>";
+}
+if (($alt_phone_dialing) and ($auto_dial_level==0)) {
+    echo "<font class=\"preview_text\"> <input type=\"checkbox\" name=\"DiaLAltPhonE\" size=\"1\" value=\"0\" /> ALT PHONE DIAL<br /></font>";
+}
+?> -->
     <?php echo _QXZ("RECORDING FILE:"); ?><br />
     </center>
     <font class="body_tiny"><span id="RecorDingFilename"></span></font><br />
@@ -20174,35 +20927,43 @@ $zi=2;
     <span style="background-color: <?php echo $MAIN_COLOR ?>" id="RecorDControl"><a href="#" onclick="conf_send_recording('MonitorConf',session_id,'','','','YES');return false;"><img src="./images/<?php echo _QXZ("$start_recording_GIF"); ?>" border="0" alt="Start Recording" /></a></span><br />
     <span style="background-color: <?php echo $MAIN_COLOR ?>" id="RecorDMute"></span>
        <?php
-    if (!preg_match("/NOGAP/",$SSrecording_buttons))
-        {echo "<span id=\"SpacerSpanA\"><img src=\"./images/"._QXZ("blank.gif")."\" width=\"145px\" height=\"16px\" border=\"0\" /></span><br />\n";}
-    if ($SSenable_first_webform > 0)
-        {echo "<span style=\"background-color: #FFFFFF\" id=\"WebFormSpan\"><img src=\"./images/"._QXZ("vdc_LB_webform_OFF.gif")."\" border=\"0\" alt=\"Web Form\" /></span><br />\n";}
-    if ($enable_second_webform > 0)
-        {echo "<span style=\"background-color: #FFFFFF\" id=\"WebFormSpanTwo\"><img src=\"./images/"._QXZ("vdc_LB_webform_two_OFF.gif")."\" border=\"0\" alt=\"Web Form 2\" /></span><br />\n";}
-    if ($enable_third_webform > 0)
-        {echo "<span style=\"background-color: #FFFFFF\" id=\"WebFormSpanThree\"><img src=\"./images/"._QXZ("vdc_LB_webform_three_OFF.gif")."\" border=\"0\" alt=\"Web Form 3\" /></span><br />\n";}
-    ?>
+if (!preg_match("/NOGAP/", $SSrecording_buttons)) {
+    echo "<span id=\"SpacerSpanA\"><img src=\"./images/"._QXZ("blank.gif")."\" width=\"145px\" height=\"16px\" border=\"0\" /></span><br />\n";
+}
+if ($SSenable_first_webform > 0) {
+    echo "<span style=\"background-color: #FFFFFF\" id=\"WebFormSpan\"><img src=\"./images/"._QXZ("vdc_LB_webform_OFF.gif")."\" border=\"0\" alt=\"Web Form\" /></span><br />\n";
+}
+if ($enable_second_webform > 0) {
+    echo "<span style=\"background-color: #FFFFFF\" id=\"WebFormSpanTwo\"><img src=\"./images/"._QXZ("vdc_LB_webform_two_OFF.gif")."\" border=\"0\" alt=\"Web Form 2\" /></span><br />\n";
+}
+if ($enable_third_webform > 0) {
+    echo "<span style=\"background-color: #FFFFFF\" id=\"WebFormSpanThree\"><img src=\"./images/"._QXZ("vdc_LB_webform_three_OFF.gif")."\" border=\"0\" alt=\"Web Form 3\" /></span><br />\n";
+}
+?>
     <font class="body_small_bold"><span id="ParkCounterSpan"> &nbsp; </span></font><br />
     <span style="background-color: <?php echo $MAIN_COLOR ?>" id="ParkControl"><img src="./images/<?php echo _QXZ("vdc_LB_parkcall_OFF.gif"); ?>" border="0" alt="Park Call" /></span><br />
     <?php
-    if ( ($ivr_park_call=='ENABLED') or ($ivr_park_call=='ENABLED_PARK_ONLY') )
-        {echo "<span style=\"background-color: $MAIN_COLOR\" id=\"ivrParkControl\"><img src=\"./images/"._QXZ("vdc_LB_ivrparkcall_OFF.gif")."\" border=\"0\" alt=\"IVR Park Call\" /></span><br />\n";}
-    else
-        {echo "<span style=\"background-color: $MAIN_COLOR\" id=\"ivrParkControl\"></span>\n";}
-    ?>
+if (($ivr_park_call=='ENABLED') or ($ivr_park_call=='ENABLED_PARK_ONLY')) {
+    echo "<span style=\"background-color: $MAIN_COLOR\" id=\"ivrParkControl\"><img src=\"./images/"._QXZ("vdc_LB_ivrparkcall_OFF.gif")."\" border=\"0\" alt=\"IVR Park Call\" /></span><br />\n";
+} else {
+    echo "<span style=\"background-color: $MAIN_COLOR\" id=\"ivrParkControl\"></span>\n";
+}
+?>
     <span style="background-color: <?php echo $MAIN_COLOR ?>" id="XferControl"><img src="./images/<?php echo _QXZ("vdc_LB_transferconf_OFF.gif"); ?>" border="0" alt="Transfer - Conference" /></span><br />
     <?php
-    if ($quick_transfer_button_enabled > 0)
-        {echo "<span style=\"background-color: $MAIN_COLOR\" id=\"QuickXfer\"><img src=\"./images/"._QXZ("vdc_LB_quickxfer_OFF.gif")."\" border=\"0\" alt=\"Quick Transfer\" /></span><br />\n";}
-    if ($custom_3way_button_transfer_enabled > 0)
-        {echo "<span style=\"background-color: $MAIN_COLOR\" id=\"CustomXfer\"><img src=\"./images/"._QXZ("vdc_LB_customxfer_OFF.gif")."\" border=\"0\" alt=\"Custom Transfer\" /></span><br />\n";}
-    ?>
+if ($quick_transfer_button_enabled > 0) {
+    echo "<span style=\"background-color: $MAIN_COLOR\" id=\"QuickXfer\"><img src=\"./images/"._QXZ("vdc_LB_quickxfer_OFF.gif")."\" border=\"0\" alt=\"Quick Transfer\" /></span><br />\n";
+}
+if ($custom_3way_button_transfer_enabled > 0) {
+    echo "<span style=\"background-color: $MAIN_COLOR\" id=\"CustomXfer\"><img src=\"./images/"._QXZ("vdc_LB_customxfer_OFF.gif")."\" border=\"0\" alt=\"Custom Transfer\" /></span><br />\n";
+}
+?>
     <span id="ReQueueCall"></span>
     <?php
-    if ($call_requeue_button > 0)
-        {echo "<br />\n";}
-    ?>
+if ($call_requeue_button > 0) {
+    echo "<br />\n";
+}
+?>
     <span id="SpacerSpanC"><img src="./images/<?php echo _QXZ("blank.gif"); ?>" width="145px" height="16px" border="0" /></span><br />
     <span style="background-color: #FFCCFF<?php echo $agent_hide_hangup_ACTIVE_style ?>" id="HangupControl"><img src="./images/<?php echo _QXZ("vdc_LB_hangupcustomer_OFF.gif"); ?>" border="0" alt="Hangup Customer" /></span><br />
     <span id="SpacerSpanD"><img src="./images/<?php echo _QXZ("blank.gif"); ?>" width="145px" height="16px" border="0" /></span><br />
@@ -20237,344 +20998,341 @@ $zi=2;
     </tr><tr>
     <td colspan="2" align="center"> <font class="body_text"><?php echo _QXZ("Customer Information:"); ?></font> <span id="CusTInfOSpaN"></span> &nbsp; &nbsp; &nbsp; &nbsp; 
     <?php
-    if ( ($agent_lead_search == 'ENABLED') or ($agent_lead_search == 'LIVE_CALL_INBOUND') or ($agent_lead_search == 'LIVE_CALL_INBOUND_AND_MANUAL') )
-        {echo "<font class=\"body_text\"><a href=\"#\" onclick=\"OpeNSearcHForMDisplaYBox();return false;\">"._QXZ("LEAD SEARCH")."</a></font>";}
-    ?>
+if (($agent_lead_search == 'ENABLED') or ($agent_lead_search == 'LIVE_CALL_INBOUND') or ($agent_lead_search == 'LIVE_CALL_INBOUND_AND_MANUAL')) {
+    echo "<font class=\"body_text\"><a href=\"#\" onclick=\"OpeNSearcHForMDisplaYBox();return false;\">"._QXZ("LEAD SEARCH")."</a></font>";
+}
+?>
     </td>
     </tr><tr>
     <td align="left" colspan="2">
     <table width="550px"><tr>
     <td align="right"><font class="body_text">
     <?php
-    $required_fields = '|';
-    if ($label_title == '---HIDE---')
-        {echo "</td><td align=\"left\" colspan=\"5\"><input type=\"hidden\" name=\"title\" id=\"title\" value=\"\" />";}
-    else
-        {
-        $title_readonly='';
-        if (preg_match("/---READONLY---/",$label_title))
-            {$title_readonly='readonly="readonly"';   $label_title = preg_replace("/---READONLY---/","",$label_title);}
-        else
-            {
-            if (preg_match("/---REQUIRED---/",$label_title))
-                {$required_fields .= "title|";   $label_title = preg_replace("/---REQUIRED---/","",$label_title);}
-            }
-        echo "$label_title: </td><td align=\"left\" colspan=\"5\"><font class=\"body_text\"><input type=\"text\" size=\"4\" name=\"title\" id=\"title\" maxlength=\"$MAXtitle\" class=\"cust_form\" value=\"\" $title_readonly />";
+$required_fields = '|';
+if ($label_title == '---HIDE---') {
+    echo "</td><td align=\"left\" colspan=\"5\"><input type=\"hidden\" name=\"title\" id=\"title\" value=\"\" />";
+} else {
+    $title_readonly='';
+    if (preg_match("/---READONLY---/", $label_title)) {
+        $title_readonly='readonly="readonly"';
+        $label_title = preg_replace("/---READONLY---/", "", $label_title);
+    } else {
+        if (preg_match("/---REQUIRED---/", $label_title)) {
+            $required_fields .= "title|";
+            $label_title = preg_replace("/---REQUIRED---/", "", $label_title);
         }
-    if ($label_first_name == '---HIDE---')
-        {echo "&nbsp; <input type=\"hidden\" name=\"first_name\" id=\"first_name\" value=\"\" />";}
-    else
-        {
-        $first_name_readonly='';
-        if (preg_match("/---READONLY---/",$label_first_name))
-            {$first_name_readonly='readonly="readonly"';   $label_first_name = preg_replace("/---READONLY---/","",$label_first_name);}
-        else
-            {
-            if (preg_match("/---REQUIRED---/",$label_first_name))
-                {$required_fields .= "first_name|";   $label_first_name = preg_replace("/---REQUIRED---/","",$label_first_name);}
-            }
-        echo "&nbsp; $label_first_name: <input type=\"text\" size=\"17\" name=\"first_name\" id=\"first_name\" maxlength=\"$MAXfirst_name\" class=\"cust_form\" value=\"\" $first_name_readonly />";
+    }
+    echo "$label_title: </td><td align=\"left\" colspan=\"5\"><font class=\"body_text\"><input type=\"text\" size=\"4\" name=\"title\" id=\"title\" maxlength=\"$MAXtitle\" class=\"cust_form\" value=\"\" $title_readonly />";
+}
+if ($label_first_name == '---HIDE---') {
+    echo "&nbsp; <input type=\"hidden\" name=\"first_name\" id=\"first_name\" value=\"\" />";
+} else {
+    $first_name_readonly='';
+    if (preg_match("/---READONLY---/", $label_first_name)) {
+        $first_name_readonly='readonly="readonly"';
+        $label_first_name = preg_replace("/---READONLY---/", "", $label_first_name);
+    } else {
+        if (preg_match("/---REQUIRED---/", $label_first_name)) {
+            $required_fields .= "first_name|";
+            $label_first_name = preg_replace("/---REQUIRED---/", "", $label_first_name);
         }
-    if ($label_middle_initial == '---HIDE---')
-        {echo "&nbsp; <input type=\"hidden\" name=\"middle_initial\" id=\"middle_initial\" value=\"\" />";}
-    else
-        {
-        $middle_initial_readonly='';
-        if (preg_match("/---READONLY---/",$label_middle_initial))
-            {$middle_initial_readonly='readonly="readonly"';   $label_middle_initial = preg_replace("/---READONLY---/","",$label_middle_initial);}
-        else
-            {
-            if (preg_match("/---REQUIRED---/",$label_middle_initial))
-                {$required_fields .= "middle_initial|";   $label_middle_initial = preg_replace("/---REQUIRED---/","",$label_middle_initial);}
-            }
-        echo "&nbsp; $label_middle_initial: <input type=\"text\" size=\"1\" name=\"middle_initial\" id=\"middle_initial\" maxlength=\"$MAXmiddle_initial\" class=\"cust_form\" value=\"\" $middle_initial_readonly />";
+    }
+    echo "&nbsp; $label_first_name: <input type=\"text\" size=\"17\" name=\"first_name\" id=\"first_name\" maxlength=\"$MAXfirst_name\" class=\"cust_form\" value=\"\" $first_name_readonly />";
+}
+if ($label_middle_initial == '---HIDE---') {
+    echo "&nbsp; <input type=\"hidden\" name=\"middle_initial\" id=\"middle_initial\" value=\"\" />";
+} else {
+    $middle_initial_readonly='';
+    if (preg_match("/---READONLY---/", $label_middle_initial)) {
+        $middle_initial_readonly='readonly="readonly"';
+        $label_middle_initial = preg_replace("/---READONLY---/", "", $label_middle_initial);
+    } else {
+        if (preg_match("/---REQUIRED---/", $label_middle_initial)) {
+            $required_fields .= "middle_initial|";
+            $label_middle_initial = preg_replace("/---REQUIRED---/", "", $label_middle_initial);
         }
-    if ($label_last_name == '---HIDE---')
-        {echo "&nbsp; <input type=\"hidden\" name=\"last_name\" id=\"last_name\" value=\"\" />";}
-    else
-        {
-        $last_name_readonly='';
-        if (preg_match("/---READONLY---/",$label_last_name))
-            {$last_name_readonly='readonly="readonly"';   $label_last_name = preg_replace("/---READONLY---/","",$label_last_name);}
-        else
-            {
-            if (preg_match("/---REQUIRED---/",$label_last_name))
-                {$required_fields .= "last_name|";   $label_last_name = preg_replace("/---REQUIRED---/","",$label_last_name);}
-            }
-        echo "&nbsp; $label_last_name: <input type=\"text\" size=\"23\" name=\"last_name\" id=\"last_name\" maxlength=\"$MAXlast_name\" class=\"cust_form\" value=\"\" $last_name_readonly />";
+    }
+    echo "&nbsp; $label_middle_initial: <input type=\"text\" size=\"1\" name=\"middle_initial\" id=\"middle_initial\" maxlength=\"$MAXmiddle_initial\" class=\"cust_form\" value=\"\" $middle_initial_readonly />";
+}
+if ($label_last_name == '---HIDE---') {
+    echo "&nbsp; <input type=\"hidden\" name=\"last_name\" id=\"last_name\" value=\"\" />";
+} else {
+    $last_name_readonly='';
+    if (preg_match("/---READONLY---/", $label_last_name)) {
+        $last_name_readonly='readonly="readonly"';
+        $label_last_name = preg_replace("/---READONLY---/", "", $label_last_name);
+    } else {
+        if (preg_match("/---REQUIRED---/", $label_last_name)) {
+            $required_fields .= "last_name|";
+            $label_last_name = preg_replace("/---REQUIRED---/", "", $label_last_name);
         }
-    echo "</td></tr><tr><td align=\"right\"><font class=\"body_text\">";
-    if ($label_address1 == '---HIDE---')
-        {echo " </td><td align=\"left\" colspan=\"5\"><input type=\"hidden\" name=\"address1\" id=\"address1\" value=\"\" />";}
-    else
-        {
-        $address1_readonly='';
-        if (preg_match("/---READONLY---/",$label_address1))
-            {$address1_readonly='readonly="readonly"';   $label_address1 = preg_replace("/---READONLY---/","",$label_address1);}
-        else
-            {
-            if (preg_match("/---REQUIRED---/",$label_address1))
-                {$required_fields .= "address1|";   $label_address1 = preg_replace("/---REQUIRED---/","",$label_address1);}
-            }
-        echo "$label_address1: </td><td align=\"left\" colspan=5><font class=\"body_text\"><input type=\"text\" size=\"85\" name=\"address1\" id=\"address1\" maxlength=\"$MAXaddress1\" class=\"cust_form\" value=\"\" $address1_readonly />";
+    }
+    echo "&nbsp; $label_last_name: <input type=\"text\" size=\"23\" name=\"last_name\" id=\"last_name\" maxlength=\"$MAXlast_name\" class=\"cust_form\" value=\"\" $last_name_readonly />";
+}
+echo "</td></tr><tr><td align=\"right\"><font class=\"body_text\">";
+if ($label_address1 == '---HIDE---') {
+    echo " </td><td align=\"left\" colspan=\"5\"><input type=\"hidden\" name=\"address1\" id=\"address1\" value=\"\" />";
+} else {
+    $address1_readonly='';
+    if (preg_match("/---READONLY---/", $label_address1)) {
+        $address1_readonly='readonly="readonly"';
+        $label_address1 = preg_replace("/---READONLY---/", "", $label_address1);
+    } else {
+        if (preg_match("/---REQUIRED---/", $label_address1)) {
+            $required_fields .= "address1|";
+            $label_address1 = preg_replace("/---REQUIRED---/", "", $label_address1);
         }
-    echo "</td></tr><tr><td align=\"right\"><font class=\"body_text\">";
-    if ($label_address2 == '---HIDE---')
-        {echo " </td><td align=\"left\"><input type=\"hidden\" name=\"address2\" id=\"address2\" value=\"\" />";}
-    else
-        {
-        $address2_readonly='';
-        if (preg_match("/---READONLY---/",$label_address2))
-            {$address2_readonly='readonly="readonly"';   $label_address2 = preg_replace("/---READONLY---/","",$label_address2);}
-        else
-            {
-            if (preg_match("/---REQUIRED---/",$label_address2))
-                {$required_fields .= "address2|";   $label_address2 = preg_replace("/---REQUIRED---/","",$label_address2);}
-            }
-        echo "$label_address2: </td><td align=\"left\"><font class=\"body_text\"><input type=\"text\" size=\"20\" name=\"address2\" id=\"address2\" maxlength=\"$MAXaddress2\" class=\"cust_form\" value=\"\" $address2_readonly />";
+    }
+    echo "$label_address1: </td><td align=\"left\" colspan=5><font class=\"body_text\"><input type=\"text\" size=\"85\" name=\"address1\" id=\"address1\" maxlength=\"$MAXaddress1\" class=\"cust_form\" value=\"\" $address1_readonly />";
+}
+echo "</td></tr><tr><td align=\"right\"><font class=\"body_text\">";
+if ($label_address2 == '---HIDE---') {
+    echo " </td><td align=\"left\"><input type=\"hidden\" name=\"address2\" id=\"address2\" value=\"\" />";
+} else {
+    $address2_readonly='';
+    if (preg_match("/---READONLY---/", $label_address2)) {
+        $address2_readonly='readonly="readonly"';
+        $label_address2 = preg_replace("/---READONLY---/", "", $label_address2);
+    } else {
+        if (preg_match("/---REQUIRED---/", $label_address2)) {
+            $required_fields .= "address2|";
+            $label_address2 = preg_replace("/---REQUIRED---/", "", $label_address2);
         }
-    echo "</td><td align=\"right\"><font class=\"body_text\">";
-    if ($label_address3 == '---HIDE---')
-        {echo " </td><td align=\"left\" colspan=\"3\"><input type=\"hidden\" name=\"address3\" id=\"address3\" value=\"\" />";}
-    else
-        {
-        $address3_readonly='';
-        if (preg_match("/---READONLY---/",$label_address3))
-            {$address3_readonly='readonly="readonly"';   $label_address3 = preg_replace("/---READONLY---/","",$label_address3);}
-        else
-            {
-            if (preg_match("/---REQUIRED---/",$label_address3))
-                {$required_fields .= "address3|";   $label_address3 = preg_replace("/---REQUIRED---/","",$label_address3);}
-            }
-        echo "$label_address3: </td><td align=\"left\" colspan=\"3\"><font class=\"body_text\"><input type=\"text\" size=\"45\" name=\"address3\" id=\"address3\" maxlength=\"$MAXaddress3\" class=\"cust_form\" value=\"\" $address3_readonly />";
+    }
+    echo "$label_address2: </td><td align=\"left\"><font class=\"body_text\"><input type=\"text\" size=\"20\" name=\"address2\" id=\"address2\" maxlength=\"$MAXaddress2\" class=\"cust_form\" value=\"\" $address2_readonly />";
+}
+echo "</td><td align=\"right\"><font class=\"body_text\">";
+if ($label_address3 == '---HIDE---') {
+    echo " </td><td align=\"left\" colspan=\"3\"><input type=\"hidden\" name=\"address3\" id=\"address3\" value=\"\" />";
+} else {
+    $address3_readonly='';
+    if (preg_match("/---READONLY---/", $label_address3)) {
+        $address3_readonly='readonly="readonly"';
+        $label_address3 = preg_replace("/---READONLY---/", "", $label_address3);
+    } else {
+        if (preg_match("/---REQUIRED---/", $label_address3)) {
+            $required_fields .= "address3|";
+            $label_address3 = preg_replace("/---REQUIRED---/", "", $label_address3);
         }
-    echo "</td></tr><tr><td align=\"right\"><font class=\"body_text\">";
-    if ($label_city == '---HIDE---')
-        {echo " </td><td align=\"left\"><input type=\"hidden\" name=\"city\" id=\"city\" value=\"\" />";}
-    else
-        {
-        $city_readonly='';
-        if (preg_match("/---READONLY---/",$label_city))
-            {$city_readonly='readonly="readonly"';   $label_city = preg_replace("/---READONLY---/","",$label_city);}
-        else
-            {
-            if (preg_match("/---REQUIRED---/",$label_city))
-                {$required_fields .= "city|";   $label_city = preg_replace("/---REQUIRED---/","",$label_city);}
-            }
-        echo "$label_city: </td><td align=\"left\"><font class=\"body_text\"><input type=\"text\" size=\"20\" name=\"city\" id=\"city\" maxlength=\"$MAXcity\" class=\"cust_form\" value=\"\" $city_readonly />";
+    }
+    echo "$label_address3: </td><td align=\"left\" colspan=\"3\"><font class=\"body_text\"><input type=\"text\" size=\"45\" name=\"address3\" id=\"address3\" maxlength=\"$MAXaddress3\" class=\"cust_form\" value=\"\" $address3_readonly />";
+}
+echo "</td></tr><tr><td align=\"right\"><font class=\"body_text\">";
+if ($label_city == '---HIDE---') {
+    echo " </td><td align=\"left\"><input type=\"hidden\" name=\"city\" id=\"city\" value=\"\" />";
+} else {
+    $city_readonly='';
+    if (preg_match("/---READONLY---/", $label_city)) {
+        $city_readonly='readonly="readonly"';
+        $label_city = preg_replace("/---READONLY---/", "", $label_city);
+    } else {
+        if (preg_match("/---REQUIRED---/", $label_city)) {
+            $required_fields .= "city|";
+            $label_city = preg_replace("/---REQUIRED---/", "", $label_city);
         }
-    echo "</td><td align=\"right\"><font class=\"body_text\">";
-    if ($label_state == '---HIDE---')
-        {echo " </td><td align=\"left\"><input type=\"hidden\" name=\"state\" id=\"state\" value=\"\" />";}
-    else
-        {
-        $state_readonly='';
-        if (preg_match("/---READONLY---/",$label_state))
-            {$state_readonly='readonly="readonly"';   $label_state = preg_replace("/---READONLY---/","",$label_state);}
-        else
-            {
-            if (preg_match("/---REQUIRED---/",$label_state))
-                {$required_fields .= "state|";   $label_state = preg_replace("/---REQUIRED---/","",$label_state);}
-            }
-        echo "$label_state: </td><td align=\"left\"><font class=\"body_text\"><input type=\"text\" size=\"4\" name=\"state\" id=\"state\" maxlength=\"$MAXstate\" class=\"cust_form\" value=\"\" $state_readonly />";
+    }
+    echo "$label_city: </td><td align=\"left\"><font class=\"body_text\"><input type=\"text\" size=\"20\" name=\"city\" id=\"city\" maxlength=\"$MAXcity\" class=\"cust_form\" value=\"\" $city_readonly />";
+}
+echo "</td><td align=\"right\"><font class=\"body_text\">";
+if ($label_state == '---HIDE---') {
+    echo " </td><td align=\"left\"><input type=\"hidden\" name=\"state\" id=\"state\" value=\"\" />";
+} else {
+    $state_readonly='';
+    if (preg_match("/---READONLY---/", $label_state)) {
+        $state_readonly='readonly="readonly"';
+        $label_state = preg_replace("/---READONLY---/", "", $label_state);
+    } else {
+        if (preg_match("/---REQUIRED---/", $label_state)) {
+            $required_fields .= "state|";
+            $label_state = preg_replace("/---REQUIRED---/", "", $label_state);
         }
-    echo "</td><td align=\"right\"><font class=\"body_text\">";
-    if ($label_postal_code == '---HIDE---')
-        {echo " </td><td align=\"left\"><input type=\"hidden\" name=\"postal_code\" id=\"postal_code\" value=\"\" />";}
-    else
-        {
-        $postal_code_readonly='';
-        if (preg_match("/---READONLY---/",$label_postal_code))
-            {$postal_code_readonly='readonly="readonly"';   $label_postal_code = preg_replace("/---READONLY---/","",$label_postal_code);}
-        else
-            {
-            if (preg_match("/---REQUIRED---/",$label_postal_code))
-                {$required_fields .= "postal_code|";   $label_postal_code = preg_replace("/---REQUIRED---/","",$label_postal_code);}
-            }
-        echo "$label_postal_code: </td><td align=\"left\"><font class=\"body_text\"><input type=\"text\" size=\"14\" name=\"postal_code\" id=\"postal_code\" maxlength=\"$MAXpostal_code\" class=\"cust_form\" value=\"\" $postal_code_readonly />";
+    }
+    echo "$label_state: </td><td align=\"left\"><font class=\"body_text\"><input type=\"text\" size=\"4\" name=\"state\" id=\"state\" maxlength=\"$MAXstate\" class=\"cust_form\" value=\"\" $state_readonly />";
+}
+echo "</td><td align=\"right\"><font class=\"body_text\">";
+if ($label_postal_code == '---HIDE---') {
+    echo " </td><td align=\"left\"><input type=\"hidden\" name=\"postal_code\" id=\"postal_code\" value=\"\" />";
+} else {
+    $postal_code_readonly='';
+    if (preg_match("/---READONLY---/", $label_postal_code)) {
+        $postal_code_readonly='readonly="readonly"';
+        $label_postal_code = preg_replace("/---READONLY---/", "", $label_postal_code);
+    } else {
+        if (preg_match("/---REQUIRED---/", $label_postal_code)) {
+            $required_fields .= "postal_code|";
+            $label_postal_code = preg_replace("/---REQUIRED---/", "", $label_postal_code);
         }
-    echo "</td></tr><tr><td align=\"right\"><font class=\"body_text\">";
-    if ($label_province == '---HIDE---')
-        {echo " </td><td align=\"left\"><input type=\"hidden\" name=\"province\" id=\"province\" value=\"\" />";}
-    else
-        {
-        $province_readonly='';
-        if (preg_match("/---READONLY---/",$label_province))
-            {$province_readonly='readonly="readonly"';   $label_province = preg_replace("/---READONLY---/","",$label_province);}
-        else
-            {
-            if (preg_match("/---REQUIRED---/",$label_province))
-                {$required_fields .= "province|";   $label_province = preg_replace("/---REQUIRED---/","",$label_province);}
-            }
-        echo "$label_province: </td><td align=\"left\"><font class=\"body_text\"><input type=\"text\" size=\"20\" name=\"province\" id=\"province\" maxlength=\"$MAXprovince\" class=\"cust_form\" value=\"\" $province_readonly />";
+    }
+    echo "$label_postal_code: </td><td align=\"left\"><font class=\"body_text\"><input type=\"text\" size=\"14\" name=\"postal_code\" id=\"postal_code\" maxlength=\"$MAXpostal_code\" class=\"cust_form\" value=\"\" $postal_code_readonly />";
+}
+echo "</td></tr><tr><td align=\"right\"><font class=\"body_text\">";
+if ($label_province == '---HIDE---') {
+    echo " </td><td align=\"left\"><input type=\"hidden\" name=\"province\" id=\"province\" value=\"\" />";
+} else {
+    $province_readonly='';
+    if (preg_match("/---READONLY---/", $label_province)) {
+        $province_readonly='readonly="readonly"';
+        $label_province = preg_replace("/---READONLY---/", "", $label_province);
+    } else {
+        if (preg_match("/---REQUIRED---/", $label_province)) {
+            $required_fields .= "province|";
+            $label_province = preg_replace("/---REQUIRED---/", "", $label_province);
         }
-    echo "</td><td align=\"right\"><font class=\"body_text\">";
-    if ($label_vendor_lead_code == '---HIDE---')
-        {echo " </td><td align=\"left\"><input type=\"hidden\" name=\"vendor_lead_code\" id=\"vendor_lead_code\" value=\"\" />";}
-    else
-        {
-        $vendor_lead_code_readonly='';
-        if (preg_match("/---READONLY---/",$label_vendor_lead_code))
-            {$vendor_lead_code_readonly='readonly="readonly"';   $label_vendor_lead_code = preg_replace("/---READONLY---/","",$label_vendor_lead_code);}
-        else
-            {
-            if (preg_match("/---REQUIRED---/",$label_vendor_lead_code))
-                {$required_fields .= "vendor_lead_code|";   $label_vendor_lead_code = preg_replace("/---REQUIRED---/","",$label_vendor_lead_code);}
-            }
-        echo "$label_vendor_lead_code: </td><td align=\"left\"><font class=\"body_text\"><input type=\"text\" size=\"15\" name=\"vendor_lead_code\" id=\"vendor_lead_code\" maxlength=\"$MAXvendor_lead_code\" class=\"cust_form\" value=\"\" $vendor_lead_code_readonly />";
+    }
+    echo "$label_province: </td><td align=\"left\"><font class=\"body_text\"><input type=\"text\" size=\"20\" name=\"province\" id=\"province\" maxlength=\"$MAXprovince\" class=\"cust_form\" value=\"\" $province_readonly />";
+}
+echo "</td><td align=\"right\"><font class=\"body_text\">";
+if ($label_vendor_lead_code == '---HIDE---') {
+    echo " </td><td align=\"left\"><input type=\"hidden\" name=\"vendor_lead_code\" id=\"vendor_lead_code\" value=\"\" />";
+} else {
+    $vendor_lead_code_readonly='';
+    if (preg_match("/---READONLY---/", $label_vendor_lead_code)) {
+        $vendor_lead_code_readonly='readonly="readonly"';
+        $label_vendor_lead_code = preg_replace("/---READONLY---/", "", $label_vendor_lead_code);
+    } else {
+        if (preg_match("/---REQUIRED---/", $label_vendor_lead_code)) {
+            $required_fields .= "vendor_lead_code|";
+            $label_vendor_lead_code = preg_replace("/---REQUIRED---/", "", $label_vendor_lead_code);
         }
-    echo "</td><td align=\"right\"><font class=\"body_text\">";
-    if ($label_gender == '---HIDE---')
-        {
-        echo "</td><td align=\"left\"><font class=\"body_text\"><span id=\"GENDERhideFORie\"><input type=\"hidden\" name=\"gender_list\" id=\"gender_list\" value=\"\" /></span>";
+    }
+    echo "$label_vendor_lead_code: </td><td align=\"left\"><font class=\"body_text\"><input type=\"text\" size=\"15\" name=\"vendor_lead_code\" id=\"vendor_lead_code\" maxlength=\"$MAXvendor_lead_code\" class=\"cust_form\" value=\"\" $vendor_lead_code_readonly />";
+}
+echo "</td><td align=\"right\"><font class=\"body_text\">";
+if ($label_gender == '---HIDE---') {
+    echo "</td><td align=\"left\"><font class=\"body_text\"><span id=\"GENDERhideFORie\"><input type=\"hidden\" name=\"gender_list\" id=\"gender_list\" value=\"\" /></span>";
+} else {
+    echo "$label_gender: </td><td align=\"left\"><font class=\"body_text\"><span id=\"GENDERhideFORie\"><select size=\"1\" name=\"gender_list\" class=\"cust_form\" id=\"gender_list\"><option value=\"U\">"._QXZ("U - Undefined")."</option><option value=\"M\">"._QXZ("M - Male")."</option><option value=\"F\">"._QXZ("F - Female")."</option></select></span>";
+}
+echo "</td></tr><tr><td align=\"right\"><font class=\"body_text\">";
+if ($label_phone_number == '---HIDE---') {
+    echo " </td><td align=\"left\"><input type=\"hidden\" name=\"phone_number\" id=\"phone_number\" value=\"\" />";
+    echo "<font class=\"body_text\"><span id=\"phone_numberDISP\"> &nbsp; </span></font>";
+} else {
+    echo "$label_phone_number: </td><td align=\"left\"><font class=\"body_text\">";
+    if ((preg_match('/Y/', $disable_alter_custphone)) or (preg_match('/HIDE/', $disable_alter_custphone))) {
+        echo "<font class=\"body_text\"><span id=\"phone_numberDISP\"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span></font>";
+        echo "<input type=\"hidden\" name=\"phone_number\" id=\"phone_number\" value=\"\" />";
+    } else {
+        echo "<input type=\"text\" size=\"20\" name=\"phone_number\" id=\"phone_number\" maxlength=\"$MAXphone_number\" class=\"cust_form\" value=\"\" />";
+    }
+}
+echo "</td><td align=\"right\"><font class=\"body_text\">";
+if ($label_phone_code == '---HIDE---') {
+    echo " </td><td align=\"left\"><input type=\"hidden\" name=\"phone_code\" id=\"phone_code\" value=\"\" />";
+} else {
+    $phone_code_readonly='';
+    if (preg_match("/---READONLY---/", $label_phone_code)) {
+        $phone_code_readonly='readonly="readonly"';
+        $label_phone_code = preg_replace("/---READONLY---/", "", $label_phone_code);
+    } else {
+        if (preg_match("/---REQUIRED---/", $label_phone_code)) {
+            $required_fields .= "phone_code|";
+            $label_phone_code = preg_replace("/---REQUIRED---/", "", $label_phone_code);
         }
-    else
-        {
-        echo "$label_gender: </td><td align=\"left\"><font class=\"body_text\"><span id=\"GENDERhideFORie\"><select size=\"1\" name=\"gender_list\" class=\"cust_form\" id=\"gender_list\"><option value=\"U\">"._QXZ("U - Undefined")."</option><option value=\"M\">"._QXZ("M - Male")."</option><option value=\"F\">"._QXZ("F - Female")."</option></select></span>";
+    }
+    echo "$label_phone_code: </td><td align=\"left\"><font class=\"body_text\"><input type=\"text\" size=\"4\" name=\"phone_code\" id=\"phone_code\" maxlength=\"$MAXphone_code\" class=\"cust_form\" value=\"\" $phone_code_readonly />";
+}
+echo "</td><td align=\"right\"><font class=\"body_text\">";
+if ($label_alt_phone == '---HIDE---') {
+    echo " </td><td align=\"left\"><input type=\"hidden\" name=\"alt_phone\" id=\"alt_phone\" value=\"\" />";
+} else {
+    $alt_phone_readonly='';
+    if (preg_match("/---READONLY---/", $label_alt_phone)) {
+        $alt_phone_readonly='readonly="readonly"';
+        $label_alt_phone = preg_replace("/---READONLY---/", "", $label_alt_phone);
+    } else {
+        if (preg_match("/---REQUIRED---/", $label_alt_phone)) {
+            $required_fields .= "alt_phone|";
+            $label_alt_phone = preg_replace("/---REQUIRED---/", "", $label_alt_phone);
         }
-    echo "</td></tr><tr><td align=\"right\"><font class=\"body_text\">";
-    if ($label_phone_number == '---HIDE---')
-        {
-        echo " </td><td align=\"left\"><input type=\"hidden\" name=\"phone_number\" id=\"phone_number\" value=\"\" />";
-        echo "<font class=\"body_text\"><span id=\"phone_numberDISP\"> &nbsp; </span></font>";
+    }
+    echo "$label_alt_phone: </td><td align=\"left\"><font class=\"body_text\"><input type=\"text\" size=\"14\" name=\"alt_phone\" id=\"alt_phone\" maxlength=\"$MAXalt_phone\" class=\"cust_form\" value=\"\" $alt_phone_readonly />";
+}
+echo "</td></tr><tr><td align=\"right\"><font class=\"body_text\">";
+if ($label_security_phrase == '---HIDE---') {
+    echo " </td><td align=\"left\"><input type=\"hidden\" name=\"security_phrase\" id=\"security_phrase\" value=\"\" />";
+} else {
+    $security_phrase_readonly='';
+    if (preg_match("/---READONLY---/", $label_security_phrase)) {
+        $security_phrase_readonly='readonly="readonly"';
+        $label_security_phrase = preg_replace("/---READONLY---/", "", $label_security_phrase);
+    } else {
+        if (preg_match("/---REQUIRED---/", $label_security_phrase)) {
+            $required_fields .= "security_phrase|";
+            $label_security_phrase = preg_replace("/---REQUIRED---/", "", $label_security_phrase);
         }
-    else
-        {
-        echo "$label_phone_number: </td><td align=\"left\"><font class=\"body_text\">";
-        if ( (preg_match('/Y/',$disable_alter_custphone)) or (preg_match('/HIDE/',$disable_alter_custphone)) )
-            {
-            echo "<font class=\"body_text\"><span id=\"phone_numberDISP\"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span></font>";
-            echo "<input type=\"hidden\" name=\"phone_number\" id=\"phone_number\" value=\"\" />";
-            }
-        else
-            {
-            echo "<input type=\"text\" size=\"20\" name=\"phone_number\" id=\"phone_number\" maxlength=\"$MAXphone_number\" class=\"cust_form\" value=\"\" />";
-            }
+    }
+    echo "$label_security_phrase: </td><td align=\"left\"><font class=\"body_text\"><input type=\"text\" size=\"20\" name=\"security_phrase\" id=\"security_phrase\" maxlength=\"$MAXsecurity_phrase\" class=\"cust_form\" value=\"\" $security_phrase_readonly />";
+}
+echo "</td><td align=\"right\"><font class=\"body_text\">";
+if ($label_email == '---HIDE---') {
+    echo " </td><td align=\"left\" colspan=\"3\"><input type=\"hidden\" name=\"email\" id=\"email\" value=\"\" />";
+} else {
+    $email_readonly='';
+    if (preg_match("/---READONLY---/", $label_email)) {
+        $email_readonly='readonly="readonly"';
+        $label_email = preg_replace("/---READONLY---/", "", $label_email);
+    } else {
+        if (preg_match("/---REQUIRED---/", $label_email)) {
+            $required_fields .= "email|";
+            $label_email = preg_replace("/---REQUIRED---/", "", $label_email);
         }
-    echo "</td><td align=\"right\"><font class=\"body_text\">";
-    if ($label_phone_code == '---HIDE---')
-        {echo " </td><td align=\"left\"><input type=\"hidden\" name=\"phone_code\" id=\"phone_code\" value=\"\" />";}
-    else
-        {
-        $phone_code_readonly='';
-        if (preg_match("/---READONLY---/",$label_phone_code))
-            {$phone_code_readonly='readonly="readonly"';   $label_phone_code = preg_replace("/---READONLY---/","",$label_phone_code);}
-        else
-            {
-            if (preg_match("/---REQUIRED---/",$label_phone_code))
-                {$required_fields .= "phone_code|";   $label_phone_code = preg_replace("/---REQUIRED---/","",$label_phone_code);}
-            }
-        echo "$label_phone_code: </td><td align=\"left\"><font class=\"body_text\"><input type=\"text\" size=\"4\" name=\"phone_code\" id=\"phone_code\" maxlength=\"$MAXphone_code\" class=\"cust_form\" value=\"\" $phone_code_readonly />";
-        }
-    echo "</td><td align=\"right\"><font class=\"body_text\">";
-    if ($label_alt_phone == '---HIDE---')
-        {echo " </td><td align=\"left\"><input type=\"hidden\" name=\"alt_phone\" id=\"alt_phone\" value=\"\" />";}
-    else
-        {
-        $alt_phone_readonly='';
-        if (preg_match("/---READONLY---/",$label_alt_phone))
-            {$alt_phone_readonly='readonly="readonly"';   $label_alt_phone = preg_replace("/---READONLY---/","",$label_alt_phone);}
-        else
-            {
-            if (preg_match("/---REQUIRED---/",$label_alt_phone))
-                {$required_fields .= "alt_phone|";   $label_alt_phone = preg_replace("/---REQUIRED---/","",$label_alt_phone);}
-            }
-        echo "$label_alt_phone: </td><td align=\"left\"><font class=\"body_text\"><input type=\"text\" size=\"14\" name=\"alt_phone\" id=\"alt_phone\" maxlength=\"$MAXalt_phone\" class=\"cust_form\" value=\"\" $alt_phone_readonly />";
-        }
-    echo "</td></tr><tr><td align=\"right\"><font class=\"body_text\">";
-    if ($label_security_phrase == '---HIDE---')
-        {echo " </td><td align=\"left\"><input type=\"hidden\" name=\"security_phrase\" id=\"security_phrase\" value=\"\" />";}
-    else
-        {
-        $security_phrase_readonly='';
-        if (preg_match("/---READONLY---/",$label_security_phrase))
-            {$security_phrase_readonly='readonly="readonly"';   $label_security_phrase = preg_replace("/---READONLY---/","",$label_security_phrase);}
-        else
-            {
-            if (preg_match("/---REQUIRED---/",$label_security_phrase))
-                {$required_fields .= "security_phrase|";   $label_security_phrase = preg_replace("/---REQUIRED---/","",$label_security_phrase);}
-            }
-        echo "$label_security_phrase: </td><td align=\"left\"><font class=\"body_text\"><input type=\"text\" size=\"20\" name=\"security_phrase\" id=\"security_phrase\" maxlength=\"$MAXsecurity_phrase\" class=\"cust_form\" value=\"\" $security_phrase_readonly />";
-        }
-    echo "</td><td align=\"right\"><font class=\"body_text\">";
-    if ($label_email == '---HIDE---')
-        {echo " </td><td align=\"left\" colspan=\"3\"><input type=\"hidden\" name=\"email\" id=\"email\" value=\"\" />";}
-    else
-        {
-        $email_readonly='';
-        if (preg_match("/---READONLY---/",$label_email))
-            {$email_readonly='readonly="readonly"';   $label_email = preg_replace("/---READONLY---/","",$label_email);}
-        else
-            {
-            if (preg_match("/---REQUIRED---/",$label_email))
-                {$required_fields .= "email|";   $label_email = preg_replace("/---REQUIRED---/","",$label_email);}
-            }
-        echo "$label_email: </td><td align=\"left\" colspan=\"3\"><font class=\"body_text\"><input type=\"text\" size=\"45\" name=\"email\" id=\"email\" maxlength=\"$MAXemail\" class=\"cust_form\" value=\"\" $email_readonly />";
-        }
-    if (strlen($agent_display_fields) > 3)
-        {
-        echo "</td></tr><tr><td align=\"left\" colspan=\"5\"><font class=\"body_text\">";
-        if (preg_match("/entry_date/",$agent_display_fields))
-            {
-            echo "$label_entry_date: &nbsp; <font class=\"body_text\"><span id=\"entry_dateDISP\"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span> &nbsp; </font>";
-            }
-        if (preg_match("/source_id/",$agent_display_fields))
-            {
-            echo "$label_source_id: &nbsp; <font class=\"body_text\"><span id=\"source_idDISP\"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span> &nbsp; </font>";
-            }
-        if (preg_match("/date_of_birth/",$agent_display_fields))
-            {
-            echo "$label_date_of_birth: &nbsp; <font class=\"body_text\"><span id=\"date_of_birthDISP\"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span> &nbsp; </font>";
-            }
-        if (preg_match("/rank/",$agent_display_fields))
-            {
-            echo "$label_rank: &nbsp; <font class=\"body_text\"><span id=\"rankDISP\"> &nbsp; &nbsp; </span> &nbsp; </font>";
-            }
-        if (preg_match("/owner/",$agent_display_fields))
-            {
-            echo "$label_owner: &nbsp; <font class=\"body_text\"><span id=\"ownerDISP\"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span> &nbsp; </font>";
-            }
-        if (preg_match("/last_local_call_time/",$agent_display_fields))
-            {
-            echo "$label_last_local_call_time: &nbsp; <font class=\"body_text\"><span id=\"last_local_call_timeDISP\"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span> &nbsp; </font>";
-            }
-        }
-    echo "</td></tr><tr><td align=\"right\"><font class=\"body_text\">";
-    if ($label_comments == '---HIDE---')
-        {
-        echo " </td><td align=\"left\" colspan=5>";
-        echo "<input type=\"hidden\" name=\"comments\" id=\"comments\" value=\"\" />\n";
-        echo "<input type=\"hidden\" name=\"other_tab_comments\" id=\"other_tab_comments\" value=\"\" />\n";
-        echo "<input type=\"hidden\" name=\"dispo_comments\" id=\"dispo_comments\" value=\"\" />\n";
-        echo "<input type=\"hidden\" name=\"callback_comments\" id=\"callback_comments\" value=\"\" />\n";
-        echo "<span id='viewcommentsdisplay'><input type='button' id='ViewCommentButton' onClick=\"ViewComments('ON','','','YES')\" value='-"._QXZ("History")."-'/></span>\n";
-        echo "<span id='otherviewcommentsdisplay'><input type='button' id='OtherViewCommentButton' onClick=\"ViewComments('ON','','','YES')\" value='-"._QXZ("History")."-'/></span>\n";
-        }
-    else
-        {
-        echo "$label_comments: <br><span id='viewcommentsdisplay'><input type='button' id='ViewCommentButton' onClick=\"ViewComments('ON','','','YES')\" value='-"._QXZ("History")."-'/></span>
+    }
+    echo "$label_email: </td><td align=\"left\" colspan=\"3\"><font class=\"body_text\"><input type=\"text\" size=\"45\" name=\"email\" id=\"email\" maxlength=\"$MAXemail\" class=\"cust_form\" value=\"\" $email_readonly />";
+}
+if (strlen($agent_display_fields) > 3) {
+    echo "</td></tr><tr><td align=\"left\" colspan=\"5\"><font class=\"body_text\">";
+    if (preg_match("/entry_date/", $agent_display_fields)) {
+        echo "$label_entry_date: &nbsp; <font class=\"body_text\"><span id=\"entry_dateDISP\"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span> &nbsp; </font>";
+    }
+    if (preg_match("/source_id/", $agent_display_fields)) {
+        echo "$label_source_id: &nbsp; <font class=\"body_text\"><span id=\"source_idDISP\"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span> &nbsp; </font>";
+    }
+    if (preg_match("/date_of_birth/", $agent_display_fields)) {
+        echo "$label_date_of_birth: &nbsp; <font class=\"body_text\"><span id=\"date_of_birthDISP\"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span> &nbsp; </font>";
+    }
+    if (preg_match("/rank/", $agent_display_fields)) {
+        echo "$label_rank: &nbsp; <font class=\"body_text\"><span id=\"rankDISP\"> &nbsp; &nbsp; </span> &nbsp; </font>";
+    }
+    if (preg_match("/owner/", $agent_display_fields)) {
+        echo "$label_owner: &nbsp; <font class=\"body_text\"><span id=\"ownerDISP\"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span> &nbsp; </font>";
+    }
+    if (preg_match("/last_local_call_time/", $agent_display_fields)) {
+        echo "$label_last_local_call_time: &nbsp; <font class=\"body_text\"><span id=\"last_local_call_timeDISP\"> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </span> &nbsp; </font>";
+    }
+}
+echo "</td></tr><tr><td align=\"right\"><font class=\"body_text\">";
+if ($label_comments == '---HIDE---') {
+    echo " </td><td align=\"left\" colspan=5>";
+    echo "<input type=\"hidden\" name=\"comments\" id=\"comments\" value=\"\" />\n";
+    echo "<input type=\"hidden\" name=\"other_tab_comments\" id=\"other_tab_comments\" value=\"\" />\n";
+    echo "<input type=\"hidden\" name=\"dispo_comments\" id=\"dispo_comments\" value=\"\" />\n";
+    echo "<input type=\"hidden\" name=\"callback_comments\" id=\"callback_comments\" value=\"\" />\n";
+    echo "<span id='viewcommentsdisplay'><input type='button' id='ViewCommentButton' onClick=\"ViewComments('ON','','','YES')\" value='-"._QXZ("History")."-'/></span>\n";
+    echo "<span id='otherviewcommentsdisplay'><input type='button' id='OtherViewCommentButton' onClick=\"ViewComments('ON','','','YES')\" value='-"._QXZ("History")."-'/></span>\n";
+} else {
+    echo "$label_comments: <br><span id='viewcommentsdisplay'><input type='button' id='ViewCommentButton' onClick=\"ViewComments('ON','','','YES')\" value='-"._QXZ("History")."-'/></span>
         </td><td align=\"left\" colspan=\"5\"><font class=\"body_text\">";
-        if ( ($multi_line_comments) )
-            {echo "<textarea name=\"comments\" id=\"comments\" rows=\"2\" cols=\"85\" class=\"cust_form_text\" value=\"\"></textarea>\n";}
-        else
-            {echo "<input type=\"text\" size=\"65\" name=\"comments\" id=\"comments\" maxlength=\"255\" class=\"cust_form\" value=\"\" />\n";}
-        }
-    echo "</font></td>
+    if (($multi_line_comments)) {
+        echo "<textarea name=\"comments\" id=\"comments\" rows=\"2\" cols=\"85\" class=\"cust_form_text\" value=\"\"></textarea>\n";
+    } else {
+        echo "<input type=\"text\" size=\"65\" name=\"comments\" id=\"comments\" maxlength=\"255\" class=\"cust_form\" value=\"\" />\n";
+    }
+}
+echo "</font></td>
         </tr><tr><td align=\"right\"><font class=\"body_text\">\n";
-    if ($per_call_notes == 'ENABLED')
-        {
-        echo _QXZ("Call Notes: ");
-        if ($agent_call_log_view == '1')
-            {echo "<br /><span id=\"CallNotesButtons\"><a href=\"#\" onclick=\"VieWNotesLoG();return false;\">"._QXZ("view notes")."</a></span> ";}
-        echo "</td><td align=\"left\" colspan=\"5\"><font class=\"body_text\">";
-        echo "<textarea name=\"call_notes\" id=\"call_notes\" rows=\"2\" cols=\"85\" class=\"cust_form_text\" value=\"\"></textarea>\n";
-        }
-    else
-        {
-        echo " </td><td align=\"left\" colspan=5><input type=\"hidden\" name=\"call_notes\" id=\"call_notes\" value=\"\" /><span id=\"CallNotesButtons\"></span>\n";
-        }
-    echo "<input type=\"hidden\" name=\"required_fields\" id=\"required_fields\" value=\"$required_fields\" />\n";
-    ?>
+if ($per_call_notes == 'ENABLED') {
+    echo _QXZ("Call Notes: ");
+    if ($agent_call_log_view == '1') {
+        echo "<br /><span id=\"CallNotesButtons\"><a href=\"#\" onclick=\"VieWNotesLoG();return false;\">"._QXZ("view notes")."</a></span> ";
+    }
+    echo "</td><td align=\"left\" colspan=\"5\"><font class=\"body_text\">";
+    echo "<textarea name=\"call_notes\" id=\"call_notes\" rows=\"2\" cols=\"85\" class=\"cust_form_text\" value=\"\"></textarea>\n";
+} else {
+    echo " </td><td align=\"left\" colspan=5><input type=\"hidden\" name=\"call_notes\" id=\"call_notes\" value=\"\" /><span id=\"CallNotesButtons\"></span>\n";
+}
+echo "<input type=\"hidden\" name=\"required_fields\" id=\"required_fields\" value=\"$required_fields\" />\n";
+?>
     </font>
     </td>
     </tr></table></td>
@@ -20595,8 +21353,10 @@ $zi=2;
 </span>
 <!-- END *********   Here is the main VICIDIAL display panel -->
 <!-- ZZZZZZZZZZZZ  action links -->
-<span style="position:absolute;left:0px;top:<?php echo $DBheight ?>px;z-index:<?php $zi++; echo $zi ?>;" id="debugbottomspan"></span>
-<span style="position:absolute;left:300px;top:<?php echo $MBheight ?>px;z-index:<?php $zi++; echo $zi ?>;" id="DiaLlOgButtonspan">
+<span style="position:absolute;left:0px;top:<?php echo $DBheight ?>px;z-index:<?php $zi++;
+echo $zi ?>;" id="debugbottomspan"></span>
+<span style="position:absolute;left:300px;top:<?php echo $MBheight ?>px;z-index:<?php $zi++;
+echo $zi ?>;" id="DiaLlOgButtonspan">
 <span id="ManuaLDiaLButtons"><font class="body_text"><span id="MDstatusSpan"><a href="#" onclick="NeWManuaLDiaLCalL('NO','','','','','YES','YES');return false;"><?php echo _QXZ("MANUAL DIAL"); ?></a></span>&nbsp; &nbsp; 
 <?php if ($agentcall_manual == '1') { ?>
 <a href="#" onclick="NeWManuaLDiaLCalL('FAST','','','','','YES','YES');return false;"><?php echo _QXZ("FAST DIAL"); ?></a>
@@ -20604,13 +21364,16 @@ $zi=2;
 </span>&nbsp; &nbsp; </font>
 <span id="CallLogButtons"><font class="body_text"><span id="CallLogLinkSpan"><a href="#" onclick="VieWCalLLoG();return false;"><?php echo _QXZ("VIEW CALL LOG"); ?></a></span><br /></font></span>
 </span>
-<span style="position:absolute;left:165px;top:<?php echo $CBheight ?>px;z-index:<?php $zi++; echo $zi ?>;" id="AgentTimeSpan">
+<span style="position:absolute;left:165px;top:<?php echo $CBheight ?>px;z-index:<?php $zi++;
+echo $zi ?>;" id="AgentTimeSpan">
 <font class="body_text"><a href="#" onclick="AgentTimeReport('open');return false;"><?php echo _QXZ("AGENT TIME"); ?></a></font>
 </span>
-<span style="position:absolute;left:550px;top:<?php echo $CBheight ?>px;z-index:<?php $zi++; echo $zi ?>;" id="PauseCodeButtons"><font class="body_text">
+<span style="position:absolute;left:550px;top:<?php echo $CBheight ?>px;z-index:<?php $zi++;
+echo $zi ?>;" id="PauseCodeButtons"><font class="body_text">
 <span id="PauseCodeLinkSpan"></span> <br />
 </font></span>
-<span style="position:absolute;left:0px;top:<?php echo $PBheight ?>px;z-index:<?php $zi++; echo $zi ?>;" id="MaiNfooterspan">
+<span style="position:absolute;left:0px;top:<?php echo $PBheight ?>px;z-index:<?php $zi++;
+echo $zi ?>;" id="MaiNfooterspan">
 <span id="blind_monitor_notice_span"><b><font color="red"> &nbsp; &nbsp; <span id="blind_monitor_notice_span_contents"></span></font></b></span>
     <table bgcolor="<?php echo $MAIN_COLOR ?>" id="MaiNfooter" width="<?php echo $MNwidth ?>px"><tr height="32px"><td height="32px"><font face="Arial,Helvetica" size="1"><?php echo _QXZ("VERSION:"); ?> <?php echo $version ?> &nbsp; <?php echo _QXZ("BUILD:"); ?> <?php echo $build ?> &nbsp; &nbsp; <?php echo _QXZ("Server:"); ?> <?php echo $server_ip ?>  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</font><br />
     <font class="body_small">
@@ -20620,162 +21383,200 @@ $zi=2;
     <tr><td colspan="3"><span id="outboundcallsspan"></span></td></tr>
     <tr><td colspan="3"><font class="body_small"><span id="AgentAlertSpan">
     <?php
-    if ( (preg_match('/ON/',$VU_alert_enabled)) and ($AgentAlert_allowed > 0) )
-        {echo "<a href=\"#\" onclick=\"alert_control('OFF');return false;\">"._QXZ("Alert is ON")."</a>";}
-    else
-        {echo "<a href=\"#\" onclick=\"alert_control('ON');return false;\">"._QXZ("Alert is OFF")."</a>";}
-    ?>
+    if ((preg_match('/ON/', $VU_alert_enabled)) and ($AgentAlert_allowed > 0)) {
+        echo "<a href=\"#\" onclick=\"alert_control('OFF');return false;\">"._QXZ("Alert is ON")."</a>";
+    } else {
+        echo "<a href=\"#\" onclick=\"alert_control('ON');return false;\">"._QXZ("Alert is OFF")."</a>";
+    }
+?>
     </span></font></td></tr>
     <tr><td colspan="3">
     <font class="body_small">
     </font>
     </td></tr></table>
 </span>
-<span style="position:absolute;left:<?php echo $SCwidth ?>px;top:<?php echo $SCheight ?>px;z-index:<?php $zi++; echo $zi ?>;" id="SecondSspan"><font class="body_text"> <?php echo _QXZ("seconds:"); ?> 
+<span style="position:absolute;left:<?php echo $SCwidth ?>px;top:<?php echo $SCheight ?>px;z-index:<?php $zi++;
+echo $zi ?>;" id="SecondSspan"><font class="body_text"> <?php echo _QXZ("seconds:"); ?> 
 <span id="SecondSDISP"> &nbsp; &nbsp; </span></font>
 </font></span>
-<span style="position:absolute;left:5px;top:<?php echo $CBheight ?>px;z-index:<?php $zi++; echo $zi ?>;" id="VolumeControlSpan"><span id="VolumeUpSpan"><img src="./images/<?php echo _QXZ("vdc_volume_up_off.gif"); ?>" border="0" /></span><br /><span id="VolumeDownSpan"><img src="./images/<?php echo _QXZ("vdc_volume_down_off.gif"); ?>" border="0" /></span>
+<span style="position:absolute;left:5px;top:<?php echo $CBheight ?>px;z-index:<?php $zi++;
+echo $zi ?>;" id="VolumeControlSpan"><span id="VolumeUpSpan"><img src="./images/<?php echo _QXZ("vdc_volume_up_off.gif"); ?>" border="0" /></span><br /><span id="VolumeDownSpan"><img src="./images/<?php echo _QXZ("vdc_volume_down_off.gif"); ?>" border="0" /></span>
 </font></span>
-<span style="position:absolute;left:35px;top:<?php echo $CBheight ?>px;z-index:<?php $zi++; echo $zi ?>;" id="AgentStatusSpan"><font class="body_text">
+<span style="position:absolute;left:35px;top:<?php echo $CBheight ?>px;z-index:<?php $zi++;
+echo $zi ?>;" id="AgentStatusSpan"><font class="body_text">
 <?php echo _QXZ("Your Status:"); ?> <span id="AgentStatusStatus"></span> <br /><?php echo _QXZ("Calls Dialing:"); ?> <span id="AgentStatusDiaLs"></span>
 </font></span>
-<span style="position:absolute;left:<?php echo $PDwidth ?>px;top:<?php echo $AMheight ?>px;z-index:<?php $zi++; echo $zi ?>;" id="AgentMuteANDPreseTDiaL"><font class="body_text">
+<span style="position:absolute;left:<?php echo $PDwidth ?>px;top:<?php echo $AMheight ?>px;z-index:<?php $zi++;
+echo $zi ?>;" id="AgentMuteANDPreseTDiaL"><font class="body_text">
     <?php
-    if ($PreseT_DiaL_LinKs)
-        {
+    if ($PreseT_DiaL_LinKs) {
         echo "<a href=\"#\" onclick=\"DtMf_PreSet_a_DiaL('NO','YES');return false;\"><font class=\"body_tiny\">"._QXZ("D1 - DIAL")."</font></a>\n";
         echo " &nbsp; \n";
         echo "<a href=\"#\" onclick=\"DtMf_PreSet_b_DiaL('NO','YES');return false;\"><font class=\"body_tiny\">"._QXZ("D2 - DIAL")."</font></a>\n";
-        }
-    else {echo "<br />\n";}
-    ?>
-    <br /><br /> &nbsp; <br />
-</font></span>
-<span style="position:absolute;left:0px;top:<?php echo $CQheight ?>px;width:<?php echo $MNwidth ?>px;overflow:scroll;z-index:<?php $zi++; echo $zi ?>;background-color:<?php echo $SIDEBAR_COLOR ?>;" id="callsinqueuedisplay"><table cellpadding="0" cellspacing="0" border="0"><tr><td width="5px" rowspan="2">&nbsp;</td><td align="center"><font class="body_text"><?php echo _QXZ("Calls In Queue:"); ?> &nbsp; </font></td></tr><tr><td align="center"><span id="callsinqueuelist">&nbsp;</span></td></tr></table></span>
-<font class="body_small"><span style="position:absolute;left:<?php echo $CLwidth ?>px;top:<?php echo $QLheight ?>px;z-index:<?php $zi++; echo $zi ?>;" id="callsinqueuelink">
-<?php 
-if ($view_calls_in_queue > 0)
-    { 
-    if ($view_calls_in_queue_launch > 0) 
-        {echo "<a href=\"#\" onclick=\"show_calls_in_queue('HIDE');\">"._QXZ("Hide Calls In Queue")."</a>\n";}
-    else 
-        {echo "<a href=\"#\" onclick=\"show_calls_in_queue('SHOW');\">"._QXZ("Show Calls In Queue")."</a>\n";}
+    } else {
+        echo "<br />\n";
     }
 ?>
+    <br /><br /> &nbsp; <br />
+</font></span>
+<span style="position:absolute;left:0px;top:<?php echo $CQheight ?>px;width:<?php echo $MNwidth ?>px;overflow:scroll;z-index:<?php $zi++;
+echo $zi ?>;background-color:<?php echo $SIDEBAR_COLOR ?>;" id="callsinqueuedisplay"><table cellpadding="0" cellspacing="0" border="0"><tr><td width="5px" rowspan="2">&nbsp;</td><td align="center"><font class="body_text"><?php echo _QXZ("Calls In Queue:"); ?> &nbsp; </font></td></tr><tr><td align="center"><span id="callsinqueuelist">&nbsp;</span></td></tr></table></span>
+<font class="body_small"><span style="position:absolute;left:<?php echo $CLwidth ?>px;top:<?php echo $QLheight ?>px;z-index:<?php $zi++;
+echo $zi ?>;" id="callsinqueuelink">
+<?php
+if ($view_calls_in_queue > 0) {
+    if ($view_calls_in_queue_launch > 0) {
+        echo "<a href=\"#\" onclick=\"show_calls_in_queue('HIDE');\">"._QXZ("Hide Calls In Queue")."</a>\n";
+    } else {
+        echo "<a href=\"#\" onclick=\"show_calls_in_queue('SHOW');\">"._QXZ("Show Calls In Queue")."</a>\n";
+    }
+}
+?>
 </span></font>
-<span style="position:absolute;left:300px;top:<?php echo $CBheight ?>px;z-index:<?php $zi++; echo $zi ?>;" id="CallbacksButtons"><font class="body_text">
+<span style="position:absolute;left:300px;top:<?php echo $CBheight ?>px;z-index:<?php $zi++;
+echo $zi ?>;" id="CallbacksButtons"><font class="body_text">
 <span id="CBstatusSpan"><?php echo _QXZ("X ACTIVE CALLBACKS"); ?></span> <br />
 </font></span>
-<span style="position:absolute;left:500px;top:<?php echo $AMheight ?>px;z-index:<?php $zi++; echo $zi ?>;" id="OtherTabCommentsSpan">
-<?php 
-    if ( ($comments_all_tabs == 'ENABLED') and ($label_comments != '---HIDE---') )
-        {
+<span style="position:absolute;left:500px;top:<?php echo $AMheight ?>px;z-index:<?php $zi++;
+echo $zi ?>;" id="OtherTabCommentsSpan">
+<?php
+    if (($comments_all_tabs == 'ENABLED') and ($label_comments != '---HIDE---')) {
         $zi++;
         echo "<table cellspacing=4 cellpadding=0><tr><td align=\"right\"><font class=\"body_text\">\n";
         echo "$label_comments: <br><span id='otherviewcommentsdisplay'><input type='button' id='OtherViewCommentButton' onClick=\"ViewComments('ON','','','YES')\" value='-"._QXZ("History")."-'/></span>
         </font></td><td align=\"left\"><font class=\"body_text\">";
-        if ( ($multi_line_comments) )
-            {echo "<textarea name=\"other_tab_comments\" id=\"other_tab_comments\" rows=\"2\" cols=\"65\" class=\"cust_form_text\" value=\"\"></textarea>\n";}
-        else
-            {echo "<input type=\"text\" size=\"65\" name=\"other_tab_comments\" id=\"other_tab_comments\" maxlength=\"255\" class=\"cust_form\" value=\"\" />\n";}
+        if (($multi_line_comments)) {
+            echo "<textarea name=\"other_tab_comments\" id=\"other_tab_comments\" rows=\"2\" cols=\"65\" class=\"cust_form_text\" value=\"\"></textarea>\n";
+        } else {
+            echo "<input type=\"text\" size=\"65\" name=\"other_tab_comments\" id=\"other_tab_comments\" maxlength=\"255\" class=\"cust_form\" value=\"\" />\n";
+        }
         echo "</td></tr></table>\n";
-        }
-    else
-        {
+    } else {
         echo "<input type=\"hidden\" name=\"other_tab_comments\" id=\"other_tab_comments\" value=\"\" />\n";
-        }
+    }
 ?>
 </span>
-<span style="position:absolute;left:<?php echo $SBwidth ?>px;top:<?php echo $AVTheight ?>px;height:500px;overflow:scroll;z-index:<?php $zi++; echo $zi ?>;background-color:<?php echo $SIDEBAR_COLOR ?>;" id="AgentViewSpan"><table cellpadding="0" cellspacing="0" border="0"><tr><td width="5px" rowspan="2">&nbsp;</td><td align="center"><font class="body_text">
+<span style="position:absolute;left:<?php echo $SBwidth ?>px;top:<?php echo $AVTheight ?>px;height:500px;overflow:scroll;z-index:<?php $zi++;
+echo $zi ?>;background-color:<?php echo $SIDEBAR_COLOR ?>;" id="AgentViewSpan"><table cellpadding="0" cellspacing="0" border="0"><tr><td width="5px" rowspan="2">&nbsp;</td><td align="center"><font class="body_text">
 <?php echo _QXZ("Other Agents Status:"); ?> &nbsp; </font></td></tr><tr><td align="center"><span id="AgentViewStatus">&nbsp;</span></td></tr></table></span>
 <?php
 $zi++;
-if ($webphone_location == 'bar')
-    {
+if ($webphone_location == 'bar') {
     echo "<span style=\"position:absolute;left:0px;top:46px;height:".$webphone_height."px;width=".$webphone_width."px;overflow:hidden;z-index:$zi;background-color:$SIDEBAR_COLOR;\" id=\"webphoneSpan\"><span id=\"webphonecontent\" style=\"overflow:hidden;\">$webphone_content</span></span>\n";
-    }
-else
-    {
+} else {
     echo "<span style=\"position:absolute;left:" . $SBwidth . "px;top:15px;height:500px;overflow:scroll;z-index:$zi;background-color:$SIDEBAR_COLOR;\" id=\"webphoneSpan\"><table cellpadding=\"$webphone_pad\" cellspacing=\"0\" border=\"0\"><tr><td width=\"5px\" rowspan=\"2\">&nbsp;</td><td align=\"center\"><font class=\"body_text\">
     "._QXZ("Web Phone").": &nbsp; </font></td></tr><tr><td align=\"center\"><span id=\"webphonecontent\">$webphone_content</span></td></tr></table></span>\n";
-    }
+}
 ?>
-<span style="position:absolute;left:<?php echo $SCwidth ?>px;top:<?php echo $SLheight ?>px;z-index:<?php $zi++; echo $zi ?>;" id="AgentViewLinkSpan"><table cellpadding="0" cellspacing="0" border="0" width="91px"><tr><td align="right"><font class="body_small"><span id="AgentViewLink"><a href="#" onclick="AgentsViewOpen('AgentViewSpan','open');return false;"><?php echo _QXZ("Agents View +"); ?></a></span></font></td></tr></table></span>
-<?php 
-if ($is_webphone=='Y')
-    { 
+<span style="position:absolute;left:<?php echo $SCwidth ?>px;top:<?php echo $SLheight ?>px;z-index:<?php $zi++;
+echo $zi ?>;" id="AgentViewLinkSpan"><table cellpadding="0" cellspacing="0" border="0" width="91px"><tr><td align="right"><font class="body_small"><span id="AgentViewLink"><a href="#" onclick="AgentsViewOpen('AgentViewSpan','open');return false;"><?php echo _QXZ("Agents View +"); ?></a></span></font></td></tr></table></span>
+<?php
+if ($is_webphone=='Y') {
     ?>
-    <span style="position:absolute;left:<?php echo $SBwidth ?>px;top:0px;z-index:<?php $zi++; echo $zi ?>;" id="webphoneLinkSpan"><table cellpadding="0" cellspacing="0" border="0" width="120px"><tr><td align="right"><font class="body_small"><span id="webphoneLink"> &nbsp; <a href="#" onclick="webphoneOpen('webphoneSpan','close');return false;"><?php echo _QXZ("WebPhone View -"); ?></a></span></font></td></tr></table></span>
-    <?php 
-    }
+    <span style="position:absolute;left:<?php echo $SBwidth ?>px;top:0px;z-index:<?php $zi++;
+    echo $zi ?>;" id="webphoneLinkSpan"><table cellpadding="0" cellspacing="0" border="0" width="120px"><tr><td align="right"><font class="body_small"><span id="webphoneLink"> &nbsp; <a href="#" onclick="webphoneOpen('webphoneSpan','close');return false;"><?php echo _QXZ("WebPhone View -"); ?></a></span></font></td></tr></table></span>
+    <?php
+}
 ?>
-<font class="body_small"><span style="position:absolute;left:165px;top:<?php echo $SDLheight ?>px;z-index:<?php $zi++; echo $zi ?>;" id="dialableleadsspan">
-<?php 
-if ($agent_display_dialable_leads > 0)
-    { 
+<font class="body_small"><span style="position:absolute;left:165px;top:<?php echo $SDLheight ?>px;z-index:<?php $zi++;
+echo $zi ?>;" id="dialableleadsspan">
+<?php
+if ($agent_display_dialable_leads > 0) {
     echo _QXZ("Dialable Leads:")." &nbsp;\n";
-    }
+}
 ?>
 </span></font>
-<span style="position:absolute;left:<?php echo $MUwidth ?>px;top:<?php echo $SLheight ?>px;z-index:<?php $zi++; echo $zi ?>;" id="AgentMuteSpan"></span>
-<span style="position:absolute;left:<?php echo $AMwidth ?>px;top:<?php echo $SRheight ?>px;z-index:<?php $zi++; echo $zi ?>;" id="MainCommit">
+<span style="position:absolute;left:<?php echo $MUwidth ?>px;top:<?php echo $SLheight ?>px;z-index:<?php $zi++;
+echo $zi ?>;" id="AgentMuteSpan"></span>
+<span style="position:absolute;left:<?php echo $AMwidth ?>px;top:<?php echo $SRheight ?>px;z-index:<?php $zi++;
+echo $zi ?>;" id="MainCommit">
 <a href="#" onclick="CustomerData_update('YES')"><font class="body_small"><?php echo _QXZ("commit"); ?></font></a>
 </span>
-<span style="position:absolute;left:<?php if ($script_tab_frame_size == 'LEFT_EDGE') {echo "0";} else {echo "154";} ?>px;top:<?php echo $SFheight ?>px;z-index:<?php $zi++; echo $zi ?>;" id="ScriptPanel">
+<span style="position:absolute;left:<?php if ($script_tab_frame_size == 'LEFT_EDGE') {
+    echo "0";
+} else {
+    echo "154";
+} ?>px;top:<?php echo $SFheight ?>px;z-index:<?php $zi++;
+echo $zi ?>;" id="ScriptPanel">
     <?php
-    if ($webphone_location == 'bar')
-        {echo "<img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";}
-    ?>
+    if ($webphone_location == 'bar') {
+        echo "<img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";
+    }
+?>
     <table border="0" bgcolor="<?php echo $SCRIPT_COLOR ?>" width="<?php echo $SPwidth ?>px" height="<?php echo $SSheight ?>px"><tr><td align="left" valign="top"><font class="sb_text"><div class="noscroll_script" id="ScriptContents"><?php echo _QXZ("AGENT SCRIPT"); ?></div></font></td></tr></table>
 </span>
-<span style="position:absolute;left:<?php echo $AMwidth ?>px;top:<?php echo $SRheight ?>px;z-index:<?php $zi++; echo $zi ?>;" id="ScriptRefresH">
+<span style="position:absolute;left:<?php echo $AMwidth ?>px;top:<?php echo $SRheight ?>px;z-index:<?php $zi++;
+echo $zi ?>;" id="ScriptRefresH">
 <a href="#" onclick="RefresHScript('','YES')"><font class="body_small"><?php echo _QXZ("refresh"); ?></font></a>
 </span>
-<span style="position:absolute;left:<?php if ($script_tab_frame_size == 'LEFT_EDGE') {echo "0";} else {echo "154";} ?>px;top:<?php echo $SFheight ?>px;z-index:<?php $zi++; echo $zi ?>;" id="Script2Panel">
+<span style="position:absolute;left:<?php if ($script_tab_frame_size == 'LEFT_EDGE') {
+    echo "0";
+} else {
+    echo "154";
+} ?>px;top:<?php echo $SFheight ?>px;z-index:<?php $zi++;
+echo $zi ?>;" id="Script2Panel">
     <?php
-    if ($webphone_location == 'bar')
-        {echo "<img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";}
-    ?>
+    if ($webphone_location == 'bar') {
+        echo "<img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";
+    }
+?>
     <table border="0" bgcolor="<?php echo $SCRIPT_COLOR ?>" width="<?php echo $SPwidth ?>px" height="<?php echo $SSheight ?>px"><tr><td align="left" valign="top"><font class="sb_text"><div class="noscroll_script" id="Script2Contents"><?php echo _QXZ("AGENT SCRIPT 2"); ?></div></font></td></tr></table>
 </span>
-<span style="position:absolute;left:<?php echo $AMwidth ?>px;top:<?php echo $SRheight ?>px;z-index:<?php $zi++; echo $zi ?>;" id="Script2RefresH">
+<span style="position:absolute;left:<?php echo $AMwidth ?>px;top:<?php echo $SRheight ?>px;z-index:<?php $zi++;
+echo $zi ?>;" id="Script2RefresH">
 <a href="#" onclick="RefresHScript2('','YES')"><font class="body_small"><?php echo _QXZ("refresh"); ?></font></a>
 </span>
-<span style="position:absolute;left:154px;top:<?php echo $SFheight ?>px;z-index:<?php $zi++; echo $zi ?>;" id="FormPanel">
+<span style="position:absolute;left:154px;top:<?php echo $SFheight ?>px;z-index:<?php $zi++;
+echo $zi ?>;" id="FormPanel">
     <?php
-    if ($webphone_location == 'bar')
-        {echo "<img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";}
-    ?>
-    <table border="0" bgcolor="<?php echo $SCRIPT_COLOR ?>" width="<?php echo $SSwidth ?>px" height="<?php echo $SSheight ?>px"><tr><td align="left" valign="top"><font class="sb_text"><div class="noscroll_form" id="FormContents"><iframe src="./vdc_form_display.php?lead_id=&list_id=&stage=WELCOME" style="background-color:transparent;" scrolling="auto" frameborder="0" allowtransparency="true" id="vcFormIFrame" name="vcFormIFrame" width="<?php echo $SDwidth ?>px" height="<?php echo $SSheight ?>px" STYLE="z-index:<?php $zi++; echo $zi ?>"> </iframe></div></font></td></tr></table>
+    if ($webphone_location == 'bar') {
+        echo "<img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";
+    }
+?>
+    <table border="0" bgcolor="<?php echo $SCRIPT_COLOR ?>" width="<?php echo $SSwidth ?>px" height="<?php echo $SSheight ?>px"><tr><td align="left" valign="top"><font class="sb_text"><div class="noscroll_form" id="FormContents"><iframe src="./vdc_form_display.php?lead_id=&list_id=&stage=WELCOME" style="background-color:transparent;" scrolling="auto" frameborder="0" allowtransparency="true" id="vcFormIFrame" name="vcFormIFrame" width="<?php echo $SDwidth ?>px" height="<?php echo $SSheight ?>px" STYLE="z-index:<?php $zi++;
+echo $zi ?>"> </iframe></div></font></td></tr></table>
 </span>
-<span style="position:absolute;left:154px;top:<?php echo $SFheight ?>px;z-index:<?php $zi++; echo $zi ?>;" id="EmailPanel">
+<span style="position:absolute;left:154px;top:<?php echo $SFheight ?>px;z-index:<?php $zi++;
+echo $zi ?>;" id="EmailPanel">
     <?php
-    if ($webphone_location == 'bar')
-        {echo "<img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";}
-    ?>
-    <table border="0" bgcolor="<?php echo $SCRIPT_COLOR ?>" width="<?php echo $SSwidth ?>px" height="<?php echo $SSheight ?>px"><tr><td align="left" valign="top"><font class="sb_text"><div class="noscroll_form" id="EmailContents"><iframe src="./vdc_email_display.php?lead_id=&list_id=&stage=WELCOME" style="background-color:transparent;" scrolling="auto" frameborder="0" allowtransparency="true" id="vcEmailIFrame" name="vcEmailIFrame" width="<?php echo $SDwidth ?>px" height="<?php echo $SSheight ?>px" STYLE="z-index:<?php $zi++; echo $zi ?>"> </iframe></div></font></td></tr></table>
+    if ($webphone_location == 'bar') {
+        echo "<img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";
+    }
+?>
+    <table border="0" bgcolor="<?php echo $SCRIPT_COLOR ?>" width="<?php echo $SSwidth ?>px" height="<?php echo $SSheight ?>px"><tr><td align="left" valign="top"><font class="sb_text"><div class="noscroll_form" id="EmailContents"><iframe src="./vdc_email_display.php?lead_id=&list_id=&stage=WELCOME" style="background-color:transparent;" scrolling="auto" frameborder="0" allowtransparency="true" id="vcEmailIFrame" name="vcEmailIFrame" width="<?php echo $SDwidth ?>px" height="<?php echo $SSheight ?>px" STYLE="z-index:<?php $zi++;
+echo $zi ?>"> </iframe></div></font></td></tr></table>
 </span>
-<span style="position:absolute;left:154px;top:<?php echo $SFheight ?>px;z-index:<?php $zi++; echo $zi ?>;" id="CustomerChatPanel">
+<span style="position:absolute;left:154px;top:<?php echo $SFheight ?>px;z-index:<?php $zi++;
+echo $zi ?>;" id="CustomerChatPanel">
     <?php
-    if ($webphone_location == 'bar')
-        {echo "<img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";}
-    ?>
-    <table border="0" bgcolor="<?php echo $SCRIPT_COLOR ?>" width="<?php echo $SSwidth ?>px" height="<?php echo $SSheight ?>px"><tr><td align="left" valign="top"><font class="sb_text"><div class="noscroll_form" id="ChatContents"><iframe src="./vdc_chat_display.php?lead_id=&list_id=&dial_method=<?php echo $dial_method; ?>&stage=WELCOME&server_ip=<?php echo $server_ip; ?>&user=<?php echo $VD_login.$VARchatgroupsURL ?>" style="background-color:transparent;" scrolling="auto" frameborder="0" allowtransparency="true" id="CustomerChatIFrame" name="CustomerChatIFrame" width="<?php echo $SDwidth ?>px" height="<?php echo $SSheight ?>px" STYLE="z-index:<?php $zi++; echo $zi ?>"> </iframe></div></font></td></tr></table>
+    if ($webphone_location == 'bar') {
+        echo "<img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";
+    }
+?>
+    <table border="0" bgcolor="<?php echo $SCRIPT_COLOR ?>" width="<?php echo $SSwidth ?>px" height="<?php echo $SSheight ?>px"><tr><td align="left" valign="top"><font class="sb_text"><div class="noscroll_form" id="ChatContents"><iframe src="./vdc_chat_display.php?lead_id=&list_id=&dial_method=<?php echo $dial_method; ?>&stage=WELCOME&server_ip=<?php echo $server_ip; ?>&user=<?php echo $VD_login.$VARchatgroupsURL ?>" style="background-color:transparent;" scrolling="auto" frameborder="0" allowtransparency="true" id="CustomerChatIFrame" name="CustomerChatIFrame" width="<?php echo $SDwidth ?>px" height="<?php echo $SSheight ?>px" STYLE="z-index:<?php $zi++;
+echo $zi ?>"> </iframe></div></font></td></tr></table>
 </span>
-<span style="position:absolute;left:154px;top:<?php echo $SFheight ?>px;z-index:<?php $zi++; echo $zi ?>;" id="InternalChatPanel">
+<span style="position:absolute;left:154px;top:<?php echo $SFheight ?>px;z-index:<?php $zi++;
+echo $zi ?>;" id="InternalChatPanel">
     <?php
-    if ($webphone_location == 'bar')
-        {echo "<img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";}
-    ?>
-    <table border="0" bgcolor="<?php echo $SCRIPT_COLOR ?>" width="<?php echo $SSwidth ?>px" height="<?php echo $SSheight ?>px"><tr><td align="left" valign="top"><font class="sb_text"><div class="noscroll_form" id="InternalChatContents"><iframe src="./agc_agent_manager_chat_interface.php?action=BLANK" style="background-color:transparent;" scrolling="auto" frameborder="0" allowtransparency="true" id="InternalChatIFrame" name="InternalChatIFrame" width="<?php echo $SDwidth ?>px" height="<?php echo $SSheight ?>px" STYLE="z-index:<?php $zi++; echo $zi ?>"> </iframe></div></font></td></tr></table>
+    if ($webphone_location == 'bar') {
+        echo "<img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";
+    }
+?>
+    <table border="0" bgcolor="<?php echo $SCRIPT_COLOR ?>" width="<?php echo $SSwidth ?>px" height="<?php echo $SSheight ?>px"><tr><td align="left" valign="top"><font class="sb_text"><div class="noscroll_form" id="InternalChatContents"><iframe src="./agc_agent_manager_chat_interface.php?action=BLANK" style="background-color:transparent;" scrolling="auto" frameborder="0" allowtransparency="true" id="InternalChatIFrame" name="InternalChatIFrame" width="<?php echo $SDwidth ?>px" height="<?php echo $SSheight ?>px" STYLE="z-index:<?php $zi++;
+echo $zi ?>"> </iframe></div></font></td></tr></table>
 </span>
-<span style="position:absolute;left:<?php $tempAMwidth = ($AMwidth - 15); echo $tempAMwidth ?>px;top:<?php echo $SRheight ?>px;z-index:<?php $zi++; echo $zi ?>;" id="FormRefresH">
+<span style="position:absolute;left:<?php $tempAMwidth = ($AMwidth - 15);
+echo $tempAMwidth ?>px;top:<?php echo $SRheight ?>px;z-index:<?php $zi++;
+echo $zi ?>;" id="FormRefresH">
 <a href="#" onclick="FormContentsLoad('YES')"><font class="body_small"><?php echo _QXZ("reset form"); ?></font></a>
 </span>
-<span style="position:absolute;left:<?php echo $AMwidth ?>px;top:<?php echo $SRheight ?>px;z-index:<?php $zi++; echo $zi ?>;" id="EmailRefresH">
+<span style="position:absolute;left:<?php echo $AMwidth ?>px;top:<?php echo $SRheight ?>px;z-index:<?php $zi++;
+echo $zi ?>;" id="EmailRefresH">
 <a href="#" onclick="EmailContentsLoad('YES')"><font class="body_small"><?php echo _QXZ("refresh"); ?></font></a>
 </span>
-<span style="position:absolute;left:5px;top:<?php echo $HTheight ?>px;z-index:<?php $zi++; echo $zi ?>;" id="HotKeyActionBox">
+<span style="position:absolute;left:5px;top:<?php echo $HTheight ?>px;z-index:<?php $zi++;
+echo $zi ?>;" id="HotKeyActionBox">
     <table border="0" bgcolor="#FFDD99" width="<?php echo $HCwidth ?>px" height="70px">
     <tr bgcolor="#FFEEBB"><td height="70px"><font class="sh_text"> <?php echo _QXZ("Lead Dispositioned As:"); ?> </font><br /><br /><center>
     <font class="sd_text"><span id="HotKeyDispo"> - </span></font>
@@ -20785,7 +21586,8 @@ if ($agent_display_dialable_leads > 0)
 </td>
     </tr></table>
 </span>
-<span style="position:absolute;left:5px;top:<?php echo $HTheight ?>px;z-index:<?php $zi++; echo $zi ?>;" id="HotKeyEntriesBox">
+<span style="position:absolute;left:5px;top:<?php echo $HTheight ?>px;z-index:<?php $zi++;
+echo $zi ?>;" id="HotKeyEntriesBox">
     <table border="0" bgcolor="#FFDD99" width="<?php echo $HCwidth ?>px" height="70px">
     <tr bgcolor="#FFEEBB"><td width="200px"><font class="sh_text"> <?php echo _QXZ("Disposition Hot Keys:"); ?> </font></td><td colspan="2">
     <font class="body_small"><?php echo _QXZ("When active, simply press the keyboard key for the desired disposition for this call. The call will then be hungup and dispositioned automatically:"); ?></font></td></tr><tr>
@@ -20800,10 +21602,12 @@ if ($agent_display_dialable_leads > 0)
     </font></td>
     </tr></table>
 </span>
-<?php if ( ($HK_statuses_camp > 0) && ($user_level>=$HKuser_level) && ($VU_hotkeys_active > 0) ) { ?>
-<span style="position:absolute;left:<?php echo $HKwidth ?>px;top:<?php echo $HKheight ?>px;z-index:<?php $zi++; echo $zi ?>;" id="hotkeysdisplay"><a href="#" onMouseOver="HotKeys('ON')"><img src="./images/<?php echo _QXZ("vdc_XB_hotkeysactive_OFF.gif"); ?>" border="0" alt="HOT KEYS INACTIVE" /></a></span>
+<?php if (($HK_statuses_camp > 0) && ($user_level>=$HKuser_level) && ($VU_hotkeys_active > 0)) { ?>
+<span style="position:absolute;left:<?php echo $HKwidth ?>px;top:<?php echo $HKheight ?>px;z-index:<?php $zi++;
+    echo $zi ?>;" id="hotkeysdisplay"><a href="#" onMouseOver="HotKeys('ON')"><img src="./images/<?php echo _QXZ("vdc_XB_hotkeysactive_OFF.gif"); ?>" border="0" alt="HOT KEYS INACTIVE" /></a></span>
 <?php } ?>
-<span style="position:absolute;left:157px;top:<?php echo $HTheight ?>px;z-index:<?php $zi++; echo $zi ?>;" id="TransferMain">
+<span style="position:absolute;left:157px;top:<?php echo $HTheight ?>px;z-index:<?php $zi++;
+echo $zi ?>;" id="TransferMain">
     <table bgcolor="#CCCCFF" width="<?php echo $SDwidth ?>px">
     <tr valign="top">
     <td align="left" height="30px">
@@ -20840,26 +21644,25 @@ if ($agent_display_dialable_leads > 0)
     <img src="./images/<?php echo _QXZ("vdc_XB_number.gif"); ?>" border="0" alt="Number to call" style="vertical-align:middle" />
     &nbsp; 
     <?php
-    if ($hide_xfer_number_to_dial=='ENABLED')
-        {
+    if ($hide_xfer_number_to_dial=='ENABLED') {
         ?>
         <input type="hidden" name="xfernumber" id="xfernumber" value="<?php echo $preset_populate ?>" /> &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;
         <?php
-        }
-    else
-        {
+    } else {
         ?>
         <input type="text" size="20" name="xfernumber" id="xfernumber" maxlength="25" class="cust_form" value="<?php echo $preset_populate ?>" /> &nbsp;
         <?php
-        }
-    ?>
+    }
+?>
     <span id="agentdirectlink"><font class="body_small_bold"><a href="#" onclick="XferAgentSelectLaunch();return false;"><?php echo _QXZ("AGENTS"); ?></a></font></span>
     <input type="hidden" name="xferuniqueid" id="xferuniqueid" />
     <input type="hidden" name="xfername" id="xfername" />
     <input type="hidden" name="xfernumhidden" id="xfernumhidden" />
  </td>
     <td align="left">
-    <span id="dialoverride_checkbox"><input type="checkbox" name="xferoverride" id="xferoverride" size="1" value="0"><font class="body_tiny" /> <?php echo _QXZ("DIAL OVERRIDE"); ?>    <?php if ($manual_dial_override_field == 'DISABLED'){echo " "._QXZ("DISABLED");}?></font></span>
+    <span id="dialoverride_checkbox"><input type="checkbox" name="xferoverride" id="xferoverride" size="1" value="0"><font class="body_tiny" /> <?php echo _QXZ("DIAL OVERRIDE"); ?>    <?php if ($manual_dial_override_field == 'DISABLED') {
+        echo " "._QXZ("DISABLED");
+    }?></font></span>
  </td>
     <td align="left">
     <span style="background-color: <?php echo $MAIN_COLOR ?>" id="Leave3WayCall"><a href="#" onclick="leave_3way_call('FIRST','YES');return false;"><img src="./images/<?php echo _QXZ("vdc_XB_leave3waycall.gif"); ?>" border="0" alt="LEAVE 3-WAY CALL" style="vertical-align:middle" /></a></span>
@@ -20874,22 +21677,16 @@ if ($agent_display_dialable_leads > 0)
     <span style="background-color: <?php echo $MAIN_COLOR ?>" id="ParkCustomerDial"><a href="#" onclick="xfer_park_dial('YES');return false;"><img src="./images/<?php echo _QXZ("vdc_XB_parkcustomerdial.gif"); ?>" border="0" alt="Park Customer Dial" style="vertical-align:middle" /></a></span>
     &nbsp;
     <?php
-    if ($enable_xfer_presets=='ENABLED')
-        {
+    if ($enable_xfer_presets=='ENABLED') {
         ?>
         <span style="background-color: <?php echo $MAIN_COLOR ?>" id="PresetPullDown"><a href="#" onclick="generate_presets_pulldown('YES');return false;"><img src="./images/<?php echo _QXZ("vdc_XB_presetsbutton.gif"); ?>" border="0" alt="Presets Button" style="vertical-align:middle" /></a></span>
         <?php
-        }
-    else
-        {
-        if ( ($enable_xfer_presets=='CONTACTS') and ($VU_preset_contact_search != 'DISABLED') )
-            {
+    } else {
+        if (($enable_xfer_presets=='CONTACTS') and ($VU_preset_contact_search != 'DISABLED')) {
             ?>
             <span style="background-color: <?php echo $MAIN_COLOR ?>" id="ContactPullDown"><a href="#" onclick="generate_contacts_search('YES');return false;"><img src="./images/<?php echo _QXZ("vdc_XB_contactsbutton.gif"); ?>" border="0" alt="Contacts Button" style="vertical-align:middle" /></a></span>
             <?php
-            }
-        else
-            {
+        } else {
             ?>
             <font class="body_tiny">
             <a href="#" onclick="DtMf_PreSet_a();return false;">D1</a> 
@@ -20899,9 +21696,9 @@ if ($agent_display_dialable_leads > 0)
             <a href="#" onclick="DtMf_PreSet_e();return false;">D5</a>
             </font>
             <?php
-            }
         }
-    ?>
+    }
+?>
     &nbsp;
     <span style="background-color: <?php echo $MAIN_COLOR ?>" id="DialBlindVMail"><img src="./images/<?php echo _QXZ("vdc_XB_ammessage_OFF.gif"); ?>" border="0" alt="Blind Transfer VMail Message" style="vertical-align:middle" /></span>
  </td>
@@ -20912,9 +21709,11 @@ if ($agent_display_dialable_leads > 0)
     </td>
     </tr></table>
 </span>
-<span style="position:absolute;left:0px;top:0px;width:<?php echo $JS_browser_width ?>px;height:<?php echo $JS_browser_height ?>px;overflow:scroll;z-index:<?php $zi++; echo $zi ?>;background-color:<?php echo $SIDEBAR_COLOR ?>;" id="AgentXferViewSpan"><center><font class="body_text">
+<span style="position:absolute;left:0px;top:0px;width:<?php echo $JS_browser_width ?>px;height:<?php echo $JS_browser_height ?>px;overflow:scroll;z-index:<?php $zi++;
+echo $zi ?>;background-color:<?php echo $SIDEBAR_COLOR ?>;" id="AgentXferViewSpan"><center><font class="body_text">
 <?php echo _QXZ("Available Agents Transfer:"); ?> <span id="AgentXferViewSelect"></span></font><br><a href="#" onclick="AgentsXferSelect('0','AgentXferViewSelect');return false;"><?php echo _QXZ("close"); ?></a></center></span>
-<span style="position:absolute;left:5px;top:<?php echo $HTheight ?>px;z-index:<?php $zi++; echo $zi ?>;" id="EAcommentsBox">
+<span style="position:absolute;left:5px;top:<?php echo $HTheight ?>px;z-index:<?php $zi++;
+echo $zi ?>;" id="EAcommentsBox">
     <table border="0" bgcolor="#FFFFCC" width="<?php echo $HCwidth ?>px" height="70px">
     <tr bgcolor="#FFFF66">
     <td align="left"><font class="sh_text"> <?php echo _QXZ("Extended Alt Phone Information:"); ?> </font></td>
@@ -20930,49 +21729,58 @@ if ($agent_display_dialable_leads > 0)
     </font></td>
     </tr></table>
 </span>
-<span style="position:absolute;left:695px;top:<?php echo $HTheight ?>px;z-index:<?php $zi++; echo $zi ?>;" id="EAcommentsMinBox">
+<span style="position:absolute;left:695px;top:<?php echo $HTheight ?>px;z-index:<?php $zi++;
+echo $zi ?>;" id="EAcommentsMinBox">
     <table border="0" bgcolor="#FFFFCC" width="40px" height="20px">
     <tr bgcolor="#FFFF66">
     <td align="left"><font class="sk_text"><a href="#" onclick="EAcommentsBoxshow();return false;"> <?php echo _QXZ("maximize"); ?> </a> <br /><?php echo _QXZ("Alt Phone Info"); ?></font></td>
     </tr></table>
 </span>
-<span style="position:absolute;left:0px;top:12px;z-index:<?php $zi++; echo $zi ?>;" id="NoneInSessionBox">
+<span style="position:absolute;left:0px;top:12px;z-index:<?php $zi++;
+echo $zi ?>;" id="NoneInSessionBox">
     <table border="0" bgcolor="#CCFFFF" width="<?php echo $CAwidth ?>px" height="<?php echo $WRheight ?>px"><tr><td align="center"> <font class="sd_text"><?php echo _QXZ("No one is in your session:"); ?> <span id="NoneInSessionID"></span><br />
     <a href="#" onclick="NoneInSessionOK();return false;"><?php echo _QXZ("Go Back"); ?></a>
     <br /><br />
     <span id="NoneInSessionLink"><a href="#" onclick="NoneInSessionCalL();return false;"><?php echo _QXZ("Call Agent Again"); ?></a></font></span>
     </td></tr></table>
 </span>
-<span style="position:absolute;left:0px;top:30px;z-index:<?php $zi++; echo $zi ?>;" id="CustomerGoneBox">
+<span style="position:absolute;left:0px;top:30px;z-index:<?php $zi++;
+echo $zi ?>;" id="CustomerGoneBox">
     <table border="0" bgcolor="#CCFFFF" width="<?php echo $CAwidth ?>px" height="<?php echo $WRheight ?>px"><tr><td align="center"> <font class="sd_text"><?php echo _QXZ("Customer has hung up:"); ?> <span id="CustomerGoneChanneL"></span><br />
     <a href="#" onclick="CustomerGoneOK();return false;"><?php echo _QXZ("Go Back"); ?></a>
     <br /><br />
     <a href="#" onclick="CustomerGoneHangup();return false;"><?php echo _QXZ("Finish and Disposition Call"); ?></a></font>
     </td></tr></table>
 </span>
-<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++; echo $zi ?>;" id="WrapupBox">
+<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++;
+echo $zi ?>;" id="WrapupBox">
     <table border="0" bgcolor="#CCFFCC" width="<?php echo $CAwidth ?>px" height="<?php echo $WRheight ?>px"><tr><td align="center"> <font class="sd_text"><?php echo _QXZ("Call Wrapup:"); ?> <span id="WrapupTimer"></span> <?php echo _QXZ("seconds remaining in wrapup"); ?></font><br /><br />
     <span id="WrapupMessage"><?php echo $wrapup_message ?></span>
     <br /><br />
     <span id="WrapupBypass"><font class="sh_text"><a href="#" onclick="WrapupFinish();return false;"><?php echo _QXZ("Finish Wrapup and Move On"); ?></a></font></span>
     </td></tr></table>
 </span>
-<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++; echo $zi ?>;" id="FSCREENWrapupBox"><table border="0" bgcolor="#FFFFFF" width="<?php echo $CAwidth ?>px" height="<?php echo $WRheight ?>px" cellpadding="0" cellspacing="0"><tr><td><span id="FSCREENWrapupMessage"><?php echo $wrapup_message ?></span></td></tr></table></span>
-<span style="position:absolute;left:200px;top:150px;z-index:<?php $zi++; echo $zi ?>;" id="TimerSpan">
+<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++;
+echo $zi ?>;" id="FSCREENWrapupBox"><table border="0" bgcolor="#FFFFFF" width="<?php echo $CAwidth ?>px" height="<?php echo $WRheight ?>px" cellpadding="0" cellspacing="0"><tr><td><span id="FSCREENWrapupMessage"><?php echo $wrapup_message ?></span></td></tr></table></span>
+<span style="position:absolute;left:200px;top:150px;z-index:<?php $zi++;
+echo $zi ?>;" id="TimerSpan">
     <table border="0" bgcolor="#CCFFCC" width="400px" height="200px"><tr><td align="center">
     <br /><font class="sh_text"><span id="TimerContentSpan"></span></font><br /><br />
     <font class="sh_text"><a href="#" onclick="hideDiv('TimerSpan');return false;"><?php echo _QXZ("Close Message"); ?></a></font>
     </td></tr></table>
 </span>
-<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++; echo $zi ?>;" id="AgenTDisablEBoX">
+<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++;
+echo $zi ?>;" id="AgenTDisablEBoX">
     <table border="0" bgcolor="#FFFFFF" width="<?php echo $CAwidth ?>px" height="<?php echo $WRheight ?>px"><tr><td align="center"><font class="sd_text"><?php echo _QXZ("Your session has been disabled"); ?><br /><a href="#" onclick="LogouT('DISABLED','','');return false;"><?php echo _QXZ("CLICK HERE TO RESET YOUR SESSION"); ?></a></font><br /><br /><!--<a href="#" onclick="hideDiv('AgenTDisablEBoX');return false;">Go Back</a>-->
     </td></tr></table>
 </span>
-<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++; echo $zi ?>;" id="SysteMDisablEBoX">
+<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++;
+echo $zi ?>;" id="SysteMDisablEBoX">
     <table border="0" bgcolor="#FFFFFF" width="<?php echo $CAwidth ?>px" height="<?php echo $WRheight ?>px"><tr><td align="center"><font class="sh_text"><?php echo _QXZ("There is a time synchronization problem with your system, please tell your system administrator"); ?><br /><br /><br /><a href="#" onclick="hideDiv('SysteMDisablEBoX');return false;"><?php echo _QXZ("Go Back"); ?></a></font>
     </td></tr></table>
 </span>
-<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++; echo $zi ?>;" id="LogouTBox">
+<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++;
+echo $zi ?>;" id="LogouTBox">
     <table border="0" bgcolor="#FFFFFF" width="<?php echo $JS_browser_width ?>px" height="<?php echo $JS_browser_height ?>px"><tr><td align="center"><br /><span id="LogouTProcess">
     <br />
     <br />
@@ -20982,21 +21790,26 @@ if ($agent_display_dialable_leads > 0)
     &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <img src="./images/<?php echo _QXZ("agent_loading_animation.gif"); ?>" height="206px" width="206px" alt="<?php echo _QXZ("LOGOUT PROCESSING..."); ?>" />
     </span><br /><br /><span id="LogouTBoxLink"><font class="loading_text"><?php echo _QXZ("LOGOUT"); ?></font></span></td></tr></table>
 </span>
-<span style="position:absolute;left:0px;top:70px;z-index:<?php $zi++; echo $zi ?>;" id="DispoButtonHideA">
+<span style="position:absolute;left:0px;top:70px;z-index:<?php $zi++;
+echo $zi ?>;" id="DispoButtonHideA">
     <table border="0" bgcolor="#CCFFCC" width="165px" height="22px"><tr><td align="center" valign="top"></td></tr></table>
 </span>
-<span style="position:absolute;left:0px;top:138px;z-index:<?php $zi++; echo $zi ?>;" id="DispoButtonHideB">
+<span style="position:absolute;left:0px;top:138px;z-index:<?php $zi++;
+echo $zi ?>;" id="DispoButtonHideB">
     <table border="0" bgcolor="#CCFFCC" width="165px" height="250px"><tr><td align="center" valign="top">&nbsp;</td></tr></table>
 </span>
-<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++; echo $zi ?>;" id="DispoButtonHideC">
+<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++;
+echo $zi ?>;" id="DispoButtonHideC">
     <table border="0" bgcolor="#CCFFCC" width="<?php echo $CAwidth ?>px" height="47px"><tr><td align="center" valign="top"><font class="sh_text"><?php echo _QXZ("Any changes made to the customer information below at this time will not be comitted, You must change customer information before you Hangup the call."); ?></font> </td></tr></table>
 </span>
-<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++; echo $zi ?>;" id="DispoSelectBox">
+<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++;
+echo $zi ?>;" id="DispoSelectBox">
     <table border="0" bgcolor="#CCFFCC" width="<?php echo $CAwidth ?>px" height="<?php echo $WRheight ?>px"><tr><td align="center" valign="top"> <font class="sd_text"><?php echo _QXZ("DISPOSITION CALL :"); ?></font><font class="sh_text"> <span id="DispoSelectPhonE"></span> &nbsp; &nbsp; &nbsp; <span id="DispoSelectHAspan"><a href="#" onclick="DispoHanguPAgaiN()"><?php echo _QXZ("Hangup Again"); ?></a></span> &nbsp; &nbsp; &nbsp; <span id="DispoSelectMaxMin"><a href="#" onclick="DispoMinimize()"> <?php echo _QXZ("minimize"); ?> </a></span></font><br />
     <?php
-    if ($webphone_location == 'bar')
-        {echo "<br /><img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";}
-    ?>
+    if ($webphone_location == 'bar') {
+        echo "<br /><img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";
+    }
+?>
     <font class="sh_text">
     <span id="Dispo3wayMessage"></span>
     <span id="DispoManualQueueMessage"></span>
@@ -21012,12 +21825,14 @@ if ($agent_display_dialable_leads > 0)
     <br /><br /> &nbsp;</font>
     </td></tr></table>
 </span>
-<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++; echo $zi ?>;" id="CallBackSelectBox">
+<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++;
+echo $zi ?>;" id="CallBackSelectBox">
     <table border="0" bgcolor="#CCFFCC" width="<?php echo $CAwidth ?>px" height="<?php echo $WRheight ?>px"><tr><td align="center" valign="top"> <font class="sd_text"><?php echo _QXZ("Select a CallBack Date :"); ?></font><span id="CallBackDatE"></span><br />
     <?php
-    if ($webphone_location == 'bar')
-        {echo "<br /><img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";}
-    ?>
+    if ($webphone_location == 'bar') {
+        echo "<br /><img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";
+    }
+?>
     <input type="hidden" name="CallBackDatESelectioN" id="CallBackDatESelectioN" />
     <input type="hidden" name="CallBackTimESelectioN" id="CallBackTimESelectioN" />
     <span id="CallBackDatEPrinT"><font class="sh_text"><?php echo _QXZ("Select a Date Below"); ?></span> &nbsp;
@@ -21025,13 +21840,12 @@ if ($agent_display_dialable_leads > 0)
     <?php echo _QXZ("Hour:"); ?> 
     <select size="1" name="CBT_hour" id="CBT_hour">
     <?php
-    if ($callback_time_24hour > 0)
-    {
+if ($callback_time_24hour > 0) {
     ?>
     <option>00</option>
     <?php
-    }
-    ?>
+}
+?>
     <option>01</option>
     <option>02</option>
     <option>03</option>
@@ -21045,8 +21859,7 @@ if ($agent_display_dialable_leads > 0)
     <option>11</option>
     <option>12</option>
     <?php
-    if ($callback_time_24hour > 0)
-    {
+if ($callback_time_24hour > 0) {
     ?>
     <option>13</option>
     <option>14</option>
@@ -21060,8 +21873,8 @@ if ($agent_display_dialable_leads > 0)
     <option>22</option>
     <option>23</option>
     <?php
-    }
-    ?>
+}
+?>
     </select> &nbsp;
     <?php echo _QXZ("Minutes:"); ?> 
     <select size="1" name="CBT_minute" id="CBT_minute">
@@ -21079,44 +21892,44 @@ if ($agent_display_dialable_leads > 0)
     <option>55</option>
     </select> &nbsp;
     <?php
-    if ($callback_time_24hour < 1)
-    {
+if ($callback_time_24hour < 1) {
     ?>
     <select size="1" name="CBT_ampm" id="CBT_ampm">
     <option>AM</option>
     <option selected>PM</option>
     </select>
     <?php
-    }
-    ?>
+}
+?>
     &nbsp; &nbsp; 
     <?php
-    if ($scheduled_callbacks_timezones_enabled > 0)
-        {
-        echo "<a href=\"#\" onclick=\"showDiv('SBC_timezone_span');return false;\">"._QXZ("Customer Timezone")."</a>: ";
-        echo "<font class=\"sh_text\"><span id=\"CallBackTimezone\">"._QXZ("server time")."</span> &nbsp;</font>\n";
-        }
-    else
-        {
-        echo "<span id=\"CallBackTimezone\"><font class=\"sh_text\"></span> &nbsp;\n";
-        }
-    echo "<br />";
-    if ($agentonly_callbacks)
-        {echo "<input type=\"checkbox\" name=\"CallBackOnlyMe\" id=\"CallBackOnlyMe\" size=\"1\" value=\"0\" /> "._QXZ("MY CALLBACK ONLY")." <br />";}
-    if ($comments_callback_screen != 'REPLACE_CB_NOTES')
-        {echo _QXZ("CB Comments:")." <input type=\"text\" name=\"CallBackCommenTsField\" id=\"CallBackCommenTsField\" size=\"50\" maxlength=\"255\" /><br /><br />\n";}
-    else
-        {echo "<input type=\"hidden\" name=\"CallBackCommenTsField\" id=\"CallBackCommenTsField\" value=\"\" /><br />\n";}
-    echo "<span id=\"CBCommentsContent\"><input type=\"hidden\" name=\"cbcomment_comments\" id=\"cbcomment_comments\" value=\"\" /></span><br />\n";
-    ?>
+if ($scheduled_callbacks_timezones_enabled > 0) {
+    echo "<a href=\"#\" onclick=\"showDiv('SBC_timezone_span');return false;\">"._QXZ("Customer Timezone")."</a>: ";
+    echo "<font class=\"sh_text\"><span id=\"CallBackTimezone\">"._QXZ("server time")."</span> &nbsp;</font>\n";
+} else {
+    echo "<span id=\"CallBackTimezone\"><font class=\"sh_text\"></span> &nbsp;\n";
+}
+echo "<br />";
+if ($agentonly_callbacks) {
+    echo "<input type=\"checkbox\" name=\"CallBackOnlyMe\" id=\"CallBackOnlyMe\" size=\"1\" value=\"0\" /> "._QXZ("MY CALLBACK ONLY")." <br />";
+}
+if ($comments_callback_screen != 'REPLACE_CB_NOTES') {
+    echo _QXZ("CB Comments:")." <input type=\"text\" name=\"CallBackCommenTsField\" id=\"CallBackCommenTsField\" size=\"50\" maxlength=\"255\" /><br /><br />\n";
+} else {
+    echo "<input type=\"hidden\" name=\"CallBackCommenTsField\" id=\"CallBackCommenTsField\" value=\"\" /><br />\n";
+}
+echo "<span id=\"CBCommentsContent\"><input type=\"hidden\" name=\"cbcomment_comments\" id=\"cbcomment_comments\" value=\"\" /></span><br />\n";
+?>
     <a href="#" onclick="CallBackDatE_submit();return false;"><?php echo _QXZ("SUBMIT"); ?></a><br /><br />
     <span id="CallBackDateContent"><?php echo  "$CCAL_OUT" ?></span>
     <br /><br /> &nbsp;</font>
     </td></tr></table>
 </span>
-<span style="position:absolute;left:560px;top:20px;z-index:<?php $zi++; echo $zi ?>;" id="SBC_timezone_span"><?php echo _QXZ("Loading"); ?>...</span>
-<?php //AUDIT COMMENTS ADDED BY POUNDTEAM // ?>
-<span style="position:absolute;left:5px;top:350px;z-index:<?php $zi++; echo $zi ?>;" id="ViewCommentsBox">
+<span style="position:absolute;left:560px;top:20px;z-index:<?php $zi++;
+echo $zi ?>;" id="SBC_timezone_span"><?php echo _QXZ("Loading"); ?>...</span>
+<?php //AUDIT COMMENTS ADDED BY POUNDTEAM //?>
+<span style="position:absolute;left:5px;top:350px;z-index:<?php $zi++;
+echo $zi ?>;" id="ViewCommentsBox">
     <TABLE border=0 bgcolor="#FFDD99" width=<?php echo $HCwidth; ?>px height='<?php echo $BROWSER_HEIGHT-380; ?>px' cellpadding=3 cellspacing=4>
     <TR bgcolor="#FFEEBB">
        <TD valign=top height=20><font class="sh_text"> <?php echo _QXZ("View Comment History:"); ?> </font> &nbsp; <font class="sk_text"><span id="ViewCommentsShowHide"><a href="#" onclick="ViewComments('OFF','','','YES');return false;"><?php echo _QXZ("hide comment history"); ?></a></span></font></td>
@@ -21128,8 +21941,9 @@ if ($agent_display_dialable_leads > 0)
     </TR>
     </TABLE>
 </span>
-<?php //end AUDIT COMMENTS ADDED BY POUNDTEAM // ?>
-<span style="position:absolute;left:5px;top:<?php echo $HTheight ?>px;z-index:<?php $zi++; echo $zi ?>;" id="CBcommentsBox">
+<?php //end AUDIT COMMENTS ADDED BY POUNDTEAM //?>
+<span style="position:absolute;left:5px;top:<?php echo $HTheight ?>px;z-index:<?php $zi++;
+echo $zi ?>;" id="CBcommentsBox">
     <table border="0" bgcolor="#FFFFCC" width="<?php echo $HCwidth ?>px" height="70px">
     <tr bgcolor="#FFFF66">
     <td align="left"><font class="sh_text"> <?php echo _QXZ("Previous Callback Information:"); ?> </font></td>
@@ -21145,26 +21959,30 @@ if ($agent_display_dialable_leads > 0)
     </font></td>
     </tr></table>
 </span>
-<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++; echo $zi ?>;" id="SCForceDialBox">
+<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++;
+echo $zi ?>;" id="SCForceDialBox">
     <table border="0" bgcolor="#CCFFCC" width="<?php echo $CAwidth ?>px" height="<?php echo $WRheight ?>px"><tr><td align="center" valign="top"> &nbsp; &nbsp; &nbsp; <font class="sd_text"><?php echo _QXZ("Scheduled Callback to Dial:"); ?></font>
     <br />
     <?php
-    if ($webphone_location == 'bar')
-        {echo "<br /><img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";}
-    ?>
+    if ($webphone_location == 'bar') {
+        echo "<br /><img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";
+    }
+?>
     <span id="SCForceDialSpan"> <?php echo _QXZ("Lead Info"); ?> </span>
     <br /><br /> &nbsp;
     <!--<a href="#" onclick="hideDiv('SCForceDialBox');return false;"><?php echo _QXZ("Close Box"); ?></a>-->
     </font>
     </td></tr></table>
 </span>
-<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++; echo $zi ?>;" id="CallBacKsLisTBox">
-    <table border="0" bgcolor="#CCFFCC" width="<?php echo $CAwidth ?>px" height="<?php echo $WRheight ?>px"><tr><td align="center" valign="top"> <font class="sh_text"><?php echo _QXZ("CALLBACKS FOR AGENT %1s:<br />To see information on one of the callbacks below, click on the INFO link. To call the customer back now, click on the DIAL link. If you click on a record below to dial it, it will be removed from the list.",0,'',$VD_login); ?></font>
+<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++;
+echo $zi ?>;" id="CallBacKsLisTBox">
+    <table border="0" bgcolor="#CCFFCC" width="<?php echo $CAwidth ?>px" height="<?php echo $WRheight ?>px"><tr><td align="center" valign="top"> <font class="sh_text"><?php echo _QXZ("CALLBACKS FOR AGENT %1s:<br />To see information on one of the callbacks below, click on the INFO link. To call the customer back now, click on the DIAL link. If you click on a record below to dial it, it will be removed from the list.", 0, '', $VD_login); ?></font>
  <br />
     <?php
-    if ($webphone_location == 'bar')
-        {echo "<br /><img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";}
-    ?>
+    if ($webphone_location == 'bar') {
+        echo "<br /><img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";
+    }
+?>
     <div class="scroll_callback_auto" id="CallBacKsLisT"></div>
     <br /><font class="sh_text"> &nbsp;
     <a href="#" onclick="CalLBacKsLisTCheck();return false;"><?php echo _QXZ("Refresh"); ?></a>
@@ -21173,16 +21991,16 @@ if ($agent_display_dialable_leads > 0)
     </font>
     </td></tr></table>
 </span>
-<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++; echo $zi ?>;" id="NeWManuaLDiaLBox">
-    <table border="0" bgcolor="#CCFFCC" width="<?php echo $CAwidth ?>px" height="<?php echo $WRheight ?>px"><tr><td align="center" valign="top"> <font class="sd_text"><?php echo _QXZ("NEW MANUAL DIAL LEAD FOR %1s in campaign %2s:",0,'',$VD_login,$VD_campaign); ?></font><br /><br /><font class="sh_text"><?php echo _QXZ("Enter information below for the new lead you wish to call."); ?>
+<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++;
+echo $zi ?>;" id="NeWManuaLDiaLBox">
+    <table border="0" bgcolor="#CCFFCC" width="<?php echo $CAwidth ?>px" height="<?php echo $WRheight ?>px"><tr><td align="center" valign="top"> <font class="sd_text"><?php echo _QXZ("NEW MANUAL DIAL LEAD FOR %1s in campaign %2s:", 0, '', $VD_login, $VD_campaign); ?></font><br /><br /><font class="sh_text"><?php echo _QXZ("Enter information below for the new lead you wish to call."); ?>
  <br />
-    <?php 
-    if (!preg_match("/X/i",$manual_dial_prefix))
-        {
-        echo _QXZ("Note: a dial prefix of %1s will be added to the beginning of this number",0,'',$manual_dial_prefix)."<br />\n";
-        }
-    ?>
-    <?php echo _QXZ("Note: all new manual dial leads will go into list %1s",0,'',$manual_dial_list_id); ?><br /><br />
+    <?php
+    if (!preg_match("/X/i", $manual_dial_prefix)) {
+        echo _QXZ("Note: a dial prefix of %1s will be added to the beginning of this number", 0, '', $manual_dial_prefix)."<br />\n";
+    }
+?>
+    <?php echo _QXZ("Note: all new manual dial leads will go into list %1s", 0, '', $manual_dial_list_id); ?><br /><br />
     <table><tr>
     <td align="right"><font class="body_text"> <?php echo _QXZ("Dial Code:"); ?> </font></td>
     <td align="left"><font class="body_text"><input type="text" size="7" maxlength="10" name="MDDiaLCodE" id="MDDiaLCodE" class="cust_form" value="<?php echo $default_phone_code ?>" />&nbsp; <?php echo _QXZ("(This is usually a 1 in the USA-Canada)"); ?></font></td>
@@ -21193,25 +22011,24 @@ if ($agent_display_dialable_leads > 0)
     <input type="hidden" name="MDPhonENumbeRHiddeN" id="MDPhonENumbeRHiddeN" value="" />
     <input type="hidden" name="MDLeadID" id="MDLeadID" value="" />
     <input type="hidden" name="MDType" id="MDType" value="" />
-    <?php 
-    if ($manual_dial_lead_id=='Y')
-        {
-        echo "    </td>";
-        echo "    </tr><tr>\n";
-        echo "    <td align=\"right\"><font class=\"body_text\"> "._QXZ("Dial Lead ID:")." </font></td>\n";
-        echo "    <td align=\"left\"><font class=\"body_text\">\n";
-        echo "    <input type=\"text\" size=\"10\" maxlength=\"10\" name=\"MDLeadIDEntry\" id=\"MDLeadIDEntry\" class=\"cust_form\" value=\"\" />&nbsp; "._QXZ("(digits only)")."</font>\n";
-        }
-    else
-        {
-        echo "<input type=\"hidden\" name=\"MDLeadIDEntry\" id=\"MDLeadIDEntry\" value=\"\" />\n";
-        }
-    $LeadLookuPXtra='';
-    if ($manual_dial_search_checkbox == 'SELECTED_LOCK')
-        {$LeadLookuPXtra = 'CHECKED DISABLED ';}
-    if ($manual_dial_search_checkbox == 'UNSELECTED_LOCK')
-        {$LeadLookuPXtra = 'DISABLED ';}
-    ?>
+    <?php
+if ($manual_dial_lead_id=='Y') {
+    echo "    </td>";
+    echo "    </tr><tr>\n";
+    echo "    <td align=\"right\"><font class=\"body_text\"> "._QXZ("Dial Lead ID:")." </font></td>\n";
+    echo "    <td align=\"left\"><font class=\"body_text\">\n";
+    echo "    <input type=\"text\" size=\"10\" maxlength=\"10\" name=\"MDLeadIDEntry\" id=\"MDLeadIDEntry\" class=\"cust_form\" value=\"\" />&nbsp; "._QXZ("(digits only)")."</font>\n";
+} else {
+    echo "<input type=\"hidden\" name=\"MDLeadIDEntry\" id=\"MDLeadIDEntry\" value=\"\" />\n";
+}
+$LeadLookuPXtra='';
+if ($manual_dial_search_checkbox == 'SELECTED_LOCK') {
+    $LeadLookuPXtra = 'CHECKED DISABLED ';
+}
+if ($manual_dial_search_checkbox == 'UNSELECTED_LOCK') {
+    $LeadLookuPXtra = 'DISABLED ';
+}
+?>
     </td>
     </tr><tr>
     <td align="right"><font class="body_text"> <?php echo _QXZ("Search Existing Leads:"); ?> </font></td>
@@ -21231,64 +22048,63 @@ if ($agent_display_dialable_leads > 0)
     <td align="right"><font class="body_text"> <?php echo _QXZ("Dial Override:"); ?> </font></td>
     <td align="left"><font class="body_text">
     <?php
-    if ($manual_dial_override_field == 'ENABLED')
-        {
-        ?>
+if ($manual_dial_override_field == 'ENABLED') {
+    ?>
         <input type="text" size="24" maxlength="20" name="MDDiaLOverridE" id="MDDiaLOverridE" class="cust_form" value="" />&nbsp; 
         <?php
-        echo _QXZ("(digits only please)");
-        }
-    else
-        {
-        ?>
+    echo _QXZ("(digits only please)");
+} else {
+    ?>
         <input type="hidden" name="MDDiaLOverridE" id="MDDiaLOverridE" value="" />&nbsp; 
         <?php
-        echo _QXZ("DISABLED");
-        }
-     ?>
+    echo _QXZ("DISABLED");
+}
+?>
     </font>
     </td>
     </tr></table>
  <br />
     <a href="#" onclick="NeWManuaLDiaLCalLSubmiT('NOW','YES');return false;"><?php echo _QXZ("Dial Now"); ?></a>
      &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp; 
-     <?php if ($manual_dial_preview > 0)
-         {
+     <?php if ($manual_dial_preview > 0) {
          echo "<a href=\"#\" onclick=\"NeWManuaLDiaLCalLSubmiT('PREVIEW','YES');return false;\">"._QXZ("Preview Call")."</a>
          &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp;  &nbsp; \n";
-         }
-     ?>
+     }
+?>
     <a href="#" onclick="ManualDialHide();return false;"><?php echo _QXZ("Go Back"); ?></a></font>
     </td></tr></table>
 </span>
-<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++; echo $zi ?>;" id="CloserSelectBox">
+<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++;
+echo $zi ?>;" id="CloserSelectBox">
     <table border="0" bgcolor="#CCFFCC" width="<?php echo $CAwidth ?>px" height="<?php echo $WRheight ?>px"><tr><td align="center" valign="top"> <font class="sd_text"><?php echo _QXZ("CLOSER INBOUND GROUP SELECTION"); ?></font> <br />
     <?php
-    if ($webphone_location == 'bar')
-        {echo "<br /><img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";}
-    ?>
+    if ($webphone_location == 'bar') {
+        echo "<br /><img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";
+    }
+?>
     <font class="sh_text">
     <span id="CloserSelectContent"> <?php echo _QXZ("Closer Inbound Group Selection"); ?> </span>
     <input type="hidden" name="CloserSelectList" id="CloserSelectList" /><br />
     <?php
-    if ( ($outbound_autodial_active > 0) and ($disable_blended_checkbox < 1) and ($dial_method != 'INBOUND_MAN') and ($VU_agent_choose_blended > 0) )
-        {
-        ?>
+if (($outbound_autodial_active > 0) and ($disable_blended_checkbox < 1) and ($dial_method != 'INBOUND_MAN') and ($VU_agent_choose_blended > 0)) {
+    ?>
         <input type="checkbox" name="CloserSelectBlended" id="CloserSelectBlended" size="1" value="0" /> <?php echo _QXZ("BLENDED CALLING(outbound activated)"); ?> <br />
         <?php
-        }
-    ?>
+}
+?>
     <a href="#" onclick="CloserSelectContent_create('YES');return false;"> <?php echo _QXZ("RESET"); ?> </a> | 
     <a href="#" onclick="CloserSelect_submit('YES');return false;"><?php echo _QXZ("SUBMIT"); ?></a>
     <br /><br /><br /><br /> &nbsp;</font>
     </td></tr></table>
 </span>
-<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++; echo $zi ?>;" id="TerritorySelectBox">
+<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++;
+echo $zi ?>;" id="TerritorySelectBox">
     <table border="0" bgcolor="#CCFFCC" width="<?php echo $CAwidth ?>px" height="<?php echo $WRheight ?>px"><tr><td align="center" valign="top"> <font class="sd_text"><?php echo _QXZ("TERRITORY SELECTION"); ?></font> <br />
     <?php
-    if ($webphone_location == 'bar')
-        {echo "<br /><img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";}
-    ?>
+    if ($webphone_location == 'bar') {
+        echo "<br /><img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";
+    }
+?>
     <font class='sh_text'>
     <span id="TerritorySelectContent"> <?php echo _QXZ("Territory Selection"); ?> </span>
     <input type="hidden" name="TerritorySelectList" id="TerritorySelectList" /><br />
@@ -21297,31 +22113,36 @@ if ($agent_display_dialable_leads > 0)
     <br /><br /><br /><br /> &nbsp;</font>
     </td></tr></table>
 </span>
-<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++; echo $zi ?>;" id="NothingBox">
+<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++;
+echo $zi ?>;" id="NothingBox">
     <span id="DiaLLeaDPrevieWHide"> <?php echo _QXZ("Channel"); ?></span>
     <span id="DiaLDiaLAltPhonEHide"> <?php echo _QXZ("Channel"); ?></span>
     <?php
-    if (!$agentonly_callbacks)
-        {echo "<input type=\"checkbox\" name=\"CallBackOnlyMe\" id=\"CallBackOnlyMe\" size=\"1\" value=\"0\" /> "._QXZ("MY CALLBACK ONLY")." <br />";}
-    if ( ($outbound_autodial_active < 1) or ($disable_blended_checkbox > 0) or ($dial_method == 'INBOUND_MAN') or ($VU_agent_choose_blended < 1) )
-        {echo "<input type=\"checkbox\" name=\"CloserSelectBlended\" id=\"CloserSelectBlended\" size=\"1\" value=\"0\" /> "._QXZ("BLENDED CALLING")."<br />";}
-    ?>
+    if (!$agentonly_callbacks) {
+        echo "<input type=\"checkbox\" name=\"CallBackOnlyMe\" id=\"CallBackOnlyMe\" size=\"1\" value=\"0\" /> "._QXZ("MY CALLBACK ONLY")." <br />";
+    }
+    if (($outbound_autodial_active < 1) or ($disable_blended_checkbox > 0) or ($dial_method == 'INBOUND_MAN') or ($VU_agent_choose_blended < 1)) {
+        echo "<input type=\"checkbox\" name=\"CloserSelectBlended\" id=\"CloserSelectBlended\" size=\"1\" value=\"0\" /> "._QXZ("BLENDED CALLING")."<br />";
+    }
+?>
 </span>
-<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++; echo $zi ?>;" id="CalLLoGDisplaYBox">
+<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++;
+echo $zi ?>;" id="CalLLoGDisplaYBox">
     <table border="0" bgcolor="#CCFFCC" width="<?php echo $CAwidth ?>px" height="<?php echo $WRheight ?>px"><tr><td align="center" valign="top"> &nbsp; &nbsp; &nbsp; <font class="sd_text"><?php echo _QXZ("AGENT CALL LOG:"); ?></font> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <font class="sh_text"><a href="#" onclick="CalLLoGVieWClose();return false;"><?php echo _QXZ("close"); ?> [X]</a><br />
     <?php
-    if ($webphone_location == 'bar')
-        {echo "<br /><img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";}
-    ?>
+    if ($webphone_location == 'bar') {
+        echo "<br /><img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";
+    }
+?>
     <div class="scroll_calllog" id="CallLogSpan"> <?php echo _QXZ("Call log List"); ?> </div>
     <br /><br /> &nbsp;</font>
     </td></tr></table>
 </span>
-<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++; echo $zi ?>;" id="AgentTimeDisplayBox">
+<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++;
+echo $zi ?>;" id="AgentTimeDisplayBox">
     <table border="0" bgcolor="#CCFFCC" width="<?php echo $CAwidth ?>px" height="<?php echo $WRheight ?>px"><tr><td align="center" valign="top">
     <?php
-    if (preg_match("/RANGE/",$agent_screen_time_display))
-        {
+    if (preg_match("/RANGE/", $agent_screen_time_display)) {
         echo " &nbsp; &nbsp; &nbsp; <font class=\"sd_text\">"._QXZ("AGENT TIME REPORT")." : &nbsp; <br />";
         echo " <input type=text name=ATstart_date id=ATstart_date value=\"$NOW_DATE\" size=12 maxlength=10>";
         echo "<script language=\"JavaScript\">\n";
@@ -21340,23 +22161,23 @@ if ($agent_display_dialable_leads > 0)
         echo "</script>\n";
         echo " &nbsp; <a href=\"#\" onclick=\"LaunchAgentTimeReport('');return false;\">"._QXZ("GO")."</a></font> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; ";
         echo "<font class=\"sh_text\"><a href=\"#\" onclick=\"AgentTimeReport('close');return false;\">"._QXZ("close")." [X]</a><br />";
-        }
-    else
-        {
+    } else {
         echo "<input type=hidden name=ATstart_date id=ATstart_date value=\"$NOW_DATE\">\n";
         echo "<input type=hidden name=ATend_date id=ATend_date value=\"$NOW_DATE\">\n";
-        }
-    ?>
+    }
+?>
     <div class="scroll_calllog" id="AgentTimeDisplaySpan"> <?php echo _QXZ("Agent Time Report"); ?> </div>
     <br /><br /> &nbsp;</font>
     </td></tr></table>
 </span>
-<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++; echo $zi ?>;" id="SearcHContactsDisplaYBox">
+<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++;
+echo $zi ?>;" id="SearcHContactsDisplaYBox">
     <table border="0" bgcolor="#CCFFFF" width="<?php echo $CAwidth ?>px" height="<?php echo $WRheight ?>px"><tr><td align="center" valign="top"> &nbsp; &nbsp; &nbsp; <font class="sd_text"><?php echo _QXZ("SEARCH FOR A CONTACT:"); ?></font> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <font class="sh_text"><a href="#" onclick="ContactSearcHVieWClose();return false;">close [X]</a><br />
     <?php
-    if ($webphone_location == 'bar')
-        {echo "<br /><img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";}
-    ?>
+    if ($webphone_location == 'bar') {
+        echo "<br /><img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";
+    }
+?>
     <br /><br />
     <?php echo _QXZ("Notes: when doing a search for a contact, wildcard or partial search terms are not allowed. <br />Contact search requests are all logged in the system."); ?>
     <br /><br />
@@ -21393,25 +22214,29 @@ if ($agent_display_dialable_leads > 0)
     <br /><br /> &nbsp;</font>
     </td></tr></table>
 </span>
-<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++; echo $zi ?>;" id="SearcHResultSContactsBox">
+<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++;
+echo $zi ?>;" id="SearcHResultSContactsBox">
     <table border="0" bgcolor="#CCFFFF" width="<?php echo $CAwidth ?>px" height="<?php echo $WRheight ?>px"><tr><td align="center" valign="top"> &nbsp; &nbsp; &nbsp; <font class="sd_text"><?php echo _QXZ("CONTACTS SEARCH RESULTS:"); ?></font> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <font class="sh_text"><a href="#" onclick="hideDiv('SearcHResultSContactsBox');return false;"><?php echo _QXZ("close"); ?> [X]</a><br />
     <?php
-    if ($webphone_location == 'bar')
-        {echo "<br /><img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";}
-    ?>
+    if ($webphone_location == 'bar') {
+        echo "<br /><img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";
+    }
+?>
     <div class="scroll_calllog" id="SearcHResultSContactsSpan"> <?php echo _QXZ("Search Results"); ?> </div>
     <br /><br /> &nbsp;</font>
     </td></tr></table>
 </span>
-<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++; echo $zi ?>;" id="SearcHForMDisplaYBox">
+<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++;
+echo $zi ?>;" id="SearcHForMDisplaYBox">
     <table border="0" bgcolor="#CCFFCC" width="<?php echo $CAwidth ?>px" height="<?php echo $WRheight ?>px"><tr><td align="center" valign="top"> &nbsp; &nbsp; &nbsp; <font class="sd_text"><?php echo _QXZ("SEARCH FOR A LEAD:"); ?></font> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <font class="sh_text"><a href="#" onclick="LeaDSearcHVieWClose();return false;"><?php echo _QXZ("close"); ?> [X]</a><br />
     <?php
-    if ($webphone_location == 'bar')
-        {echo "<br /><img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";}
-    $TEMPlabel_vendor_lead_code = preg_replace("/---READONLY---|---REQUIRED---|---HIDE---/","",$label_vendor_lead_code);
-    ?>
+    if ($webphone_location == 'bar') {
+        echo "<br /><img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";
+    }
+    $TEMPlabel_vendor_lead_code = preg_replace("/---READONLY---|---REQUIRED---|---HIDE---/", "", $label_vendor_lead_code);
+?>
     <br /><br />
-    <?php echo _QXZ("Notes: when doing a search for a lead, the phone number, lead ID or %1s are the best fields to use.",0,'',$TEMPlabel_vendor_lead_code); ?> <br /><?php echo _QXZ("Using the other fields may be slower. Lead searching does not allow for wildcard or partial search terms."); ?> <br /><?php echo _QXZ("Lead search requests are all logged in the system."); ?>
+    <?php echo _QXZ("Notes: when doing a search for a lead, the phone number, lead ID or %1s are the best fields to use.", 0, '', $TEMPlabel_vendor_lead_code); ?> <br /><?php echo _QXZ("Using the other fields may be slower. Lead searching does not allow for wildcard or partial search terms."); ?> <br /><?php echo _QXZ("Lead search requests are all logged in the system."); ?>
     <br /><br />
     <center>
     <table border="0">
@@ -21432,117 +22257,122 @@ if ($agent_display_dialable_leads > 0)
     </tr>
     <tr>
     <?php
-    if ($label_vendor_lead_code == '---HIDE---')
-        {echo " </td><td align=\"left\"><input type=\"hidden\" name=\"search_vendor_lead_code\" id=\"search_vendor_lead_code\" value=\"\" />";}
-    else
-        {
-        $label_vendor_lead_code = preg_replace("/---READONLY---|---REQUIRED---/","",$label_vendor_lead_code);
-        echo "<td align=\"right\"> <font class=\"sh_text\">$label_vendor_lead_code:</font> </td><td align=\"left\"><input type=\"text\" size=\"18\" maxlength=\"$MAXvendor_lead_code\" name=\"search_vendor_lead_code\" id=\"search_vendor_lead_code\"></td>\n";
-        }
-    echo "</tr><tr>\n";
-    if ($label_first_name == '---HIDE---')
-        {echo " </td><td align=\"left\"><input type=\"hidden\" name=\"search_first_name\" id=\"search_first_name\" value=\"\" />";}
-    else
-        {
-        $label_first_name = preg_replace("/---READONLY---|---REQUIRED---/","",$label_first_name);
-        echo "<td align=\"right\"> <font class=\"sh_text\">$label_first_name:</font> </td><td align=\"left\"><input type=\"text\" size=\"18\" maxlength=\"$MAXfirst_name\" name=\"search_first_name\" id=\"search_first_name\"></td>\n";
-        }
-    echo "</tr><tr>\n";
-    if ($label_last_name == '---HIDE---')
-        {echo " </td><td align=\"left\"><input type=\"hidden\" name=\"search_last_name\" id=\"search_last_name\" value=\"\" />";}
-    else
-        {
-        $label_last_name = preg_replace("/---READONLY---|---REQUIRED---/","",$label_last_name);
-        echo "<td align=\"right\"> <font class=\"sh_text\">$label_last_name:</font> </td><td align=\"left\"><input type=\"text\" size=\"18\" maxlength=\"$MAXlast_name\" name=\"search_last_name\" id=\"search_last_name\"></td>\n";
-        }
-    echo "</tr><tr>\n";
-    if ($label_city == '---HIDE---')
-        {echo " </td><td align=\"left\"><input type=\"hidden\" name=\"search_city\" id=\"search_city\" value=\"\" />";}
-    else
-        {
-        $label_city = preg_replace("/---READONLY---|---REQUIRED---/","",$label_city);
-        echo "<td align=\"right\"> <font class=\"sh_text\">$label_city:</font> </td><td align=\"left\"><input type=\"text\" size=\"18\" maxlength=\"$MAXcity\" name=\"search_city\" id=\"search_city\"></td>\n";
-        }
-    echo "</tr><tr>\n";
-    if ($label_state == '---HIDE---')
-        {echo " </td><td align=\"left\"><input type=\"hidden\" name=\"search_state\" id=\"search_state\" value=\"\" />";}
-    else
-        {
-        $label_state = preg_replace("/---READONLY---|---REQUIRED---/","",$label_state);
-        echo "<td align=\"right\"> <font class=\"sh_text\">$label_state:</font> </td><td align=\"left\"><input type=\"text\" size=\"18\" maxlength=\"$MAXstate\" name=\"search_state\" id=\"search_state\"></td>\n";
-        }
-    echo "</tr><tr>\n";
-    if ($label_postal_code == '---HIDE---')
-        {echo " </td><td align=\"left\"><input type=\"hidden\" name=\"search_postal_code\" id=\"search_postal_code\" value=\"\" />";}
-    else
-        {
-        $label_postal_code = preg_replace("/---READONLY---|---REQUIRED---/","",$label_postal_code);
-        echo "<td align=\"right\"> <font class=\"sh_text\">$label_postal_code:</font> </td><td align=\"left\"><input type=\"text\" size=\"10\" maxlength=\"$MAXpostal_code\" name=\"search_postal_code\" id=\"search_postal_code\"></td>\n";
-        }
-    echo "</tr><tr>\n";
-    ?>
+if ($label_vendor_lead_code == '---HIDE---') {
+    echo " </td><td align=\"left\"><input type=\"hidden\" name=\"search_vendor_lead_code\" id=\"search_vendor_lead_code\" value=\"\" />";
+} else {
+    $label_vendor_lead_code = preg_replace("/---READONLY---|---REQUIRED---/", "", $label_vendor_lead_code);
+    echo "<td align=\"right\"> <font class=\"sh_text\">$label_vendor_lead_code:</font> </td><td align=\"left\"><input type=\"text\" size=\"18\" maxlength=\"$MAXvendor_lead_code\" name=\"search_vendor_lead_code\" id=\"search_vendor_lead_code\"></td>\n";
+}
+echo "</tr><tr>\n";
+if ($label_first_name == '---HIDE---') {
+    echo " </td><td align=\"left\"><input type=\"hidden\" name=\"search_first_name\" id=\"search_first_name\" value=\"\" />";
+} else {
+    $label_first_name = preg_replace("/---READONLY---|---REQUIRED---/", "", $label_first_name);
+    echo "<td align=\"right\"> <font class=\"sh_text\">$label_first_name:</font> </td><td align=\"left\"><input type=\"text\" size=\"18\" maxlength=\"$MAXfirst_name\" name=\"search_first_name\" id=\"search_first_name\"></td>\n";
+}
+echo "</tr><tr>\n";
+if ($label_last_name == '---HIDE---') {
+    echo " </td><td align=\"left\"><input type=\"hidden\" name=\"search_last_name\" id=\"search_last_name\" value=\"\" />";
+} else {
+    $label_last_name = preg_replace("/---READONLY---|---REQUIRED---/", "", $label_last_name);
+    echo "<td align=\"right\"> <font class=\"sh_text\">$label_last_name:</font> </td><td align=\"left\"><input type=\"text\" size=\"18\" maxlength=\"$MAXlast_name\" name=\"search_last_name\" id=\"search_last_name\"></td>\n";
+}
+echo "</tr><tr>\n";
+if ($label_city == '---HIDE---') {
+    echo " </td><td align=\"left\"><input type=\"hidden\" name=\"search_city\" id=\"search_city\" value=\"\" />";
+} else {
+    $label_city = preg_replace("/---READONLY---|---REQUIRED---/", "", $label_city);
+    echo "<td align=\"right\"> <font class=\"sh_text\">$label_city:</font> </td><td align=\"left\"><input type=\"text\" size=\"18\" maxlength=\"$MAXcity\" name=\"search_city\" id=\"search_city\"></td>\n";
+}
+echo "</tr><tr>\n";
+if ($label_state == '---HIDE---') {
+    echo " </td><td align=\"left\"><input type=\"hidden\" name=\"search_state\" id=\"search_state\" value=\"\" />";
+} else {
+    $label_state = preg_replace("/---READONLY---|---REQUIRED---/", "", $label_state);
+    echo "<td align=\"right\"> <font class=\"sh_text\">$label_state:</font> </td><td align=\"left\"><input type=\"text\" size=\"18\" maxlength=\"$MAXstate\" name=\"search_state\" id=\"search_state\"></td>\n";
+}
+echo "</tr><tr>\n";
+if ($label_postal_code == '---HIDE---') {
+    echo " </td><td align=\"left\"><input type=\"hidden\" name=\"search_postal_code\" id=\"search_postal_code\" value=\"\" />";
+} else {
+    $label_postal_code = preg_replace("/---READONLY---|---REQUIRED---/", "", $label_postal_code);
+    echo "<td align=\"right\"> <font class=\"sh_text\">$label_postal_code:</font> </td><td align=\"left\"><input type=\"text\" size=\"10\" maxlength=\"$MAXpostal_code\" name=\"search_postal_code\" id=\"search_postal_code\"></td>\n";
+}
+echo "</tr><tr>\n";
+?>
     <td align="center" colspan="2"><br /> <font class="sh_text"><a href="#" onclick="LeadSearchSubmit();return false;"><?php echo _QXZ("SUBMIT SEARCH"); ?></a> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <a href="#" onclick="LeadSearchReset();return false;"><?php echo _QXZ("reset form"); ?></a></font></td>
     </tr>
     </table>
     <br /><br /> &nbsp;
     </td></tr></table>
 </span>
-<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++; echo $zi ?>;" id="SearcHResultSDisplaYBox">
+<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++;
+echo $zi ?>;" id="SearcHResultSDisplaYBox">
     <table border="0" bgcolor="#CCFFCC" width="<?php echo $CAwidth ?>px" height="<?php echo $WRheight ?>px"><tr><td align="center" valign="top"> &nbsp; &nbsp; &nbsp; <font class="sd_text"><?php echo _QXZ("SEARCH RESULTS:"); ?></font> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <font class="sh_text"><a href="#" onclick="hideDiv('SearcHResultSDisplaYBox');return false;"><?php echo _QXZ("close"); ?> [X]</a><br />
     <?php
-    if ($webphone_location == 'bar')
-        {echo "<br /><img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";}
-    ?>
+    if ($webphone_location == 'bar') {
+        echo "<br /><img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";
+    }
+?>
     <div class="scroll_calllog" id="SearcHResultSSpan"> <?php echo _QXZ("Search Results"); ?> </div>
     <br /><br /> &nbsp;</font>
     </td></tr></table>
 </span>
-<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++; echo $zi ?>;" id="CalLNotesDisplaYBox">
+<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++;
+echo $zi ?>;" id="CalLNotesDisplaYBox">
     <table border="0" bgcolor="#CCFFCC" width="<?php echo $CAwidth ?>px" height="<?php echo $WRheight ?>px"><tr><td align="center" valign="top"> &nbsp; &nbsp; &nbsp; <font class="sd_text"><?php echo _QXZ("CALL NOTES LOG:"); ?></font> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <font class="sh_text"><a href="#" onclick="hideDiv('CalLNotesDisplaYBox');return false;"><?php echo _QXZ("close"); ?> [X]</a><br />
     <?php
-    if ($webphone_location == 'bar')
-        {echo "<br /><img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";}
-    ?>
+    if ($webphone_location == 'bar') {
+        echo "<br /><img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";
+    }
+?>
     <div class="scroll_calllog" id="CallNotesSpan"> <?php echo _QXZ("Call Notes List"); ?> </div>
     <br /><br /> &nbsp;
     <a href="#" onclick="hideDiv('CalLNotesDisplaYBox');return false;"><?php echo _QXZ("Close Info Box"); ?></a>
     </font>
     </td></tr></table>
 </span>
-<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++; echo $zi ?>;" id="LeaDInfOBox">
+<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++;
+echo $zi ?>;" id="LeaDInfOBox">
     <table border="0" bgcolor="#CCFFCC" width="<?php echo $CAwidth ?>px" height="<?php echo $WRheight ?>px"><tr><td align="center" valign="top"> &nbsp; &nbsp; &nbsp; <font class="sd_text"><?php echo _QXZ("Customer Information:"); ?></font> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <font class="sh_text"><a href="#" onclick="hideDiv('LeaDInfOBox');return false;"><?php echo _QXZ("close"); ?> [X]</a>
     <br />
     <?php
-    if ($webphone_location == 'bar')
-        {echo "<br /><img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";}
-    ?>
+    if ($webphone_location == 'bar') {
+        echo "<br /><img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";
+    }
+?>
     <span id="LeaDInfOSpan"> <?php echo _QXZ("Lead Info"); ?> </span>
     <br /><br /> &nbsp;
     <a href="#" onclick="hideDiv('LeaDInfOBox');return false;"><?php echo _QXZ("Close Info Box"); ?></a>
     </font>
     </td></tr></table>
 </span>
-<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++; echo $zi ?>;" id="PauseCodeSelectBox">
+<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++;
+echo $zi ?>;" id="PauseCodeSelectBox">
     <table border="0" bgcolor="#CCFFCC" width="<?php echo $CAwidth ?>px" height="<?php echo $WRheight ?>px"><tr><td align="center" valign="top"> <font class="sd_text"><?php echo _QXZ("SELECT A PAUSE CODE :"); ?></font><br /><font class="sh_text">
     <?php
-    if ($webphone_location == 'bar')
-        {echo "<br /><img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";}
-    ?>
+    if ($webphone_location == 'bar') {
+        echo "<br /><img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";
+    }
+?>
     <span id="PauseCodeSelectContent"> <?php echo _QXZ("Pause Code Selection"); ?> </span>
     <input type="hidden" name="PauseCodeSelection" id="PauseCodeSelection" />
     <?php
-    if ($mgrapr_ct > 0)
-        {echo "<br /><br /><b>* "._QXZ("These pause codes require manager approval")."</b>\n";}
-    ?>
+if ($mgrapr_ct > 0) {
+    echo "<br /><br /><b>* "._QXZ("These pause codes require manager approval")."</b>\n";
+}
+?>
     <br /><br /> &nbsp;</font>
     </td></tr></table>
 </span>
-<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++; echo $zi ?>;" id="PauseCodeMgrAprBox">
+<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++;
+echo $zi ?>;" id="PauseCodeMgrAprBox">
     <table border="0" bgcolor="#CCFFCC" width="<?php echo $CAwidth ?>px" height="<?php echo $WRheight ?>px"><tr><td align="center" valign="top"> <font class="sd_text"><?php echo _QXZ("Pause Code Manager Approval"); ?>:</font><br /><br /><font class="sh_text">
     <?php
-    if ($webphone_location == 'bar')
-        {echo "<br /><img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";}
-    ?>
+    if ($webphone_location == 'bar') {
+        echo "<br /><img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";
+    }
+?>
     <span id="PauseCodeMgrAprContent"> <?php echo _QXZ("Pause Code Selection"); ?> </span>
     <br />
     <input type="hidden" name="PauseCodeMgrAprSelection" id="PauseCodeMgrAprSelection" value="" />
@@ -21556,43 +22386,51 @@ if ($agent_display_dialable_leads > 0)
     <br /><br /> &nbsp;</font>
     </td></tr></table>
 </span>
-<span style="position:absolute;left:<?php echo $PBwidth ?>px;top:40px;z-index:<?php $zi++; echo $zi ?>;" id="PresetsSelectBox">
+<span style="position:absolute;left:<?php echo $PBwidth ?>px;top:40px;z-index:<?php $zi++;
+echo $zi ?>;" id="PresetsSelectBox">
     <table border="0" bgcolor="#9999FF" width="400px" height="<?php echo $HTheight ?>px"><tr><td align="center" valign="top"> <font class="sd_text"><?php echo _QXZ("SELECT A PRESET :"); ?></font><br /><font class="sh_text">
     <?php
-    if ($webphone_location == 'bar')
-        {echo "<br /><img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";}
-    ?>
+    if ($webphone_location == 'bar') {
+        echo "<br /><img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";
+    }
+?>
     <span id="PresetsSelectBoxContent"> <?php echo _QXZ("Presets Selection"); ?> </span>
     <input type="hidden" name="PresetSelection" id="PresetSelection" /></font>
     </td></tr></table>
 </span>
-<span style="position:absolute;left:<?php echo $PBwidth ?>px;top:40px;z-index:<?php $zi++; echo $zi ?>;" id="VMMessageSelectBox">
+<span style="position:absolute;left:<?php echo $PBwidth ?>px;top:40px;z-index:<?php $zi++;
+echo $zi ?>;" id="VMMessageSelectBox">
     <table border="0" bgcolor="#9999FF" width="400px" height="<?php echo $HTheight ?>px"><tr><td align="center" valign="top"> <font class="sd_text"><?php echo _QXZ("SELECT A VM MESSAGE"); ?>:</font> &nbsp; &nbsp; <a href="#" onclick="hideDiv('VMMessageSelectBox');return false;"><?php echo _QXZ("close"); ?></a><br /><font class="sh_text">
     <?php
-    if ($webphone_location == 'bar')
-        {echo "<br /><img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";}
-    ?>
+    if ($webphone_location == 'bar') {
+        echo "<br /><img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";
+    }
+?>
     <span id="VMMessageSelectBoxContent"> <?php echo _QXZ("VM Message Selection"); ?> </span>
     <input type="hidden" name="VMMessageSelection" id="VMMessageSelection" /></font>
     </td></tr></table>
 </span>
-<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++; echo $zi ?>;" id="GroupAliasSelectBox">
+<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++;
+echo $zi ?>;" id="GroupAliasSelectBox">
     <table border="0" bgcolor="#CCFFCC" width="<?php echo $CAwidth ?>px" height="<?php echo $WRheight ?>px"><tr><td align="center" valign="top"> <font class="sd_text"><?php echo _QXZ("SELECT A GROUP ALIAS :"); ?></font><br /><font class="sh_text">
     <?php
-    if ($webphone_location == 'bar')
-        {echo "<br /><img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";}
-    ?>
+    if ($webphone_location == 'bar') {
+        echo "<br /><img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";
+    }
+?>
     <span id="GroupAliasSelectContent"> <?php echo _QXZ("Group Alias Selection"); ?> </span>
     <input type="hidden" name="GroupAliasSelection" id="GroupAliasSelection" />
     <br /><br /> &nbsp;</font>
     </td></tr></table>
 </span>
-<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++; echo $zi ?>;" id="DiaLInGrouPSelectBox">
+<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++;
+echo $zi ?>;" id="DiaLInGrouPSelectBox">
     <table border="0" bgcolor="#CCFFCC" width="<?php echo $CAwidth ?>px" height="<?php echo $WRheight ?>px"><tr><td align="center" valign="top"> <font class="sd_text"><?php echo _QXZ("SELECT A DIAL IN-GROUP :"); ?></font><br /><font class="sh_text">
     <?php
-    if ($webphone_location == 'bar')
-        {echo "<br /><img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";}
-    ?>
+    if ($webphone_location == 'bar') {
+        echo "<br /><img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";
+    }
+?>
     <span id="DiaLInGrouPSelectContent"> <?php echo _QXZ("Dial In-Group Selection"); ?> </span>
     <input type="hidden" name="DiaLInGrouPSelection" id="DiaLInGrouPSelection" />
     <br /><br /> &nbsp;</font>
@@ -21602,12 +22440,14 @@ if ($agent_display_dialable_leads > 0)
     <table border="0" bgcolor="#FFFFFF" width="<?php echo $CAwidth ?>px" height="<?php echo $WRheight ?>px"><tr><td align="center"><font class="sd_text"> &nbsp; </font><br />
     </td></tr></table>
 </span>
-<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++; echo $zi ?>;" id="ManualValidateBox">
+<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++;
+echo $zi ?>;" id="ManualValidateBox">
     <table border="0" bgcolor="#CCFFCC" width="<?php echo $CAwidth ?>px" height="<?php echo $WRheight ?>px"><tr><td align="center" valign="top"> <font class="sd_text"><?php echo _QXZ("Manual Dial Validation"); ?>:</font><br /><br /><font class="sh_text">
     <?php
-    if ($webphone_location == 'bar')
-        {echo "<br /><img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";}
-    ?>
+    if ($webphone_location == 'bar') {
+        echo "<br /><img src=\"./images/"._QXZ("pixel.gif")."\" width=\"1px\" height=\"".$webphone_height."px\" /><br />\n";
+    }
+?>
     <span id="ManualValidateContent"> <?php echo _QXZ("Number to be dialed"); ?> </span>
     <br />
     <input type="hidden" name="ManualValidateNumber" id="ManualValidateNumber" value="" />
@@ -21619,24 +22459,29 @@ if ($agent_display_dialable_leads > 0)
     <br /><br /> &nbsp;</font>
     </td></tr></table>
 </span>
-<? $zi = ($zi + 100); ?>
-<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++; echo $zi ?>;" id="blind_monitor_alert_span">
+<?php $zi = ($zi + 100); ?>
+<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++;
+echo $zi ?>;" id="blind_monitor_alert_span">
     <table border="0" bgcolor="#CCFFCC" width="<?php echo $CAwidth ?>px" height="<?php echo $WRheight ?>px"><tr><td align="center" valign="top"> <font class="sd_text"><?php echo _QXZ("ALERT :"); ?></font><br /><font class="sh_text">
     <b><font color="red" size="5"> &nbsp; &nbsp; <span id="blind_monitor_alert_span_contents"></span></b></font>
     <br /><br /> <a href="#" onclick="hideDiv('blind_monitor_alert_span');return false;"><?php echo _QXZ("Go Back"); ?></a>
     </font>
     </td></tr></table>
 </span>
-<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++; echo $zi ?>;" id="DeactivateDOlDSessioNSpan">
+<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++;
+echo $zi ?>;" id="DeactivateDOlDSessioNSpan">
     <table border="0" bgcolor="#FFFFFF" width="<?php echo $CAwidth ?>px" height="<?php echo $WRheight ?>px"><tr><td align="center"><font class="sh_text"><?php echo _QXZ("Another live agent session was open using your user ID. It has been disabled. Click OK to continue to the agent screen."); ?><br /><a href="#" onclick="hideDiv('DeactivateDOlDSessioNSpan');return false;"><?php echo _QXZ("OK"); ?></a> --></font>
     </td></tr></table>
 </span>
-<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++; echo $zi ?>;" id="InvalidOpenerSpan">
+<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++;
+echo $zi ?>;" id="InvalidOpenerSpan">
     <table border="0" bgcolor="#FFFFFF" width="<?php echo $CAwidth ?>px" height="<?php echo $WRheight ?>px"><tr><td align="center"><font class="sd_text"><?php echo _QXZ("This agent screen was not opened properly."); ?></font><br />
     </td></tr></table>
 </span>
-<div id="HolidayDisplayDiv" style="position:absolute;top:0;left:0;display:none;background-color:#ffffff;z-index:<?php $zi++; echo $zi ?>;"></div>
-<span style="position:absolute;left:0px;top:<?php echo $GHheight ?>px;z-index:<?php $zi++; echo $zi ?>;" id="GENDERhideFORieALT"></span>
+<div id="HolidayDisplayDiv" style="position:absolute;top:0;left:0;display:none;background-color:#ffffff;z-index:<?php $zi++;
+echo $zi ?>;"></div>
+<span style="position:absolute;left:0px;top:<?php echo $GHheight ?>px;z-index:<?php $zi++;
+echo $zi ?>;" id="GENDERhideFORieALT"></span>
 </form>
 <form name="inert_form" id="inert_form" onsubmit="return false;">
 <span style="position:absolute;left:0px;top:400px;z-index:1;" id="NothingBox2">
@@ -21645,7 +22490,8 @@ if ($agent_display_dialable_leads > 0)
 </span>
 </form>
 <form name="alert_form" id="alert_form" onsubmit="return false;">
-<span style="position:absolute;left:200px;top:200px;z-index:<?php $zi++; echo $zi ?>;" id="AlertBox">
+<span style="position:absolute;left:200px;top:200px;z-index:<?php $zi++;
+echo $zi ?>;" id="AlertBox">
 <table border="2" bgcolor="#666666" cellpadding="2" cellspacing="1">
 <tr><td bgcolor="#f0f0f0" align="left">
 <font face="arial,helvetica" size="2"><b> &nbsp; <?php echo _QXZ("Agent Alert!"); ?></b></font>
@@ -21678,8 +22524,7 @@ if ($agent_display_dialable_leads > 0)
 <audio id='ChatAudioAlertFile'><source src="sounds/chat_alert.mp3" type="audio/mpeg"></audio>
 <audio id='EmailAudioAlertFile'><source src="sounds/email_alert.mp3" type="audio/mpeg"></audio>
 <?php
-if ($SSagent_screen_timer == 'setTimeoutAudioLoop')
-    {
+if ($SSagent_screen_timer == 'setTimeoutAudioLoop') {
     echo "<audio id='setTimeoutAudioLoopPlay' loop><source src=\"sounds/20Hz_tone.mp3\" type=\"audio/mpeg\"></audio>";
     echo "<script>";
     echo "var ALP_audio = document.getElementById('setTimeoutAudioLoopPlay');";
@@ -21687,20 +22532,19 @@ if ($SSagent_screen_timer == 'setTimeoutAudioLoop')
     echo "ALP_audio.volume = ALP_js_volume;";
     echo "ALP_audio.play()";
     echo "</script>";
-    }
-if ( ($SSbrowser_call_alerts > 0) or ($SSagent_hidden_sound_seconds > 0) )
-    {
-    $bas=0;   $bas_embed_output='';
-    $browser_alert_sounds_listARY = explode(',',$browser_alert_sounds_list);
+}
+if (($SSbrowser_call_alerts > 0) or ($SSagent_hidden_sound_seconds > 0)) {
+    $bas=0;
+    $bas_embed_output='';
+    $browser_alert_sounds_listARY = explode(',', $browser_alert_sounds_list);
     $browser_alert_sounds_listARY_ct = count($browser_alert_sounds_listARY);
-    while ($browser_alert_sounds_listARY_ct > $bas)
-        {
+    while ($browser_alert_sounds_listARY_ct > $bas) {
         $bas_embed_output .= "<audio id='BAS_$browser_alert_sounds_listARY[$bas]'><source src=\"sounds/".$browser_alert_sounds_listARY[$bas].".mp3\" type=\"audio/mpeg\"></audio>\n";
         $bas++;
-        }
+    }
     echo "$bas_embed_output";
     echo "\n";
-    }
+}
 ?>
 <?php echo "$INSERT_before_body_close"; ?>
 </body>

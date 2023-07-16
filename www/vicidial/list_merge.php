@@ -40,7 +40,7 @@ require("functions.php");
 $PHP_AUTH_USER=$_SERVER['PHP_AUTH_USER'];
 $PHP_AUTH_PW=$_SERVER['PHP_AUTH_PW'];
 $PHP_SELF=$_SERVER['PHP_SELF'];
-$PHP_SELF = preg_replace('/\.php.*/i','.php',$PHP_SELF);
+$PHP_SELF = preg_replace('/\.php.*/i', '.php', $PHP_SELF);
 $ip = getenv("REMOTE_ADDR");
 $SQLdate = date("Y-m-d H:i:s");
 $DB=0;
@@ -49,40 +49,81 @@ $confirm = "";
 $available_lists = "";
 $start_dest_list_id = "";
 $num_leads = "";
-if (isset($_GET["DB"])) {$DB=$_GET["DB"];}
-    elseif (isset($_POST["DB"])) {$DB=$_POST["DB"];}
-if (isset($_GET["submit"])) {$submit=$_GET["submit"];}
-    elseif (isset($_POST["submit"])) {$submit=$_POST["submit"];}
-if (isset($_GET["confirm"])) {$confirm=$_GET["confirm"];}
-    elseif (isset($_POST["confirm"])) {$confirm=$_POST["confirm"];}
-if (isset($_GET["available_lists"])) {$available_lists=$_GET["available_lists"];}
-    elseif (isset($_POST["available_lists"])) {$available_lists=$_POST["available_lists"];}
-if (isset($_GET["start_dest_list_id"])) {$start_dest_list_id=$_GET["start_dest_list_id"];}
-    elseif (isset($_POST["start_dest_list_id"])) {$start_dest_list_id=$_POST["start_dest_list_id"];}
-if (isset($_GET["num_leads"])) {$num_leads=$_GET["num_leads"];}
-    elseif (isset($_POST["num_leads"])) {$num_leads=$_POST["num_leads"];}
-if (isset($_GET["destination_list_id"])) {$destination_list_id=$_GET["destination_list_id"];}
-    elseif (isset($_POST["destination_list_id"])) {$destination_list_id=$_POST["destination_list_id"];}
-if (isset($_GET["new_list_id"])) {$new_list_id=$_GET["new_list_id"];}
-    elseif (isset($_POST["new_list_id"])) {$new_list_id=$_POST["new_list_id"];}
-if (isset($_GET["new_list_name"])) {$new_list_name=$_GET["new_list_name"];}
-    elseif (isset($_POST["new_list_name"])) {$new_list_name=$_POST["new_list_name"];}
-if (isset($_GET["new_list_description"])) {$new_list_description=$_GET["new_list_description"];}
-    elseif (isset($_POST["new_list_description"])) {$new_list_description=$_POST["new_list_description"];}
-if (isset($_GET["active"])) {$active=$_GET["active"];}
-    elseif (isset($_POST["active"])) {$active=$_POST["active"];}
-if (isset($_GET["campaign_id"])) {$campaign_id=$_GET["campaign_id"];}
-    elseif (isset($_POST["campaign_id"])) {$campaign_id=$_POST["campaign_id"];}
-if (isset($_GET["retain_original_list"])) {$retain_original_list=$_GET["retain_original_list"];}
-    elseif (isset($_POST["retain_original_list"])) {$retain_original_list=$_POST["retain_original_list"];}
-if (isset($_GET["create_new_list"])) {$create_new_list=$_GET["create_new_list"];}
-    elseif (isset($_POST["create_new_list"])) {$create_new_list=$_POST["create_new_list"];}
-$DB = preg_replace('/[^0-9]/','',$DB);
+if (isset($_GET["DB"])) {
+    $DB=$_GET["DB"];
+} elseif (isset($_POST["DB"])) {
+    $DB=$_POST["DB"];
+}
+if (isset($_GET["submit"])) {
+    $submit=$_GET["submit"];
+} elseif (isset($_POST["submit"])) {
+    $submit=$_POST["submit"];
+}
+if (isset($_GET["confirm"])) {
+    $confirm=$_GET["confirm"];
+} elseif (isset($_POST["confirm"])) {
+    $confirm=$_POST["confirm"];
+}
+if (isset($_GET["available_lists"])) {
+    $available_lists=$_GET["available_lists"];
+} elseif (isset($_POST["available_lists"])) {
+    $available_lists=$_POST["available_lists"];
+}
+if (isset($_GET["start_dest_list_id"])) {
+    $start_dest_list_id=$_GET["start_dest_list_id"];
+} elseif (isset($_POST["start_dest_list_id"])) {
+    $start_dest_list_id=$_POST["start_dest_list_id"];
+}
+if (isset($_GET["num_leads"])) {
+    $num_leads=$_GET["num_leads"];
+} elseif (isset($_POST["num_leads"])) {
+    $num_leads=$_POST["num_leads"];
+}
+if (isset($_GET["destination_list_id"])) {
+    $destination_list_id=$_GET["destination_list_id"];
+} elseif (isset($_POST["destination_list_id"])) {
+    $destination_list_id=$_POST["destination_list_id"];
+}
+if (isset($_GET["new_list_id"])) {
+    $new_list_id=$_GET["new_list_id"];
+} elseif (isset($_POST["new_list_id"])) {
+    $new_list_id=$_POST["new_list_id"];
+}
+if (isset($_GET["new_list_name"])) {
+    $new_list_name=$_GET["new_list_name"];
+} elseif (isset($_POST["new_list_name"])) {
+    $new_list_name=$_POST["new_list_name"];
+}
+if (isset($_GET["new_list_description"])) {
+    $new_list_description=$_GET["new_list_description"];
+} elseif (isset($_POST["new_list_description"])) {
+    $new_list_description=$_POST["new_list_description"];
+}
+if (isset($_GET["active"])) {
+    $active=$_GET["active"];
+} elseif (isset($_POST["active"])) {
+    $active=$_POST["active"];
+}
+if (isset($_GET["campaign_id"])) {
+    $campaign_id=$_GET["campaign_id"];
+} elseif (isset($_POST["campaign_id"])) {
+    $campaign_id=$_POST["campaign_id"];
+}
+if (isset($_GET["retain_original_list"])) {
+    $retain_original_list=$_GET["retain_original_list"];
+} elseif (isset($_POST["retain_original_list"])) {
+    $retain_original_list=$_POST["retain_original_list"];
+}
+if (isset($_GET["create_new_list"])) {
+    $create_new_list=$_GET["create_new_list"];
+} elseif (isset($_POST["create_new_list"])) {
+    $create_new_list=$_POST["create_new_list"];
+}
+$DB = preg_replace('/[^0-9]/', '', $DB);
 $sys_settings_stmt = "SELECT use_non_latin,outbound_autodial_active,sounds_central_control_active,enable_languages,language_method,active_modules,admin_screen_colors,allow_manage_active_lists,allow_web_debug FROM system_settings;";
 $sys_settings_rslt=mysql_to_mysqli($sys_settings_stmt, $link);
 $num_rows = mysqli_num_rows($sys_settings_rslt);
-if ($num_rows > 0)
-    {
+if ($num_rows > 0) {
     $sys_settings_row=mysqli_fetch_row($sys_settings_rslt);
     $non_latin =                        $sys_settings_row[0];
     $SSoutbound_autodial_active =        $sys_settings_row[1];
@@ -93,76 +134,74 @@ if ($num_rows > 0)
     $SSadmin_screen_colors =            $sys_settings_row[6];
     $SSallow_manage_active_lists =        $sys_settings_row[7];
     $SSallow_web_debug =                $sys_settings_row[8];
-    }
-else
-    {
+} else {
     exit;
-    }
-if ($SSallow_web_debug < 1) {$DB=0;}
-$retain_original_list = preg_replace('/[^NY]/i','',$retain_original_list);
-$available_lists = preg_replace('/[^0-9\|]/','',$available_lists);
-$start_dest_list_id = preg_replace('/[^0-9]/','',$start_dest_list_id);
-$destination_list_id = preg_replace('/[^0-9]/','',$destination_list_id);
-$new_list_id = preg_replace('/[^0-9]/','',$new_list_id);
-$new_list_name = preg_replace('/[^- \.\,\_0-9a-zA-Z]/','',$new_list_name);
-$new_list_description = preg_replace('/[^- \.\,\_0-9a-zA-Z]/','',$new_list_description);
-$num_leads = preg_replace('/[^0-9]/','',$num_leads);
+}
+if ($SSallow_web_debug < 1) {
+    $DB=0;
+}
+$retain_original_list = preg_replace('/[^NY]/i', '', $retain_original_list);
+$available_lists = preg_replace('/[^0-9\|]/', '', $available_lists);
+$start_dest_list_id = preg_replace('/[^0-9]/', '', $start_dest_list_id);
+$destination_list_id = preg_replace('/[^0-9]/', '', $destination_list_id);
+$new_list_id = preg_replace('/[^0-9]/', '', $new_list_id);
+$new_list_name = preg_replace('/[^- \.\,\_0-9a-zA-Z]/', '', $new_list_name);
+$new_list_description = preg_replace('/[^- \.\,\_0-9a-zA-Z]/', '', $new_list_description);
+$num_leads = preg_replace('/[^0-9]/', '', $num_leads);
 $submit = preg_replace('/[^-_0-9a-zA-Z]/', '', $submit);
 $confirm = preg_replace('/[^-_0-9a-zA-Z]/', '', $confirm);
 $active = preg_replace('/[^-_0-9a-zA-Z]/', '', $active);
 $create_new_list = preg_replace('/[^-_0-9a-zA-Z]/', '', $create_new_list);
-if ($non_latin < 1)
-    {
+if ($non_latin < 1) {
     $PHP_AUTH_USER = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_USER);
     $PHP_AUTH_PW = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_PW);
     $campaign_id = preg_replace('/[^-_0-9a-zA-Z]/', '', $campaign_id);
-    }
-else
-    {
+} else {
     $PHP_AUTH_USER = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_USER);
     $PHP_AUTH_PW = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_PW);
     $campaign_id = preg_replace('/[^-_0-9\p{L}]/u', '', $campaign_id);
-    }
+}
 $stmt="SELECT selected_language,modify_lists from vicidial_users where user='$PHP_AUTH_USER';";
-if ($DB) {echo "|$stmt|\n";}
+if ($DB) {
+    echo "|$stmt|\n";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 $sl_ct = mysqli_num_rows($rslt);
-if ($sl_ct > 0)
-    {
+if ($sl_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $VUselected_language =        $row[0];
-    }
+}
 $auth=0;
-$auth_message = user_authorization($PHP_AUTH_USER,$PHP_AUTH_PW,'',1,0);
-if ($auth_message == 'GOOD')
-    {$auth=1;}
-if ($auth < 1)
-    {
+$auth_message = user_authorization($PHP_AUTH_USER, $PHP_AUTH_PW, '', 1, 0);
+if ($auth_message == 'GOOD') {
+    $auth=1;
+}
+if ($auth < 1) {
     $VDdisplayMESSAGE = _QXZ("Login incorrect, please try again");
-    if ($auth_message == 'LOCK')
-        {
+    if ($auth_message == 'LOCK') {
         $VDdisplayMESSAGE = _QXZ("Too many login attempts, try again in 15 minutes");
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
-    if ($auth_message == 'IPBLOCK')
-        {
+    }
+    if ($auth_message == 'IPBLOCK') {
         $VDdisplayMESSAGE = _QXZ("Your IP Address is not allowed") . ": $ip";
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
+    }
     Header("WWW-Authenticate: Basic realm=\"CONTACT-CENTER-ADMIN\"");
     Header("HTTP/1.0 401 Unauthorized");
     echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$PHP_AUTH_PW|$auth_message|\n";
     exit;
-    }
-header ("Content-type: text/html; charset=utf-8");
-header ("Cache-Control: no-cache, must-revalidate");  // HTTP/1.1
-header ("Pragma: no-cache");              // HTTP/1.0
+}
+header("Content-type: text/html; charset=utf-8");
+header("Cache-Control: no-cache, must-revalidate");  // HTTP/1.1
+header("Pragma: no-cache");              // HTTP/1.0
 $rights_stmt = "SELECT user_level, user_group, load_leads, modify_leads, modify_lists from vicidial_users where user='$PHP_AUTH_USER';";
-if ($DB) {echo "|$stmt|\n";}
+if ($DB) {
+    echo "|$stmt|\n";
+}
 $rights_rslt=mysql_to_mysqli($rights_stmt, $link);
 $rights_row=mysqli_fetch_row($rights_rslt);
 $user_level =        $rights_row[0];
@@ -170,30 +209,26 @@ $user_group =        $rights_row[1];
 $load_leads =        $rights_row[2];
 $modify_leads =        $rights_row[3];
 $modify_lists =        $rights_row[4];
-if ( $user_level < 9 )
-    {
-    header ("Content-type: text/html; charset=utf-8");
+if ($user_level < 9) {
+    header("Content-type: text/html; charset=utf-8");
     echo _QXZ("You need to be a level 9 user to use this tool");
     exit;
-    }
-if ( $load_leads < 1 )
-    {
-    header ("Content-type: text/html; charset=utf-8");
+}
+if ($load_leads < 1) {
+    header("Content-type: text/html; charset=utf-8");
     echo _QXZ("You do not have permissions to load leads");
     exit;
-    }
-if ( $modify_leads < 1 )
-    {
-    header ("Content-type: text/html; charset=utf-8");
+}
+if ($modify_leads < 1) {
+    header("Content-type: text/html; charset=utf-8");
     echo _QXZ("You do not have permissions to modify leads");
     exit;
-    }
-if ( $modify_lists < 1 )
-    {
-    header ("Content-type: text/html; charset=utf-8");
+}
+if ($modify_lists < 1) {
+    header("Content-type: text/html; charset=utf-8");
     echo _QXZ("You do not have permissions to modify lists");
     exit;
-    }
+}
 echo "<html>\n";
 echo "<head>\n";
 echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"vicidial_stylesheet.css\" />";
@@ -256,14 +291,14 @@ $SSalt_row1_background='BDFFBD';
 $SSalt_row2_background='99FF99';
 $SSalt_row3_background='CCFFCC';
 $SSweb_logo='default_old';
-if ($SSadmin_screen_colors != 'default')
-    {
+if ($SSadmin_screen_colors != 'default') {
     $stmt = "SELECT menu_background,frame_background,std_row1_background,std_row2_background,std_row3_background,std_row4_background,std_row5_background,alt_row1_background,alt_row2_background,alt_row3_background,web_logo FROM vicidial_screen_colors where colors_id='$SSadmin_screen_colors';";
     $rslt=mysql_to_mysqli($stmt, $link);
-    if ($DB) {echo "$stmt\n";}
+    if ($DB) {
+        echo "$stmt\n";
+    }
     $colors_ct = mysqli_num_rows($rslt);
-    if ($colors_ct > 0)
-        {
+    if ($colors_ct > 0) {
         $row=mysqli_fetch_row($rslt);
         $SSmenu_background =        $row[0];
         $SSframe_background =        $row[1];
@@ -277,8 +312,8 @@ if ($SSadmin_screen_colors != 'default')
         $SSalt_row2_background =    $row[8];
         $SSalt_row3_background =    $row[9];
         $SSweb_logo =                $row[10];
-        }
     }
+}
 $Mhead_color =    $SSstd_row5_background;
 $Mmain_bgcolor = $SSmenu_background;
 $Mhead_color =    $SSstd_row5_background;
@@ -293,57 +328,55 @@ echo "</td>\n";
 echo "<td align=right><font face='ARIAL,HELVETICA' size=2><b> &nbsp; </td>\n";
 echo "</tr>\n";
 echo "<tr bgcolor='#$SSframe_background'><td align=left colspan=2><font face='ARIAL,HELVETICA' color=black size=3> &nbsp; \n";
-if ($DB>0)
-    {
+if ($DB>0) {
     echo "DB: $DB<br>\n";
     echo "submit: $submit<br>\n";
     echo "confirm: $confirm<br>\n";
     echo "available_lists: $available_lists<br>\n";
     echo "start_dest_list_id: $start_dest_list_id<br>\n";
     echo "num_leads: $num_leads<br>\n";
-    }
+}
 $allowed_campaigns_stmt="SELECT allowed_campaigns from vicidial_user_groups where user_group='$user_group';";
-if ($DB) { echo "|$allowed_campaigns_stmt|\n"; }
+if ($DB) {
+    echo "|$allowed_campaigns_stmt|\n";
+}
 $rslt = mysql_to_mysqli($allowed_campaigns_stmt, $link);
 $allowed_campaigns_row = mysqli_fetch_row($rslt);
 $allowed_campaigns = $allowed_campaigns_row[0];
-if ($DB) { echo "|$allowed_campaigns|\n"; }
+if ($DB) {
+    echo "|$allowed_campaigns|\n";
+}
 $allowed_campaigns_sql = "";
-if ( preg_match("/ALL\-CAMPAIGNS/i",$allowed_campaigns) )
-    {
-    if ($DB) { echo "|Processing All Campaigns|\n"; }
+if (preg_match("/ALL\-CAMPAIGNS/i", $allowed_campaigns)) {
+    if ($DB) {
+        echo "|Processing All Campaigns|\n";
+    }
     $campaign_id_stmt = "SELECT campaign_id FROM vicidial_campaigns;";
     $campaign_id_rslt = mysql_to_mysqli($campaign_id_stmt, $link);
     $campaign_id_num_rows = mysqli_num_rows($campaign_id_rslt);
-    if ($DB) { echo "|campaign_id_num_rows = $campaign_id_num_rows|\n"; }
-    if ($campaign_id_num_rows > 0)
-        {
+    if ($DB) {
+        echo "|campaign_id_num_rows = $campaign_id_num_rows|\n";
+    }
+    if ($campaign_id_num_rows > 0) {
         $i = 0;
-        while ( $i < $campaign_id_num_rows )
-            {
+        while ($i < $campaign_id_num_rows) {
             $campaign_id_row = mysqli_fetch_row($campaign_id_rslt);
-            if ( $i == 0 )
-                {
+            if ($i == 0) {
                 $allowed_campaigns_sql = "'$campaign_id_row[0]'";
-                }
-            else
-                {
+            } else {
                 $allowed_campaigns_sql = "$allowed_campaigns_sql, '$campaign_id_row[0]'";
-                }
-            $i++;
             }
+            $i++;
         }
     }
-else
-    {
-    $allowed_campaigns_sql = preg_replace("/ -/",'',$allowed_campaigns);
-    $allowed_campaigns_sql = preg_replace("/^ /",'',$allowed_campaigns_sql);
-    $allowed_campaigns_sql = preg_replace("/ $/",'',$allowed_campaigns_sql);
-    $allowed_campaigns_sql = preg_replace("/ /","','",$allowed_campaigns_sql);
+} else {
+    $allowed_campaigns_sql = preg_replace("/ -/", '', $allowed_campaigns);
+    $allowed_campaigns_sql = preg_replace("/^ /", '', $allowed_campaigns_sql);
+    $allowed_campaigns_sql = preg_replace("/ $/", '', $allowed_campaigns_sql);
+    $allowed_campaigns_sql = preg_replace("/ /", "','", $allowed_campaigns_sql);
     $allowed_campaigns_sql = "'$allowed_campaigns_sql'";
-    }
-if ($submit == _QXZ("submit") )
-    {
+}
+if ($submit == _QXZ("submit")) {
     if(count($available_lists)<1) {
         echo "<p>"._QXZ("No list ids to merge given.")."</p>\n";
         echo "<p><a href='$PHP_SELF'>"._QXZ("Click here to start over.")."</a></p>\n";
@@ -354,12 +387,12 @@ if ($submit == _QXZ("submit") )
         $list_rslt=mysql_to_mysqli($list_stmt, $link);
         $list_row = mysqli_fetch_row($list_rslt);
         $list_rows = mysqli_num_rows($list_rslt);
-        if ($list_rows>0) {            
+        if ($list_rows>0) {
             $new_list_name=$list_row[1];
             $new_list_description=$list_row[2];
             $campaign_id=$list_row[3];
             $active=$list_row[4];
-            if (!preg_match("/ $campaign_id /", $allowed_campaigns) && !preg_match("/ALL\-CAMPAIGNS/i",$allowed_campaigns)) {
+            if (!preg_match("/ $campaign_id /", $allowed_campaigns) && !preg_match("/ALL\-CAMPAIGNS/i", $allowed_campaigns)) {
                 echo "<p>"._QXZ("Cannot move leads - access is denied to the specified list ID ($campaign_id - $allowed_campaigns):")." $new_list_id</p>\n";
                 echo "<p><a href='$PHP_SELF?new_list_id=$new_list_id&destination_list_id=$destination_list_id&new_campaign_id=$new_campaign_id&new_list_name=".urlencode($new_list_name)."&new_list_description=".urlencode($new_list_description)."&active=$active&retain_original_list=$retain_original_list&available_lists[]=".implode("&available_lists[]=", $available_lists)."'>"._QXZ("Click here to start over.")."</a></p>\n";
                 exit;
@@ -373,30 +406,33 @@ if ($submit == _QXZ("submit") )
             $create_new_list=1;
         }
         $destination_list_id=$new_list_id;
-    } else if ($destination_list_id) {
+    } elseif ($destination_list_id) {
         $id_chk_stmt = "SELECT list_id, list_name, list_description, campaign_id, active FROM vicidial_lists where list_id = '$destination_list_id';";
-        if ($DB) { echo "|$id_chk_stmt|\n"; }
+        if ($DB) {
+            echo "|$id_chk_stmt|\n";
+        }
         $id_chk_rslt = mysql_to_mysqli($id_chk_stmt, $link);
         $id_chk_rows = mysqli_num_rows($id_chk_rslt);
-        if ( $id_chk_rows < 1 )
-            {
+        if ($id_chk_rows < 1) {
             echo "<p>$destination_list_id "._QXZ("is not a valid list id in the system.")."</p>\n";
             echo "<p><a href='$PHP_SELF'>"._QXZ("Click here to start over.")."</a></p>\n";
             echo "</body>\n</html>\n";
             exit;
-            }    
+        }
     } else {
-            echo "<p>"._QXZ("No valid destination list id given.")."</p>\n";
-            echo "<p><a href='$PHP_SELF'>"._QXZ("Click here to start over.")."</a></p>\n";
-            exit;
+        echo "<p>"._QXZ("No valid destination list id given.")."</p>\n";
+        echo "<p><a href='$PHP_SELF'>"._QXZ("Click here to start over.")."</a></p>\n";
+        exit;
     }
     $orig_count_stmt = "SELECT count(*) FROM vicidial_list where list_id in ('".implode("','", $available_lists)."');";
-    if ($DB) { echo "|$orig_count_stmt|\n"; }
+    if ($DB) {
+        echo "|$orig_count_stmt|\n";
+    }
     $orig_count_rslt = mysql_to_mysqli($orig_count_stmt, $link);
     $orig_count_row = mysqli_fetch_row($orig_count_rslt);
     $orig_count = $orig_count_row[0];
-    $num_lists = ceil( $orig_count / $num_leads );
-    echo ""._QXZ("You are about to merge list(s) <UL><LI>%1s</UL><BR>into list ID %2s.<BR><BR><B>TOTAL LEADS TO BE MOVED: %3s",0,'',implode("<LI>", $available_lists),$destination_list_id,$orig_count)."\n";
+    $num_lists = ceil($orig_count / $num_leads);
+    echo ""._QXZ("You are about to merge list(s) <UL><LI>%1s</UL><BR>into list ID %2s.<BR><BR><B>TOTAL LEADS TO BE MOVED: %3s", 0, '', implode("<LI>", $available_lists), $destination_list_id, $orig_count)."\n";
     if ($orig_count>=400000) {
         echo "<BR><BR><redalert>*** "._QXZ("WARNING:  Lists should not have more than 400,000 records in them!!!")." ***</redalert><BR><BR>";
     }
@@ -416,87 +452,97 @@ if ($submit == _QXZ("submit") )
     echo "</form>\n";
     echo "<p><a href='$PHP_SELF'>"._QXZ("Click here to start over.")."</a></p></center>\n";
     echo "</body>\n</html>\n";
-    }
-if ($confirm == _QXZ("CONFIRM"))
-    {
+}
+if ($confirm == _QXZ("CONFIRM")) {
     $available_lists_array=explode("|", $available_lists);
     $orig_count_stmt = "SELECT count(*) FROM vicidial_list where list_id in ('".implode("', '", $available_lists_array)."');";
-    if ($DB) { echo "|$orig_count_stmt|\n"; }
+    if ($DB) {
+        echo "|$orig_count_stmt|\n";
+    }
     $orig_count_rslt = mysql_to_mysqli($orig_count_stmt, $link);
     $orig_count_row = mysqli_fetch_row($orig_count_rslt);
     $orig_count = $orig_count_row[0];
-    if ($create_new_list) 
-        {
+    if ($create_new_list) {
         $list_create_stmt = "INSERT INTO vicidial_lists (list_id, list_name, campaign_id, active, list_description) VALUES ('$new_list_id', '$new_list_name', '$campaign_id', '$active', '$new_list_description');";
         $list_create_rslt=mysql_to_mysqli($list_create_stmt, $link);
         $new_list_count = mysqli_affected_rows($link);
-        if ($DB) {echo "|$list_create_stmt|\n";}
+        if ($DB) {
+            echo "|$list_create_stmt|\n";
+        }
         $SQL_log = preg_replace('/;/', '', $list_create_stmt);
         $SQL_log = addslashes($SQL_log);
         $admin_log_stmt="INSERT INTO vicidial_admin_log set event_date='$SQLdate', user='$PHP_AUTH_USER', ip_address='$ip', event_section='LISTS', event_type='OTHER', record_id='$new_list_id', event_code='ADMIN ADD LIST', event_sql=\"$SQL_log\", event_notes='$new_list_count LIST CREATED';";
-        if ($DB) {echo "|$admin_log_stmt|\n";}
-        $admin_log_rslt=mysql_to_mysqli($admin_log_stmt, $link);
+        if ($DB) {
+            echo "|$admin_log_stmt|\n";
         }
-/*
-    if ($retain_original_list) 
-        {
-        $upd_stmt="update vicidial_list set entry_list_id=list_id where list_id in ('".implode("', '", $available_lists_array)."');";
-        $upd_rslt=mysql_to_mysqli($upd_stmt, $link);
-        $update_lead_count = mysqli_affected_rows($link);
-        $SQL_log = preg_replace('/;/', '', $upd_stmt);
-        $SQL_log = addslashes($SQL_log);
-        $admin_log_stmt="INSERT INTO vicidial_admin_log set event_date='$SQLdate', user='$PHP_AUTH_USER', ip_address='$ip', event_section='LISTS', event_type='OTHER', record_id='$destination_list_id', event_code='ADMIN UPDATE LEADS', event_sql=\"$SQL_log\", event_notes='$update_lead_count LEADS UPDATED';";
         $admin_log_rslt=mysql_to_mysqli($admin_log_stmt, $link);
-        }
-*/
+    }
+    /*
+        if ($retain_original_list)
+            {
+            $upd_stmt="update vicidial_list set entry_list_id=list_id where list_id in ('".implode("', '", $available_lists_array)."');";
+            $upd_rslt=mysql_to_mysqli($upd_stmt, $link);
+            $update_lead_count = mysqli_affected_rows($link);
+            $SQL_log = preg_replace('/;/', '', $upd_stmt);
+            $SQL_log = addslashes($SQL_log);
+            $admin_log_stmt="INSERT INTO vicidial_admin_log set event_date='$SQLdate', user='$PHP_AUTH_USER', ip_address='$ip', event_section='LISTS', event_type='OTHER', record_id='$destination_list_id', event_code='ADMIN UPDATE LEADS', event_sql=\"$SQL_log\", event_notes='$update_lead_count LEADS UPDATED';";
+            $admin_log_rslt=mysql_to_mysqli($admin_log_stmt, $link);
+            }
+    */
     $move_lead_stmt = "UPDATE vicidial_list SET list_id = '$destination_list_id' WHERE list_id in ('".implode("', '", $available_lists_array)."');";
-    if ($DB) { echo "|$move_lead_stmt|\n"; }
+    if ($DB) {
+        echo "|$move_lead_stmt|\n";
+    }
     $move_lead_rslt = mysql_to_mysqli($move_lead_stmt, $link);
     $move_lead_count = mysqli_affected_rows($link);
     $SQL_log = "$move_lead_stmt";
     $SQL_log = preg_replace('/;/', '', $SQL_log);
     $SQL_log = addslashes($SQL_log);
     $admin_log_stmt="INSERT INTO vicidial_admin_log set event_date='$SQLdate', user='$PHP_AUTH_USER', ip_address='$ip', event_section='LISTS', event_type='OTHER', record_id='$destination_list_id', event_code='ADMIN LIST MERGE', event_sql=\"$SQL_log\", event_notes='$move_lead_count LEADS MOVED';";
-    if ($DB) {echo "|$admin_log_stmt|\n";}
+    if ($DB) {
+        echo "|$admin_log_stmt|\n";
+    }
     $admin_log_rslt=mysql_to_mysqli($admin_log_stmt, $link);
-    set_time_limit( 120 );
+    set_time_limit(120);
     echo "<p>"._QXZ("List(s)")." ".implode(", ", $available_lists_array)." "._QXZ("was merged into list")." $destination_list_id "._QXZ("with")." $move_lead_count "._QXZ("lead(s) moved.")."</p>";
     echo "<p><a href='$PHP_SELF'>"._QXZ("Click here to start over.")."</a></p>\n";
-    }
-if (($submit != "submit" ) && ($confirm != "CONFIRM"))
-    {
+}
+if (($submit != "submit") && ($confirm != "CONFIRM")) {
     $activeSQL = "and active = 'N'";
-    if ($SSallow_manage_active_lists > 0) {$activeSQL = '';}
+    if ($SSallow_manage_active_lists > 0) {
+        $activeSQL = '';
+    }
     $lists_stmt = "SELECT list_id, list_name FROM vicidial_lists WHERE campaign_id IN ($allowed_campaigns_sql) $activeSQL ORDER BY list_id;";
-    if ($DB) { echo "|$lists_stmt|\n"; }
+    if ($DB) {
+        echo "|$lists_stmt|\n";
+    }
     $lists_rslt = mysql_to_mysqli($lists_stmt, $link);
     $num_rows = mysqli_num_rows($lists_rslt);
     $allowed_lists_count = 0;
-    while ( $allowed_lists_count < $num_rows )
-        {
+    while ($allowed_lists_count < $num_rows) {
         $lists_row = mysqli_fetch_row($lists_rslt);
         $lead_count_stmt = "SELECT count(1)  FROM vicidial_list WHERE list_id = '$lists_row[0]';";
-        if ($DB) { echo "|$lead_count_stmt|\n"; }
+        if ($DB) {
+            echo "|$lead_count_stmt|\n";
+        }
         $lead_count_rslt = mysql_to_mysqli($lead_count_stmt, $link);
         $lead_count_row = mysqli_fetch_row($lead_count_rslt);
         $lead_count = $lead_count_row[0];
         $list_ary[$allowed_lists_count] = $lists_row[0];
         $list_name_ary[$allowed_lists_count] = $lists_row[1];
         $list_lead_count_ary[$allowed_lists_count] = $lead_count_row[0];
-        if ($allowed_lists_count == 0)
-            {
+        if ($allowed_lists_count == 0) {
             $allowed_lists_sql = "'$lists_row[0]'";
-            }
-        else
-            {
+        } else {
             $allowed_lists_sql = "$allowed_lists_sql, '$lists_row[0]'";
-            }
-        $allowed_lists_count++;
         }
-    if ($SSallow_manage_active_lists > 0)
-        {echo "<p>"._QXZ("This is the list merge tool. It will merge several existing lists into a single list.")."</p>";}
-    else
-        {echo "<p>"._QXZ("This is the list merge tool. It will only work on inactive lists. It will merge several existing lists into a single list.")."</p>";}
+        $allowed_lists_count++;
+    }
+    if ($SSallow_manage_active_lists > 0) {
+        echo "<p>"._QXZ("This is the list merge tool. It will merge several existing lists into a single list.")."</p>";
+    } else {
+        echo "<p>"._QXZ("This is the list merge tool. It will only work on inactive lists. It will merge several existing lists into a single list.")."</p>";
+    }
     echo "<form action=$PHP_SELF method=POST>\n";
     echo "<center><table width=$section_width cellspacing=3>\n";
     echo "<tr bgcolor=#$SSmenu_background><td colspan=2 align=center><font color=white><b>"._QXZ("List Merge")."</b></font></td></tr>\n";
@@ -504,17 +550,19 @@ if (($submit != "submit" ) && ($confirm != "CONFIRM"))
     echo "<select size=".($num_rows<10 ? $num_rows : 10)." name=available_lists[] id='available_lists' multiple onClick='PopulateMergeMenu()'>\n";
     echo "<option value=''>-- "._QXZ("SELECT LISTS BELOW")." --</option>\n";
     $i = 0;
-    while ( $i < $allowed_lists_count )
-        {
-        if (is_array($available_lists))
-            {
-            if (in_array($list_ary[$i], $available_lists)) {$x="selected";} 
-            else {$x="";}
+    while ($i < $allowed_lists_count) {
+        if (is_array($available_lists)) {
+            if (in_array($list_ary[$i], $available_lists)) {
+                $x="selected";
+            } else {
+                $x="";
             }
-        else {$x="";}
+        } else {
+            $x="";
+        }
         echo "<option value='$list_ary[$i]' $x>$list_ary[$i] - $list_name_ary[$i] ($list_lead_count_ary[$i] "._QXZ("leads").")</option>\n";
         $i++;
-        }
+    }
     echo "</select></td></tr>\n";
     echo "<tr bgcolor=#$SSstd_row2_background><td align=right>"._QXZ("List to merge into:")."</td><td align=left>\n";
     echo "<select name='destination_list_id' id='destination_list_id' size='1'>\n";
@@ -534,12 +582,11 @@ if (($submit != "submit" ) && ($confirm != "CONFIRM"))
     $campaigns_to_print = mysqli_num_rows($rslt);
     $campaigns_list='';
     $o=0;
-    while ($campaigns_to_print > $o) 
-        {
+    while ($campaigns_to_print > $o) {
         $rowx=mysqli_fetch_row($rslt);
         $campaigns_list .= "<option value=\"$rowx[0]\">$rowx[0] - $rowx[1]</option>\n";
         $o++;
-        }
+    }
     echo "$campaigns_list";
     echo "<option SELECTED>$campaign_id</option>\n";
     echo "</select>$NWB#lists-campaign_id$NWE</td></tr>\n";
@@ -551,6 +598,6 @@ if (($submit != "submit" ) && ($confirm != "CONFIRM"))
     echo "<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />\n";
     echo "<script language='Javascript'>PopulateMergeMenu();</script>";
     echo "</body></html>\n";
-    }
+}
 echo "</td></tr></table>\n";
 ?>

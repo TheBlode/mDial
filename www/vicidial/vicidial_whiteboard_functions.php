@@ -35,9 +35,12 @@
 <?php
 header('Content-Type: application/javascript');
 require("functions.php");
-if (isset($_GET["mobile"]))                {$mobile=$_GET["mobile"];}
-    elseif (isset($_POST["mobile"]))        {$mobile=$_POST["mobile"];}
-$mobile=preg_replace('/[^0-9\p{L}]/u','',$mobile);
+if (isset($_GET["mobile"])) {
+    $mobile=$_GET["mobile"];
+} elseif (isset($_POST["mobile"])) {
+    $mobile=$_POST["mobile"];
+}
+$mobile=preg_replace('/[^0-9\p{L}]/u', '', $mobile);
 ?>
 // vicidial_whiteboard_functions.php
 // 

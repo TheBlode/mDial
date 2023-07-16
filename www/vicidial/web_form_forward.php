@@ -33,9 +33,15 @@
 # * ======================================== */
 ?>
 <?php
-if (isset($_GET["phone_number"]))    {$phone_number=$_GET["phone_number"];}
-if (isset($_GET["source_id"]))        {$source_id=$_GET["source_id"];}
-if (isset($_GET["user"]))            {$user=$_GET["user"];}
+if (isset($_GET["phone_number"])) {
+    $phone_number=$_GET["phone_number"];
+}
+if (isset($_GET["source_id"])) {
+    $source_id=$_GET["source_id"];
+}
+if (isset($_GET["user"])) {
+    $user=$_GET["user"];
+}
 $user = preg_replace("/\<|\>|\'|\"|\\\\|;| /", '', $user);
 $source_id = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $source_id);
 $phone_number = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $phone_number);

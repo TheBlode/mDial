@@ -35,50 +35,78 @@
 <?php
 $admin_version = '2.14-2';
 $build = '220224-2144';
-header ("Content-type: text/html; charset=utf-8");
+header("Content-type: text/html; charset=utf-8");
 require("dbconnect_mysqli.php"); # /srv/www/vhosts/vicimarketing/vicidial/
 require("functions.php");
 $link=mysqli_connect("$VARDB_server", "$VARDB_user", "$VARDB_pass", "$VARDB_database", $VARDB_port);
-if (!$link) 
-    {
+if (!$link) {
     die("MySQL connect ERROR:  " . mysqli_error('mysqli'));
-    }
+}
 $PHP_AUTH_USER=$_SERVER['PHP_AUTH_USER'];
 $PHP_AUTH_PW=$_SERVER['PHP_AUTH_PW'];
 $QUERY_STRING = getenv("QUERY_STRING");
 $PHP_SELF=$_SERVER['PHP_SELF'];
-$PHP_SELF = preg_replace('/\.php.*/i','.php',$PHP_SELF);
-if (isset($_GET["DB"]))                {$DB=$_GET["DB"];}
-    elseif (isset($_POST["DB"]))    {$DB=$_POST["DB"];}
-if (isset($_GET["submit"]))    {$submit=$_GET["submit"];}
-    elseif (isset($_POST["submit"]))    {$submit=$_POST["submit"];}
-if (isset($_GET["new_scorecard_id"]))    {$new_scorecard_id=$_GET["new_scorecard_id"];}
-    elseif (isset($_POST["new_scorecard_id"]))    {$new_scorecard_id=$_POST["new_scorecard_id"];}
-if (isset($_GET["new_scorecard_name"]))    {$new_scorecard_name=$_GET["new_scorecard_name"];}
-    elseif (isset($_POST["new_scorecard_name"]))    {$new_scorecard_name=$_POST["new_scorecard_name"];}
-if (isset($_GET["new_active"]))    {$new_active=$_GET["new_active"];}
-    elseif (isset($_POST["new_active"]))    {$new_active=$_POST["new_active"];}
-if (isset($_GET["active"]))    {$active=$_GET["active"];}
-    elseif (isset($_POST["active"]))    {$active=$_POST["active"];}
-if (isset($_GET["action"]))    {$action=$_GET["action"];}
-    elseif (isset($_POST["action"]))    {$action=$_POST["action"];}
-if (isset($_GET["confirm_deletion"]))    {$confirm_deletion=$_GET["confirm_deletion"];}
-    elseif (isset($_POST["confirm_deletion"]))    {$confirm_deletion=$_POST["confirm_deletion"];}
-if (isset($_GET["scorecard_id"]))    {$scorecard_id=$_GET["scorecard_id"];}
-    elseif (isset($_POST["scorecard_id"]))    {$scorecard_id=$_POST["scorecard_id"];}
-if ( file_exists("/etc/mysql_enc.conf") ) {
+$PHP_SELF = preg_replace('/\.php.*/i', '.php', $PHP_SELF);
+if (isset($_GET["DB"])) {
+    $DB=$_GET["DB"];
+} elseif (isset($_POST["DB"])) {
+    $DB=$_POST["DB"];
+}
+if (isset($_GET["submit"])) {
+    $submit=$_GET["submit"];
+} elseif (isset($_POST["submit"])) {
+    $submit=$_POST["submit"];
+}
+if (isset($_GET["new_scorecard_id"])) {
+    $new_scorecard_id=$_GET["new_scorecard_id"];
+} elseif (isset($_POST["new_scorecard_id"])) {
+    $new_scorecard_id=$_POST["new_scorecard_id"];
+}
+if (isset($_GET["new_scorecard_name"])) {
+    $new_scorecard_name=$_GET["new_scorecard_name"];
+} elseif (isset($_POST["new_scorecard_name"])) {
+    $new_scorecard_name=$_POST["new_scorecard_name"];
+}
+if (isset($_GET["new_active"])) {
+    $new_active=$_GET["new_active"];
+} elseif (isset($_POST["new_active"])) {
+    $new_active=$_POST["new_active"];
+}
+if (isset($_GET["active"])) {
+    $active=$_GET["active"];
+} elseif (isset($_POST["active"])) {
+    $active=$_POST["active"];
+}
+if (isset($_GET["action"])) {
+    $action=$_GET["action"];
+} elseif (isset($_POST["action"])) {
+    $action=$_POST["action"];
+}
+if (isset($_GET["confirm_deletion"])) {
+    $confirm_deletion=$_GET["confirm_deletion"];
+} elseif (isset($_POST["confirm_deletion"])) {
+    $confirm_deletion=$_POST["confirm_deletion"];
+}
+if (isset($_GET["scorecard_id"])) {
+    $scorecard_id=$_GET["scorecard_id"];
+} elseif (isset($_POST["scorecard_id"])) {
+    $scorecard_id=$_POST["scorecard_id"];
+}
+if (file_exists("/etc/mysql_enc.conf")) {
     $DBCagc = file("/etc/mysql_enc.conf");
     foreach ($DBCagc as $DBCline) {
-        $DBCline = preg_replace("/ |>|\n|\r|\t|\#.*|;.*/","",$DBCline);
-        if (ereg("^enckey", $DBCline)) {$enckey = $DBCline;   $enckey = preg_replace("/.*=/","",$enckey);}
+        $DBCline = preg_replace("/ |>|\n|\r|\t|\#.*|;.*/", "", $DBCline);
+        if (ereg("^enckey", $DBCline)) {
+            $enckey = $DBCline;
+            $enckey = preg_replace("/.*=/", "", $enckey);
+        }
     }
 }
-$DB=preg_replace('/[^0-9]/','',$DB);
+$DB=preg_replace('/[^0-9]/', '', $DB);
 $stmt = "SELECT use_non_latin,auto_dial_limit,user_territories_active,allow_custom_dialplan,callcard_enabled,admin_modify_refresh,nocache_admin,webroot_writable,admin_screen_colors,qc_features_active,hosted_settings,allow_web_debug FROM system_settings;";
 $rslt=mysql_to_mysqli($stmt, $link);
 $qm_conf_ct = mysqli_num_rows($rslt);
-if ($qm_conf_ct > 0)
-    {
+if ($qm_conf_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $non_latin =                    $row[0];
     $SSauto_dial_limit =            $row[1];
@@ -93,28 +121,27 @@ if ($qm_conf_ct > 0)
     $SShosted_settings =            $row[10];
     $SSauto_dial_limit = ($SSauto_dial_limit + 0.001);
     $SSallow_web_debug =            $row[11];
-    }
-if ($SSallow_web_debug < 1) {$DB=0;}
-$submit=preg_replace('/[^-0-9 \p{L}]/u','',$submit);
-$new_active = preg_replace('/[^NY]/','',$new_active);
-$active = preg_replace('/[^NY]/','',$active);
-$action = preg_replace('/[^-_0-9a-zA-Z]/','',$action);
-$confirm_deletion = preg_replace('/[^Y]/','',$confirm_deletion);
-$scorecard_id = preg_replace('/[^-_0-9a-zA-Z]/','',$scorecard_id);
-if ($non_latin < 1)
-    {
+}
+if ($SSallow_web_debug < 1) {
+    $DB=0;
+}
+$submit=preg_replace('/[^-0-9 \p{L}]/u', '', $submit);
+$new_active = preg_replace('/[^NY]/', '', $new_active);
+$active = preg_replace('/[^NY]/', '', $active);
+$action = preg_replace('/[^-_0-9a-zA-Z]/', '', $action);
+$confirm_deletion = preg_replace('/[^Y]/', '', $confirm_deletion);
+$scorecard_id = preg_replace('/[^-_0-9a-zA-Z]/', '', $scorecard_id);
+if ($non_latin < 1) {
     $PHP_AUTH_USER = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_USER);
     $PHP_AUTH_PW = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_PW);
-    $new_scorecard_id = preg_replace('/[^-_0-9a-zA-Z]/','',$new_scorecard_id);
-    $new_scorecard_name = preg_replace('/[^- \.\,\_0-9a-zA-Z]/','',$new_scorecard_name);
-    }
-else
-    {
+    $new_scorecard_id = preg_replace('/[^-_0-9a-zA-Z]/', '', $new_scorecard_id);
+    $new_scorecard_name = preg_replace('/[^- \.\,\_0-9a-zA-Z]/', '', $new_scorecard_name);
+} else {
     $PHP_AUTH_USER = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_USER);
     $PHP_AUTH_PW = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_PW);
-    $new_scorecard_id = preg_replace('/[^-_0-9\p{L}]/u','',$new_scorecard_id);
-    $new_scorecard_name = preg_replace('/[^- \.\,\_0-9\p{L}]/u','',$new_scorecard_name);
-    }
+    $new_scorecard_id = preg_replace('/[^-_0-9\p{L}]/u', '', $new_scorecard_id);
+    $new_scorecard_name = preg_replace('/[^- \.\,\_0-9\p{L}]/u', '', $new_scorecard_name);
+}
 $SSmenu_background='015B91';
 $SSframe_background='D9E6FE';
 $SSstd_row1_background='9BB9FB';
@@ -125,14 +152,14 @@ $SSstd_row5_background='A3C3D6';
 $SSalt_row1_background='BDFFBD';
 $SSalt_row2_background='99FF99';
 $SSalt_row3_background='CCFFCC';
-if ($SSadmin_screen_colors != 'default')
-    {
+if ($SSadmin_screen_colors != 'default') {
     $stmt = "SELECT menu_background,frame_background,std_row1_background,std_row2_background,std_row3_background,std_row4_background,std_row5_background,alt_row1_background,alt_row2_background,alt_row3_background,web_logo FROM vicidial_screen_colors where colors_id='$SSadmin_screen_colors';";
     $rslt=mysql_to_mysqli($stmt, $link);
-    if ($DB) {echo "$stmt\n";}
+    if ($DB) {
+        echo "$stmt\n";
+    }
     $colors_ct = mysqli_num_rows($rslt);
-    if ($colors_ct > 0)
-        {
+    if ($colors_ct > 0) {
         $row=mysqli_fetch_row($rslt);
         $SSmenu_background =        $row[0];
         $SSframe_background =        $row[1];
@@ -145,44 +172,40 @@ if ($SSadmin_screen_colors != 'default')
         $SSalt_row2_background =    $row[8];
         $SSalt_row3_background =    $row[9];
         $SSweb_logo =                $row[10];
-        }
     }
+}
 $Mhead_color =    $SSstd_row5_background;
 $Mmain_bgcolor = $SSmenu_background;
 $Mhead_color =    $SSstd_row5_background;
 $auth=0;
-$auth_message = user_authorization($PHP_AUTH_USER,$PHP_AUTH_PW,'',1,0);
-if ($auth_message == 'GOOD')
-    {$auth=1;}
-if ($auth < 1)
-    {
+$auth_message = user_authorization($PHP_AUTH_USER, $PHP_AUTH_PW, '', 1, 0);
+if ($auth_message == 'GOOD') {
+    $auth=1;
+}
+if ($auth < 1) {
     $VDdisplayMESSAGE = _QXZ("Login incorrect, please try again");
-    if ($auth_message == 'LOCK')
-        {
+    if ($auth_message == 'LOCK') {
         $VDdisplayMESSAGE = _QXZ("Too many login attempts, try again in 15 minutes");
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
-    if ($auth_message == 'IPBLOCK')
-        {
+    }
+    if ($auth_message == 'IPBLOCK') {
         $VDdisplayMESSAGE = _QXZ("Your IP Address is not allowed") . ": $ip";
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
+    }
     Header("WWW-Authenticate: Basic realm=\"CONTACT-CENTER-ADMIN\"");
     Header("HTTP/1.0 401 Unauthorized");
     echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$PHP_AUTH_PW|$auth_message|\n";
     exit;
-    }    
-if ($submit==_QXZ("SUBMIT NEW SCORECARD")) 
-    {
+}
+if ($submit==_QXZ("SUBMIT NEW SCORECARD")) {
     $ins_stmt="insert into quality_control_scorecards(qc_scorecard_id, scorecard_name, active) VALUES('".mysqli_escape_string($link, $new_scorecard_id)."', '".mysqli_escape_string($link, $new_scorecard_name)."', '$new_active')";
     $ins_rslt=mysql_to_mysqli($ins_stmt, $link);
-    }
-if ($auth) 
-    {
+}
+if ($auth) {
     $office_no=strtoupper($PHP_AUTH_USER);
     $password=strtoupper($PHP_AUTH_PW);
     $auth_stmt="SELECT user_id,user,pass,full_name,user_level,user_group,phone_login,phone_pass,delete_users,delete_user_groups,delete_lists,delete_campaigns,delete_ingroups,delete_remote_agents,load_leads,campaign_detail,ast_admin_access,ast_delete_phones,delete_scripts,modify_leads,hotkeys_active,change_agent_campaign,agent_choose_ingroups,closer_campaigns,scheduled_callbacks,agentonly_callbacks,agentcall_manual,vicidial_recording,vicidial_transfers,delete_filters,alter_agent_interface_options,closer_default_blended,delete_call_times,modify_call_times,modify_users,modify_campaigns,modify_lists,modify_scripts,modify_filters,modify_ingroups,modify_usergroups,modify_remoteagents,modify_servers,view_reports,vicidial_recording_override,alter_custdata_override,qc_enabled,qc_user_level,qc_pass,qc_finish,qc_commit,add_timeclock_log,modify_timeclock_log,delete_timeclock_log,alter_custphone_override,vdc_agent_api_access,modify_inbound_dids,delete_inbound_dids,active,alert_enabled,download_lists,agent_shift_enforcement_override,manager_shift_enforcement_override,shift_override_flag,export_reports,delete_from_dnc,email,user_code,territory,allow_alerts,callcard_admin,force_change_password,modify_shifts,modify_phones,modify_carriers,modify_labels,modify_statuses,modify_voicemail,modify_audiostore,modify_moh,modify_tts,modify_contacts,modify_same_user_level from vicidial_users where user='$PHP_AUTH_USER';";
@@ -242,31 +265,32 @@ if ($auth)
     $LOGallowed_reports =            $row[1];
     $LOGadmin_viewable_groups =        $row[2];
     $LOGadmin_viewable_call_times =    $row[3];
-    }
+}
 $stmt="SELECT allowed_campaigns,allowed_reports from vicidial_user_groups where user_group='$LOGuser_group';";
-if ($DB) {echo "|$stmt|\n";}
+if ($DB) {
+    echo "|$stmt|\n";
+}
 $rslt=mysqli_query($link, $stmt);
 $row=mysqli_fetch_row($rslt);
 $LOGallowed_campaigns = $row[0];
 $LOGallowed_reports =    $row[1];
 $LOGallowed_campaignsSQL='';
 $whereLOGallowed_campaignsSQL='';
-if ( (!preg_match("/ALL-/",$LOGallowed_campaigns)) )
-    {
-    $rawLOGallowed_campaignsSQL = preg_replace("/ -/",'',$LOGallowed_campaigns);
-    $rawLOGallowed_campaignsSQL = preg_replace("/ /","','",$rawLOGallowed_campaignsSQL);
+if ((!preg_match("/ALL-/", $LOGallowed_campaigns))) {
+    $rawLOGallowed_campaignsSQL = preg_replace("/ -/", '', $LOGallowed_campaigns);
+    $rawLOGallowed_campaignsSQL = preg_replace("/ /", "','", $rawLOGallowed_campaignsSQL);
     $LOGallowed_campaignsSQL = "and campaign_id IN('$rawLOGallowed_campaignsSQL')";
     $whereLOGallowed_campaignsSQL = "where campaign_id IN('$rawLOGallowed_campaignsSQL')";
-    }
+}
 $regexLOGallowed_campaigns = " $LOGallowed_campaigns ";
-header ("Content-type: text/html; charset=utf-8");
-header ("Cache-Control: no-cache, must-revalidate");  // HTTP/1.1
-header ("Pragma: no-cache");      // HTTP/1.0
+header("Content-type: text/html; charset=utf-8");
+header("Cache-Control: no-cache, must-revalidate");  // HTTP/1.1
+header("Pragma: no-cache");      // HTTP/1.0
 echo "<html>\n";
 echo "<head>\n";
 echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"vicidial_stylesheet.php\">\n";
 echo "<script language=\"JavaScript\" src=\"help.js\"></script>\n";
-echo "<div id='HelpDisplayDiv' class='help_info' style='display:none;'></div>";    
+echo "<div id='HelpDisplayDiv' class='help_info' style='display:none;'></div>";
 echo "<title>"._QXZ("Quality control scorecards")."</title>\n";
 echo "</head>\n";
 $NWB = "<IMG SRC=\"help.png\" onClick=\"FillAndShowHelpDiv(event, '";
@@ -645,91 +669,92 @@ function ChangeCheckpoint(checkpoint_row_id, scorecard_id, q_action, parameter, 
 </script>
 <?php
     echo "<TABLE width='100%'><TR><TD>\n";
-    echo "<FONT FACE=\"ARIAL,HELVETICA\" COLOR=BLACK SIZE=2>";
-    echo "<img src=\"images/icon_black_qc.png\" alt=\"Quality Control\" width=42 height=42> "._QXZ("Quality Control Scorecards").":<BR><BR>\n";
-    if ($action=="delete_scorecard" && $scorecard_id && !$confirm_deletion) 
-        {
-        echo "<a href='$PHP_SELF?scorecard_id=$scorecard_id&action=delete_scorecard&confirm_deletion=Y'>"._QXZ("CLICK HERE TO CONFIRM SCORECARD")." \"$scorecard_id\" "._QXZ("DELETION")."</a><BR><BR>";
-        }
-    else if ($action=="delete_scorecard" && $scorecard_id && $confirm_deletion=="Y") 
-        {
-        $del_stmt="delete from quality_control_scorecards where qc_scorecard_id='$scorecard_id'";
-        $del_rslt=mysql_to_mysqli($del_stmt, $link);
-        if(mysqli_affected_rows($link)>0)
-            {
-            echo "<B>"._QXZ("SCORECARD")." $scorecard_id "._QXZ("DELETED")."</B><BR><BR>";
-            }
-        $del_stmt="delete from quality_control_checkpoints where qc_scorecard_id='$scorecard_id'";
-        $del_rslt=mysql_to_mysqli($del_stmt, $link);
-        }
-    echo "<span id='scorecards_display'>\n";
-    echo "<table cellpadding=2 cellspacing=0 width='100%'>\n";
-    echo "\t<tr bgcolor=black nowrap>\n";
-    echo "\t\t<td align=left><font size=1 color=white>"._QXZ("Scorecard")."</font></td>\n";
-    echo "\t\t<td align=left><font size=1 color='white'>"._QXZ("Checkpoints")."</font></td>\n";
-    echo "\t\t<td align=left><font size=1 color='white'>"._QXZ("Pass/max score")."</font></td>\n";
-    echo "\t\t<td align=left><font size=1 color='white'>"._QXZ("Campaigns")."</font></td>\n";
-    echo "\t\t<td align=left><font size=1 color='white'>"._QXZ("In-groups")."</font></td>\n";
-    echo "\t\t<td align=left><font size=1 color='white'>"._QXZ("Lists")."</font></td>\n";
-    echo "\t\t<td align=left><font size=1 color='white'>"._QXZ("Last modified")."</font></td>\n";
-    echo "\t\t<td align=left><font size=1 color='white'>"._QXZ("Active")."</font></td>\n";
-    echo "\t\t<td align=left><font size=1 color='white'>&nbsp;</font></td>\n";
-    echo "\t\t<td align=left><font size=1 color='white'>&nbsp;</font></td>\n";
-    echo "\t</tr>\n";
-    $stmt="select * from quality_control_scorecards order by qc_scorecard_id asc";
-    $rslt=mysql_to_mysqli($stmt, $link);
-    $i=0;
-    while ($row=mysqli_fetch_array($rslt)) {
-        $i++;
-        if ($i%2==0) {$bgcolor=$SSstd_row1_background;} else {$bgcolor=$SSstd_row2_background;}
-        echo "\t<tr bgcolor='".$bgcolor."'>\n";
-        echo "\t\t\t<td align=left><font size=1>$row[qc_scorecard_id] - $row[scorecard_name]</font></td>\n";
-        $qstmt="select count(*), sum(checkpoint_points) from quality_control_checkpoints where qc_scorecard_id='$row[qc_scorecard_id]'";
-        $qrslt=mysql_to_mysqli($qstmt, $link);
-        $qrow=mysqli_fetch_row($qrslt);
-        $checkpoints=$qrow[0];
-        ($checkpoints==0 ? $score_total="--" : $score_total=$qrow[1]);
-        echo "\t\t\t<td align=left><font size=1>$checkpoints</font></td>\n";
-        echo "\t\t\t<td align=left><font size=1>$row[passing_score] / $score_total</font></td>\n";
-        $qstmt="select count(*) from vicidial_campaigns where qc_scorecard_id='$row[qc_scorecard_id]'";
-        $qrslt=mysql_to_mysqli($qstmt, $link);
-        $qrow=mysqli_fetch_row($qrslt);
-        $campaigns_in_use=$qrow[0];
-        echo "\t\t\t<td align=left><font size=1>$campaigns_in_use</font></td>\n";
-        $qstmt="select count(*) from vicidial_inbound_groups where qc_scorecard_id='$row[qc_scorecard_id]'";
-        $qrslt=mysql_to_mysqli($qstmt, $link);
-        $qrow=mysqli_fetch_row($qrslt);
-        $ingroups_in_use=$qrow[0];
-        echo "\t\t\t<td align=left><font size=1>$ingroups_in_use</font></td>\n";
-        $qstmt="select count(*) from vicidial_lists where qc_scorecard_id='$row[qc_scorecard_id]'";
-        $qrslt=mysql_to_mysqli($qstmt, $link);
-        $qrow=mysqli_fetch_row($qrslt);
-        $lists_in_use=$qrow[0];
-        echo "\t\t\t<td align=left><font size=1>$lists_in_use</font></td>\n";
-        echo "\t\t\t<td align=left><font size=1>$row[last_modified]</font></td>\n";
-        echo "\t\t\t<td align=left><input type='checkbox' name='active".$row["qc_scorecard_id"]."' id='active".$row["qc_scorecard_id"]."' onClick=\"ChangeCheckpoint('0', '$row[qc_scorecard_id]', 'update_scorecard', 'active')\"".($row["active"]=="Y" ? " checked" : "")."></td>\n";
-        echo "\t\t\t<td align=left><input type='button' class='tiny_blue_btn' onClick=\"LoadCheckpoints('$row[qc_scorecard_id]')\" value='"._QXZ("MODIFY")."'></td>\n";
-        echo "\t\t\t<td align=left><input type='button' class='tiny_red_btn' onClick=\"window.location.href='$PHP_SELF?scorecard_id=$row[qc_scorecard_id]&action=delete_scorecard'\" value='"._QXZ("DELETE")."'></font></td>\n";
-        echo "</tr>";
+echo "<FONT FACE=\"ARIAL,HELVETICA\" COLOR=BLACK SIZE=2>";
+echo "<img src=\"images/icon_black_qc.png\" alt=\"Quality Control\" width=42 height=42> "._QXZ("Quality Control Scorecards").":<BR><BR>\n";
+if ($action=="delete_scorecard" && $scorecard_id && !$confirm_deletion) {
+    echo "<a href='$PHP_SELF?scorecard_id=$scorecard_id&action=delete_scorecard&confirm_deletion=Y'>"._QXZ("CLICK HERE TO CONFIRM SCORECARD")." \"$scorecard_id\" "._QXZ("DELETION")."</a><BR><BR>";
+} elseif ($action=="delete_scorecard" && $scorecard_id && $confirm_deletion=="Y") {
+    $del_stmt="delete from quality_control_scorecards where qc_scorecard_id='$scorecard_id'";
+    $del_rslt=mysql_to_mysqli($del_stmt, $link);
+    if(mysqli_affected_rows($link)>0) {
+        echo "<B>"._QXZ("SCORECARD")." $scorecard_id "._QXZ("DELETED")."</B><BR><BR>";
     }
-    echo "\t<tr bgcolor=black>\n";
-    echo "\t\t<th colspan='10'><font size=1 color='white'><input type='button' class='tiny_blue_btn' onClick='NewScorecard()' value='"._QXZ("ADD NEW SCORECARD")."'></font></td>\n";
-    echo "\t</tr>\n";
-    echo "</table>\n";
-    echo "</span>\n";
-    echo "<BR><a name='display_tag'><span id='checkpoint_display'>";
-    echo "</span>";
-    echo "</td></tr>\n";
-    echo "</table>\n";
-    echo "</font>\n";
-    echo "</TD></TR></TABLE>\n";
+    $del_stmt="delete from quality_control_checkpoints where qc_scorecard_id='$scorecard_id'";
+    $del_rslt=mysql_to_mysqli($del_stmt, $link);
+}
+echo "<span id='scorecards_display'>\n";
+echo "<table cellpadding=2 cellspacing=0 width='100%'>\n";
+echo "\t<tr bgcolor=black nowrap>\n";
+echo "\t\t<td align=left><font size=1 color=white>"._QXZ("Scorecard")."</font></td>\n";
+echo "\t\t<td align=left><font size=1 color='white'>"._QXZ("Checkpoints")."</font></td>\n";
+echo "\t\t<td align=left><font size=1 color='white'>"._QXZ("Pass/max score")."</font></td>\n";
+echo "\t\t<td align=left><font size=1 color='white'>"._QXZ("Campaigns")."</font></td>\n";
+echo "\t\t<td align=left><font size=1 color='white'>"._QXZ("In-groups")."</font></td>\n";
+echo "\t\t<td align=left><font size=1 color='white'>"._QXZ("Lists")."</font></td>\n";
+echo "\t\t<td align=left><font size=1 color='white'>"._QXZ("Last modified")."</font></td>\n";
+echo "\t\t<td align=left><font size=1 color='white'>"._QXZ("Active")."</font></td>\n";
+echo "\t\t<td align=left><font size=1 color='white'>&nbsp;</font></td>\n";
+echo "\t\t<td align=left><font size=1 color='white'>&nbsp;</font></td>\n";
+echo "\t</tr>\n";
+$stmt="select * from quality_control_scorecards order by qc_scorecard_id asc";
+$rslt=mysql_to_mysqli($stmt, $link);
+$i=0;
+while ($row=mysqli_fetch_array($rslt)) {
+    $i++;
+    if ($i%2==0) {
+        $bgcolor=$SSstd_row1_background;
+    } else {
+        $bgcolor=$SSstd_row2_background;
+    }
+    echo "\t<tr bgcolor='".$bgcolor."'>\n";
+    echo "\t\t\t<td align=left><font size=1>$row[qc_scorecard_id] - $row[scorecard_name]</font></td>\n";
+    $qstmt="select count(*), sum(checkpoint_points) from quality_control_checkpoints where qc_scorecard_id='$row[qc_scorecard_id]'";
+    $qrslt=mysql_to_mysqli($qstmt, $link);
+    $qrow=mysqli_fetch_row($qrslt);
+    $checkpoints=$qrow[0];
+    ($checkpoints==0 ? $score_total="--" : $score_total=$qrow[1]);
+    echo "\t\t\t<td align=left><font size=1>$checkpoints</font></td>\n";
+    echo "\t\t\t<td align=left><font size=1>$row[passing_score] / $score_total</font></td>\n";
+    $qstmt="select count(*) from vicidial_campaigns where qc_scorecard_id='$row[qc_scorecard_id]'";
+    $qrslt=mysql_to_mysqli($qstmt, $link);
+    $qrow=mysqli_fetch_row($qrslt);
+    $campaigns_in_use=$qrow[0];
+    echo "\t\t\t<td align=left><font size=1>$campaigns_in_use</font></td>\n";
+    $qstmt="select count(*) from vicidial_inbound_groups where qc_scorecard_id='$row[qc_scorecard_id]'";
+    $qrslt=mysql_to_mysqli($qstmt, $link);
+    $qrow=mysqli_fetch_row($qrslt);
+    $ingroups_in_use=$qrow[0];
+    echo "\t\t\t<td align=left><font size=1>$ingroups_in_use</font></td>\n";
+    $qstmt="select count(*) from vicidial_lists where qc_scorecard_id='$row[qc_scorecard_id]'";
+    $qrslt=mysql_to_mysqli($qstmt, $link);
+    $qrow=mysqli_fetch_row($qrslt);
+    $lists_in_use=$qrow[0];
+    echo "\t\t\t<td align=left><font size=1>$lists_in_use</font></td>\n";
+    echo "\t\t\t<td align=left><font size=1>$row[last_modified]</font></td>\n";
+    echo "\t\t\t<td align=left><input type='checkbox' name='active".$row["qc_scorecard_id"]."' id='active".$row["qc_scorecard_id"]."' onClick=\"ChangeCheckpoint('0', '$row[qc_scorecard_id]', 'update_scorecard', 'active')\"".($row["active"]=="Y" ? " checked" : "")."></td>\n";
+    echo "\t\t\t<td align=left><input type='button' class='tiny_blue_btn' onClick=\"LoadCheckpoints('$row[qc_scorecard_id]')\" value='"._QXZ("MODIFY")."'></td>\n";
+    echo "\t\t\t<td align=left><input type='button' class='tiny_red_btn' onClick=\"window.location.href='$PHP_SELF?scorecard_id=$row[qc_scorecard_id]&action=delete_scorecard'\" value='"._QXZ("DELETE")."'></font></td>\n";
+    echo "</tr>";
+}
+echo "\t<tr bgcolor=black>\n";
+echo "\t\t<th colspan='10'><font size=1 color='white'><input type='button' class='tiny_blue_btn' onClick='NewScorecard()' value='"._QXZ("ADD NEW SCORECARD")."'></font></td>\n";
+echo "\t</tr>\n";
+echo "</table>\n";
+echo "</span>\n";
+echo "<BR><a name='display_tag'><span id='checkpoint_display'>";
+echo "</span>";
+echo "</td></tr>\n";
+echo "</table>\n";
+echo "</font>\n";
+echo "</TD></TR></TABLE>\n";
 echo "</TD></TR>\n";
 echo "<TR><TD bgcolor=#$SSmenu_background ALIGN=CENTER><BR>\n";
 echo "<FONT STYLE=\"font-family:HELVETICA;font-size:9;color:white;\">";
 echo _QXZ("VERSION").": $admin_version<BR>";
 echo _QXZ("BUILD").": $build\n";
-if (!preg_match("/_BUILD_/",$SShosted_settings))
-    {echo "<BR><a href=\"$PHP_SELF?ADD=999995\"><font color=white>&copy; 2021 ViciDial Group</font></a><BR><img src=\"images/pixel.gif\">";}
+if (!preg_match("/_BUILD_/", $SShosted_settings)) {
+    echo "<BR><a href=\"$PHP_SELF?ADD=999995\"><font color=white>&copy; 2021 ViciDial Group</font></a><BR><img src=\"images/pixel.gif\">";
+}
 echo "</FONT>\n";
 echo "</TD><TD bgcolor=#$SSframe_background ALIGN=CENTER>\n";
 echo "</TD></TR>\n";

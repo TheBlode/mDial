@@ -91,9 +91,9 @@ $IR_SLA_all_statuses=0;
 $audio_store_GSM_allowed=0;
 $include_sales_in_TPD_report=0;
 $CORS_allowed_origin        = '';    # if multiple origins allowed, separate them by a pipe (also allows PHP preg syntax)
-$CORS_allowed_methods        = '';    # if multiple methods allowed, separate them by a comma 
+$CORS_allowed_methods        = '';    # if multiple methods allowed, separate them by a comma
 $CORS_affected_scripts        = '';    # If multiple(but less than all) scripts affected, separate them by a space (see CORS_SUPPORT.txt doc for list of files)
-$CORS_allowed_headers        = '';    # passed in Access-Control-Allow-Headers http response header, 
+$CORS_allowed_headers        = '';    # passed in Access-Control-Allow-Headers http response header,
 $CORS_allowed_credentials    = 'N';    # 'Y' or 'N', whether to send credentials to browser or not
 $Xframe_options                = 'N';    # Not part of CORS, but can prevent Iframe/embed/etc... use by foreign website, will populate for all affected scripts
 $CORS_debug                    = 0;    # 0 = no, 1 = yes (default is no) This will generate a lot of log entries in a CORSdebug_log.txt file

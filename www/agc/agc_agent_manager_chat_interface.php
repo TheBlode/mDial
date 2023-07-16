@@ -36,32 +36,54 @@
 $admin_version = '2.14-13';
 $build = '220922-1027';
 $php_script = 'agc_agent_manager_chat_interface.php';
-$sh="managerchats"; 
+$sh="managerchats";
 require("dbconnect_mysqli.php");
 require("functions.php");
-if (isset($_GET["DB"]))                            {$DB=$_GET["DB"];}
-    elseif (isset($_POST["DB"]))                {$DB=$_POST["DB"];}
-if (isset($_GET["action"]))                        {$action=$_GET["action"];}
-    elseif (isset($_POST["action"]))            {$action=$_POST["action"];}
-if (isset($_GET["SUBMIT"]))                        {$SUBMIT=$_GET["SUBMIT"];}
-    elseif (isset($_POST["SUBMIT"]))            {$SUBMIT=$_POST["SUBMIT"];}
-if (isset($_GET["manager_chat_id"]))            {$manager_chat_id=$_GET["manager_chat_id"];}
-    elseif (isset($_POST["manager_chat_id"]))    {$manager_chat_id=$_POST["manager_chat_id"];}
-if (isset($_GET["user"]))                        {$user=$_GET["user"];}
-    elseif (isset($_POST["user"]))                {$user=$_POST["user"];}
-if (isset($_GET["pass"]))                        {$pass=$_GET["pass"];}
-    elseif (isset($_POST["pass"]))                {$pass=$_POST["pass"];}
-if (!$user) {echo "Page should only be viewed through the agent interface."; die;}
-$DB=preg_replace("/[^0-9a-zA-Z]/","",$DB);
-$user=preg_replace("/\'|\"|\\\\|;| /","",$user);
-$pass=preg_replace("/\'|\"|\\\\|;| /","",$pass);
+if (isset($_GET["DB"])) {
+    $DB=$_GET["DB"];
+} elseif (isset($_POST["DB"])) {
+    $DB=$_POST["DB"];
+}
+if (isset($_GET["action"])) {
+    $action=$_GET["action"];
+} elseif (isset($_POST["action"])) {
+    $action=$_POST["action"];
+}
+if (isset($_GET["SUBMIT"])) {
+    $SUBMIT=$_GET["SUBMIT"];
+} elseif (isset($_POST["SUBMIT"])) {
+    $SUBMIT=$_POST["SUBMIT"];
+}
+if (isset($_GET["manager_chat_id"])) {
+    $manager_chat_id=$_GET["manager_chat_id"];
+} elseif (isset($_POST["manager_chat_id"])) {
+    $manager_chat_id=$_POST["manager_chat_id"];
+}
+if (isset($_GET["user"])) {
+    $user=$_GET["user"];
+} elseif (isset($_POST["user"])) {
+    $user=$_POST["user"];
+}
+if (isset($_GET["pass"])) {
+    $pass=$_GET["pass"];
+} elseif (isset($_POST["pass"])) {
+    $pass=$_POST["pass"];
+}
+if (!$user) {
+    echo "Page should only be viewed through the agent interface.";
+    die;
+}
+$DB=preg_replace("/[^0-9a-zA-Z]/", "", $DB);
+$user=preg_replace("/\'|\"|\\\\|;| /", "", $user);
+$pass=preg_replace("/\'|\"|\\\\|;| /", "", $pass);
 $VUselected_language = '';
 $stmt = "SELECT use_non_latin,enable_languages,language_method,default_language,allow_chats,allow_web_debug FROM system_settings;";
 $rslt=mysql_to_mysqli($stmt, $link);
-    if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'00XXX',$user,$server_ip,$session_name,$one_mysql_log);}
+if ($mel > 0) {
+    mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '00XXX', $user, $server_ip, $session_name, $one_mysql_log);
+}
 $qm_conf_ct = mysqli_num_rows($rslt);
-if ($qm_conf_ct > 0)
-    {
+if ($qm_conf_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $non_latin =            $row[0];
     $SSenable_languages =    $row[1];
@@ -69,58 +91,53 @@ if ($qm_conf_ct > 0)
     $SSdefault_language =    $row[3];
     $SSallow_chats =        $row[4];
     $SSallow_web_debug =    $row[5];
-    }
+}
 $VUselected_language = $SSdefault_language;
-if ($SSallow_web_debug < 1) {$DB=0;}
-$action = preg_replace('/[^-\_0-9a-zA-Z]/','',$action);
-$SUBMIT = preg_replace('/[^-\_0-9a-zA-Z]/','',$SUBMIT);
-if ($non_latin < 1)
-    {
-    $user=preg_replace("/[^-_0-9a-zA-Z]/","",$user);
-    $pass=preg_replace("/[^-\.\+\/\=_0-9a-zA-Z]/","",$pass);
-    $manager_chat_id = preg_replace('/[^- \_\.0-9a-zA-Z]/','',$user);
-    }
-else
-    {
-    $user = preg_replace('/[^-_0-9\p{L}]/u','',$user);
-    $pass = preg_replace('/[^-\.\+\/\=_0-9\p{L}]/u','',$pass);
-    $manager_chat_id = preg_replace("/[^- \_\.0-9\p{L}]/u","",$user);
-    }
-if (file_exists('options.php'))
-    {
+if ($SSallow_web_debug < 1) {
+    $DB=0;
+}
+$action = preg_replace('/[^-\_0-9a-zA-Z]/', '', $action);
+$SUBMIT = preg_replace('/[^-\_0-9a-zA-Z]/', '', $SUBMIT);
+if ($non_latin < 1) {
+    $user=preg_replace("/[^-_0-9a-zA-Z]/", "", $user);
+    $pass=preg_replace("/[^-\.\+\/\=_0-9a-zA-Z]/", "", $pass);
+    $manager_chat_id = preg_replace('/[^- \_\.0-9a-zA-Z]/', '', $user);
+} else {
+    $user = preg_replace('/[^-_0-9\p{L}]/u', '', $user);
+    $pass = preg_replace('/[^-\.\+\/\=_0-9\p{L}]/u', '', $pass);
+    $manager_chat_id = preg_replace("/[^- \_\.0-9\p{L}]/u", "", $user);
+}
+if (file_exists('options.php')) {
     require_once('options.php');
-    }
+}
 $manager_chat_refresh_milliseconds = ($manager_chat_refresh_seconds ? $manager_chat_refresh_seconds*1000 : 1000);
-if ($action == 'BLANK')
-    {
-    header ("Content-type: text/html; charset=utf-8");
+if ($action == 'BLANK') {
+    header("Content-type: text/html; charset=utf-8");
     exit;
-    }
+}
 $auth=0;
-$auth_message = user_authorization($user,$pass,'',0,1,0,0,'chat');
-if ($auth_message == 'GOOD')
-    {$auth=1;}
-if( (strlen($user)<2) or (strlen($pass)<2) or ($auth==0))
-    {
+$auth_message = user_authorization($user, $pass, '', 0, 1, 0, 0, 'chat');
+if ($auth_message == 'GOOD') {
+    $auth=1;
+}
+if((strlen($user)<2) or (strlen($pass)<2) or ($auth==0)) {
     echo _QXZ("Invalid Username/Password:")." |$user|$pass|$auth_message|$sh|\n";
     exit;
-    }
+}
 $user_stmt="select full_name,user_level,selected_language from vicidial_users where user='$user'";
 $user_level=0;
 $user_rslt=mysql_to_mysqli($user_stmt, $link);
-if (mysqli_num_rows($user_rslt)>0) 
-    {
+if (mysqli_num_rows($user_rslt)>0) {
     $user_row=mysqli_fetch_row($user_rslt);
     $full_name =            $user_row[0];
     $user_level =            $user_row[1];
     $VUselected_language =    $user_row[2];
-    }
-if ($SSallow_chats < 1)
-    {
-    header ("Content-type: text/html; charset=utf-8");
+}
+if ($SSallow_chats < 1) {
+    header("Content-type: text/html; charset=utf-8");
     echo _QXZ("Error, chat disabled on this system");
     exit;
-    }
+}
 $chat_reload_id_number_array=array();
 $unread_stmt="select manager_chat_id, manager_chat_subid, sum(if(message_viewed_date is not null and vicidial_manager_chat_log.user='$user', 0, 1)) as unread_count from vicidial_manager_chat_log where vicidial_manager_chat_log.user='$user' group by manager_chat_id, manager_chat_subid order by manager_chat_id, manager_chat_subid";
 $unread_rslt=mysql_to_mysqli($unread_stmt, $link);
@@ -140,38 +157,54 @@ $priority_chat="";
 $priority_chat_subid="";
 while ($row=mysqli_fetch_row($rslt)) {
     if ($row[0]!="") {
-        if (!$priority_chat) {$priority_chat=$row[0];} # The priority_chat is the most recent chat that has not been viewed.
-        if (!$priority_chat_subid) {$priority_chat_subid=$row[1];} # The priority_chat is the most recent chat that has not been viewed.
-        if (!$agent_manager_override) {$agent_manager_override="0";} # The priority_chat is the most recent chat that has not been viewed.
+        if (!$priority_chat) {
+            $priority_chat=$row[0];
+        } # The priority_chat is the most recent chat that has not been viewed.
+        if (!$priority_chat_subid) {
+            $priority_chat_subid=$row[1];
+        } # The priority_chat is the most recent chat that has not been viewed.
+        if (!$agent_manager_override) {
+            $agent_manager_override="0";
+        } # The priority_chat is the most recent chat that has not been viewed.
         array_push($active_chats_array, "$row[0]");
         $chat_subid_array[$row[0]]="$row[1]";
         $chat_managers_array[$row[0]]="$row[2]";
         $chat_start_date_array[$row[0]]="$row[3]";
-        if ($row[4]>0) {array_push($unread_chats_array, $row[0]);} # Store any chat with unread messages.
+        if ($row[4]>0) {
+            array_push($unread_chats_array, $row[0]);
+        } # Store any chat with unread messages.
         $agents_managers_array[$row[0]]="0";  // not a chat where the agent is a manager
     }
 }
-    $unread_stmt="select manager_chat_id, manager_chat_subid, sum(if(message_viewed_date is not null and vicidial_manager_chat_log.user='$user', 0, 1)) as unread_count from vicidial_manager_chat_log where vicidial_manager_chat_log.manager='$user' group by manager_chat_id, manager_chat_subid order by manager_chat_id, manager_chat_subid";
-    $unread_rslt=mysql_to_mysqli($unread_stmt, $link);
-    while ($unread_row=mysqli_fetch_array($unread_rslt)) {
-        $IDNumber=$unread_row["manager_chat_id"]."-".$unread_row["manager_chat_subid"]."-".$unread_row["unread_count"];
-        array_push($chat_reload_id_number_array, "$IDNumber");
+$unread_stmt="select manager_chat_id, manager_chat_subid, sum(if(message_viewed_date is not null and vicidial_manager_chat_log.user='$user', 0, 1)) as unread_count from vicidial_manager_chat_log where vicidial_manager_chat_log.manager='$user' group by manager_chat_id, manager_chat_subid order by manager_chat_id, manager_chat_subid";
+$unread_rslt=mysql_to_mysqli($unread_stmt, $link);
+while ($unread_row=mysqli_fetch_array($unread_rslt)) {
+    $IDNumber=$unread_row["manager_chat_id"]."-".$unread_row["manager_chat_subid"]."-".$unread_row["unread_count"];
+    array_push($chat_reload_id_number_array, "$IDNumber");
+}
+$stmt="select distinct vicidial_manager_chat_log.manager_chat_id, vicidial_manager_chat_log.manager_chat_subid, vicidial_users.full_name, vicidial_manager_chats.chat_start_date, sum(if(vicidial_manager_chat_log.message_viewed_date is null and vicidial_manager_chat_log.user='$user', 1, 0)),vicidial_manager_chat_log.user from vicidial_manager_chat_log, vicidial_manager_chats, vicidial_users where vicidial_manager_chat_log.manager='$user' and vicidial_manager_chat_log.manager_chat_id=vicidial_manager_chats.manager_chat_id and vicidial_manager_chat_log.user=vicidial_users.user group by manager_chat_id, manager_chat_subid order by message_viewed_date asc, message_date desc";
+$rslt=mysql_to_mysqli($stmt, $link);
+while ($row=mysqli_fetch_row($rslt)) {
+    if ($row[0]!="") {
+        if (!$priority_chat) {
+            $priority_chat=$row[0];
+        } # The priority_chat is the most recent chat that has not been viewed.
+        if (!$priority_chat_subid) {
+            $priority_chat_subid=$row[1];
+        } # The priority_chat is the most recent chat that has not been viewed.
+        if (!$agent_manager_override) {
+            $agent_manager_override=$row[5];
+        } # The priority_chat is the most recent chat that has not been viewed.
+        array_push($active_chats_array, "$row[0]");
+        $chat_subid_array[$row[0]]="$row[1]"; // Added back in on 3/3 - why was this removed?
+        $chat_managers_array[$row[0]]="$row[2]";
+        $chat_start_date_array[$row[0]]="$row[3]";
+        if ($row[4]>0) {
+            array_push($unread_chats_array, $row[0]);
+        } # Store any chat with unread messages.
+        $agents_managers_array[$row[0]]="$row[5]";  // IS a chat where the agent is a manager
     }
-    $stmt="select distinct vicidial_manager_chat_log.manager_chat_id, vicidial_manager_chat_log.manager_chat_subid, vicidial_users.full_name, vicidial_manager_chats.chat_start_date, sum(if(vicidial_manager_chat_log.message_viewed_date is null and vicidial_manager_chat_log.user='$user', 1, 0)),vicidial_manager_chat_log.user from vicidial_manager_chat_log, vicidial_manager_chats, vicidial_users where vicidial_manager_chat_log.manager='$user' and vicidial_manager_chat_log.manager_chat_id=vicidial_manager_chats.manager_chat_id and vicidial_manager_chat_log.user=vicidial_users.user group by manager_chat_id, manager_chat_subid order by message_viewed_date asc, message_date desc";
-    $rslt=mysql_to_mysqli($stmt, $link);
-    while ($row=mysqli_fetch_row($rslt)) {
-        if ($row[0]!="") {
-            if (!$priority_chat) {$priority_chat=$row[0];} # The priority_chat is the most recent chat that has not been viewed.
-            if (!$priority_chat_subid) {$priority_chat_subid=$row[1];} # The priority_chat is the most recent chat that has not been viewed.
-            if (!$agent_manager_override) {$agent_manager_override=$row[5];} # The priority_chat is the most recent chat that has not been viewed.
-            array_push($active_chats_array, "$row[0]");
-            $chat_subid_array[$row[0]]="$row[1]"; // Added back in on 3/3 - why was this removed?
-            $chat_managers_array[$row[0]]="$row[2]";
-            $chat_start_date_array[$row[0]]="$row[3]";
-            if ($row[4]>0) {array_push($unread_chats_array, $row[0]);} # Store any chat with unread messages.
-            $agents_managers_array[$row[0]]="$row[5]";  // IS a chat where the agent is a manager
-        }
-    }
+}
 asort($active_chats_array);
 asort($chat_managers_array);
 asort($chat_reload_id_number_array);
@@ -179,10 +212,10 @@ $ChatReloadIDNumber="";
 foreach($chat_reload_id_number_array as $key => $id_number) {
     $ChatReloadIDNumber.="$id_number.";
 }
-$ChatReloadIDNumber=substr($ChatReloadIDNumber,0,-1);
-header ("Content-type: text/html; charset=utf-8");
-header ("Cache-Control: no-cache, must-revalidate");  // HTTP/1.1
-header ("Pragma: no-cache");                          // HTTP/1.0
+$ChatReloadIDNumber=substr($ChatReloadIDNumber, 0, -1);
+header("Content-type: text/html; charset=utf-8");
+header("Cache-Control: no-cache, must-revalidate");  // HTTP/1.1
+header("Pragma: no-cache");                          // HTTP/1.0
 echo '<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 ';
@@ -702,28 +735,32 @@ echo "\t</div>\n";
 echo "</TD>\n";
 echo "<TD align='left' rowspan='2' valign='top' width='210'>\n";
 echo "<div class='scrolling_chat_display' id='AllActiveChats'>\n";
-    echo "<ul class='chatview'>";
-    if (empty($chat_managers_array)) {
-        echo "\t<li class='arial_bold'>"._QXZ("NO OPEN CHATS")."</li>\n";
-    } else {
-        foreach($chat_managers_array as $manager_chat_id => $text) {
-            $manager_chat_subid=$chat_subid_array[$manager_chat_id];
-            if (!empty($unread_chats_array) && in_array($manager_chat_id, $unread_chats_array)) {$cclass="unreadchat";} else {$cclass="viewedchat";}
-            echo "\t<li class='".$cclass."'><a onClick=\"document.getElementById('CurrentActiveChat').value='$manager_chat_id'; document.getElementById('CurrentActiveChatSubID').value='$manager_chat_subid'; document.getElementById('AgentManagerOverride').value='".$agents_managers_array[$manager_chat_id]."'; LoadAvailableAgentsForChat('AllLiveNonChatAgents', 'agent_to_add');\">Chat #".$manager_chat_id."</a></li>\n"; # $chat_managers_array[$manager_chat_id]
-                $additional_agents_stmt="select concat(manager, selected_agents) as participants from vicidial_manager_chats where manager_chat_id='$manager_chat_id'";
-                $additional_agents_rslt=mysql_to_mysqli($additional_agents_stmt, $link);
-                $aa_row=mysqli_fetch_row($additional_agents_rslt);
-                $additional_agents=preg_replace("/^\||\|$/", "", $aa_row[0]);
-                $additional_agents=preg_replace("/\|/", "','", $additional_agents);
-                $full_name_stmt="select full_name from vicidial_users where user in ('$additional_agents') and user!='$user' order by full_name asc";
-                $full_name_rslt=mysql_to_mysqli($full_name_stmt, $link);
-                while ($fname_row=mysqli_fetch_row($full_name_rslt)) {
-                    echo "\t<li class='additional_agents'><a onClick=\"document.getElementById('CurrentActiveChat').value='$manager_chat_id'; document.getElementById('CurrentActiveChatSubID').value='$manager_chat_subid'; document.getElementById('AgentManagerOverride').value='".$agents_managers_array[$manager_chat_id]."'; LoadAvailableAgentsForChat('AllLiveNonChatAgents', 'agent_to_add');\">".$fname_row[0]."</a></li>\n";
-                }
-            $sid++;
+echo "<ul class='chatview'>";
+if (empty($chat_managers_array)) {
+    echo "\t<li class='arial_bold'>"._QXZ("NO OPEN CHATS")."</li>\n";
+} else {
+    foreach($chat_managers_array as $manager_chat_id => $text) {
+        $manager_chat_subid=$chat_subid_array[$manager_chat_id];
+        if (!empty($unread_chats_array) && in_array($manager_chat_id, $unread_chats_array)) {
+            $cclass="unreadchat";
+        } else {
+            $cclass="viewedchat";
         }
+        echo "\t<li class='".$cclass."'><a onClick=\"document.getElementById('CurrentActiveChat').value='$manager_chat_id'; document.getElementById('CurrentActiveChatSubID').value='$manager_chat_subid'; document.getElementById('AgentManagerOverride').value='".$agents_managers_array[$manager_chat_id]."'; LoadAvailableAgentsForChat('AllLiveNonChatAgents', 'agent_to_add');\">Chat #".$manager_chat_id."</a></li>\n"; # $chat_managers_array[$manager_chat_id]
+        $additional_agents_stmt="select concat(manager, selected_agents) as participants from vicidial_manager_chats where manager_chat_id='$manager_chat_id'";
+        $additional_agents_rslt=mysql_to_mysqli($additional_agents_stmt, $link);
+        $aa_row=mysqli_fetch_row($additional_agents_rslt);
+        $additional_agents=preg_replace("/^\||\|$/", "", $aa_row[0]);
+        $additional_agents=preg_replace("/\|/", "','", $additional_agents);
+        $full_name_stmt="select full_name from vicidial_users where user in ('$additional_agents') and user!='$user' order by full_name asc";
+        $full_name_rslt=mysql_to_mysqli($full_name_stmt, $link);
+        while ($fname_row=mysqli_fetch_row($full_name_rslt)) {
+            echo "\t<li class='additional_agents'><a onClick=\"document.getElementById('CurrentActiveChat').value='$manager_chat_id'; document.getElementById('CurrentActiveChatSubID').value='$manager_chat_subid'; document.getElementById('AgentManagerOverride').value='".$agents_managers_array[$manager_chat_id]."'; LoadAvailableAgentsForChat('AllLiveNonChatAgents', 'agent_to_add');\">".$fname_row[0]."</a></li>\n";
+        }
+        $sid++;
     }
-    echo "</ul>\n";
+}
+echo "</ul>\n";
 echo "\t</div>\n";
 echo "<font class='small_arial_bold'>("._QXZ("bolded chats = unread messages").")<BR><input type='checkbox' id='MuteChatAlert' name='MuteChatAlert'>"._QXZ("Mute alert sound")."</font>\n";
 echo "\t<BR><input class='green_btn' type='button' style='width:200px' value='"._QXZ("CHAT WITH LIVE AGENT")."' onClick=\"document.getElementById('AgentChatSpan').style.display='none'; document.getElementById('AgentNewChatSpan').style.display='block'; ReloadAgentNewChatSpan('$user');\">\n";
@@ -748,15 +785,23 @@ echo "<table width='600' border='0' cellpadding='5' cellspacing='0'>\n";
 echo "<TR BGCOLOR='#E6E6E6' valign='top'>\n";
 echo "<td width='*'><font class='arial'>"._QXZ("Select a live agent").":</font><BR>\n";
 $stmt="SELECT user_group from vicidial_users where user='$user';";
-if ($non_latin > 0) {$rslt=mysql_to_mysqli("SET NAMES 'UTF8'", $link);}
+if ($non_latin > 0) {
+    $rslt=mysql_to_mysqli("SET NAMES 'UTF8'", $link);
+}
 $rslt=mysql_to_mysqli($stmt, $link);
-    if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'00573',$user,$server_ip,$session_name,$one_mysql_log);}
+if ($mel > 0) {
+    mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '00573', $user, $server_ip, $session_name, $one_mysql_log);
+}
 $row=mysqli_fetch_row($rslt);
 $VU_user_group =    $row[0];
 $stmt="SELECT campaign_id from vicidial_live_agents where user='$user';";
-if ($non_latin > 0) {$rslt=mysql_to_mysqli("SET NAMES 'UTF8'", $link);}
+if ($non_latin > 0) {
+    $rslt=mysql_to_mysqli("SET NAMES 'UTF8'", $link);
+}
 $rslt=mysql_to_mysqli($stmt, $link);
-    if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'00XXX',$user,$server_ip,$session_name,$one_mysql_log);}
+if ($mel > 0) {
+    mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '00XXX', $user, $server_ip, $session_name, $one_mysql_log);
+}
 $row=mysqli_fetch_row($rslt);
 $campaign_id =    $row[0];
 $agent_allowed_chat_groupsSQL='';
@@ -764,38 +809,41 @@ $stmt="SELECT agent_status_viewable_groups,agent_status_view_time,agent_allowed_
 $rslt=mysql_to_mysqli($stmt, $link);
 $row=mysqli_fetch_row($rslt);
 $agent_allowed_chat_groups = $row[2];
-$agent_allowed_chat_groupsSQL = preg_replace('/\s\s/i','',$agent_allowed_chat_groups);
-$agent_allowed_chat_groupsSQL = preg_replace('/\s/i',"','",$agent_allowed_chat_groupsSQL);
+$agent_allowed_chat_groupsSQL = preg_replace('/\s\s/i', '', $agent_allowed_chat_groups);
+$agent_allowed_chat_groupsSQL = preg_replace('/\s/i', "','", $agent_allowed_chat_groupsSQL);
 $agent_allowed_chat_groupsSQL = "user_group IN('$agent_allowed_chat_groupsSQL')";
 $agent_status_view = 0;
-if (strlen($agent_allowed_chat_groups) > 2)
-    {$agent_status_view = 1;}
+if (strlen($agent_allowed_chat_groups) > 2) {
+    $agent_status_view = 1;
+}
 $agent_status_view_time=0;
-if ($row[1] == 'Y')
-    {$agent_status_view_time=1;}
+if ($row[1] == 'Y') {
+    $agent_status_view_time=1;
+}
 $andSQL='';
-if (preg_match("/ALL-GROUPS/",$agent_allowed_chat_groups))
-    {$AGENTviewSQL = "";}
-else
-    {
+if (preg_match("/ALL-GROUPS/", $agent_allowed_chat_groups)) {
+    $AGENTviewSQL = "";
+} else {
     $AGENTviewSQL = "($agent_allowed_chat_groupsSQL)";
-    if (preg_match("/CAMPAIGN-AGENTS/",$agent_allowed_chat_groups))
-        {$AGENTviewSQL = "($AGENTviewSQL or (campaign_id='$campaign_id'))";}
-    $AGENTviewSQL = "and $AGENTviewSQL";
+    if (preg_match("/CAMPAIGN-AGENTS/", $agent_allowed_chat_groups)) {
+        $AGENTviewSQL = "($AGENTviewSQL or (campaign_id='$campaign_id'))";
     }
+    $AGENTviewSQL = "and $AGENTviewSQL";
+}
 $stmt="SELECT vla.user,vu.full_name from vicidial_live_agents vla,vicidial_users vu where vla.user=vu.user and vu.user!='$user' $AGENTviewSQL order by vu.full_name;";
 $rslt=mysql_to_mysqli($stmt, $link);
-if ($rslt) {$agents_count = mysqli_num_rows($rslt);}
+if ($rslt) {
+    $agents_count = mysqli_num_rows($rslt);
+}
 $loop_count=0;
 echo "<div id='AllLiveAgents'>"; # TEST
 echo "<select name='agent' id='agent'>\n";
 echo "<option value=''>Available agents</option>\n";
-while ($agents_count > $loop_count)
-    {
+while ($agents_count > $loop_count) {
     $row=mysqli_fetch_row($rslt);
     echo "<option value='$row[0]'>$row[1]</option>\n";
     $loop_count++;
-    }
+}
 echo "</select>";
 echo "</div>"; # TEST
 echo "</td>\n";

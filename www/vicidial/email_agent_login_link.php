@@ -40,25 +40,35 @@ require("functions.php");
 $PHP_AUTH_USER=$_SERVER['PHP_AUTH_USER'];
 $PHP_AUTH_PW=$_SERVER['PHP_AUTH_PW'];
 $PHP_SELF=$_SERVER['PHP_SELF'];
-$PHP_SELF = preg_replace('/\.php.*/i','.php',$PHP_SELF);
+$PHP_SELF = preg_replace('/\.php.*/i', '.php', $PHP_SELF);
 $ip = getenv("REMOTE_ADDR");
 $SQLdate = date("Y-m-d H:i:s");
 $DB=0;
 $preview="";
 $agent_id="";
-if (isset($_GET["DB"])) {$DB=$_GET["DB"];}
-    elseif (isset($_POST["DB"])) {$DB=$_POST["DB"];}
-if (isset($_GET["preview"]))    {$preview=$_GET["preview"];}
-    elseif (isset($_POST["preview"]))    {$preview=$_POST["preview"];}
-if (isset($_GET["agent_id"]))    {$agent_id=$_GET["agent_id"];}
-    elseif (isset($_POST["agent_id"]))    {$agent_id=$_POST["agent_id"];}
-$DB = preg_replace('/[^0-9]/','',$DB);
-if ( $preview == "" ) { $preview == 1; }
+if (isset($_GET["DB"])) {
+    $DB=$_GET["DB"];
+} elseif (isset($_POST["DB"])) {
+    $DB=$_POST["DB"];
+}
+if (isset($_GET["preview"])) {
+    $preview=$_GET["preview"];
+} elseif (isset($_POST["preview"])) {
+    $preview=$_POST["preview"];
+}
+if (isset($_GET["agent_id"])) {
+    $agent_id=$_GET["agent_id"];
+} elseif (isset($_POST["agent_id"])) {
+    $agent_id=$_POST["agent_id"];
+}
+$DB = preg_replace('/[^0-9]/', '', $DB);
+if ($preview == "") {
+    $preview == 1;
+}
 $sys_settings_stmt = "SELECT use_non_latin,outbound_autodial_active,sounds_central_control_active,enable_languages,language_method,admin_screen_colors,report_default_format,allow_manage_active_lists,user_account_emails,pass_hash_enabled,allow_web_debug FROM system_settings;";
 $sys_settings_rslt=mysql_to_mysqli($sys_settings_stmt, $link);
 $num_rows = mysqli_num_rows($sys_settings_rslt);
-if ($num_rows > 0)
-    {
+if ($num_rows > 0) {
     $sys_settings_row=mysqli_fetch_row($sys_settings_rslt);
     $non_latin =                        $sys_settings_row[0];
     $SSoutbound_autodial_active =        $sys_settings_row[1];
@@ -71,92 +81,83 @@ if ($num_rows > 0)
     $user_account_emails =                $sys_settings_row[8];
     $pass_hash_enabled =                 $sys_settings_row[9];
     $SSallow_web_debug =                $sys_settings_row[10];
-    }
-else
-    {
+} else {
     exit;
-    }
-if ($SSallow_web_debug < 1) {$DB=0;}
-$preview = preg_replace('/[^-_0-9a-zA-Z]/','',$preview);
-$agent_id = preg_replace('/[^-_0-9a-zA-Z]/','',$agent_id);
-if ($non_latin < 1)
-    {
+}
+if ($SSallow_web_debug < 1) {
+    $DB=0;
+}
+$preview = preg_replace('/[^-_0-9a-zA-Z]/', '', $preview);
+$agent_id = preg_replace('/[^-_0-9a-zA-Z]/', '', $agent_id);
+if ($non_latin < 1) {
     $PHP_AUTH_USER = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_USER);
     $PHP_AUTH_PW = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_PW);
-    }
-else
-    {
+} else {
     $PHP_AUTH_USER = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_USER);
     $PHP_AUTH_PW = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_PW);
-    }
+}
 $stmt="SELECT selected_language from vicidial_users where user='$PHP_AUTH_USER';";
-if ($DB) {echo "|$stmt|\n";}
+if ($DB) {
+    echo "|$stmt|\n";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 $sl_ct = mysqli_num_rows($rslt);
-if ($sl_ct > 0)
-    {
+if ($sl_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $VUselected_language =      $row[0];
-    }
+}
 $auth=0;
-$auth_message = user_authorization($PHP_AUTH_USER,$PHP_AUTH_PW,'',1,0);
-if ( ($auth_message == 'GOOD') or ($auth_message == '2FA') )
-    {
+$auth_message = user_authorization($PHP_AUTH_USER, $PHP_AUTH_PW, '', 1, 0);
+if (($auth_message == 'GOOD') or ($auth_message == '2FA')) {
     $auth=1;
-    if ($auth_message == '2FA')
-        {
-        header ("Content-type: text/html; charset=utf-8");
+    if ($auth_message == '2FA') {
+        header("Content-type: text/html; charset=utf-8");
         echo _QXZ("Your session is expired").". <a href=\"admin.php\">"._QXZ("Click here to log in")."</a>.\n";
         exit;
-        }
     }
-if ($auth > 0)
-    {
+}
+if ($auth > 0) {
     $stmt="SELECT count(*) from vicidial_users where user='$PHP_AUTH_USER' and user_level = 9 and modify_users='1';";
-    if ($DB) {echo "|$stmt|\n";}
+    if ($DB) {
+        echo "|$stmt|\n";
+    }
     $rslt=mysql_to_mysqli($stmt, $link);
     $row=mysqli_fetch_row($rslt);
     $users_auth=$row[0];
-    if ($users_auth < 1)
-        {
+    if ($users_auth < 1) {
         $VDdisplayMESSAGE = _QXZ("You are not allowed to modify users");
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
     }
-else
-    {
+} else {
     $VDdisplayMESSAGE = _QXZ("Login incorrect, please try again");
-    if ($auth_message == 'LOCK')
-        {
+    if ($auth_message == 'LOCK') {
         $VDdisplayMESSAGE = _QXZ("Too many login attempts, try again in 15 minutes");
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
-    if ($auth_message == 'IPBLOCK')
-        {
+    }
+    if ($auth_message == 'IPBLOCK') {
         $VDdisplayMESSAGE = _QXZ("Your IP Address is not allowed") . ": $ip";
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
+    }
     Header("WWW-Authenticate: Basic realm=\"CONTACT-CENTER-ADMIN\"");
     Header("HTTP/1.0 401 Unauthorized");
     echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$PHP_AUTH_PW|$auth_message|\n";
     exit;
-    }
-if ( $user_account_emails == 'DISABLED')
-    {
+}
+if ($user_account_emails == 'DISABLED') {
     $VDdisplayMESSAGE = _QXZ("ERROR: This feature is disabled. How did you event get here?");
-    Header ("Content-type: text/html; charset=utf-8");
+    Header("Content-type: text/html; charset=utf-8");
     echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
     exit;
-    }
-header ("Content-type: text/html; charset=utf-8");
-header ("Cache-Control: no-cache, must-revalidate");  // HTTP/1.1
-header ("Pragma: no-cache");              // HTTP/1.0
+}
+header("Content-type: text/html; charset=utf-8");
+header("Cache-Control: no-cache, must-revalidate");  // HTTP/1.1
+header("Pragma: no-cache");              // HTTP/1.0
 $SSmenu_background='015B91';
 $SSframe_background='D9E6FE';
 $SSstd_row1_background='9BB9FB';
@@ -167,14 +168,14 @@ $SSstd_row5_background='A3C3D6';
 $SSalt_row1_background='BDFFBD';
 $SSalt_row2_background='99FF99';
 $SSalt_row3_background='CCFFCC';
-if ($SSadmin_screen_colors != 'default')
-    {
+if ($SSadmin_screen_colors != 'default') {
     $stmt = "SELECT menu_background,frame_background,std_row1_background,std_row2_background,std_row3_background,std_row4_background,std_row5_background,alt_row1_background,alt_row2_background,alt_row3_background,web_logo FROM vicidial_screen_colors where colors_id='$SSadmin_screen_colors';";
     $rslt=mysql_to_mysqli($stmt, $link);
-    if ($DB) {echo "$stmt\n";}
+    if ($DB) {
+        echo "$stmt\n";
+    }
     $colors_ct = mysqli_num_rows($rslt);
-    if ($colors_ct > 0)
-        {
+    if ($colors_ct > 0) {
         $row=mysqli_fetch_row($rslt);
         $SSmenu_background =        $row[0];
         $SSframe_background =       $row[1];
@@ -187,8 +188,8 @@ if ($SSadmin_screen_colors != 'default')
         $SSalt_row2_background =    $row[8];
         $SSalt_row3_background =    $row[9];
         $SSweb_logo =               $row[10];
-        }
     }
+}
 $Mhead_color =  $SSstd_row5_background;
 $Mmain_bgcolor = $SSmenu_background;
 $Mhead_color =  $SSstd_row5_background;
@@ -197,27 +198,29 @@ $selected_small_logo = "./images/vicidial_admin_web_logo.png";
 $logo_new=0;
 $logo_old=0;
 $logo_small_old=0;
-if (file_exists('./images/vicidial_admin_web_logo.png')) {$logo_new++;}
-if (file_exists('vicidial_admin_web_logo_small.gif')) {$logo_small_old++;}
-if (file_exists('vicidial_admin_web_logo.gif')) {$logo_old++;}
-if ($SSweb_logo=='default_new')
-    {
+if (file_exists('./images/vicidial_admin_web_logo.png')) {
+    $logo_new++;
+}
+if (file_exists('vicidial_admin_web_logo_small.gif')) {
+    $logo_small_old++;
+}
+if (file_exists('vicidial_admin_web_logo.gif')) {
+    $logo_old++;
+}
+if ($SSweb_logo=='default_new') {
     $selected_logo = "./images/vicidial_admin_web_logo.png";
     $selected_small_logo = "./images/vicidial_admin_web_logo.png";
-    }
-if ( ($SSweb_logo=='default_old') and ($logo_old > 0) )
-    {
+}
+if (($SSweb_logo=='default_old') and ($logo_old > 0)) {
     $selected_logo = "./vicidial_admin_web_logo.gif";
     $selected_small_logo = "./vicidial_admin_web_logo_small.gif";
-    }
-if ( ($SSweb_logo!='default_new') and ($SSweb_logo!='default_old') )
-    {
-    if (file_exists("./images/vicidial_admin_web_logo$SSweb_logo"))
-        {
+}
+if (($SSweb_logo!='default_new') and ($SSweb_logo!='default_old')) {
+    if (file_exists("./images/vicidial_admin_web_logo$SSweb_logo")) {
         $selected_logo = "./images/vicidial_admin_web_logo$SSweb_logo";
         $selected_small_logo = "./images/vicidial_admin_web_logo$SSweb_logo";
-        }
     }
+}
 echo "<html>\n";
 echo "<head>\n";
 echo "<META HTTP-EQUIV='Content-Type' CONTENT='text/html; charset=utf-8'>\n";
@@ -247,14 +250,14 @@ $full_name = "";
 $phone_login = "";
 $phone_pass = "";
 $email = "";
-if ( $agent_id != "" )
-    {
+if ($agent_id != "") {
     $stmt = "SELECT user, pass, full_name, phone_login, phone_pass, email FROM vicidial_users where user='$agent_id';";
     $rslt=mysql_to_mysqli($stmt, $link);
-    if ($DB) {echo "$stmt\n";}
+    if ($DB) {
+        echo "$stmt\n";
+    }
     $user_ct = mysqli_num_rows($rslt);
-    if ($user_ct > 0)
-        {
+    if ($user_ct > 0) {
         $row=mysqli_fetch_row($rslt);
         $user = $row[0];
         $pass = $row[1];
@@ -262,68 +265,58 @@ if ( $agent_id != "" )
         $phone_login = $row[3];
         $phone_pass = $row[4];
         $email = $row[5];
-        }
-    else
-        {
+    } else {
         $error_msg .= _QXZ("Error: User Account Not Found.");
         $error_msg .= "<br /><br />";
-        }
     }
-else
-    {
+} else {
     $error_msg .= _QXZ("Error: agent_id not set.");
     $error_msg .= "<br /><br />";
-    }
-if ( $pass_hash_enabled == 1) 
-    {
-    if (( $user == "" ) || ( $full_name == "" ) || ( $phone_login == "" ) || ( $phone_pass == "" ) || ( $email == "" ))
-        {
+}
+if ($pass_hash_enabled == 1) {
+    if (($user == "") || ($full_name == "") || ($phone_login == "") || ($phone_pass == "") || ($email == "")) {
         $error_msg .= _QXZ("Error: Required fields not set for this user. <br /><br />Please go back and ensure User Number, Full Name, Phone Login, Phone Pass, and Email are set for this user.");
         $error_msg .= "<br /><br />";
-        }
     }
-else
-    {
-    if (( $user == "" ) || ( $pass == "" ) || ( $full_name == "" ) || ( $phone_login == "" ) || ( $phone_pass == "" ) || ( $email == "" ))
-        {
+} else {
+    if (($user == "") || ($pass == "") || ($full_name == "") || ($phone_login == "") || ($phone_pass == "") || ($email == "")) {
         $error_msg .= _QXZ("Error: Required fields not set for this user. <br /><br />Please go back and ensure User Number, Password, Full Name, Phone Login, Phone Pass, and Email are set for this user.");
         $error_msg .= "<br /><br />";
-        }
     }
+}
 $logins_list = "";
 $phone_login_list="'$phone_login'";
 $stmt = "SELECT logins_list FROM phones_alias where alias_id='$phone_login';";
 $rslt=mysql_to_mysqli($stmt, $link);
-if ($DB) {echo "$stmt\n";}
+if ($DB) {
+    echo "$stmt\n";
+}
 $alias_ct = mysqli_num_rows($rslt);
-if ( $alias_ct > 0 )
-    {
+if ($alias_ct > 0) {
     $row=mysqli_fetch_row($rslt);
-    $logins_list = $row[0];    
-    $phone_login_list = preg_replace(',' ,'\',\'' ,"$phone_login,$logins_list");
-    }
+    $logins_list = $row[0];
+    $phone_login_list = preg_replace(',', '\',\'', "$phone_login,$logins_list");
+}
 $is_webphone = "";
 $stmt = "SELECT login, pass, is_webphone FROM phones where login IN ($phone_login_list) and active='Y';";
 $rslt=mysql_to_mysqli($stmt, $link);
-if ($DB) {echo "$stmt\n";}
+if ($DB) {
+    echo "$stmt\n";
+}
 $phone_ct = mysqli_num_rows($rslt);
-if ( $phone_ct > 0 )
-    {
+if ($phone_ct > 0) {
     $phones_array=mysqli_fetch_all($rslt);
-    }
-else 
-    {
-    if ( $alias_ct == 0 )
-        {
+} else {
+    if ($alias_ct == 0) {
         $error_msg .= _QXZ("Error: Phone Login does not exist. <br /><br />Please go back and ensure that the Phone Login set for this user is an Active Phone or Phone Alias.");
         $error_msg .= "<br /><br />";
-        }
     }
+}
 $hostname = $_SERVER['HTTP_HOST'];
 $referrer = $_SERVER['HTTP_REFERER'];
 $from_email = "no-reply@$hostname";
 $send_url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-$send_url = trim(strtok($send_url,'?'));
+$send_url = trim(strtok($send_url, '?'));
 $send_url .= "?preview=0&agent_id=$agent_id";
 $login_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$hostname/agc/vicidial.php?VD_login=$user&pl=$phone_login&pp=$phone_pass";
 $subject = _QXZ("Your $hostname agent login");
@@ -336,17 +329,14 @@ $body .= _QXZ("Login URL");
 $body .= ": <a href=\"$login_link\">$login_link</a><br />";
 $body .= _QXZ("User Login");
 $body .= ": $user<br />";
-if (( $user_account_emails == 'SEND_WITH_PASS' ) && ( $pass_hash_enabled == 0 ))
-    {
+if (($user_account_emails == 'SEND_WITH_PASS') && ($pass_hash_enabled == 0)) {
     $body .= _QXZ("User Password");
     $body .= ": $pass<br /><br />";
-    }
-else 
-    {
+} else {
     $body .= "<br />";
     $body .= _QXZ("Contact your manager for your User Password.");
     $body .= "<br /><br />";
-    }
+}
 $body .= _QXZ("You should bookmark the Login URL in your web browser.");
 echo "<table width=$page_width bgcolor=#E6E6E6 cellpadding=2 cellspacing=0>\n";
 echo "<tr bgcolor='#E6E6E6'>\n";
@@ -358,10 +348,8 @@ echo "</td>\n";
 echo "<td align=right><font face='ARIAL,HELVETICA' size=2> &nbsp; </font></td>\n";
 echo "</tr>\n";
 echo "<tr bgcolor='#$SSframe_background'><td align=left colspan=2><font face='ARIAL,HELVETICA' color=black size=3><br /><br /> \n";
-if ($preview == 1) 
-    {
-    if ( $error_msg == "" ) 
-        {
+if ($preview == 1) {
+    if ($error_msg == "") {
         echo _QXZ("Here is the email you are about to send to ")." $full_name: &nbsp; <br /><br /></td><td>&nbsp;</td></tr>\n";
         echo "<tr bgcolor='#FFFFFF'><td align=left colspan=2><font face='ARIAL,HELVETICA' color=black size=3>\n";
         echo _QXZ("TO").": $email<br /><br />";
@@ -379,9 +367,7 @@ if ($preview == 1)
         echo "</a>";
         echo _QXZ("to go back.");
         echo "<td>&nbsp;</td></tr>";
-        }
-    else
-        {
+    } else {
         echo "$error_msg";
         echo "<br /><br >";
         echo _QXZ("Click ");
@@ -390,34 +376,30 @@ if ($preview == 1)
         echo "</a>";
         echo _QXZ("to go back.");
         echo "<td>&nbsp;</td></tr>";
-        }
     }
-else 
-    {
-    if ( $error_msg == "" ) 
-        {
+} else {
+    if ($error_msg == "") {
         // To send HTML mail, the Content-type header must be set
         $headers  = 'MIME-Version: 1.0' . "\r\n";
         $headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";
         // Create email headers
         $headers .= 'From: ' . $from_email . "\r\n" . 'Reply-To: ' . $from_email . "\r\n" . 'X-Mailer: PHP/' . phpversion();
         $body = "<html><body>" . $body . "</body></html>";
-        $success = mail($email, $subject, $body, $headers );
-        if ($success)
-            {
+        $success = mail($email, $subject, $body, $headers);
+        if ($success) {
             $stmt="INSERT INTO vicidial_admin_log set event_date='$SQLdate', user='$PHP_AUTH_USER', ip_address='$ip', event_section='USERS', event_type='OTHER', record_id='$agent_id', event_code='USER EMAIL LINK SENT', event_sql=\"\", event_notes='$full_name ($email)';";
             echo _QXZ("Your email to ") . "<a href=\"admin.php?ADD=3&user=$agent_id\">$full_name ($email)</a>" . _QXZ(" has been sent successfully.");
-            }
-        else
-            {
+        } else {
             $stmt="INSERT INTO vicidial_admin_log set event_date='$SQLdate', user='$PHP_AUTH_USER', ip_address='$ip', event_section='USERS', event_type='OTHER', record_id='$agent_id', event_code='USER EMAIL LINK FAILED', event_sql=\"\", event_notes='$full_name ($email)';";
             $error_msg = error_get_last()['message'];
             echo "error_msg";
-            }
-        if ($DB) {echo "|$stmt|\n";}
-        $rslt=mysql_to_mysqli($stmt, $link);
         }
+        if ($DB) {
+            echo "|$stmt|\n";
+        }
+        $rslt=mysql_to_mysqli($stmt, $link);
     }
+}
 echo "</td></tr>\n";
 echo "</td></tr></table>\n";
 ?>

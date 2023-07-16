@@ -32,41 +32,60 @@
 # * Bug reports, feature requests and patches welcome!
 # * ======================================== */
 ?>
-<?php 
+<?php
 $startMS = microtime();
 $version = '2.14-41';
 $build = '230225-1531';
-header ("Content-type: text/html; charset=utf-8");
+header("Content-type: text/html; charset=utf-8");
 require("dbconnect_mysqli.php");
 require("functions.php");
 require("VERM_options.php");
 require("VERM_global_vars.inc");
-if (isset($_GET["start_date"]))            {$start_date=$_GET["start_date"];}
-    elseif (isset($_POST["start_date"]))    {$start_date=$_POST["start_date"];}
-if (isset($_GET["end_date"]))            {$end_date=$_GET["end_date"];}
-    elseif (isset($_POST["end_date"]))    {$end_date=$_POST["end_date"];}
-if (isset($_GET["comparison_years"]))            {$comparison_years=$_GET["comparison_years"];}
-    elseif (isset($_POST["comparison_years"]))    {$comparison_years=$_POST["comparison_years"];}
-if (isset($_GET["comparison_months"]))            {$comparison_months=$_GET["comparison_months"];}
-    elseif (isset($_POST["comparison_months"]))    {$comparison_months=$_POST["comparison_months"];}
-if (isset($_GET["submit_report"]))            {$submit_report=$_GET["submit_report"];}
-    elseif (isset($_POST["submit_report"]))    {$submit_report=$_POST["submit_report"];}
-if (isset($_GET["DB"]))            {$DB=$_GET["DB"];}
-    elseif (isset($_POST["DB"]))    {$DB=$_POST["DB"];}
-$DB=preg_replace("/[^0-9a-zA-Z]/","",$DB);
+if (isset($_GET["start_date"])) {
+    $start_date=$_GET["start_date"];
+} elseif (isset($_POST["start_date"])) {
+    $start_date=$_POST["start_date"];
+}
+if (isset($_GET["end_date"])) {
+    $end_date=$_GET["end_date"];
+} elseif (isset($_POST["end_date"])) {
+    $end_date=$_POST["end_date"];
+}
+if (isset($_GET["comparison_years"])) {
+    $comparison_years=$_GET["comparison_years"];
+} elseif (isset($_POST["comparison_years"])) {
+    $comparison_years=$_POST["comparison_years"];
+}
+if (isset($_GET["comparison_months"])) {
+    $comparison_months=$_GET["comparison_months"];
+} elseif (isset($_POST["comparison_months"])) {
+    $comparison_months=$_POST["comparison_months"];
+}
+if (isset($_GET["submit_report"])) {
+    $submit_report=$_GET["submit_report"];
+} elseif (isset($_POST["submit_report"])) {
+    $submit_report=$_POST["submit_report"];
+}
+if (isset($_GET["DB"])) {
+    $DB=$_GET["DB"];
+} elseif (isset($_POST["DB"])) {
+    $DB=$_POST["DB"];
+}
+$DB=preg_replace("/[^0-9a-zA-Z]/", "", $DB);
 $PHP_AUTH_USER=$_SERVER['PHP_AUTH_USER'];
 $PHP_AUTH_PW=$_SERVER['PHP_AUTH_PW'];
 $PHP_SELF=$_SERVER['PHP_SELF'];
-$PHP_SELF = preg_replace('/\.php.*/i','.php',$PHP_SELF);
+$PHP_SELF = preg_replace('/\.php.*/i', '.php', $PHP_SELF);
 $report_name = 'Vox Enhanced Reporting Module';
 $db_source = 'M';
 $start=date("U");
 $stmt = "SELECT use_non_latin,outbound_autodial_active,slave_db_server,reports_use_slave_db,enable_languages,language_method,agent_whisper_enabled,report_default_format,enable_pause_code_limits,allow_web_debug,admin_screen_colors,admin_web_directory FROM system_settings;";
 $rslt=mysql_to_mysqli($stmt, $link);
-if ($DB) {echo "$stmt\n";}
+if ($DB) {
+    echo "$stmt\n";
+}
 $qm_conf_ct = mysqli_num_rows($rslt);
-if ($qm_conf_ct > 0)
-    {
+if ($qm_conf_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $non_latin =                    $row[0];
     $outbound_autodial_active =        $row[1];
@@ -80,12 +99,14 @@ if ($qm_conf_ct > 0)
     $SSallow_web_debug =            $row[9];
     $SSadmin_screen_colors =        $row[10];
     $SSadmin_web_directory =        $row[11];
-    }
-if ($SSallow_web_debug < 1) {$DB=0;}
+}
+if ($SSallow_web_debug < 1) {
+    $DB=0;
+}
 $PHP_AUTH_USER=$_SERVER['PHP_AUTH_USER'];
 $PHP_AUTH_PW=$_SERVER['PHP_AUTH_PW'];
 $PHP_SELF=$_SERVER['PHP_SELF'];
-$PHP_SELF = preg_replace('/\.php.*/i','.php',$PHP_SELF);
+$PHP_SELF = preg_replace('/\.php.*/i', '.php', $PHP_SELF);
 $start_date=preg_replace('/[^-0-9]/', '', $start_date);
 $end_date=preg_replace('/[^-0-9]/', '', $end_date);
 $comparison_years=preg_replace('/[^0-9]/', '', $comparison_years);
@@ -95,11 +116,17 @@ $default_queue_groups=array("514915v_USA_Shared", "515915v_MLA_Shared", "001_ALL
 $default_queue_group_names=array("Onshore", "Offshore", "Onshore + Offshore");
 $survey_ivr_groups=array("561403", "561402");
 $survey_ivr_group_names=array("PRS-Survey-Overall-iVR", "PRS-Survey-NPS-iVR");
-if (!$vicidial_queue_groups) {$vicidial_queue_groups=$default_queue_groups;}
-if (!$vicidial_queue_group_names) {$vicidial_queue_group_names=$default_queue_group_names;}
+if (!$vicidial_queue_groups) {
+    $vicidial_queue_groups=$default_queue_groups;
+}
+if (!$vicidial_queue_group_names) {
+    $vicidial_queue_group_names=$default_queue_group_names;
+}
 $stmt="select *, if(queue_group in ('".implode("', '", $default_queue_groups)."'), 0, 1) as priority from vicidial_queue_groups where active='Y' $LOGallowed_queue_groupsSQL order by priority, queue_group, queue_group_name;";
 $rslt=mysql_to_mysqli($stmt, $link);
-if ($DB) {$MAIN.="$stmt\n";}
+if ($DB) {
+    $MAIN.="$stmt\n";
+}
 $queue_groups_to_print = mysqli_num_rows($rslt);
 $i=0;
 $LISTqueue_groups=array();
@@ -107,28 +134,33 @@ $LISTqueue_group_names=array();
 $queue_groups_to_print++;
 $queue_groups_string='|';
 $queue_groups_dropdown="";
-while ($i < $queue_groups_to_print)
-    {
+while ($i < $queue_groups_to_print) {
     $row=mysqli_fetch_array($rslt);
     $LISTqueue_groups[$i] =        $row["queue_group"];
     $LISTqueue_group_names[$i] =    $row["queue_group_name"];
     $queue_groups_string .= "$LISTqueue_groups[$i]|";
-    if(in_array($row["queue_group"], $vicidial_queue_groups)) {$s=" selected";} else {$s="";}
+    if(in_array($row["queue_group"], $vicidial_queue_groups)) {
+        $s=" selected";
+    } else {
+        $s="";
+    }
     $queue_groups_dropdown .= "\t<option value='$row[queue_group]'$s>$row[queue_group_name]</option>\n";
     $i++;
-    if (!$default_queue_group)  {$default_queue_group=$row["queue_group_name"];}
+    if (!$default_queue_group) {
+        $default_queue_group=$row["queue_group_name"];
     }
-function RemoveEmptyArrayStrings($array) 
-    {
-    if (is_array($array))
-        {
-        for ($i=0; $i<count($array); $i++)
-                {
-                if ($array[$i]=="") {unset($array[$i]);}
-                }
+}
+function RemoveEmptyArrayStrings($array)
+{
+    if (is_array($array)) {
+        for ($i=0; $i<count($array); $i++) {
+            if ($array[$i]=="") {
+                unset($array[$i]);
+            }
         }
-    return $array;
     }
+    return $array;
+}
 /*
 $vicidial_queue_groups=preg_replace('/[^-_0-9\p{L}]/u','',$vicidial_queue_groups);
 $vicidial_queue_groups=RemoveEmptyArrayStrings($vicidial_queue_groups);
@@ -164,7 +196,7 @@ while($campaign_id_row=mysqli_fetch_array($campaign_id_rslt))
     }
 $and_atomic_queue_campaigns_clause="and campaign_id in ('".$atomic_queue_campaigns_str."')";
 $closer_campaigns_stmt="select closer_campaigns from vicidial_campaigns where closer_campaigns is not null $LOGallowed_campaignsSQL"; #  $included_campaigns_clause
-$closer_campaigns_rslt=mysql_to_mysqli($closer_campaigns_stmt, $link); 
+$closer_campaigns_rslt=mysql_to_mysqli($closer_campaigns_stmt, $link);
 $allowed_ingroups_array=array();
 while ($closer_campaigns_row=mysqli_fetch_array($closer_campaigns_rslt))
     {
@@ -225,18 +257,15 @@ else
     $vicidial_agent_log_SQL.="$and_inbound_only_agents_clause";
     }
 */
-$vicidial_queue_groups=preg_replace('/[^-_0-9\p{L}]/u','',$vicidial_queue_groups);
+$vicidial_queue_groups=preg_replace('/[^-_0-9\p{L}]/u', '', $vicidial_queue_groups);
 $vicidial_queue_groups=RemoveEmptyArrayStrings($vicidial_queue_groups);
-if ($vicidial_queue_groups && $submit_report)
-    {
+if ($vicidial_queue_groups && $submit_report) {
     $HTML_output="";
-    for ($y=0; $y<count($comparison_years); $y++)
-        {
+    for ($y=0; $y<count($comparison_years); $y++) {
         $current_year=$comparison_years[$y];
         $section_rowspan=count($vicidial_queue_groups);
         $comparison_rslts=array();
-        for ($i=0; $i<count($vicidial_queue_groups); $i++)
-            {
+        for ($i=0; $i<count($vicidial_queue_groups); $i++) {
             $current_queue_group=$vicidial_queue_groups[$i];
             $current_queue_group_name=$vicidial_queue_group_names[$i];
             $vicidial_log_SQL="where year(call_date)='$current_year' and month(call_date) in (".implode(", ", $comparison_months).") ";
@@ -244,10 +273,8 @@ if ($vicidial_queue_groups && $submit_report)
             $vicidial_user_log_SQL="where year(event_date)='$current_year' and month(event_date) in (".implode(", ", $comparison_months).") ";
             $vicidial_agent_log_SQL="where year(event_time)='$current_year' and month(event_time) in (".implode(", ", $comparison_months).") ";
             $where_event_date_SQL="where year(event_date)='$current_year' and month(event_date) in (".implode(", ", $comparison_months).") ";
-            for ($m=1; $m<=12; $m++)
-                {
-                if(in_array($m, $comparison_months))
-                    {
+            for ($m=1; $m<=12; $m++) {
+                if(in_array($m, $comparison_months)) {
                     $monthName = date("F", mktime(0, 0, 0, $m, 1, 2022));
                     $key=$monthName;
                     $comparison_rslts["$current_queue_group_name"]["$key"]["offered"]+=0;
@@ -257,12 +284,11 @@ if ($vicidial_queue_groups && $submit_report)
                     $comparison_rslts["$current_queue_group_name"]["$key"]["total_handle_time"]+=0;
                     $comparison_rslts["$current_queue_group_name"]["$key"]["answered_inbound_calls"]+=0;
                     $comparison_rslts["$current_queue_group_name"]["$key"]["sla_calls"]+=0;
-                    }
                 }
+            }
             $vqg_stmt="select included_campaigns, included_inbound_groups from vicidial_queue_groups where queue_group='$current_queue_group'";
             $vqg_rslt=mysql_to_mysqli($vqg_stmt, $link);
-            if(mysqli_num_rows($vqg_rslt)>0)
-                {
+            if(mysqli_num_rows($vqg_rslt)>0) {
                 $vqg_row=mysqli_fetch_array($vqg_rslt);
                 $included_campaigns=trim(preg_replace('/\s\-$/', '', $vqg_row["included_campaigns"]));
                 $included_campaigns_array=explode(" ", $included_campaigns);
@@ -275,70 +301,62 @@ if ($vicidial_queue_groups && $submit_report)
                 $included_inbound_groups_ct=count($included_inbound_groups_array);
                 $included_inbound_groups_clause="and group_id in ('".preg_replace('/\s/', "', '", $included_inbound_groups)."')";
                 $where_included_inbound_groups_clause="where group_id in ('".preg_replace('/\s/', "', '", $included_inbound_groups)."')";
-                }
+            }
             $atomic_queue_str="";
             $atomic_queue_campaigns_str="";
             $campaign_id_stmt="select campaign_id, campaign_name from vicidial_campaigns where campaign_id is not null $included_campaigns_clause order by campaign_id"; # $LOGallowed_campaignsSQL, removed for now per Matt's assurances
             $campaign_id_rslt=mysql_to_mysqli($campaign_id_stmt, $link);
-            while($campaign_id_row=mysqli_fetch_array($campaign_id_rslt))
-                {
+            while($campaign_id_row=mysqli_fetch_array($campaign_id_rslt)) {
                 $atomic_queue_str.=$campaign_id_row["campaign_name"];
                 $atomic_queue_str.=" <i>[".$campaign_id_row["campaign_id"]."]</i>,";
                 $atomic_queue_campaigns_str.="'$campaign_id_row[campaign_id]', ";
-                }
+            }
             $atomic_queue_campaigns_str=preg_replace('/, $/', '', $atomic_queue_campaigns_str);
             $and_atomic_queue_campaigns_clause="and campaign_id in (".$atomic_queue_campaigns_str.")";
             $atomic_queue_ingroups_str="";
             $ingroups_id_stmt="select group_id, group_name from vicidial_inbound_groups $where_included_inbound_groups_clause"; #where group_id in ('".implode("', '", $allowed_ingroups_array)."') $included_inbound_groups_clause
             $ingroups_id_rslt=mysql_to_mysqli($ingroups_id_stmt, $link);
-            while($ingroups_id_row=mysqli_fetch_array($ingroups_id_rslt))
-                {
+            while($ingroups_id_row=mysqli_fetch_array($ingroups_id_rslt)) {
                 $atomic_queue_str.=$ingroups_id_row["group_name"];
                 $atomic_queue_str.=" <i>[".$ingroups_id_row["group_id"]."]</i>,";
                 $atomic_queue_ingroups_str.="'$ingroups_id_row[group_id]', ";
-                }
+            }
             $atomic_queue_ingroups_str=preg_replace('/, $/', '', $atomic_queue_ingroups_str);
             $and_atomic_queue_ingroups_clause="and campaign_id in (".$atomic_queue_ingroups_str.")";
             $atomic_queue_str=preg_replace('/,$/', '', $atomic_queue_str);
             $inbound_only_agents_array=array();
-            if (count($included_campaigns_array)==0 && count($included_inbound_groups_array)>0) # Need to get list of users for user log table/vicidial agent log table
-                {
+            if (count($included_campaigns_array)==0 && count($included_inbound_groups_array)>0) { # Need to get list of users for user log table/vicidial agent log table
                 $closer_campaigns_SQL="and (";
-                for ($q=0; $q<count($included_inbound_groups_array); $q++)
-                    {
+                for ($q=0; $q<count($included_inbound_groups_array); $q++) {
                     $closer_campaigns_SQL.="closer_campaigns like '% ".$included_inbound_groups_array[$q]." %' OR ";
-                    }
+                }
                 $closer_campaigns_SQL=preg_replace('/ OR $/', "", $closer_campaigns_SQL).")";
                 $vucl_stmt="select * from vicidial_user_closer_log $where_event_date_SQL $closer_campaigns_SQL";
                 $vucl_rslt=mysql_to_mysqli($vucl_stmt, $link);
-                while ($vucl_row=mysqli_fetch_array($vucl_rslt))
-                    {
-                    if (!in_array($vucl_row["user"], $inbound_only_agents_array))
-                        {
+                while ($vucl_row=mysqli_fetch_array($vucl_rslt)) {
+                    if (!in_array($vucl_row["user"], $inbound_only_agents_array)) {
                         $inbound_only_agents_array[]=$vucl_row["user"];
-                        }
                     }
+                }
                 $and_inbound_only_agents_clause=" and user in ('".implode("', '", $inbound_only_agents_array)."') ";
-                }            
+            }
             $vicidial_log_SQL.="$and_atomic_queue_campaigns_clause";
             $vicidial_closer_log_SQL.="$and_atomic_queue_ingroups_clause";
-            if (count($included_campaigns_array)>0 || count($inbound_only_agents_array)==0)
-                {
+            if (count($included_campaigns_array)>0 || count($inbound_only_agents_array)==0) {
                 $vicidial_user_log_SQL.="$and_atomic_queue_campaigns_clause";
                 $vicidial_agent_log_SQL.="$and_atomic_queue_campaigns_clause";
-                }
-            else
-                {
+            } else {
                 $vicidial_user_log_SQL.="$and_inbound_only_agents_clause";
                 $vicidial_agent_log_SQL.="$and_inbound_only_agents_clause";
-                }
-            $total_calls=0; $total_answered_calls=0; $total_unanswered_calls=0;
+            }
+            $total_calls=0;
+            $total_answered_calls=0;
+            $total_unanswered_calls=0;
             $calls_stmt_outb=($atomic_queue_campaigns_str!="" ? "select monthname(call_date) as qmname, date_format(call_date, '%m') as qmonth, year(call_date) as qyear, sum(if(user in ('VDAD', 'VDCL'), 1, 0)) as unanswered_calls, count(*) as total_calls, sum(length_in_sec) as total_handle_time, 0 as total_wait_time, -1 as sla_calls FROM vicidial_log $vicidial_log_SQL $exc_addtl_statuses group by qmonth, qyear" : "");
             $calls_stmt_inb=($atomic_queue_ingroups_str!="" ? "select monthname(call_date) as qmname, date_format(call_date, '%m') as qmonth, year(call_date) as qyear, sum(if(user in ('VDAD', 'VDCL'), 1, 0)) as unanswered_calls, count(*) as total_calls, sum(if(user in ('VDAD', 'VDCL'), 0, if(comments='EMAIL', length_in_sec, if(length_in_sec-queue_seconds<0, 0, length_in_sec-queue_seconds)))) as total_handle_time, sum(if(user in ('VDAD', 'VDCL') or comments='EMAIL', 0, queue_seconds)) as total_wait_time, sum(if(queue_seconds<=60 and user NOT in ('VDAD', 'VDCL'), 1, 0)) as sla_calls FROM vicidial_closer_log $vicidial_closer_log_SQL $exc_addtl_statuses group by qmonth, qyear" : "");
             $calls_stmt=$calls_stmt_outb.(strlen($calls_stmt_outb)>0 && strlen($calls_stmt_inb)>0 ? " UNION " : "").$calls_stmt_inb;
             $calls_rslt=mysql_to_mysqli($calls_stmt, $link);
-            while ($calls_row=mysqli_fetch_array($calls_rslt)) 
-                {
+            while ($calls_row=mysqli_fetch_array($calls_rslt)) {
                 $month=$calls_row["qmonth"];
                 $month_name=$calls_row["qmname"];
                 $total_calls=$calls_row["total_calls"];
@@ -353,391 +371,356 @@ if ($vicidial_queue_groups && $submit_report)
                 $comparison_rslts["$current_queue_group_name"]["$key"]["total_wait_time"]+=$total_wait_time;
                 $comparison_rslts["$current_queue_group_name"]["$key"]["abandoned"]+=$total_abandons;
                 $comparison_rslts["$current_queue_group_name"]["$key"]["total_handle_time"]+=$total_handle_time;
-                if ($sla_calls>=0)
-                    {
+                if ($sla_calls>=0) {
                     $comparison_rslts["$current_queue_group_name"]["$key"]["answered_inbound_calls"]+=$total_answers;
                     $comparison_rslts["$current_queue_group_name"]["$key"]["sla_calls"]+=$sla_calls;
-                    }
                 }
+            }
             $sla_percent=sprintf("%.1f", MathZDC((100*$sla_calls), $total_answers)); # Total calls instead?
             $average_handle_time=sprintf("%.1f", MathZDC($total_handle_time, $total_answers)); # Total calls instead?
             $average_wait_time=sprintf("%.1f", MathZDC($total_wait_time, $total_answers)); # Total calls instead?
             $abandons_percentage=sprintf("%.1f", MathZDC((100*$total_abandons), $total_calls));
-$agent_sessions_array=array();
-$vicidial_user_stmt="select distinct user from vicidial_user_log $vicidial_user_log_SQL and event in ('LOGIN', 'LOGOUT', 'TIMEOUTLOGOUT') order by user asc";
-if ($DB) {$HTML_output.="<B>$vicidial_user_stmt</B>";}
-$vicidial_user_rslt=mysql_to_mysqli($vicidial_user_stmt, $link);
-while ($vicidial_user_row=mysqli_fetch_row($vicidial_user_rslt))
-    {
-    $vicidial_user=$vicidial_user_row[0];
-    $event_date_clause_apx="";
-    if (!$overnight_agents)
-        {
-        $init_start_stmt="select min(event_date) from vicidial_user_log $vicidial_user_log_SQL and event='LOGIN' and user='$vicidial_user'";
-        $init_start_rslt=mysql_to_mysqli($init_start_stmt, $link);
-        if (mysqli_num_rows($init_start_rslt)>0)
-            {
-            $isr_row=mysqli_fetch_row($init_start_rslt);
-            $event_date_clause_apx=" and event_date>='$isr_row[0]' ";
+            $agent_sessions_array=array();
+            $vicidial_user_stmt="select distinct user from vicidial_user_log $vicidial_user_log_SQL and event in ('LOGIN', 'LOGOUT', 'TIMEOUTLOGOUT') order by user asc";
+            if ($DB) {
+                $HTML_output.="<B>$vicidial_user_stmt</B>";
             }
-        }
-    $session_stmt="select *,if(event='LOGOUT' or event='TIMEOUTLOGOUT', 1, 0) as priority from vicidial_user_log $vicidial_user_log_SQL $event_date_clause_apx and event in ('LOGIN', 'LOGOUT', 'TIMEOUTLOGOUT') and user='$vicidial_user' order by event_date, priority asc";
-    if ($DB) {$HTML_output.="<B>$session_stmt</B>";}
-    $session_rslt=mysql_to_mysqli($session_stmt, $link);
-    $prev_date="";
-    $start_event_date="";
-    $row_no=0; $agent_logged_in=0;
-    while ($session_row=mysqli_fetch_array($session_rslt))
-        {
-        $original_session_start_date="$start_date $start_time";
-        $original_session_cutoff_date="$start_date 00:00:00";
-        $original_session_cutoff_eod="$start_date 23:59:59";
-        $full_name=$fullname_info["$session_row[user]"];
-        $user=$session_row["user"];
-        $campaign_id=$session_row["campaign_id"];
-        $user_group=$session_row["user_group"];
-        $extension=$session_row["extension"];
-        $event=$session_row["event"];
-        $notes=$session_row["extension"];
-        $event_epoch=$session_row["event_epoch"];
-        $event_time=$session_row["event_date"];
-        $server_ip=$session_row["server_ip"];
-        $event_date=substr($event_time, 0, 10);
-        if (!$prev_date) {$prev_date=$event_date;}
-        if ($event_date!=$TODAY)
-            {
-            $event_date_eod="$event_date 23:59:59";
-            }
-        else
-            {
-            $event_date_eod="$event_date $NOW_TIME";
-            }
-        if ($row_no==0)
-            {
-            $override_login=0;
-            $previous_interval_stmt="select * from vicidial_user_log where user='$user' $and_vicidial_user_log_SQL and event_date<='$original_session_start_date' and event_date>='$original_session_cutoff_date' and event in ('LOGIN', 'LOGOUT', 'TIMEOUTLOGOUT') order by user, event_date desc limit 1";
-            $previous_interval_rslt=mysql_to_mysqli($previous_interval_stmt, $link);
-            if (mysqli_num_rows($previous_interval_rslt)>0)
-                {
-                $previous_interval_row=mysqli_fetch_array($previous_interval_rslt);
-                if ($previous_interval_row["event"]=="LOGIN")
-                    {
-                    $override_login=1;
-                    $login_notes="PRIOR LOGIN";
+            $vicidial_user_rslt=mysql_to_mysqli($vicidial_user_stmt, $link);
+            while ($vicidial_user_row=mysqli_fetch_row($vicidial_user_rslt)) {
+                $vicidial_user=$vicidial_user_row[0];
+                $event_date_clause_apx="";
+                if (!$overnight_agents) {
+                    $init_start_stmt="select min(event_date) from vicidial_user_log $vicidial_user_log_SQL and event='LOGIN' and user='$vicidial_user'";
+                    $init_start_rslt=mysql_to_mysqli($init_start_stmt, $link);
+                    if (mysqli_num_rows($init_start_rslt)>0) {
+                        $isr_row=mysqli_fetch_row($init_start_rslt);
+                        $event_date_clause_apx=" and event_date>='$isr_row[0]' ";
                     }
-                else
-                    {
-                    $next_interval_stmt="select * from vicidial_user_log where user='$user' $and_vicidial_user_log_SQL and event_date>='$original_session_start_date' and event_date<='$original_session_cutoff_eod' and event in ('LOGIN', 'LOGOUT', 'TIMEOUTLOGOUT') order by user, event_date desc limit 1";
-                    $next_interval_rslt=mysql_to_mysqli($next_interval_stmt, $link);
-                    if (mysqli_num_rows($next_interval_rslt)>0)
-                        {
-                        $next_interval_row=mysqli_fetch_array($next_interval_rslt);
-                        if (preg_match('/LOGOUT/', $next_interval_row["event"]))
-                            {
-                            $override_login=1;
-                            $login_notes="DOUBLE LOGOUT";
+                }
+                $session_stmt="select *,if(event='LOGOUT' or event='TIMEOUTLOGOUT', 1, 0) as priority from vicidial_user_log $vicidial_user_log_SQL $event_date_clause_apx and event in ('LOGIN', 'LOGOUT', 'TIMEOUTLOGOUT') and user='$vicidial_user' order by event_date, priority asc";
+                if ($DB) {
+                    $HTML_output.="<B>$session_stmt</B>";
+                }
+                $session_rslt=mysql_to_mysqli($session_stmt, $link);
+                $prev_date="";
+                $start_event_date="";
+                $row_no=0;
+                $agent_logged_in=0;
+                while ($session_row=mysqli_fetch_array($session_rslt)) {
+                    $original_session_start_date="$start_date $start_time";
+                    $original_session_cutoff_date="$start_date 00:00:00";
+                    $original_session_cutoff_eod="$start_date 23:59:59";
+                    $full_name=$fullname_info["$session_row[user]"];
+                    $user=$session_row["user"];
+                    $campaign_id=$session_row["campaign_id"];
+                    $user_group=$session_row["user_group"];
+                    $extension=$session_row["extension"];
+                    $event=$session_row["event"];
+                    $notes=$session_row["extension"];
+                    $event_epoch=$session_row["event_epoch"];
+                    $event_time=$session_row["event_date"];
+                    $server_ip=$session_row["server_ip"];
+                    $event_date=substr($event_time, 0, 10);
+                    if (!$prev_date) {
+                        $prev_date=$event_date;
+                    }
+                    if ($event_date!=$TODAY) {
+                        $event_date_eod="$event_date 23:59:59";
+                    } else {
+                        $event_date_eod="$event_date $NOW_TIME";
+                    }
+                    if ($row_no==0) {
+                        $override_login=0;
+                        $previous_interval_stmt="select * from vicidial_user_log where user='$user' $and_vicidial_user_log_SQL and event_date<='$original_session_start_date' and event_date>='$original_session_cutoff_date' and event in ('LOGIN', 'LOGOUT', 'TIMEOUTLOGOUT') order by user, event_date desc limit 1";
+                        $previous_interval_rslt=mysql_to_mysqli($previous_interval_stmt, $link);
+                        if (mysqli_num_rows($previous_interval_rslt)>0) {
+                            $previous_interval_row=mysqli_fetch_array($previous_interval_rslt);
+                            if ($previous_interval_row["event"]=="LOGIN") {
+                                $override_login=1;
+                                $login_notes="PRIOR LOGIN";
+                            } else {
+                                $next_interval_stmt="select * from vicidial_user_log where user='$user' $and_vicidial_user_log_SQL and event_date>='$original_session_start_date' and event_date<='$original_session_cutoff_eod' and event in ('LOGIN', 'LOGOUT', 'TIMEOUTLOGOUT') order by user, event_date desc limit 1";
+                                $next_interval_rslt=mysql_to_mysqli($next_interval_stmt, $link);
+                                if (mysqli_num_rows($next_interval_rslt)>0) {
+                                    $next_interval_row=mysqli_fetch_array($next_interval_rslt);
+                                    if (preg_match('/LOGOUT/', $next_interval_row["event"])) {
+                                        $override_login=1;
+                                        $login_notes="DOUBLE LOGOUT";
+                                    }
+                                }
+                            }
+                            if ($override_login==1) {
+                                $start_event_date=$original_session_start_date;
+                                $start_epoch_stmt="select unix_timestamp('$start_event_date')";
+                                $start_epoch_rslt=mysql_to_mysqli($start_epoch_stmt, $link);
+                                $start_epoch_row=mysqli_fetch_row($start_epoch_rslt);
+                                $override_event_epoch=$start_epoch_row[0];
+                                $agent_sessions_array["$user"]["$start_event_date"]["full_name"]=$full_name;
+                                $agent_sessions_array["$user"]["$start_event_date"]["start_hour"]=$override_event_epoch;
+                                $agent_sessions_array["$user"]["$start_event_date"]["login_notes"]=$login_notes;
+                                $agent_logged_in=1;
                             }
                         }
                     }
-                if ($override_login==1)
-                    {
-                    $start_event_date=$original_session_start_date;
-                    $start_epoch_stmt="select unix_timestamp('$start_event_date')";
-                    $start_epoch_rslt=mysql_to_mysqli($start_epoch_stmt, $link);
-                    $start_epoch_row=mysqli_fetch_row($start_epoch_rslt);
-                    $override_event_epoch=$start_epoch_row[0];
+                    $row_no++; # Keeps from doing an override check
+                    if ($event=="LOGIN") {
+                        if ($agent_logged_in==0) {
+                            $start_event_date=$event_time;
+                            $agent_sessions_array["$user"]["$start_event_date"]["full_name"]=$full_name;
+                            $agent_sessions_array["$user"]["$start_event_date"]["start_hour"]=$event_epoch;
+                        }
+                        $agent_logged_in=1;
+                    }
+                    if (preg_match('/LOGOUT/', $event)) { #  && $agent_logged_in==1, removed this due to back to back logouts (see user 105110 for 2022-01-10)
+                        $agent_sessions_array["$user"]["$start_event_date"]["end_hour"]=$event_epoch;
+                        $agent_sessions_array["$user"]["$start_event_date"]["duration"]=($agent_sessions_array["$user"]["$start_event_date"]["end_hour"]-$agent_sessions_array["$user"]["$start_event_date"]["start_hour"]);
+                        if ($agent_logged_in==1) {
+                            $agent_sessions_array["$user"]["$start_event_date"]["notes"]="NORMAL LOGOUT";
+                        } else {
+                            $agent_sessions_array["$user"]["$start_event_date"]["notes"]="REPEAT LOGOUT";
+                        }
+                        $agent_logged_in=0;
+                    }
+                    $override_login=0;
+                    $prev_date=$event_date;
+                    $prev_event=$event;
+                    $prev_campaign_id=$campaign_id;
+                }
+                if($agent_logged_in) {
+                    if ($event_date!=$TODAY) {
+                        $event_date_eod="$event_date 23:59:59";
+                        $notes="EOD LOGOUT";
+                    } else {
+                        $event_date_eod="$event_date $NOW_TIME";
+                        $notes="STILL LOGGED IN";
+                    }
+                    $eod_epoch_stmt="select unix_timestamp('$start_event_date'), unix_timestamp('$event_date_eod')";
+                    $eod_epoch_rslt=mysql_to_mysqli($eod_epoch_stmt, $link);
+                    $eod_epoch_row=mysqli_fetch_row($eod_epoch_rslt);
+                    $agent_sessions_array["$user"]["$start_event_date"]["start_hour"]=$eod_epoch_row[0];
                     $agent_sessions_array["$user"]["$start_event_date"]["full_name"]=$full_name;
-                    $agent_sessions_array["$user"]["$start_event_date"]["start_hour"]=$override_event_epoch;
-                    $agent_sessions_array["$user"]["$start_event_date"]["login_notes"]=$login_notes;
-                    $agent_logged_in=1;
-                    }
+                    $agent_sessions_array["$user"]["$start_event_date"]["end_hour"]=$eod_epoch_row[1];
+                    $agent_sessions_array["$user"]["$start_event_date"]["duration"]=($agent_sessions_array["$user"]["$start_event_date"]["end_hour"]-$agent_sessions_array["$user"]["$start_event_date"]["start_hour"]);
+                    $agent_sessions_array["$user"]["$start_event_date"]["notes"]=$notes;
+                    $agent_logged_in=0;
                 }
             }
-        $row_no++; # Keeps from doing an override check
-        if ($event=="LOGIN")
-            {
-            if ($agent_logged_in==0)
-                {
-                $start_event_date=$event_time;
-                $agent_sessions_array["$user"]["$start_event_date"]["full_name"]=$full_name;
-                $agent_sessions_array["$user"]["$start_event_date"]["start_hour"]=$event_epoch;
+            foreach ($agent_sessions_array as $user => $sessions) {
+                if (count(array_count_values(array_column($sessions, 'start_hour')))==0) {
+                    unset($agent_sessions_array["$user"]);
                 }
-            $agent_logged_in=1;
-            }
-        if (preg_match('/LOGOUT/', $event)) #  && $agent_logged_in==1, removed this due to back to back logouts (see user 105110 for 2022-01-10)
-            {
-            $agent_sessions_array["$user"]["$start_event_date"]["end_hour"]=$event_epoch;
-            $agent_sessions_array["$user"]["$start_event_date"]["duration"]=($agent_sessions_array["$user"]["$start_event_date"]["end_hour"]-$agent_sessions_array["$user"]["$start_event_date"]["start_hour"]);
-            if ($agent_logged_in==1)
-                {
-                $agent_sessions_array["$user"]["$start_event_date"]["notes"]="NORMAL LOGOUT";
-                }
-            else
-                {
-                $agent_sessions_array["$user"]["$start_event_date"]["notes"]="REPEAT LOGOUT";
-                }
-            $agent_logged_in=0;
-            }
-        $override_login=0;
-        $prev_date=$event_date;
-        $prev_event=$event;
-        $prev_campaign_id=$campaign_id;
-        }
-    if($agent_logged_in)
-        { 
-        if ($event_date!=$TODAY)
-            {
-            $event_date_eod="$event_date 23:59:59";
-            $notes="EOD LOGOUT";
-            }
-        else
-            {
-            $event_date_eod="$event_date $NOW_TIME";
-            $notes="STILL LOGGED IN";
-            }
-        $eod_epoch_stmt="select unix_timestamp('$start_event_date'), unix_timestamp('$event_date_eod')";
-        $eod_epoch_rslt=mysql_to_mysqli($eod_epoch_stmt, $link);
-        $eod_epoch_row=mysqli_fetch_row($eod_epoch_rslt);
-        $agent_sessions_array["$user"]["$start_event_date"]["start_hour"]=$eod_epoch_row[0];
-        $agent_sessions_array["$user"]["$start_event_date"]["full_name"]=$full_name;
-        $agent_sessions_array["$user"]["$start_event_date"]["end_hour"]=$eod_epoch_row[1];
-        $agent_sessions_array["$user"]["$start_event_date"]["duration"]=($agent_sessions_array["$user"]["$start_event_date"]["end_hour"]-$agent_sessions_array["$user"]["$start_event_date"]["start_hour"]);
-        $agent_sessions_array["$user"]["$start_event_date"]["notes"]=$notes;
-        $agent_logged_in=0;
-        }
-    }
-foreach ($agent_sessions_array as $user => $sessions)
-    {
-    if (count(array_count_values(array_column($sessions,'start_hour')))==0)
-        {
-        unset($agent_sessions_array["$user"]);
-        }
-    foreach($sessions as $start_event_date => $activity)
-        {
-        if ($agent_sessions_array["$user"]["$start_event_date"]["start_hour"]) #
-            {
-            $full_name=$agent_sessions_array["$user"]["$start_event_date"]["full_name"];
-            $pause_stmt="select sec_to_time(sum(pause_sec)), sum(pause_sec), count(*) from vicidial_agent_log where event_time>=from_unixtime(".$agent_sessions_array["$user"]["$start_event_date"]["start_hour"].") and event_time<=from_unixtime(".$agent_sessions_array["$user"]["$start_event_date"]["end_hour"].") and user='$user' and pause_sec>0";
-            $pause_rslt=mysql_to_mysqli($pause_stmt, $link);
-            $pause_row=mysqli_fetch_row($pause_rslt);
-            $agent_sessions_array["$user"]["$start_event_date"]["pause_sec"]=$pause_row[1];        
-            $agent_sessions_array["$user"]["$start_event_date"]["talk_sec"]=0;
-/* poached from AGENTS, not necessary
-            $billable_stmt="select campaign_id, sub_status, if(sum(pause_sec) is null, 0, sum(pause_sec)) as total_pause, count(*) as pauses From vicidial_agent_log where event_time>=from_unixtime(".$agent_sessions_array["$user"]["$start_event_date"]["start_hour"].") and event_time<=from_unixtime(".$agent_sessions_array["$user"]["$start_event_date"]["end_hour"].") and user='$user' and pause_sec>0 group by campaign_id, sub_status order by campaign_id, sub_status";
-            $billable_rslt=mysql_to_mysqli($billable_stmt, $link);
-            while ($billable_row=mysqli_fetch_array($billable_rslt))
-                {
-                $campaign_id=$billable_row["campaign_id"];
-                $sub_status=$billable_row["sub_status"];
-                if (in_array($sub_status, $billable_pause_codes["$campaign_id"]) || in_array($sub_status, $billable_pause_codes["SYSTEM"]))
-                    {
-                    $agent_sessions_array["$user"]["$start_event_date"]["billable"]+=$billable_row["total_pause"];        
-                    }
-                }
-*/
-            $call_stmt_outb="";
-            if ($atomic_queue_campaigns_str!="")
-                {
-                $call_stmt_outb="select if(sum(talk_sec) is null, 0, sum(talk_sec)) as total_talk, if (sum(wait_sec) is null, 0, sum(wait_sec)) as total_wait, if (sum(dispo_sec) is null, 0, sum(dispo_sec)) as total_dispo, status, campaign_id, count(*) as calls, 'OUTBOUND' as direction From vicidial_agent_log where event_time>=from_unixtime(".$agent_sessions_array["$user"]["$start_event_date"]["start_hour"].") and event_time<=from_unixtime(".$agent_sessions_array["$user"]["$start_event_date"]["end_hour"].") and user='$user' and lead_id>0 and lead_id is not null and talk_epoch is not null and comments!='INBOUND' $and_atomic_queue_campaigns_clause group by status, campaign_id ";
-                }
-            $call_stmt_inb="";
-            if ($atomic_queue_ingroups_str!="")
-                {
-                $vcl_uniqueid_stmt="select uniqueid, status, length_in_sec-queue_seconds  from vicidial_closer_log $vicidial_closer_log_SQL and call_date+INTERVAL ceil(queue_seconds) SECOND>=from_unixtime(".$agent_sessions_array["$user"]["$start_event_date"]["start_hour"].") and call_date+INTERVAL ceil(queue_seconds) SECOND<=from_unixtime(".$agent_sessions_array["$user"]["$start_event_date"]["end_hour"].") and user='$user' and status!='AFTHRS'";
-                $vcl_uniqueid_stmt.=" and call_date>=from_unixtime(".$agent_sessions_array["$user"]["$start_event_date"]["start_hour"].")-INTERVAL 24 HOUR and call_date<=from_unixtime(".$agent_sessions_array["$user"]["$start_event_date"]["end_hour"].")+INTERVAL 24 HOUR";
-                if ($DB) {print "\n\n<!--\n $vcl_uniqueid_stmt \n//-->\n\n";}
-                $vcl_uniqueid_rslt=mysql_to_mysqli($vcl_uniqueid_stmt, $link);
-                $val_uniqueid_array=array();
-                while ($vcl_uniqueid_row=mysqli_fetch_row($vcl_uniqueid_rslt))
-                    {
-                    array_push($val_uniqueid_array, $vcl_uniqueid_row[0]);
-                    $status=$vcl_uniqueid_row[1];
-                    $talk_sec=$vcl_uniqueid_row[2];
-                    $agent_sessions_array["$user"]["$start_event_date"]["talk_sec"]+=$talk_sec;        
-/* poached from AGENTS, not necessary
-                    if (in_array($status, $sale_array["$campaign_id"]) || in_array($status, $sale_array["SYSTEM"]))
-                        {
-                        $agent_sessions_array["$user"]["$start_event_date"]["sales"]++;        
+                foreach($sessions as $start_event_date => $activity) {
+                    if ($agent_sessions_array["$user"]["$start_event_date"]["start_hour"]) { #
+                        $full_name=$agent_sessions_array["$user"]["$start_event_date"]["full_name"];
+                        $pause_stmt="select sec_to_time(sum(pause_sec)), sum(pause_sec), count(*) from vicidial_agent_log where event_time>=from_unixtime(".$agent_sessions_array["$user"]["$start_event_date"]["start_hour"].") and event_time<=from_unixtime(".$agent_sessions_array["$user"]["$start_event_date"]["end_hour"].") and user='$user' and pause_sec>0";
+                        $pause_rslt=mysql_to_mysqli($pause_stmt, $link);
+                        $pause_row=mysqli_fetch_row($pause_rslt);
+                        $agent_sessions_array["$user"]["$start_event_date"]["pause_sec"]=$pause_row[1];
+                        $agent_sessions_array["$user"]["$start_event_date"]["talk_sec"]=0;
+                        /* poached from AGENTS, not necessary
+                                    $billable_stmt="select campaign_id, sub_status, if(sum(pause_sec) is null, 0, sum(pause_sec)) as total_pause, count(*) as pauses From vicidial_agent_log where event_time>=from_unixtime(".$agent_sessions_array["$user"]["$start_event_date"]["start_hour"].") and event_time<=from_unixtime(".$agent_sessions_array["$user"]["$start_event_date"]["end_hour"].") and user='$user' and pause_sec>0 group by campaign_id, sub_status order by campaign_id, sub_status";
+                                    $billable_rslt=mysql_to_mysqli($billable_stmt, $link);
+                                    while ($billable_row=mysqli_fetch_array($billable_rslt))
+                                        {
+                                        $campaign_id=$billable_row["campaign_id"];
+                                        $sub_status=$billable_row["sub_status"];
+                                        if (in_array($sub_status, $billable_pause_codes["$campaign_id"]) || in_array($sub_status, $billable_pause_codes["SYSTEM"]))
+                                            {
+                                            $agent_sessions_array["$user"]["$start_event_date"]["billable"]+=$billable_row["total_pause"];
+                                            }
+                                        }
+                        */
+                        $call_stmt_outb="";
+                        if ($atomic_queue_campaigns_str!="") {
+                            $call_stmt_outb="select if(sum(talk_sec) is null, 0, sum(talk_sec)) as total_talk, if (sum(wait_sec) is null, 0, sum(wait_sec)) as total_wait, if (sum(dispo_sec) is null, 0, sum(dispo_sec)) as total_dispo, status, campaign_id, count(*) as calls, 'OUTBOUND' as direction From vicidial_agent_log where event_time>=from_unixtime(".$agent_sessions_array["$user"]["$start_event_date"]["start_hour"].") and event_time<=from_unixtime(".$agent_sessions_array["$user"]["$start_event_date"]["end_hour"].") and user='$user' and lead_id>0 and lead_id is not null and talk_epoch is not null and comments!='INBOUND' $and_atomic_queue_campaigns_clause group by status, campaign_id ";
                         }
-                    if (in_array($status, $human_ans_array["$campaign_id"]) || in_array($status, $human_ans_array["SYSTEM"]))
-                        {
-                        $agent_sessions_array["$user"]["$start_event_date"]["human_answered"]++;        
-                        }
-                    if (in_array($status, $contact_array["$campaign_id"]) || in_array($status, $contact_array["SYSTEM"]))
-                        {
-                        $agent_sessions_array["$user"]["$start_event_date"]["contacts"]++;        
-                        }
-*/                    
-                    }
-                $call_stmt_inb="select if(sum(talk_sec) is null, 0, sum(talk_sec)) as total_talk, if (sum(wait_sec) is null, 0, sum(wait_sec)) as total_wait, if (sum(dispo_sec) is null, 0, sum(dispo_sec)) as total_dispo, status, campaign_id, count(*) as calls, 'INBOUND' as direction From vicidial_agent_log where event_time>=from_unixtime(".$agent_sessions_array["$user"]["$start_event_date"]["start_hour"].") and event_time<=from_unixtime(".$agent_sessions_array["$user"]["$start_event_date"]["end_hour"].") and user='$user' and lead_id>0 and lead_id is not null and talk_epoch is not null and comments='INBOUND' and uniqueid in ('".implode("', '", $val_uniqueid_array)."') group by status, campaign_id ";
-                }
-            $call_stmt=$call_stmt_outb.($call_stmt_outb!="" && $call_stmt_inb!="" ? " UNION " : "").$call_stmt_inb;
-            $call_rslt=mysql_to_mysqli($call_stmt, $link);
-            while($call_row=mysqli_fetch_array($call_rslt))
-                {
-                $call_direction=$call_row["direction"];
-                if ($call_direction=="OUTBOUND")
-                    {
-                    $agent_sessions_array["$user"]["$start_event_date"]["talk_sec"]+=$call_row["total_talk"];        
-                    }
-/* poached from AGENTS, not necessary
-                $agent_sessions_array["$user"]["$start_event_date"]["wait_sec"]+=$call_row["total_wait"];        
-                $agent_sessions_array["$user"]["$start_event_date"]["dispo_sec"]+=$call_row["total_dispo"];        
-                $campaign_id=$call_row["campaign_id"];
-                $status=$call_row["status"];
-                $agent_sessions_array["$user"]["$start_event_date"]["sales"]+=0;        
-                $agent_sessions_array["$user"]["$start_event_date"]["human_answered"]+=0;        
-                $agent_sessions_array["$user"]["$start_event_date"]["contacts"]+=0;        
-                if ($call_direction=="OUTBOUND")
-                    {
-                    if (in_array($status, $sale_array["$campaign_id"]) || in_array($status, $sale_array["SYSTEM"]))
-                        {
-                        $agent_sessions_array["$user"]["$start_event_date"]["sales"]+=$call_row["calls"];        
-                        }
-                    if (in_array($status, $human_ans_array["$campaign_id"]) || in_array($status, $human_ans_array["SYSTEM"]))
-                        {
-                        $agent_sessions_array["$user"]["$start_event_date"]["human_answered"]+=$call_row["calls"];        
-                        }
-                    if (in_array($status, $contact_array["$campaign_id"]) || in_array($status, $contact_array["SYSTEM"]))
-                        {
-                        $agent_sessions_array["$user"]["$start_event_date"]["contacts"]+=$call_row["calls"];        
-                        }
-                    }
-*/
-                }
-/*  poached from AGENTS, not necessary
-            $session_start_time=$agent_sessions_array["$user"]["$start_event_date"]["start_hour"];
-            $session_end_time=$agent_sessions_array["$user"]["$start_event_date"]["end_hour"];
-            while ($session_start_time<$session_end_time)
-                {
-                $hour_stmt="select date_format(from_unixtime($session_start_time), '%k'), date_format(from_unixtime($session_start_time), '%Y-%m-%d')";
-                $hour_rslt=mysql_to_mysqli($hour_stmt, $link);
-                $hour_row=mysqli_fetch_row($hour_rslt);
-                $hour=$hour_row[0];
-                $array_date=$hour_row[1];
-                $agent_date_hour_array["$array_date"]["$hour"]["$user"]=1;
-                $time_in_interval=(3600-($session_start_time%3600));
-                if (($session_start_time+$time_in_interval)>$session_end_time)
-                    {
-                    $time_in_interval=$session_end_time-$session_start_time;
-                    }
-                $session_start_time+=$time_in_interval;
-                }
-*/
-/*  poached from AGENTS, not necessary
-            $nonbill_stmt="select sub_status, pause_epoch, pause_sec, event_time from vicidial_agent_log where event_time>=from_unixtime(".$agent_sessions_array["$user"]["$start_event_date"]["start_hour"].") and event_time<=from_unixtime(".$agent_sessions_array["$user"]["$start_event_date"]["end_hour"].") and user='$user' and pause_sec>0 and sub_status is not null and sub_status not in ('BLANK')";
-            $nonbill_rslt=mysql_to_mysqli($nonbill_stmt, $link);
-            while ($nb_row=mysqli_fetch_row($nonbill_rslt))
-                {
-                if (!in_array($nb_row[0], $billable_pause_codes["$campaign_id"]) && !in_array($nb_row[0], $billable_pause_codes["SYSTEM"]))
-                    {
-                    $pause_start_time=$nb_row[1];
-                    $pause_end_time=$nb_row[1]+$nb_row[2];
-                    while ($pause_start_time<$pause_end_time)
-                        {
-                        $hour_stmt="select date_format(from_unixtime($pause_start_time), '%k'), date_format(from_unixtime($pause_start_time), '%Y-%m-%d')";
-                        $hour_rslt=mysql_to_mysqli($hour_stmt, $link);
-                        $hour_row=mysqli_fetch_row($hour_rslt);
-                        $hour=$hour_row[0];
-                        $time_in_interval=(3600-($pause_start_time%3600));
-                        if (($pause_start_time+$time_in_interval)>$pause_end_time)
-                            {
-                            $time_in_interval=$pause_end_time-$pause_start_time;
+                        $call_stmt_inb="";
+                        if ($atomic_queue_ingroups_str!="") {
+                            $vcl_uniqueid_stmt="select uniqueid, status, length_in_sec-queue_seconds  from vicidial_closer_log $vicidial_closer_log_SQL and call_date+INTERVAL ceil(queue_seconds) SECOND>=from_unixtime(".$agent_sessions_array["$user"]["$start_event_date"]["start_hour"].") and call_date+INTERVAL ceil(queue_seconds) SECOND<=from_unixtime(".$agent_sessions_array["$user"]["$start_event_date"]["end_hour"].") and user='$user' and status!='AFTHRS'";
+                            $vcl_uniqueid_stmt.=" and call_date>=from_unixtime(".$agent_sessions_array["$user"]["$start_event_date"]["start_hour"].")-INTERVAL 24 HOUR and call_date<=from_unixtime(".$agent_sessions_array["$user"]["$start_event_date"]["end_hour"].")+INTERVAL 24 HOUR";
+                            if ($DB) {
+                                print "\n\n<!--\n $vcl_uniqueid_stmt \n//-->\n\n";
                             }
-                        $pause_start_time+=$time_in_interval;
+                            $vcl_uniqueid_rslt=mysql_to_mysqli($vcl_uniqueid_stmt, $link);
+                            $val_uniqueid_array=array();
+                            while ($vcl_uniqueid_row=mysqli_fetch_row($vcl_uniqueid_rslt)) {
+                                array_push($val_uniqueid_array, $vcl_uniqueid_row[0]);
+                                $status=$vcl_uniqueid_row[1];
+                                $talk_sec=$vcl_uniqueid_row[2];
+                                $agent_sessions_array["$user"]["$start_event_date"]["talk_sec"]+=$talk_sec;
+                                /* poached from AGENTS, not necessary
+                                                    if (in_array($status, $sale_array["$campaign_id"]) || in_array($status, $sale_array["SYSTEM"]))
+                                                        {
+                                                        $agent_sessions_array["$user"]["$start_event_date"]["sales"]++;
+                                                        }
+                                                    if (in_array($status, $human_ans_array["$campaign_id"]) || in_array($status, $human_ans_array["SYSTEM"]))
+                                                        {
+                                                        $agent_sessions_array["$user"]["$start_event_date"]["human_answered"]++;
+                                                        }
+                                                    if (in_array($status, $contact_array["$campaign_id"]) || in_array($status, $contact_array["SYSTEM"]))
+                                                        {
+                                                        $agent_sessions_array["$user"]["$start_event_date"]["contacts"]++;
+                                                        }
+                                */
+                            }
+                            $call_stmt_inb="select if(sum(talk_sec) is null, 0, sum(talk_sec)) as total_talk, if (sum(wait_sec) is null, 0, sum(wait_sec)) as total_wait, if (sum(dispo_sec) is null, 0, sum(dispo_sec)) as total_dispo, status, campaign_id, count(*) as calls, 'INBOUND' as direction From vicidial_agent_log where event_time>=from_unixtime(".$agent_sessions_array["$user"]["$start_event_date"]["start_hour"].") and event_time<=from_unixtime(".$agent_sessions_array["$user"]["$start_event_date"]["end_hour"].") and user='$user' and lead_id>0 and lead_id is not null and talk_epoch is not null and comments='INBOUND' and uniqueid in ('".implode("', '", $val_uniqueid_array)."') group by status, campaign_id ";
                         }
+                        $call_stmt=$call_stmt_outb.($call_stmt_outb!="" && $call_stmt_inb!="" ? " UNION " : "").$call_stmt_inb;
+                        $call_rslt=mysql_to_mysqli($call_stmt, $link);
+                        while($call_row=mysqli_fetch_array($call_rslt)) {
+                            $call_direction=$call_row["direction"];
+                            if ($call_direction=="OUTBOUND") {
+                                $agent_sessions_array["$user"]["$start_event_date"]["talk_sec"]+=$call_row["total_talk"];
+                            }
+                            /* poached from AGENTS, not necessary
+                                            $agent_sessions_array["$user"]["$start_event_date"]["wait_sec"]+=$call_row["total_wait"];
+                                            $agent_sessions_array["$user"]["$start_event_date"]["dispo_sec"]+=$call_row["total_dispo"];
+                                            $campaign_id=$call_row["campaign_id"];
+                                            $status=$call_row["status"];
+                                            $agent_sessions_array["$user"]["$start_event_date"]["sales"]+=0;
+                                            $agent_sessions_array["$user"]["$start_event_date"]["human_answered"]+=0;
+                                            $agent_sessions_array["$user"]["$start_event_date"]["contacts"]+=0;
+                                            if ($call_direction=="OUTBOUND")
+                                                {
+                                                if (in_array($status, $sale_array["$campaign_id"]) || in_array($status, $sale_array["SYSTEM"]))
+                                                    {
+                                                    $agent_sessions_array["$user"]["$start_event_date"]["sales"]+=$call_row["calls"];
+                                                    }
+                                                if (in_array($status, $human_ans_array["$campaign_id"]) || in_array($status, $human_ans_array["SYSTEM"]))
+                                                    {
+                                                    $agent_sessions_array["$user"]["$start_event_date"]["human_answered"]+=$call_row["calls"];
+                                                    }
+                                                if (in_array($status, $contact_array["$campaign_id"]) || in_array($status, $contact_array["SYSTEM"]))
+                                                    {
+                                                    $agent_sessions_array["$user"]["$start_event_date"]["contacts"]+=$call_row["calls"];
+                                                    }
+                                                }
+                            */
+                        }
+                        /*  poached from AGENTS, not necessary
+                                    $session_start_time=$agent_sessions_array["$user"]["$start_event_date"]["start_hour"];
+                                    $session_end_time=$agent_sessions_array["$user"]["$start_event_date"]["end_hour"];
+                                    while ($session_start_time<$session_end_time)
+                                        {
+                                        $hour_stmt="select date_format(from_unixtime($session_start_time), '%k'), date_format(from_unixtime($session_start_time), '%Y-%m-%d')";
+                                        $hour_rslt=mysql_to_mysqli($hour_stmt, $link);
+                                        $hour_row=mysqli_fetch_row($hour_rslt);
+                                        $hour=$hour_row[0];
+                                        $array_date=$hour_row[1];
+                                        $agent_date_hour_array["$array_date"]["$hour"]["$user"]=1;
+                                        $time_in_interval=(3600-($session_start_time%3600));
+                                        if (($session_start_time+$time_in_interval)>$session_end_time)
+                                            {
+                                            $time_in_interval=$session_end_time-$session_start_time;
+                                            }
+                                        $session_start_time+=$time_in_interval;
+                                        }
+                        */
+                        /*  poached from AGENTS, not necessary
+                                    $nonbill_stmt="select sub_status, pause_epoch, pause_sec, event_time from vicidial_agent_log where event_time>=from_unixtime(".$agent_sessions_array["$user"]["$start_event_date"]["start_hour"].") and event_time<=from_unixtime(".$agent_sessions_array["$user"]["$start_event_date"]["end_hour"].") and user='$user' and pause_sec>0 and sub_status is not null and sub_status not in ('BLANK')";
+                                    $nonbill_rslt=mysql_to_mysqli($nonbill_stmt, $link);
+                                    while ($nb_row=mysqli_fetch_row($nonbill_rslt))
+                                        {
+                                        if (!in_array($nb_row[0], $billable_pause_codes["$campaign_id"]) && !in_array($nb_row[0], $billable_pause_codes["SYSTEM"]))
+                                            {
+                                            $pause_start_time=$nb_row[1];
+                                            $pause_end_time=$nb_row[1]+$nb_row[2];
+                                            while ($pause_start_time<$pause_end_time)
+                                                {
+                                                $hour_stmt="select date_format(from_unixtime($pause_start_time), '%k'), date_format(from_unixtime($pause_start_time), '%Y-%m-%d')";
+                                                $hour_rslt=mysql_to_mysqli($hour_stmt, $link);
+                                                $hour_row=mysqli_fetch_row($hour_rslt);
+                                                $hour=$hour_row[0];
+                                                $time_in_interval=(3600-($pause_start_time%3600));
+                                                if (($pause_start_time+$time_in_interval)>$pause_end_time)
+                                                    {
+                                                    $time_in_interval=$pause_end_time-$pause_start_time;
+                                                    }
+                                                $pause_start_time+=$time_in_interval;
+                                                }
+                                            }
+                                        }
+                        */
+                        /*  poached from AGENTS, not necessary
+                                    $total_agent_time+=$agent_sessions_array["$user"]["$start_event_date"]["duration"];
+                                    if ($agent_sessions_array["$user"]["$start_event_date"]["duration"]<$min_agent_time || !$min_agent_time)
+                                        {
+                                        $min_agent_time=$agent_sessions_array["$user"]["$start_event_date"]["duration"];
+                                        }
+                                    if ($agent_sessions_array["$user"]["$start_event_date"]["duration"]>$max_agent_time || !$max_agent_time)
+                                        {
+                                        $max_agent_time=$agent_sessions_array["$user"]["$start_event_date"]["duration"];
+                                        }
+                        */
                     }
                 }
-*/
-/*  poached from AGENTS, not necessary
-            $total_agent_time+=$agent_sessions_array["$user"]["$start_event_date"]["duration"];
-            if ($agent_sessions_array["$user"]["$start_event_date"]["duration"]<$min_agent_time || !$min_agent_time)
-                {
-                $min_agent_time=$agent_sessions_array["$user"]["$start_event_date"]["duration"];
-                }
-            if ($agent_sessions_array["$user"]["$start_event_date"]["duration"]>$max_agent_time || !$max_agent_time)
-                {
-                $max_agent_time=$agent_sessions_array["$user"]["$start_event_date"]["duration"];
-                }
-*/
             }
-        }
-    }
-$HTML_output.="<!--\n";
-foreach ($agent_sessions_array as $user => $sessions)
-    {    
-    foreach($sessions as $interval_date => $session)
-        {
-        $key=date("F", strtotime("$interval_date"));
-        $HTML_output.=" $interval_date - $key\n";
-        $comparison_rslts["$current_queue_group_name"]["$key"]["duration"]+=$session["duration"];
-        $comparison_rslts["$current_queue_group_name"]["$key"]["pause_sec"]+=$session["pause_sec"];
-        $comparison_rslts["$current_queue_group_name"]["$key"]["talk_sec"]+=$session["talk_sec"];
-        }
-    }
-$HTML_output.="//-->\n";
-/*
-            while ($calls_row=mysqli_fetch_array($calls_rslt)) 
-                {
-                $total_calls++;
-                if (preg_match('/VDAD|VDCL/', $calls_row["user"])) #  && preg_match('/^DROP$|TIMEOT|WAITTO|NANQUE/', $calls_row["status"])
-                    {
-                    $total_unanswered_calls++;
-                    }
-                else
-                    {
-                    $total_answered_calls++;
-                    }
+            $HTML_output.="<!--\n";
+            foreach ($agent_sessions_array as $user => $sessions) {
+                foreach($sessions as $interval_date => $session) {
+                    $key=date("F", strtotime("$interval_date"));
+                    $HTML_output.=" $interval_date - $key\n";
+                    $comparison_rslts["$current_queue_group_name"]["$key"]["duration"]+=$session["duration"];
+                    $comparison_rslts["$current_queue_group_name"]["$key"]["pause_sec"]+=$session["pause_sec"];
+                    $comparison_rslts["$current_queue_group_name"]["$key"]["talk_sec"]+=$session["talk_sec"];
                 }
-*/
             }
-        $rpt_sections=array("Offered", "Answered", "Average Speed to Answer", "Average Handle Time", "Abandoned", "Abandoned %", "Occupancy", "SLA"); # 
-        $rpt_styles=array("offered_td", "answered_td", "avg_speed_td", "avg_handle_td", "abandoned_td", "abandoned_pct_td", "occupancy_td", "sla_td"); # 
-        if ($y>0) {$HTML_output.="<BR><HR><BR>";}
+            $HTML_output.="//-->\n";
+            /*
+                        while ($calls_row=mysqli_fetch_array($calls_rslt))
+                            {
+                            $total_calls++;
+                            if (preg_match('/VDAD|VDCL/', $calls_row["user"])) #  && preg_match('/^DROP$|TIMEOT|WAITTO|NANQUE/', $calls_row["status"])
+                                {
+                                $total_unanswered_calls++;
+                                }
+                            else
+                                {
+                                $total_answered_calls++;
+                                }
+                            }
+            */
+        }
+        $rpt_sections=array("Offered", "Answered", "Average Speed to Answer", "Average Handle Time", "Abandoned", "Abandoned %", "Occupancy", "SLA"); #
+        $rpt_styles=array("offered_td", "answered_td", "avg_speed_td", "avg_handle_td", "abandoned_td", "abandoned_pct_td", "occupancy_td", "sla_td"); #
+        if ($y>0) {
+            $HTML_output.="<BR><HR><BR>";
+        }
         $HTML_output.="<table id='report_table'>";
         $HTML_output.="<tr>";
         $HTML_output.="<th class='comparison_th'>PRS Onshore and Offshore</th>";
         $HTML_output.="<th class='comparison_th'>$current_year</th>";
-        for ($m=1; $m<=12; $m++)
-            {
+        for ($m=1; $m<=12; $m++) {
             $monthName = date("F", mktime(0, 0, 0, $m, 1, 2022));
             $HTML_output.="<th class='comparison_th'>$monthName</th>";
-            }
+        }
         $HTML_output.="<th class='comparison_th'>Total</th>";
         $HTML_output.="</tr>";
-        for ($i=0; $i<count($rpt_sections); $i++)
-            {
+        for ($i=0; $i<count($rpt_sections); $i++) {
             $j=0;
-            foreach ($comparison_rslts as $queue => $data)
-                {
+            foreach ($comparison_rslts as $queue => $data) {
                 $HTML_output.="<tr class='".$rpt_styles[$i]."'>";
-                if ($j==0) 
-                    {
+                if ($j==0) {
                     $HTML_output.="<td rowspan='".($rpt_sections[$i]=="SLA" ? ($section_rowspan+1) : $section_rowspan)."'>".$rpt_sections[$i]."</td>";
-                    if ($rpt_sections[$i]=="SLA")
-                        {
+                    if ($rpt_sections[$i]=="SLA") {
                         $HTML_output.="<td>Goal</td>";
-                        for ($m=1; $m<=12; $m++)
-                            {
+                        for ($m=1; $m<=12; $m++) {
                             $HTML_output.="<td align='center'>".(in_array($m, $comparison_months) ? "80%" : "-")."</td>";
-                            }
+                        }
                         $HTML_output.="<td align='center'>80%</td>";
                         $HTML_output.="</tr>";
                         $HTML_output.="<tr class='".$rpt_styles[$i]."'>";
-                        }
                     }
+                }
                 $HTML_output.="<td>".$queue."</td>";
                 $total_value=0;
                 $total_numerator=0;
                 $total_denominator=0;
-                for ($m=1; $m<=12; $m++)
-                    {
+                for ($m=1; $m<=12; $m++) {
                     $monthName = date("F", mktime(0, 0, 0, $m, 1, 2022));
                     $value="";
-                    if ($data["$monthName"])
-                        {
-                        switch($rpt_sections[$i])
-                            {
+                    if ($data["$monthName"]) {
+                        switch($rpt_sections[$i]) {
                             case "Offered":
                                 $value=$data["$monthName"]["offered"];
                                 $total_value+=$value;
@@ -775,12 +758,11 @@ $HTML_output.="//-->\n";
                                 $total_numerator+=$data["$monthName"]["sla_calls"];
                                 $total_denominator+=$data["$monthName"]["answered_inbound_calls"];
                                 break;
-                            }
                         }
-                    $HTML_output.="<td align='center'>".($value ? $value : "-")."</td>";
                     }
-                switch($rpt_sections[$i])
-                    {
+                    $HTML_output.="<td align='center'>".($value ? $value : "-")."</td>";
+                }
+                switch($rpt_sections[$i]) {
                     case "Offered":
                     case "Answered":
                     case "Abandoned":
@@ -797,86 +779,77 @@ $HTML_output.="//-->\n";
                         $total_value=sprintf("%.1f", MathZDC((100*$total_numerator), $total_denominator))."%";
                         $HTML_output.="<td align='center'>$total_value</td>";
                         break;
-                    }
+                }
                 $HTML_output.="</tr>";
                 $j++;
-                }
             }
+        }
         $HTML_output.="</table>";
         $HTML_output.="<BR><table id='report_table'>";
         $HTML_output.="<tr>";
         $HTML_output.="<th class='comparison_th'>UHC Onshore and Offshore</th>";
         $HTML_output.="<th class='comparison_th'>$current_year</th>";
         $HTML_output.="<th class='comparison_th'>Survey Question</th>";
-        for ($i=1; $i<=12; $i++)
-            {
+        for ($i=1; $i<=12; $i++) {
             $monthName = date("F", mktime(0, 0, 0, $i, 1, 2022));
             $HTML_output.="<th class='comparison_th'>$monthName</th>";
-            }
+        }
         $HTML_output.="<th class='comparison_th'>Total</th>";
         $HTML_output.="</tr>";
         $survey_sections=array("NPS Survey Average Scores");
         $survey_styles=array("survey_td");
         $section_rowspan=count($survey_ivr_groups);
-        for ($i=0; $i<count($survey_sections); $i++)
-            {
+        for ($i=0; $i<count($survey_sections); $i++) {
             $HTML_output.="<tr class='".$survey_styles[$i]."'>";
-            if ($i==0) 
-                {
+            if ($i==0) {
                 $HTML_output.="<td rowspan='".($survey_sections[$i]=="NPS Survey Average Scores" ? ($section_rowspan+1) : $section_rowspan)."'>".$survey_sections[$i]."</td>";
-                if ($survey_sections[$i]=="NPS Survey Average Scores")
-                    {
+                if ($survey_sections[$i]=="NPS Survey Average Scores") {
                     $HTML_output.="<td>Goal</td>";
                     $HTML_output.="<td>&nbsp;</td>";
-                    for ($m=1; $m<=12; $m++)
-                        {
+                    for ($m=1; $m<=12; $m++) {
                         $HTML_output.="<td align='center'>".(in_array($m, $comparison_months) ? "10" : "-")."</td>";
-                        }
+                    }
                     $HTML_output.="<td align='center'>10</td>";
                     $HTML_output.="</tr>";
                     $HTML_output.="<tr class='".$survey_styles[$i]."'>";
                     $HTML_output.="<td rowspan='".$section_rowspan."'>Onshore + Offshore</td>";
-                    }
                 }
-            for ($j=0; $j<count($survey_ivr_groups); $j++)
-                {
+            }
+            for ($j=0; $j<count($survey_ivr_groups); $j++) {
                 $current_survey=$survey_ivr_groups[$j];
                 $current_survey_name=$survey_ivr_group_names[$j];
                 $HTML_output.="<td>".$current_survey." - ".$current_survey_name."</td>";
-                for ($m=1; $m<=12; $m++)
-                    {
+                for ($m=1; $m<=12; $m++) {
                     $monthName = date("F", mktime(0, 0, 0, $m, 1, 2022));
                     $value="";
-                    if (in_array($m, $comparison_months))
-                        {
+                    if (in_array($m, $comparison_months)) {
                         $survey_stmt="select avg(comment_b) from live_inbound_log where year(start_time)='$current_year' and month(start_time)='$m' and comment_b in ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') and comment_d like '".$current_survey.">%'";
                         $survey_rslt=mysql_to_mysqli($survey_stmt, $link);
-                        while ($survey_row=mysqli_fetch_array($survey_rslt)) 
-                            {
+                        while ($survey_row=mysqli_fetch_array($survey_rslt)) {
                             $value=sprintf("%.2f", $survey_row[0]);
-                            }
                         }
-                    $HTML_output.="<td align='center'>".($value ? $value : "-")."</td>";
                     }
+                    $HTML_output.="<td align='center'>".($value ? $value : "-")."</td>";
+                }
                 $survey_stmt="select avg(comment_b) from live_inbound_log where year(start_time)='$current_year' and month(start_time) in (".implode(", ", $comparison_months).") and comment_b in ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10') and comment_d like '".$current_survey.">%'";
                 $survey_rslt=mysql_to_mysqli($survey_stmt, $link);
-                while ($survey_row=mysqli_fetch_array($survey_rslt)) 
-                    {
+                while ($survey_row=mysqli_fetch_array($survey_rslt)) {
                     $value=sprintf("%.2f", $survey_row[0]);
-                    }
+                }
                 $HTML_output.="<td align='center'>".($value ? $value : "-")."</td>";
                 $HTML_output.="</tr>";
-                }
             }
-        $HTML_output.="</table>";
         }
+        $HTML_output.="</table>";
     }
-if ($DB) {$HTML_output.="<B>$calls_stmt</B>";}
+}
+if ($DB) {
+    $HTML_output.="<B>$calls_stmt</B>";
+}
 $calls_rslt=mysqli_query($link, $calls_stmt);
-if (file_exists('options.php'))
-    {
+if (file_exists('options.php')) {
     require('options.php');
-    }
+}
 $check_limit=2;
 $NWB = "<IMG SRC=\"help.png\" onClick=\"FillAndShowHelpDiv(event, '";
 $NWE = "')\" WIDTH=20 HEIGHT=20 BORDER=0 ALT=\"HELP\" ALIGN=TOP>";
@@ -1111,8 +1084,8 @@ function RunComparisonReport(realtime_override)
 echo "<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=utf-8\">\n";
 echo "<TITLE>"._QXZ("$report_name")." - "._QXZ("Custom report form")."</TITLE></HEAD><BODY BGCOLOR=WHITE marginheight=0 marginwidth=0 leftmargin=0 topmargin=0 onload=\"CountMonthsYears()\">\n";
 echo "<div id='HelpDisplayDiv' class='help_info' style='display:none;'></div>";
-    $short_header=1;
-    require("../$SSadmin_web_directory/admin_header.php");
+$short_header=1;
+require("../$SSadmin_web_directory/admin_header.php");
 ?>
 <form name='VERM_custom_report' action="<?php echo $PHP_SELF; ?>" method="get">
 <table id='admin_table' style='width:900px'>
@@ -1134,10 +1107,10 @@ echo "<div id='HelpDisplayDiv' class='help_info' style='display:none;'></div>";
             <td align='right'><?php echo _QXZ("Queues"); ?>: </td>
             <td align='left'>
 <?php
-            echo "    <select multiple id='vicidial_queue_groups[]' name='vicidial_queue_groups[]' class='VERM_form_field' size=3>\n"; 
-            echo $queue_groups_dropdown;
-            echo "  </select>\n";
-            echo "$NWB#VERM_custom_report_queue$NWE";
+            echo "    <select multiple id='vicidial_queue_groups[]' name='vicidial_queue_groups[]' class='VERM_form_field' size=3>\n";
+echo $queue_groups_dropdown;
+echo "  </select>\n";
+echo "$NWB#VERM_custom_report_queue$NWE";
 ?>
             </td>
         </tr>
@@ -1147,28 +1120,26 @@ echo "<div id='HelpDisplayDiv' class='help_info' style='display:none;'></div>";
             <td align='left'>
 <?php
         $min_year_stmt="select year(min(call_date)) from vicidial_log where call_date>0";
-        $min_year_rslt=mysql_to_mysqli($min_year_stmt, $link);
-        $min_year_row=mysqli_fetch_row($min_year_rslt);
-        $min_year=$min_year_row[0];
-        echo "\t\t\t<select multiple id='comparison_years[]' name='comparison_years[]' class='VERM_form_field' size='".(date("Y")-$min_year+1)."' onClick='MultiSelectLimit(this.name, this.id, $check_limit)'>"; 
-        for ($i=$min_year; $i<=date("Y"); $i++)
-            {
-            echo "\n\t\t\t\t<option value='$i' ".(in_array($i, $comparison_years) ? "selected" : "").">$i</option>";
-            }
-        echo "\n\t\t\t</select>\n";
+$min_year_rslt=mysql_to_mysqli($min_year_stmt, $link);
+$min_year_row=mysqli_fetch_row($min_year_rslt);
+$min_year=$min_year_row[0];
+echo "\t\t\t<select multiple id='comparison_years[]' name='comparison_years[]' class='VERM_form_field' size='".(date("Y")-$min_year+1)."' onClick='MultiSelectLimit(this.name, this.id, $check_limit)'>";
+for ($i=$min_year; $i<=date("Y"); $i++) {
+    echo "\n\t\t\t\t<option value='$i' ".(in_array($i, $comparison_years) ? "selected" : "").">$i</option>";
+}
+echo "\n\t\t\t</select>\n";
 ?>
             </td>
             <td align='right'><?php echo _QXZ("Please select months for comparison"); ?>: </td>
             <td align='left'>
             <!-- <input onClick="SelectAll('comparison_months', 'select_all_months')" type='checkbox' name='select_all_months' id='select_all_months'>Select/unselect all<BR> //-->
 <?php
-        echo "\t\t\t<select multiple id='comparison_months[]' name='comparison_months[]' class='VERM_form_field' size='12' onClick='MultiSelectLimit(this.name, this.id, 12)'>"; 
-        for ($i=1; $i<=12; $i++)
-            {
-            $monthName = date('F', mktime(0,0,0,$i));
-            echo "\n\t\t\t\t<option value='$i'".(in_array($i, $comparison_months) ? "selected" : "").">$monthName</option>";
-            }
-        echo "\n\t\t\t</select>\n";
+        echo "\t\t\t<select multiple id='comparison_months[]' name='comparison_months[]' class='VERM_form_field' size='12' onClick='MultiSelectLimit(this.name, this.id, 12)'>";
+for ($i=1; $i<=12; $i++) {
+    $monthName = date('F', mktime(0, 0, 0, $i));
+    echo "\n\t\t\t\t<option value='$i'".(in_array($i, $comparison_months) ? "selected" : "").">$monthName</option>";
+}
+echo "\n\t\t\t</select>\n";
 ?>
             </td>
         </tr>
@@ -1186,8 +1157,13 @@ echo "<div id='HelpDisplayDiv' class='help_info' style='display:none;'></div>";
 </tr>
 //-->
 </table>
-<?php 
-if (!$download_rpt) {echo $HTML_output; ob_flush(); flush(); $HTML_output="";}
+<?php
+if (!$download_rpt) {
+    echo $HTML_output;
+    ob_flush();
+    flush();
+    $HTML_output="";
+}
 $end=date("U");
 echo "<font size='1'>Executed in ".($end-$start)." sec</font>";
 ?>

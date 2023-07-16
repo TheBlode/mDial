@@ -32,57 +32,107 @@
 # * Bug reports, feature requests and patches welcome!
 # * ======================================== */
 ?>
-<?php 
+<?php
 $startMS = microtime();
 require("dbconnect_mysqli.php");
 require("functions.php");
 $PHP_AUTH_USER=$_SERVER['PHP_AUTH_USER'];
 $PHP_AUTH_PW=$_SERVER['PHP_AUTH_PW'];
 $PHP_SELF=$_SERVER['PHP_SELF'];
-$PHP_SELF = preg_replace('/\.php.*/i','.php',$PHP_SELF);
-if (isset($_GET["group"]))                    {$group=$_GET["group"];}
-    elseif (isset($_POST["group"]))            {$group=$_POST["group"];}
-if (isset($_GET["route"]))                    {$route=$_GET["route"];}
-    elseif (isset($_POST["route"]))            {$route=$_POST["route"];}
-if (isset($_GET["query_date"]))                {$query_date=$_GET["query_date"];}
-    elseif (isset($_POST["query_date"]))    {$query_date=$_POST["query_date"];}
-if (isset($_GET["time_BEGIN"]))                {$time_BEGIN=$_GET["time_BEGIN"];}
-    elseif (isset($_POST["time_BEGIN"]))    {$time_BEGIN=$_POST["time_BEGIN"];}
-if (isset($_GET["end_date"]))                {$end_date=$_GET["end_date"];}
-    elseif (isset($_POST["end_date"]))        {$end_date=$_POST["end_date"];}
-if (isset($_GET["time_END"]))                {$time_END=$_GET["time_END"];}
-    elseif (isset($_POST["time_END"]))        {$time_END=$_POST["time_END"];}
-if (isset($_GET["shift"]))                    {$shift=$_GET["shift"];}
-    elseif (isset($_POST["shift"]))            {$shift=$_POST["shift"];}
-if (isset($_GET["submit"]))                    {$submit=$_GET["submit"];}
-    elseif (isset($_POST["submit"]))        {$submit=$_POST["submit"];}
-if (isset($_GET["SUBMIT"]))                    {$SUBMIT=$_GET["SUBMIT"];}
-    elseif (isset($_POST["SUBMIT"]))        {$SUBMIT=$_POST["SUBMIT"];}
-if (isset($_GET["DB"]))                        {$DB=$_GET["DB"];}
-    elseif (isset($_POST["DB"]))            {$DB=$_POST["DB"];}
-if (isset($_GET["file_download"]))            {$file_download=$_GET["file_download"];}
-    elseif (isset($_POST["file_download"]))    {$file_download=$_POST["file_download"];}
-if (isset($_GET["report_display_type"]))            {$report_display_type=$_GET["report_display_type"];}
-    elseif (isset($_POST["report_display_type"]))    {$report_display_type=$_POST["report_display_type"];}
-if (isset($_GET["search_archived_data"]))            {$search_archived_data=$_GET["search_archived_data"];}
-    elseif (isset($_POST["search_archived_data"]))    {$search_archived_data=$_POST["search_archived_data"];}
-$DB=preg_replace("/[^0-9a-zA-Z]/","",$DB);
+$PHP_SELF = preg_replace('/\.php.*/i', '.php', $PHP_SELF);
+if (isset($_GET["group"])) {
+    $group=$_GET["group"];
+} elseif (isset($_POST["group"])) {
+    $group=$_POST["group"];
+}
+if (isset($_GET["route"])) {
+    $route=$_GET["route"];
+} elseif (isset($_POST["route"])) {
+    $route=$_POST["route"];
+}
+if (isset($_GET["query_date"])) {
+    $query_date=$_GET["query_date"];
+} elseif (isset($_POST["query_date"])) {
+    $query_date=$_POST["query_date"];
+}
+if (isset($_GET["time_BEGIN"])) {
+    $time_BEGIN=$_GET["time_BEGIN"];
+} elseif (isset($_POST["time_BEGIN"])) {
+    $time_BEGIN=$_POST["time_BEGIN"];
+}
+if (isset($_GET["end_date"])) {
+    $end_date=$_GET["end_date"];
+} elseif (isset($_POST["end_date"])) {
+    $end_date=$_POST["end_date"];
+}
+if (isset($_GET["time_END"])) {
+    $time_END=$_GET["time_END"];
+} elseif (isset($_POST["time_END"])) {
+    $time_END=$_POST["time_END"];
+}
+if (isset($_GET["shift"])) {
+    $shift=$_GET["shift"];
+} elseif (isset($_POST["shift"])) {
+    $shift=$_POST["shift"];
+}
+if (isset($_GET["submit"])) {
+    $submit=$_GET["submit"];
+} elseif (isset($_POST["submit"])) {
+    $submit=$_POST["submit"];
+}
+if (isset($_GET["SUBMIT"])) {
+    $SUBMIT=$_GET["SUBMIT"];
+} elseif (isset($_POST["SUBMIT"])) {
+    $SUBMIT=$_POST["SUBMIT"];
+}
+if (isset($_GET["DB"])) {
+    $DB=$_GET["DB"];
+} elseif (isset($_POST["DB"])) {
+    $DB=$_POST["DB"];
+}
+if (isset($_GET["file_download"])) {
+    $file_download=$_GET["file_download"];
+} elseif (isset($_POST["file_download"])) {
+    $file_download=$_POST["file_download"];
+}
+if (isset($_GET["report_display_type"])) {
+    $report_display_type=$_GET["report_display_type"];
+} elseif (isset($_POST["report_display_type"])) {
+    $report_display_type=$_POST["report_display_type"];
+}
+if (isset($_GET["search_archived_data"])) {
+    $search_archived_data=$_GET["search_archived_data"];
+} elseif (isset($_POST["search_archived_data"])) {
+    $search_archived_data=$_POST["search_archived_data"];
+}
+$DB=preg_replace("/[^0-9a-zA-Z]/", "", $DB);
 $NOW_DATE = date("Y-m-d");
 $NOW_TIME = date("Y-m-d H:i:s");
 $STARTtime = date("U");
-if (!isset($group)) {$group = array();}
-if (!isset($query_date)) {$query_date = $NOW_DATE;}
-if (!isset($end_date)) {$end_date = $NOW_DATE;}
-if (!isset($time_BEGIN)) {$time_BEGIN = "00:00:00";}
-if (!isset($time_END)) {$time_END = "23:59:59";}
-if (strlen($shift)<2) {$shift='--';}
+if (!isset($group)) {
+    $group = array();
+}
+if (!isset($query_date)) {
+    $query_date = $NOW_DATE;
+}
+if (!isset($end_date)) {
+    $end_date = $NOW_DATE;
+}
+if (!isset($time_BEGIN)) {
+    $time_BEGIN = "00:00:00";
+}
+if (!isset($time_END)) {
+    $time_END = "23:59:59";
+}
+if (strlen($shift)<2) {
+    $shift='--';
+}
 $report_name = 'Inbound DID Detail Report';
 $db_source = 'M';
 $stmt = "SELECT use_non_latin,outbound_autodial_active,slave_db_server,reports_use_slave_db,enable_languages,language_method,report_default_format,allow_web_debug FROM system_settings;";
 $rslt=mysql_to_mysqli($stmt, $link);
 $qm_conf_ct = mysqli_num_rows($rslt);
-if ($qm_conf_ct > 0)
-    {
+if ($qm_conf_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $non_latin =                    $row[0];
     $outbound_autodial_active =        $row[1];
@@ -92,9 +142,13 @@ if ($qm_conf_ct > 0)
     $SSlanguage_method =            $row[5];
     $SSreport_default_format =        $row[6];
     $SSallow_web_debug =            $row[7];
-    }
-if ($SSallow_web_debug < 1) {$DB=0;}
-if (strlen($report_display_type)<2) {$report_display_type = 'TEXT';}
+}
+if ($SSallow_web_debug < 1) {
+    $DB=0;
+}
+if (strlen($report_display_type)<2) {
+    $report_display_type = 'TEXT';
+}
 $query_date = preg_replace('/[^- \:\_0-9a-zA-Z]/', '', $query_date);
 $end_date = preg_replace('/[^- \:\_0-9a-zA-Z]/', '', $end_date);
 $time_BEGIN = preg_replace('/[^- \:\_0-9a-zA-Z]/', '', $time_BEGIN);
@@ -105,175 +159,168 @@ $submit = preg_replace('/[^-_0-9a-zA-Z]/', '', $submit);
 $file_download = preg_replace('/[^-_0-9a-zA-Z]/', '', $file_download);
 $search_archived_data = preg_replace('/[^-_0-9a-zA-Z]/', '', $search_archived_data);
 $report_display_type = preg_replace('/[^-_0-9a-zA-Z]/', '', $report_display_type);
-if ($non_latin < 1)
-    {
+if ($non_latin < 1) {
     $PHP_AUTH_USER = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_USER);
     $PHP_AUTH_PW = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_PW);
     $shift = preg_replace('/[^-_0-9a-zA-Z]/', '', $shift);
-    }
-else
-    {
+} else {
     $PHP_AUTH_USER = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_USER);
     $PHP_AUTH_PW = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_PW);
     $shift = preg_replace('/[^-_0-9\p{L}]/u', '', $shift);
-    }
+}
 $archives_available="N";
 $log_tables_array=array("vicidial_did_log");
-for ($t=0; $t<count($log_tables_array); $t++) 
-    {
+for ($t=0; $t<count($log_tables_array); $t++) {
     $table_name=$log_tables_array[$t];
     $archive_table_name=use_archive_table($table_name);
-    if ($archive_table_name!=$table_name) {$archives_available="Y";}
+    if ($archive_table_name!=$table_name) {
+        $archives_available="Y";
     }
-if ($search_archived_data) 
-    {
+}
+if ($search_archived_data) {
     $vicidial_did_log_table=use_archive_table("vicidial_did_log");
-    }
-else
-    {
+} else {
     $vicidial_did_log_table="vicidial_did_log";
-    }
+}
 $stmt="SELECT selected_language from vicidial_users where user='$PHP_AUTH_USER';";
-if ($DB) {echo "|$stmt|\n";}
+if ($DB) {
+    echo "|$stmt|\n";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 $sl_ct = mysqli_num_rows($rslt);
-if ($sl_ct > 0)
-    {
+if ($sl_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $VUselected_language =        $row[0];
-    }
+}
 $auth=0;
 $reports_auth=0;
 $admin_auth=0;
-$auth_message = user_authorization($PHP_AUTH_USER,$PHP_AUTH_PW,'REPORTS',1,0);
-if ($auth_message == 'GOOD')
-    {$auth=1;}
-if ($auth > 0)
-    {
+$auth_message = user_authorization($PHP_AUTH_USER, $PHP_AUTH_PW, 'REPORTS', 1, 0);
+if ($auth_message == 'GOOD') {
+    $auth=1;
+}
+if ($auth > 0) {
     $stmt="SELECT count(*) from vicidial_users where user='$PHP_AUTH_USER' and user_level > 7 and view_reports='1';";
-    if ($DB) {echo "|$stmt|\n";}
+    if ($DB) {
+        echo "|$stmt|\n";
+    }
     $rslt=mysql_to_mysqli($stmt, $link);
     $row=mysqli_fetch_row($rslt);
     $admin_auth=$row[0];
     $stmt="SELECT count(*) from vicidial_users where user='$PHP_AUTH_USER' and user_level > 6 and view_reports='1';";
-    if ($DB) {echo "|$stmt|\n";}
+    if ($DB) {
+        echo "|$stmt|\n";
+    }
     $rslt=mysql_to_mysqli($stmt, $link);
     $row=mysqli_fetch_row($rslt);
     $reports_auth=$row[0];
-    if ($reports_auth < 1)
-        {
+    if ($reports_auth < 1) {
         $VDdisplayMESSAGE = _QXZ("You are not allowed to view reports");
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
-    if ( ($reports_auth > 0) and ($admin_auth < 1) )
-        {
+    }
+    if (($reports_auth > 0) and ($admin_auth < 1)) {
         $ADD=999999;
         $reports_only_user=1;
-        }
     }
-else
-    {
+} else {
     $VDdisplayMESSAGE = _QXZ("Login incorrect, please try again");
-    if ($auth_message == 'LOCK')
-        {
+    if ($auth_message == 'LOCK') {
         $VDdisplayMESSAGE = _QXZ("Too many login attempts, try again in 15 minutes");
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
-    if ($auth_message == 'IPBLOCK')
-        {
+    }
+    if ($auth_message == 'IPBLOCK') {
         $VDdisplayMESSAGE = _QXZ("Your IP Address is not allowed") . ": $ip";
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
+    }
     Header("WWW-Authenticate: Basic realm=\"CONTACT-CENTER-ADMIN\"");
     Header("HTTP/1.0 401 Unauthorized");
     echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$PHP_AUTH_PW|$auth_message|\n";
     exit;
-    }
+}
 $stmt="SELECT user_group from vicidial_users where user='$PHP_AUTH_USER';";
-if ($DB) {$MAIN.="|$stmt|\n";}
+if ($DB) {
+    $MAIN.="|$stmt|\n";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 $row=mysqli_fetch_row($rslt);
 $LOGuser_group =            $row[0];
 $stmt="SELECT allowed_campaigns,allowed_reports,admin_viewable_groups,admin_viewable_call_times from vicidial_user_groups where user_group='$LOGuser_group';";
-if ($DB) {$MAIN.="|$stmt|\n";}
+if ($DB) {
+    $MAIN.="|$stmt|\n";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 $row=mysqli_fetch_row($rslt);
 $LOGallowed_campaigns =            $row[0];
 $LOGallowed_reports =            $row[1];
 $LOGadmin_viewable_groups =        $row[2];
 $LOGadmin_viewable_call_times =    $row[3];
-if ( (!preg_match("/$report_name/",$LOGallowed_reports)) and (!preg_match("/ALL REPORTS/",$LOGallowed_reports)) )
-    {
+if ((!preg_match("/$report_name/", $LOGallowed_reports)) and (!preg_match("/ALL REPORTS/", $LOGallowed_reports))) {
     Header("WWW-Authenticate: Basic realm=\"CONTACT-CENTER-ADMIN\"");
     Header("HTTP/1.0 401 Unauthorized");
     echo _QXZ("You are not allowed to view this report").": |$PHP_AUTH_USER|$report_name|\n";
     exit;
-    }
+}
 $LOGadmin_viewable_groupsSQL='';
 $whereLOGadmin_viewable_groupsSQL='';
-if ( (!preg_match('/\-\-ALL\-\-/i',$LOGadmin_viewable_groups)) and (strlen($LOGadmin_viewable_groups) > 3) )
-    {
-    $rawLOGadmin_viewable_groupsSQL = preg_replace("/ -/",'',$LOGadmin_viewable_groups);
-    $rawLOGadmin_viewable_groupsSQL = preg_replace("/ /","','",$rawLOGadmin_viewable_groupsSQL);
+if ((!preg_match('/\-\-ALL\-\-/i', $LOGadmin_viewable_groups)) and (strlen($LOGadmin_viewable_groups) > 3)) {
+    $rawLOGadmin_viewable_groupsSQL = preg_replace("/ -/", '', $LOGadmin_viewable_groups);
+    $rawLOGadmin_viewable_groupsSQL = preg_replace("/ /", "','", $rawLOGadmin_viewable_groupsSQL);
     $LOGadmin_viewable_groupsSQL = "and user_group IN('---ALL---','$rawLOGadmin_viewable_groupsSQL')";
     $whereLOGadmin_viewable_groupsSQL = "where user_group IN('---ALL---','$rawLOGadmin_viewable_groupsSQL')";
-    }
+}
 $LOGadmin_viewable_call_timesSQL='';
 $whereLOGadmin_viewable_call_timesSQL='';
-if ( (!preg_match('/\-\-ALL\-\-/i', $LOGadmin_viewable_call_times)) and (strlen($LOGadmin_viewable_call_times) > 3) )
-    {
-    $rawLOGadmin_viewable_call_timesSQL = preg_replace("/ -/",'',$LOGadmin_viewable_call_times);
-    $rawLOGadmin_viewable_call_timesSQL = preg_replace("/ /","','",$rawLOGadmin_viewable_call_timesSQL);
+if ((!preg_match('/\-\-ALL\-\-/i', $LOGadmin_viewable_call_times)) and (strlen($LOGadmin_viewable_call_times) > 3)) {
+    $rawLOGadmin_viewable_call_timesSQL = preg_replace("/ -/", '', $LOGadmin_viewable_call_times);
+    $rawLOGadmin_viewable_call_timesSQL = preg_replace("/ /", "','", $rawLOGadmin_viewable_call_timesSQL);
     $LOGadmin_viewable_call_timesSQL = "and call_time_id IN('---ALL---','$rawLOGadmin_viewable_call_timesSQL')";
     $whereLOGadmin_viewable_call_timesSQL = "where call_time_id IN('---ALL---','$rawLOGadmin_viewable_call_timesSQL')";
-    }
+}
 $stmt="select did_id,did_pattern,did_description from vicidial_inbound_dids $whereLOGadmin_viewable_groupsSQL order by did_pattern;";
 $rslt=mysql_to_mysqli($stmt, $link);
-if ($DB) {$MAIN.="$stmt\n";}
+if ($DB) {
+    $MAIN.="$stmt\n";
+}
 $groups_to_print = mysqli_num_rows($rslt);
 $groups_string='|';
 $i=0;
 $groups=array();
 $group_patterns=array();
 $group_names=array();
-while ($i < $groups_to_print)
-    {
+while ($i < $groups_to_print) {
     $row=mysqli_fetch_row($rslt);
     $groups[$i] =            $row[0];
     $group_patterns[$i] =    $row[1];
     $group_names[$i] =        $row[2];
     $groups_string .= "$groups[$i]|";
     $i++;
-    }
+}
 $i=0;
 $group_string='|';
 $group_ct = count($group);
-while($i < $group_ct)
-    {
+while($i < $group_ct) {
     $group[$i] = preg_replace('/[^-_0-9\p{L}]/u', '', $group[$i]);
-    if ( (strlen($group[$i]) > 0) and (preg_match("/\|$group[$i]\|/",$groups_string)) )
-        {
+    if ((strlen($group[$i]) > 0) and (preg_match("/\|$group[$i]\|/", $groups_string))) {
         $group_string .= "$group[$i]|";
         $group_SQL .= "'$group[$i]',";
         $groupQS .= "&group[]=$group[$i]";
-        }
+    }
     $i++;
-    }
-if ( (preg_match('/\s\-\-NONE\-\-\s/',$group_string) ) or ($group_ct < 1) )
-    {
+}
+if ((preg_match('/\s\-\-NONE\-\-\s/', $group_string)) or ($group_ct < 1)) {
     $group_SQL = "''";
-    }
-else
-    {
-    $group_SQL = preg_replace('/,$/i', '',$group_SQL);
-    }
-if (strlen($group_SQL)<3) {$group_SQL="''";}
+} else {
+    $group_SQL = preg_replace('/,$/i', '', $group_SQL);
+}
+if (strlen($group_SQL)<3) {
+    $group_SQL="''";
+}
 $LOGip = getenv("REMOTE_ADDR");
 $LOGbrowser = getenv("HTTP_USER_AGENT");
 $LOGscript_name = getenv("SCRIPT_NAME");
@@ -281,48 +328,60 @@ $LOGserver_name = getenv("SERVER_NAME");
 $LOGserver_port = getenv("SERVER_PORT");
 $LOGrequest_uri = getenv("REQUEST_URI");
 $LOGhttp_referer = getenv("HTTP_REFERER");
-$LOGbrowser=preg_replace("/\'|\"|\\\\/","",$LOGbrowser);
-$LOGrequest_uri=preg_replace("/\'|\"|\\\\/","",$LOGrequest_uri);
-$LOGhttp_referer=preg_replace("/\'|\"|\\\\/","",$LOGhttp_referer);
-if (preg_match("/443/i",$LOGserver_port)) {$HTTPprotocol = 'https://';}
-  else {$HTTPprotocol = 'http://';}
-if (($LOGserver_port == '80') or ($LOGserver_port == '443') ) {$LOGserver_port='';}
-else {$LOGserver_port = ":$LOGserver_port";}
+$LOGbrowser=preg_replace("/\'|\"|\\\\/", "", $LOGbrowser);
+$LOGrequest_uri=preg_replace("/\'|\"|\\\\/", "", $LOGrequest_uri);
+$LOGhttp_referer=preg_replace("/\'|\"|\\\\/", "", $LOGhttp_referer);
+if (preg_match("/443/i", $LOGserver_port)) {
+    $HTTPprotocol = 'https://';
+} else {
+    $HTTPprotocol = 'http://';
+}
+if (($LOGserver_port == '80') or ($LOGserver_port == '443')) {
+    $LOGserver_port='';
+} else {
+    $LOGserver_port = ":$LOGserver_port";
+}
 $LOGfull_url = "$HTTPprotocol$LOGserver_name$LOGserver_port$LOGrequest_uri";
 $LOGhostname = php_uname('n');
-if (strlen($LOGhostname)<1) {$LOGhostname='X';}
-if (strlen($LOGserver_name)<1) {$LOGserver_name='X';}
+if (strlen($LOGhostname)<1) {
+    $LOGhostname='X';
+}
+if (strlen($LOGserver_name)<1) {
+    $LOGserver_name='X';
+}
 $stmt="SELECT webserver_id FROM vicidial_webservers where webserver='$LOGserver_name' and hostname='$LOGhostname' LIMIT 1;";
 $rslt=mysql_to_mysqli($stmt, $link);
-if ($DB) {echo "$stmt\n";}
+if ($DB) {
+    echo "$stmt\n";
+}
 $webserver_id_ct = mysqli_num_rows($rslt);
-if ($webserver_id_ct > 0)
-    {
+if ($webserver_id_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $webserver_id = $row[0];
-    }
-else
-    {
+} else {
     $stmt="INSERT INTO vicidial_webservers (webserver,hostname) values('$LOGserver_name','$LOGhostname');";
-    if ($DB) {echo "$stmt\n";}
+    if ($DB) {
+        echo "$stmt\n";
+    }
     $rslt=mysql_to_mysqli($stmt, $link);
     $affected_rows = mysqli_affected_rows($link);
     $webserver_id = mysqli_insert_id($link);
-    }
+}
 $AMP='&';
 $QM='?';
 $stmt="INSERT INTO vicidial_report_log set event_date=NOW(), user='$PHP_AUTH_USER', ip_address='$LOGip', report_name='$report_name', browser='$LOGbrowser', referer='$LOGhttp_referer', notes='$LOGserver_name:$LOGserver_port $LOGscript_name |$query_date, $end_date, $shift, $file_download, $report_display_type|', url='".$LOGfull_url."?DB=".$DB."&file_download=".$file_download."&query_date=".$query_date."&end_date=".$end_date."&shift=".$shift."&report_display_type=".$report_display_type."$groupQS', webserver='$webserver_id';";
-if ($DB) {echo "|$stmt|\n";}
+if ($DB) {
+    echo "|$stmt|\n";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 $report_log_id = mysqli_insert_id($link);
-if ( (strlen($slave_db_server)>5) and (preg_match("/$report_name/",$reports_use_slave_db)) )
-    {
+if ((strlen($slave_db_server)>5) and (preg_match("/$report_name/", $reports_use_slave_db))) {
     mysqli_close($link);
     $use_slave_server=1;
     $db_source = 'S';
     require("dbconnect_mysqli.php");
     $MAIN.="<!-- Using slave server $slave_db_server $db_source -->\n";
-    }
+}
 require("screen_colors.php");
 $NWB = "<IMG SRC=\"help.png\" onClick=\"FillAndShowHelpDiv(event, '";
 $NWE = "')\" WIDTH=20 HEIGHT=20 BORDER=0 ALT=\"HELP\" ALIGN=TOP>";
@@ -354,20 +413,19 @@ $HEADER.="<script language=\"JavaScript\" src=\"help.js\"></script>\n";
 $HEADER.="<link rel=\"stylesheet\" href=\"calendar.css\">\n";
 $HEADER.="<link rel=\"stylesheet\" href=\"horizontalbargraph.css\">\n";
 require("chart_button.php");
-$HEADER.="<script src='chart/Chart.js'></script>\n"; 
+$HEADER.="<script src='chart/Chart.js'></script>\n";
 $HEADER.="<script language=\"JavaScript\" src=\"vicidial_chart_functions.js\"></script>\n";
 $HEADER.="<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=utf-8\">\n";
 $HEADER.="<TITLE>"._QXZ("$report_name")."</TITLE></HEAD><BODY BGCOLOR=WHITE marginheight=0 marginwidth=0 leftmargin=0 topmargin=0>\n";
 $HEADER.="<div id='HelpDisplayDiv' class='help_info' style='display:none;'></div>";
 $short_header=1;
-if ($DB > 0)
-    {
+if ($DB > 0) {
     $MAIN.="<BR>\n";
     $MAIN.="$group_ct|$group_string|$group_SQL\n";
     $MAIN.="<BR>\n";
     $MAIN.="$shift|$query_date|$end_date\n";
     $MAIN.="<BR>\n";
-    }
+}
 $MAIN.="<b>"._QXZ("$report_name")."</b> $NWB#DIDdetail$NWE\n";
 $MAIN.="<TABLE CELLPADDING=3 CELLSPACING=0><TR><TD>";
 $MAIN.="<FORM ACTION=\"$PHP_SELF\" METHOD=POST name=vicidial_report id=vicidial_report>\n";
@@ -403,14 +461,14 @@ $MAIN.="<BR><INPUT TYPE=TEXT NAME=time_END SIZE=10 MAXLENGTH=8 VALUE=\"$time_END
 $MAIN.="</TD><TD align=center valign=top>\n";
 $MAIN.="<SELECT SIZE=5 NAME=group[] multiple>\n";
 $o=0;
-while ($groups_to_print > $o)
-    {
-    if (preg_match("/\|$groups[$o]\|/",$group_string)) 
-        {$MAIN.="<option selected value=\"$groups[$o]\">$group_patterns[$o] - $group_names[$o]</option>\n";}
-    else
-        {$MAIN.="<option value=\"$groups[$o]\">$group_patterns[$o] - $group_names[$o]</option>\n";}
-    $o++;
+while ($groups_to_print > $o) {
+    if (preg_match("/\|$groups[$o]\|/", $group_string)) {
+        $MAIN.="<option selected value=\"$groups[$o]\">$group_patterns[$o] - $group_names[$o]</option>\n";
+    } else {
+        $MAIN.="<option value=\"$groups[$o]\">$group_patterns[$o] - $group_names[$o]</option>\n";
     }
+    $o++;
+}
 $MAIN.="</SELECT>\n";
 $MAIN.="</TD><TD align=left valign=top><FONT FACE=\"ARIAL,HELVETICA\" COLOR=BLACK SIZE=2>"._QXZ("Shift").":<BR>\n";
 $MAIN.="<SELECT SIZE=1 NAME=shift>\n";
@@ -448,10 +506,9 @@ $MAIN.="<option>PF_DID</option>\n";
 $MAIN.="<option>PFR_DID</option>\n";
 $MAIN.="<option>NA_VOICEMAIL</option>\n";
 $MAIN.="</SELECT>\n";
-if ($archives_available=="Y") 
-    {
+if ($archives_available=="Y") {
     $MAIN.="<BR><BR><input type='checkbox' name='search_archived_data' value='checked' $search_archived_data>"._QXZ("Search archived data")."\n";
-    }
+}
 $MAIN.="</FONT></TD><TD align=left valign=top>\n";
 $MAIN.="<INPUT TYPE=hidden NAME=DB VALUE=\"$DB\">\n";
 $MAIN.=" &nbsp;";
@@ -462,13 +519,10 @@ $MAIN.="</TD></TR></TABLE>\n";
 $MAIN.="</FORM>\n";
 $MAIN.="<PRE><FONT SIZE=2>";
 $JS_text="<script language='Javascript'>";
-if (!$group)
-    {
+if (!$group) {
     $MAIN.="\n\n";
     $MAIN.=_QXZ("PLEASE SELECT A DID AND DATE RANGE ABOVE AND CLICK SUBMIT")."\n";
-    }
-else
-    {
+} else {
     $suffix=" SHIFT: $shift ";
     switch($shift) {
         case "AM":
@@ -519,85 +573,84 @@ else
             $suffix="";
             break;
     }
-/*
-    if ($shift == 'AM') 
-        {
-        if (strlen($time_BEGIN) < 6) {$time_BEGIN = "00:00:00";}   
-        if (strlen($time_END) < 6) {$time_END = "11:59:59";}
-        }
-    if ($shift == 'PM') 
-        {
-        if (strlen($time_BEGIN) < 6) {$time_BEGIN = "12:00:00";}
-        if (strlen($time_END) < 6) {$time_END = "23:59:59";}
-        }
-    if ($shift == 'ALL') 
-        {
-        if (strlen($time_BEGIN) < 6) {$time_BEGIN = "00:00:00";}
-        if (strlen($time_END) < 6) {$time_END = "23:59:59";}
-        }
-    if ($shift == 'DAYTIME') 
-        {
-        if (strlen($time_BEGIN) < 6) {$time_BEGIN = "08:45:00";}
-        if (strlen($time_END) < 6) {$time_END = "00:59:59";}
-        }
-    if ($shift == '10AM-5PM') 
-        {
-        if (strlen($time_BEGIN) < 6) {$time_BEGIN = "10:00:00";}
-        if (strlen($time_END) < 6) {$time_END = "16:59:59";}
-        }
-    if ($shift == '10AM-6PM') 
-        {
-        if (strlen($time_BEGIN) < 6) {$time_BEGIN = "10:00:00";}
-        if (strlen($time_END) < 6) {$time_END = "17:59:59";}
-        }
-    if ($shift == '9AM-11PM') 
-        {
-        if (strlen($time_BEGIN) < 6) {$time_BEGIN = "09:00:00";}
-        if (strlen($time_END) < 6) {$time_END = "22:59:59";}
-        }
-    if ($shift == '9AM-10PM') 
-        {
-        if (strlen($time_BEGIN) < 6) {$time_BEGIN = "09:00:00";}
-        if (strlen($time_END) < 6) {$time_END = "21:59:59";}
-        }
-    if ($shift == '9AM-1AM') 
-        {
-        if (strlen($time_BEGIN) < 6) {$time_BEGIN = "09:00:00";}
-        if (strlen($time_END) < 6) {$time_END = "00:59:59";}
-        }
-    if ($shift == '845-1745') 
-        {
-        if (strlen($time_BEGIN) < 6) {$time_BEGIN = "08:45:00";}
-        if (strlen($time_END) < 6) {$time_END = "17:44:59";}
-        }
-    if ($shift == '1745-100') 
-        {
-        if (strlen($time_BEGIN) < 6) {$time_BEGIN = "17:45:00";}
-        if (strlen($time_END) < 6) {$time_END = "00:59:59";}
-        }
-*/
-    $query_date_BEGIN = "$query_date $time_BEGIN";   
+    /*
+        if ($shift == 'AM')
+            {
+            if (strlen($time_BEGIN) < 6) {$time_BEGIN = "00:00:00";}
+            if (strlen($time_END) < 6) {$time_END = "11:59:59";}
+            }
+        if ($shift == 'PM')
+            {
+            if (strlen($time_BEGIN) < 6) {$time_BEGIN = "12:00:00";}
+            if (strlen($time_END) < 6) {$time_END = "23:59:59";}
+            }
+        if ($shift == 'ALL')
+            {
+            if (strlen($time_BEGIN) < 6) {$time_BEGIN = "00:00:00";}
+            if (strlen($time_END) < 6) {$time_END = "23:59:59";}
+            }
+        if ($shift == 'DAYTIME')
+            {
+            if (strlen($time_BEGIN) < 6) {$time_BEGIN = "08:45:00";}
+            if (strlen($time_END) < 6) {$time_END = "00:59:59";}
+            }
+        if ($shift == '10AM-5PM')
+            {
+            if (strlen($time_BEGIN) < 6) {$time_BEGIN = "10:00:00";}
+            if (strlen($time_END) < 6) {$time_END = "16:59:59";}
+            }
+        if ($shift == '10AM-6PM')
+            {
+            if (strlen($time_BEGIN) < 6) {$time_BEGIN = "10:00:00";}
+            if (strlen($time_END) < 6) {$time_END = "17:59:59";}
+            }
+        if ($shift == '9AM-11PM')
+            {
+            if (strlen($time_BEGIN) < 6) {$time_BEGIN = "09:00:00";}
+            if (strlen($time_END) < 6) {$time_END = "22:59:59";}
+            }
+        if ($shift == '9AM-10PM')
+            {
+            if (strlen($time_BEGIN) < 6) {$time_BEGIN = "09:00:00";}
+            if (strlen($time_END) < 6) {$time_END = "21:59:59";}
+            }
+        if ($shift == '9AM-1AM')
+            {
+            if (strlen($time_BEGIN) < 6) {$time_BEGIN = "09:00:00";}
+            if (strlen($time_END) < 6) {$time_END = "00:59:59";}
+            }
+        if ($shift == '845-1745')
+            {
+            if (strlen($time_BEGIN) < 6) {$time_BEGIN = "08:45:00";}
+            if (strlen($time_END) < 6) {$time_END = "17:44:59";}
+            }
+        if ($shift == '1745-100')
+            {
+            if (strlen($time_BEGIN) < 6) {$time_BEGIN = "17:45:00";}
+            if (strlen($time_END) < 6) {$time_END = "00:59:59";}
+            }
+    */
+    $query_date_BEGIN = "$query_date $time_BEGIN";
     $query_date_END = "$end_date $time_END";
-    $SQdate_ARY =    explode(' ',$query_date_BEGIN);
-    $SQday_ARY =    explode('-',$SQdate_ARY[0]);
-    $SQtime_ARY =    explode(':',$SQdate_ARY[1]);
-    $EQdate_ARY =    explode(' ',$query_date_END);
-    $EQday_ARY =    explode('-',$EQdate_ARY[0]);
-    $EQtime_ARY =    explode(':',$EQdate_ARY[1]);
+    $SQdate_ARY =    explode(' ', $query_date_BEGIN);
+    $SQday_ARY =    explode('-', $SQdate_ARY[0]);
+    $SQtime_ARY =    explode(':', $SQdate_ARY[1]);
+    $EQdate_ARY =    explode(' ', $query_date_END);
+    $EQday_ARY =    explode('-', $EQdate_ARY[0]);
+    $EQtime_ARY =    explode(':', $EQdate_ARY[1]);
     $SQepochDAY = mktime(0, 0, 0, $SQday_ARY[1], $SQday_ARY[2], $SQday_ARY[0]);
     $SQepoch = mktime($SQtime_ARY[0], $SQtime_ARY[1], $SQtime_ARY[2], $SQday_ARY[1], $SQday_ARY[2], $SQday_ARY[0]);
     $EQepoch = mktime($EQtime_ARY[0], $EQtime_ARY[1], $EQtime_ARY[2], $EQday_ARY[1], $EQday_ARY[2], $EQday_ARY[0]);
-    $SQsec = ( ($SQtime_ARY[0] * 3600) + ($SQtime_ARY[1] * 60) + ($SQtime_ARY[2] * 1) );
-    $EQsec = ( ($EQtime_ARY[0] * 3600) + ($EQtime_ARY[1] * 60) + ($EQtime_ARY[2] * 1) );
+    $SQsec = (($SQtime_ARY[0] * 3600) + ($SQtime_ARY[1] * 60) + ($SQtime_ARY[2] * 1));
+    $EQsec = (($EQtime_ARY[0] * 3600) + ($EQtime_ARY[1] * 60) + ($EQtime_ARY[2] * 1));
     $DURATIONsec = ($EQepoch - $SQepoch);
-    $DURATIONday = intval( MathZDC($DURATIONsec, 86400) + 1 );
-    if ( ($EQsec < $SQsec) and ($DURATIONday < 1) )
-        {
-        $EQepoch = ($SQepochDAY + ($EQsec + 86400) );
+    $DURATIONday = intval(MathZDC($DURATIONsec, 86400) + 1);
+    if (($EQsec < $SQsec) and ($DURATIONday < 1)) {
+        $EQepoch = ($SQepochDAY + ($EQsec + 86400));
         $query_date_END = date("Y-m-d H:i:s", $EQepoch);
         $DURATIONday++;
-        }
-    $MAIN.=_QXZ("Inbound DID Detail Report",40)." $NOW_TIME\n";
+    }
+    $MAIN.=_QXZ("Inbound DID Detail Report", 40)." $NOW_TIME\n";
     $MAIN.="\n";
     $MAIN.=_QXZ("Time range")." $DURATIONday "._QXZ("days").": $query_date_BEGIN "._QXZ("to")." $query_date_END   $suffix\n\n";
     $CSV_text1.="\""._QXZ("Inbound DID Detail Report")."\",\"$NOW_TIME\"\n\n";
@@ -605,40 +658,43 @@ else
     $d=0;
     $daySTART=array();
     $dayEND=array();
-    while ($d < $DURATIONday)
-        {
-        $dSQepoch = ($SQepoch + ($d * 86400) );
-        $dEQepoch = ($SQepochDAY + ($EQsec + ($d * 86400) ) );
-        if ($EQsec < $SQsec)
-            {
+    while ($d < $DURATIONday) {
+        $dSQepoch = ($SQepoch + ($d * 86400));
+        $dEQepoch = ($SQepochDAY + ($EQsec + ($d * 86400)));
+        if ($EQsec < $SQsec) {
             $dEQepoch = ($dEQepoch + 86400);
-            }
+        }
         $daySTART[$d] = date("Y-m-d H:i:s", $dSQepoch);
         $dayEND[$d] = date("Y-m-d H:i:s", $dEQepoch);
         $d++;
-        }
+    }
     $default_route='';
     $stmt="select did_id,did_pattern,did_route from vicidial_inbound_dids order by did_id;";
     $rslt=mysql_to_mysqli($stmt, $link);
-    if ($DB) {$MAIN.="$stmt\n";}
+    if ($DB) {
+        $MAIN.="$stmt\n";
+    }
     $Drecords_to_grab = mysqli_num_rows($rslt);
     $h=0;
     $Ddid_id=array();
     $Ddid_pattern=array();
     $Ddid_route=array();
-    while ($Drecords_to_grab > $h)
-        {
+    while ($Drecords_to_grab > $h) {
         $row=mysqli_fetch_row($rslt);
         $Ddid_id[$h] =                $row[0];
         $Ddid_pattern[$h] =            $row[1];
         $Ddid_route[$h] =            $row[2];
         $h++;
-        }
+    }
     $routeSQL='';
-    if (strlen($route) > 0) {$routeSQL = "and did_route='$route'";}
+    if (strlen($route) > 0) {
+        $routeSQL = "and did_route='$route'";
+    }
     $stmt="SELECT call_date,extension,server_ip,uniqueid,did_route,did_id,caller_id_number,caller_id_name,channel from ".$vicidial_did_log_table." where call_date >= '$query_date_BEGIN' and call_date <= '$query_date_END' and did_id IN($group_SQL) $routeSQL order by call_date;";
     $rslt=mysql_to_mysqli($stmt, $link);
-    if ($DB) {$MAIN.="$stmt\n";}
+    if ($DB) {
+        $MAIN.="$stmt\n";
+    }
     $records_to_grab = mysqli_num_rows($rslt);
     $i=0;
     $Lcall_date=array();
@@ -652,8 +708,7 @@ else
     $Lchannel=array();
     $Ldid_pattern=array();
     $Ldid_route_current=array();
-    while ($i < $records_to_grab)
-        {
+    while ($i < $records_to_grab) {
         $row=mysqli_fetch_row($rslt);
         $Lcall_date[$i] =            $row[0];
         $Lextension[$i] =            $row[1];
@@ -667,28 +722,24 @@ else
         $Ldid_pattern[$i] =            '-undefined-';
         $Ldid_route_current[$i] =    '-undefined-';
         $h=0;
-        while ($Drecords_to_grab > $h)
-            {
-            if ($Ddid_id[$h] == "$Ldid_id[$i]")
-                {
+        while ($Drecords_to_grab > $h) {
+            if ($Ddid_id[$h] == "$Ldid_id[$i]") {
                 $Ldid_pattern[$i] =            $Ddid_pattern[$h];
                 $Ldid_route_current[$i] =    $Ddid_route[$h];
-                }
-            $h++;
             }
-        $i++;
+            $h++;
         }
-    if ($i > 0)
-        {
+        $i++;
+    }
+    if ($i > 0) {
         $ASCII_text.=_QXZ("DID Detail").":\n";
         $ASCII_text.="+---------------------+--------------------+----------------------+-----------------+----------------------+----------------------+----------------------+---------+--------------------+----------------------+------------------------------------------------------------------------------------------------------+\n";
-        $ASCII_text.="| "._QXZ("CALL DATE",19)." | "._QXZ("DID EXTEN",18)." | "._QXZ("DID PATTERN",20)." | "._QXZ("SERVER",15)." | "._QXZ("UNIQUEID", 20)." | "._QXZ("CALL ROUTE", 20)." | "._QXZ("DID ROUTE", 20)." | "._QXZ("DID ID", 7)." | "._QXZ("CID NUMBER", 18)." | "._QXZ("CID NAME", 20)." | "._QXZ("CHANNEL", 100)." |\n";
+        $ASCII_text.="| "._QXZ("CALL DATE", 19)." | "._QXZ("DID EXTEN", 18)." | "._QXZ("DID PATTERN", 20)." | "._QXZ("SERVER", 15)." | "._QXZ("UNIQUEID", 20)." | "._QXZ("CALL ROUTE", 20)." | "._QXZ("DID ROUTE", 20)." | "._QXZ("DID ID", 7)." | "._QXZ("CID NUMBER", 18)." | "._QXZ("CID NAME", 20)." | "._QXZ("CHANNEL", 100)." |\n";
         $ASCII_text.="+---------------------+--------------------+----------------------+-----------------+----------------------+----------------------+----------------------+---------+--------------------+----------------------+------------------------------------------------------------------------------------------------------+\n";
         $CSV_text1.="\""._QXZ("DID Detail").":\"\n";
         $CSV_text1.="\""._QXZ("CALL DATE")."\",\""._QXZ("DID EXTEN")."\",\""._QXZ("DID PATTERN")."\",\""._QXZ("SERVER")."\",\""._QXZ("UNIQUEID")."\",\""._QXZ("CALL ROUTE")."\",\""._QXZ("DID CURRENT ROUTE")."\",\""._QXZ("DID ID")."\",\""._QXZ("CID NUMBER")."\",\""._QXZ("CID NAME")."\",\""._QXZ("CHANNEL")."\"\n";
         $i=0;
-        while ($i < $records_to_grab)
-            {
+        while ($i < $records_to_grab) {
             $CSV_text1.="\"$Lcall_date[$i]\",\"$Lextension[$i]\",\"$Ldid_pattern[$i]\",\"$Lserver_ip[$i]\",\"$Luniqueid[$i]\",\"$Ldid_route[$i]\",\"$Ldid_route_current[$i]\",\"$Ldid_id[$i]\",\"$Lcaller_id_number[$i]\",\"$Lcaller_id_name[$i]\",\"$Lchannel[$i]\"\n";
             $Lcall_date[$i] =            sprintf("%-19s", $Lcall_date[$i]);
             $Lextension[$i] =            sprintf("%-18s", $Lextension[$i]);
@@ -703,75 +754,77 @@ else
             $Lchannel[$i] =                sprintf("%-100s", $Lchannel[$i]);
             $ASCII_text.="| $Lcall_date[$i] | $Lextension[$i] | $Ldid_pattern[$i] | $Lserver_ip[$i] | $Luniqueid[$i] | $Ldid_route[$i] | $Ldid_route_current[$i] | $Ldid_id[$i] | $Lcaller_id_number[$i] | $Lcaller_id_name[$i] | $Lchannel[$i] |\n";
             $i++;
-            }
+        }
         $FtotCALLS =    sprintf("%18s", $i);
         $ASCII_text.="+---------------------+--------------------+----------------------+-----------------+----------------------+----------------------+----------------------+---------+--------------------+----------------------+------------------------------------------------------------------------------------------------------+\n";
-        $ASCII_text.="| "._QXZ("TOTAL CALLS",19,"r")." | $FtotCALLS |\n";
+        $ASCII_text.="| "._QXZ("TOTAL CALLS", 19, "r")." | $FtotCALLS |\n";
         $ASCII_text.="+---------------------+--------------------+\n";
         $CSV_text1.="\"\",\"\",\""._QXZ("TOTALS")."\",\"$FtotCALLS\"\n";
         $MAIN.=$ASCII_text;
-        }
+    }
     $ENDtime = date("U");
     $RUNtime = ($ENDtime - $STARTtime);
     $MAIN.="\n"._QXZ("Run Time").": $RUNtime "._QXZ("seconds")."|$db_source\n";
     $MAIN.="</PRE>\n";
     $MAIN.="</TD></TR></TABLE>\n";
     $MAIN.="</BODY></HTML>\n";
+}
+if ($file_download>0) {
+    $FILE_TIME = date("Ymd-His");
+    $CSVfilename = "AST_DIDstats_$US$FILE_TIME.csv";
+    $CSV_var="CSV_text".$file_download;
+    $CSV_text=preg_replace('/^ +/', '', $$CSV_var);
+    $CSV_text=preg_replace('/\n +,/', ',', $CSV_text);
+    $CSV_text=preg_replace('/ +\"/', '"', $CSV_text);
+    $CSV_text=preg_replace('/\" +/', '"', $CSV_text);
+    // We'll be outputting a TXT file
+    header('Content-type: application/octet-stream');
+    // It will be called LIST_101_20090209-121212.txt
+    header("Content-Disposition: attachment; filename=\"$CSVfilename\"");
+    header('Expires: 0');
+    header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+    header('Pragma: public');
+    ob_clean();
+    flush();
+    echo "$CSV_text";
+    if ($db_source == 'S') {
+        mysqli_close($link);
+        $use_slave_server=0;
+        $db_source = 'M';
+        require("dbconnect_mysqli.php");
     }
-    if ($file_download>0) {
-        $FILE_TIME = date("Ymd-His");
-        $CSVfilename = "AST_DIDstats_$US$FILE_TIME.csv";
-        $CSV_var="CSV_text".$file_download;
-        $CSV_text=preg_replace('/^ +/', '', $$CSV_var);
-        $CSV_text=preg_replace('/\n +,/', ',', $CSV_text);
-        $CSV_text=preg_replace('/ +\"/', '"', $CSV_text);
-        $CSV_text=preg_replace('/\" +/', '"', $CSV_text);
-        // We'll be outputting a TXT file
-        header('Content-type: application/octet-stream');
-        // It will be called LIST_101_20090209-121212.txt
-        header("Content-Disposition: attachment; filename=\"$CSVfilename\"");
-        header('Expires: 0');
-        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-        header('Pragma: public');
-        ob_clean();
-        flush();
-        echo "$CSV_text";
-        if ($db_source == 'S')
-            {
-            mysqli_close($link);
-            $use_slave_server=0;
-            $db_source = 'M';
-            require("dbconnect_mysqli.php");
-            }
-        $endMS = microtime();
-        $startMSary = explode(" ",$startMS);
-        $endMSary = explode(" ",$endMS);
-        $runS = ($endMSary[0] - $startMSary[0]);
-        $runM = ($endMSary[1] - $startMSary[1]);
-        $TOTALrun = ($runS + $runM);
-        $stmt="UPDATE vicidial_report_log set run_time='$TOTALrun' where report_log_id='$report_log_id';";
-        if ($DB) {echo "|$stmt|\n";}
-        $rslt=mysql_to_mysqli($stmt, $link);
-        exit;
-    } else {
-        echo $HEADER;
-        require("admin_header.php");
-        echo $MAIN;
+    $endMS = microtime();
+    $startMSary = explode(" ", $startMS);
+    $endMSary = explode(" ", $endMS);
+    $runS = ($endMSary[0] - $startMSary[0]);
+    $runM = ($endMSary[1] - $startMSary[1]);
+    $TOTALrun = ($runS + $runM);
+    $stmt="UPDATE vicidial_report_log set run_time='$TOTALrun' where report_log_id='$report_log_id';";
+    if ($DB) {
+        echo "|$stmt|\n";
     }
-if ($db_source == 'S')
-    {
+    $rslt=mysql_to_mysqli($stmt, $link);
+    exit;
+} else {
+    echo $HEADER;
+    require("admin_header.php");
+    echo $MAIN;
+}
+if ($db_source == 'S') {
     mysqli_close($link);
     $use_slave_server=0;
     $db_source = 'M';
     require("dbconnect_mysqli.php");
-    }
+}
 $endMS = microtime();
-$startMSary = explode(" ",$startMS);
-$endMSary = explode(" ",$endMS);
+$startMSary = explode(" ", $startMS);
+$endMSary = explode(" ", $endMS);
 $runS = ($endMSary[0] - $startMSary[0]);
 $runM = ($endMSary[1] - $startMSary[1]);
 $TOTALrun = ($runS + $runM);
 $stmt="UPDATE vicidial_report_log set run_time='$TOTALrun' where report_log_id='$report_log_id';";
-if ($DB) {echo "|$stmt|\n";}
+if ($DB) {
+    echo "|$stmt|\n";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 ?>

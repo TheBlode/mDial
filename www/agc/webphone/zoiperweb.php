@@ -33,24 +33,51 @@
 # * ======================================== */
 ?>
 <?php
-if (isset($_GET["DB"]))                            {$DB=$_GET["DB"];}
-        elseif (isset($_POST["DB"]))            {$DB=$_POST["DB"];}
-if (isset($_GET["phone_login"]))                {$phone_login=$_GET["phone_login"];}
-        elseif (isset($_POST["phone_login"]))    {$phone_login=$_POST["phone_login"];}
-if (isset($_GET["phone_pass"]))                    {$phone_pass=$_GET["phone_pass"];}
-        elseif (isset($_POST["phone_pass"]))    {$phone_pass=$_POST["phone_pass"];}
-if (isset($_GET["server_ip"]))                    {$server_ip=$_GET["server_ip"];}
-        elseif (isset($_POST["server_ip"]))        {$server_ip=$_POST["server_ip"];}
-if (isset($_GET["callerid"]))                    {$callerid=$_GET["callerid"];}
-        elseif (isset($_POST["callerid"]))        {$callerid=$_POST["callerid"];}
-if (isset($_GET["protocol"]))                    {$protocol=$_GET["protocol"];}
-        elseif (isset($_POST["protocol"]))        {$protocol=$_POST["protocol"];}
-if (isset($_GET["codecs"]))                        {$codecs=$_GET["codecs"];}
-        elseif (isset($_POST["codecs"]))        {$codecs=$_POST["codecs"];}
-if (isset($_GET["options"]))                    {$options=$_GET["options"];}
-        elseif (isset($_POST["options"]))        {$options=$_POST["options"];}
-if (isset($_GET["system_key"]))                    {$system_key=$_GET["system_key"];}
-        elseif (isset($_POST["system_key"]))    {$system_key=$_POST["system_key"];}
+if (isset($_GET["DB"])) {
+    $DB=$_GET["DB"];
+} elseif (isset($_POST["DB"])) {
+    $DB=$_POST["DB"];
+}
+if (isset($_GET["phone_login"])) {
+    $phone_login=$_GET["phone_login"];
+} elseif (isset($_POST["phone_login"])) {
+    $phone_login=$_POST["phone_login"];
+}
+if (isset($_GET["phone_pass"])) {
+    $phone_pass=$_GET["phone_pass"];
+} elseif (isset($_POST["phone_pass"])) {
+    $phone_pass=$_POST["phone_pass"];
+}
+if (isset($_GET["server_ip"])) {
+    $server_ip=$_GET["server_ip"];
+} elseif (isset($_POST["server_ip"])) {
+    $server_ip=$_POST["server_ip"];
+}
+if (isset($_GET["callerid"])) {
+    $callerid=$_GET["callerid"];
+} elseif (isset($_POST["callerid"])) {
+    $callerid=$_POST["callerid"];
+}
+if (isset($_GET["protocol"])) {
+    $protocol=$_GET["protocol"];
+} elseif (isset($_POST["protocol"])) {
+    $protocol=$_POST["protocol"];
+}
+if (isset($_GET["codecs"])) {
+    $codecs=$_GET["codecs"];
+} elseif (isset($_POST["codecs"])) {
+    $codecs=$_POST["codecs"];
+}
+if (isset($_GET["options"])) {
+    $options=$_GET["options"];
+} elseif (isset($_POST["options"])) {
+    $options=$_POST["options"];
+}
+if (isset($_GET["system_key"])) {
+    $system_key=$_GET["system_key"];
+} elseif (isset($_POST["system_key"])) {
+    $system_key=$_POST["system_key"];
+}
 $b64_phone_login =        base64_decode($phone_login);
 $b64_phone_pass =        base64_decode($phone_pass);
 $b64_server_ip =        base64_decode($server_ip);
@@ -59,16 +86,17 @@ $b64_protocol =            base64_decode($protocol);
 $b64_codecs =            base64_decode($codecs);
 $b64_options =            base64_decode($options);
 $b64_system_key =        base64_decode($system_key);
-if ($b64_protocol != 'SIP')
-    {$b64_protocol = 'IAX';}
-$b64_phone_login = preg_replace('/[^-\*\#\.\:\/\@\_0-9\p{L}]/u','',$b64_phone_login);
-$b64_phone_pass = preg_replace('/[^-\*\#\.\:\/\@\_0-9\p{L}]/u','',$b64_phone_pass);
-$b64_server_ip = preg_replace('/[^-\*\#\.\:\/\@\_0-9\p{L}]/u','',$b64_server_ip);
-$b64_callerid = preg_replace('/[^-\*\#\.\:\/\@\_0-9\p{L}]/u','',$b64_callerid);
-$b64_protocol = preg_replace('/[^-\*\#\.\:\/\@\_0-9\p{L}]/u','',$b64_protocol);
-$b64_codecs = preg_replace('/[^-\*\#\.\:\/\@\_0-9\p{L}]/u','',$b64_codecs);
-$b64_options = preg_replace('/[^-\*\#\.\:\/\@\_0-9\p{L}]/u','',$b64_options);
-$b64_system_key = preg_replace('/[^-\*\#\.\:\/\@\_0-9\p{L}]/u','',$b64_system_key);
+if ($b64_protocol != 'SIP') {
+    $b64_protocol = 'IAX';
+}
+$b64_phone_login = preg_replace('/[^-\*\#\.\:\/\@\_0-9\p{L}]/u', '', $b64_phone_login);
+$b64_phone_pass = preg_replace('/[^-\*\#\.\:\/\@\_0-9\p{L}]/u', '', $b64_phone_pass);
+$b64_server_ip = preg_replace('/[^-\*\#\.\:\/\@\_0-9\p{L}]/u', '', $b64_server_ip);
+$b64_callerid = preg_replace('/[^-\*\#\.\:\/\@\_0-9\p{L}]/u', '', $b64_callerid);
+$b64_protocol = preg_replace('/[^-\*\#\.\:\/\@\_0-9\p{L}]/u', '', $b64_protocol);
+$b64_codecs = preg_replace('/[^-\*\#\.\:\/\@\_0-9\p{L}]/u', '', $b64_codecs);
+$b64_options = preg_replace('/[^-\*\#\.\:\/\@\_0-9\p{L}]/u', '', $b64_options);
+$b64_system_key = preg_replace('/[^-\*\#\.\:\/\@\_0-9\p{L}]/u', '', $b64_system_key);
 ?>
 <html>
 <head>
@@ -140,13 +168,25 @@ function OnZoiperReady(phone)
     Account.UserName = "<?php echo $b64_phone_login ?>";
     Account.Password = "<?php echo $b64_phone_pass ?>";
     <?php
-    if (preg_match("/gsm/i",$b64_codecs))    {echo "Account.AddCodec(\"GSM\")\n";}
-    if (preg_match("/ulaw/i",$b64_codecs))    {echo "Account.AddCodec(\"u-law\")\n";}
-    if (preg_match("/alaw/i",$b64_codecs))    {echo "Account.AddCodec(\"a-law\")\n";}
-    if (preg_match("/speex/i",$b64_codecs)) {echo "Account.AddCodec(\"Speex\")\n";}
-    if (preg_match("/ilbc/i",$b64_codecs))    {echo "Account.AddCodec(\"iLBC 30\")\n";}
-    if (preg_match("/ilbc/i",$b64_codecs))    {echo "Account.AddCodec(\"iLBC 20\")\n";}
-    ?>
+    if (preg_match("/gsm/i", $b64_codecs)) {
+        echo "Account.AddCodec(\"GSM\")\n";
+    }
+    if (preg_match("/ulaw/i", $b64_codecs)) {
+        echo "Account.AddCodec(\"u-law\")\n";
+    }
+    if (preg_match("/alaw/i", $b64_codecs)) {
+        echo "Account.AddCodec(\"a-law\")\n";
+    }
+    if (preg_match("/speex/i", $b64_codecs)) {
+        echo "Account.AddCodec(\"Speex\")\n";
+    }
+    if (preg_match("/ilbc/i", $b64_codecs)) {
+        echo "Account.AddCodec(\"iLBC 30\")\n";
+    }
+    if (preg_match("/ilbc/i", $b64_codecs)) {
+        echo "Account.AddCodec(\"iLBC 20\")\n";
+    }
+?>
     Account.Apply();
     Account.Register();
     Zoiper.UseAccount("Sample");
@@ -164,11 +204,13 @@ function OnZoiperReady(phone)
     Contact.FaxNumber   = "fax";
     Contact.Apply();
     <?php
-    if (preg_match("/DIALPAD_Y|DIALPAD_TOGGLE/i",$b64_options))    
-        {echo "Zoiper.ShowDialPad(\"true\");\n";}
-    if (preg_match("/DIALPAD_N|DIALPAD_OFF_TOGGLE/i",$b64_options))    
-        {echo "Zoiper.ShowDialPad(\"false\");\n";}
-    ?>
+if (preg_match("/DIALPAD_Y|DIALPAD_TOGGLE/i", $b64_options)) {
+    echo "Zoiper.ShowDialPad(\"true\");\n";
+}
+if (preg_match("/DIALPAD_N|DIALPAD_OFF_TOGGLE/i", $b64_options)) {
+    echo "Zoiper.ShowDialPad(\"false\");\n";
+}
+?>
     }
 function OnZoiperCallFail(call)
     {
@@ -202,11 +244,12 @@ function OnZoiperCallIncoming(call)
     {
     Status(call.Phone + " incoming");
     <?php
-    if (preg_match("/AUTOANSWER_N/i",$b64_options))    
-        {echo "// autoanswer disabled;\n";}
-    else
-        {echo "call.Accept();\n\tActiveCall = call;\n";}
-    ?>
+if (preg_match("/AUTOANSWER_N/i", $b64_options)) {
+    echo "// autoanswer disabled;\n";
+} else {
+    echo "call.Accept();\n\tActiveCall = call;\n";
+}
+?>
     }
 function OnZoiperAccountRegister(account)
     {
@@ -274,10 +317,12 @@ function dialpad_active()
 <span id="Status">Ready</span>
 <span id="Dialpad_toggle">
 <?php
-if (preg_match("/DIALPAD_TOGGLE/i",$b64_options))    
-    {echo "<a href=\"#\" onclick=\"dialpad_inactive();return false;\">DIALPAD -</a>\n";}
-if (preg_match("/DIALPAD_OFF_TOGGLE/i",$b64_options))    
-    {echo "<a href=\"#\" onclick=\"dialpad_active();return false;\">DIALPAD +</a>\n";}
+if (preg_match("/DIALPAD_TOGGLE/i", $b64_options)) {
+    echo "<a href=\"#\" onclick=\"dialpad_inactive();return false;\">DIALPAD -</a>\n";
+}
+if (preg_match("/DIALPAD_OFF_TOGGLE/i", $b64_options)) {
+    echo "<a href=\"#\" onclick=\"dialpad_active();return false;\">DIALPAD +</a>\n";
+}
 ?>
 </span>
 </body>

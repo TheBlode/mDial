@@ -36,92 +36,162 @@
 $startMS = microtime();
 require("dbconnect_mysqli.php");
 require("functions.php");
-    function factorial($num) {
-        $num=floor($num);
-        if ($num>0) {
-            $result=1;
-            for ($x=1; $x<=$num; $x++) {
-                $result*=$x;
-            }
-            return $result;
-        } else {
-            return 1;
-        }
-    }
-    function erlsum($low, $limit, $erlangs) {
-        $result=0;
-        for ($n=$low; $n<=$limit; $n++) {
-            $result+=pow($erlangs, $n)/(factorial($n));
+function factorial($num)
+{
+    $num=floor($num);
+    if ($num>0) {
+        $result=1;
+        for ($x=1; $x<=$num; $x++) {
+            $result*=$x;
         }
         return $result;
+    } else {
+        return 1;
     }
-    function adjustedGoS($erlangs, $GoS, $retry_rate, $lines) {
-        $E[0]=$erlangs;
-        $P[0]=$GoS;
-        for ($q=0; $q<100; $q++) {
-            $E[($q+1)]=$erlangs+($retry_rate/100)*$E[$q]*$P[$q];
-            $P[($q+1)]=MathZDC((pow($E[($q+1)], $lines)/(factorial($lines))), (erlsum(0, $lines, $E[($q+1)])));
-        }
-        return $P[100];
+}
+function erlsum($low, $limit, $erlangs)
+{
+    $result=0;
+    for ($n=$low; $n<=$limit; $n++) {
+        $result+=pow($erlangs, $n)/(factorial($n));
     }
-if (file_exists('options.php'))
-    {
+    return $result;
+}
+function adjustedGoS($erlangs, $GoS, $retry_rate, $lines)
+{
+    $E[0]=$erlangs;
+    $P[0]=$GoS;
+    for ($q=0; $q<100; $q++) {
+        $E[($q+1)]=$erlangs+($retry_rate/100)*$E[$q]*$P[$q];
+        $P[($q+1)]=MathZDC((pow($E[($q+1)], $lines)/(factorial($lines))), (erlsum(0, $lines, $E[($q+1)])));
+    }
+    return $P[100];
+}
+if (file_exists('options.php')) {
     require('options.php');
-    }
+}
 $PHP_AUTH_USER=$_SERVER['PHP_AUTH_USER'];
 $PHP_AUTH_PW=$_SERVER['PHP_AUTH_PW'];
 $PHP_SELF=$_SERVER['PHP_SELF'];
-$PHP_SELF = preg_replace('/\.php.*/i','.php',$PHP_SELF);
-if (isset($_GET["group"]))                {$group=$_GET["group"];}
-    elseif (isset($_POST["group"]))        {$group=$_POST["group"];}
-if (isset($_GET["campaign"]))                {$campaign=$_GET["campaign"];}
-    elseif (isset($_POST["campaign"]))        {$campaign=$_POST["campaign"];}
-if (isset($_GET["query_date"]))                {$query_date=$_GET["query_date"];}
-    elseif (isset($_POST["query_date"]))    {$query_date=$_POST["query_date"];}
-if (isset($_GET["end_date"]))                {$end_date=$_GET["end_date"];}
-    elseif (isset($_POST["end_date"]))        {$end_date=$_POST["end_date"];}
-if (isset($_GET["drop_percent"]))                {$drop_percent=$_GET["drop_percent"];}
-    elseif (isset($_POST["drop_percent"]))        {$drop_percent=$_POST["drop_percent"];}
-if (isset($_GET["shift"]))                {$shift=$_GET["shift"];}
-    elseif (isset($_POST["shift"]))        {$shift=$_POST["shift"];}
-if (isset($_GET["erlang_type"]))                {$erlang_type=$_GET["erlang_type"];}
-    elseif (isset($_POST["erlang_type"]))    {$erlang_type=$_POST["erlang_type"];}
-if (isset($_GET["actual_agents"]))                {$actual_agents=$_GET["actual_agents"];}
-    elseif (isset($_POST["actual_agents"]))    {$actual_agents=$_POST["actual_agents"];}
-if (isset($_GET["hourly_pay"]))                {$hourly_pay=$_GET["hourly_pay"];}
-    elseif (isset($_POST["hourly_pay"]))    {$hourly_pay=$_POST["hourly_pay"];}
-if (isset($_GET["revenue_per_sale"]))                {$revenue_per_sale=$_GET["revenue_per_sale"];}
-    elseif (isset($_POST["revenue_per_sale"]))    {$revenue_per_sale=$_POST["revenue_per_sale"];}
-if (isset($_GET["sale_chance"]))                {$sale_chance=$_GET["sale_chance"];}
-    elseif (isset($_POST["sale_chance"]))    {$sale_chance=$_POST["sale_chance"];}
-if (isset($_GET["retry_rate"]))                {$retry_rate=$_GET["retry_rate"];}
-    elseif (isset($_POST["retry_rate"]))    {$retry_rate=$_POST["retry_rate"];}
-if (isset($_GET["target_pqueue"]))            {$target_pqueue=$_GET["target_pqueue"];}
-    elseif (isset($_POST["target_pqueue"]))    {$target_pqueue=$_POST["target_pqueue"];}
-if (isset($_GET["file_download"]))            {$file_download=$_GET["file_download"];}
-    elseif (isset($_POST["file_download"]))    {$file_download=$_POST["file_download"];}
-if (isset($_GET["submit"]))                {$submit=$_GET["submit"];}
-    elseif (isset($_POST["submit"]))    {$submit=$_POST["submit"];}
-if (isset($_GET["SUBMIT"]))                {$SUBMIT=$_GET["SUBMIT"];}
-    elseif (isset($_POST["SUBMIT"]))    {$SUBMIT=$_POST["SUBMIT"];}
-if (isset($_GET["DB"]))                {$DB=$_GET["DB"];}
-    elseif (isset($_POST["DB"]))    {$DB=$_POST["DB"];}
-if (isset($_GET["report_display_type"]))                {$report_display_type=$_GET["report_display_type"];}
-    elseif (isset($_POST["report_display_type"]))    {$report_display_type=$_POST["report_display_type"];}
-$DB=preg_replace("/[^0-9a-zA-Z]/","",$DB);
+$PHP_SELF = preg_replace('/\.php.*/i', '.php', $PHP_SELF);
+if (isset($_GET["group"])) {
+    $group=$_GET["group"];
+} elseif (isset($_POST["group"])) {
+    $group=$_POST["group"];
+}
+if (isset($_GET["campaign"])) {
+    $campaign=$_GET["campaign"];
+} elseif (isset($_POST["campaign"])) {
+    $campaign=$_POST["campaign"];
+}
+if (isset($_GET["query_date"])) {
+    $query_date=$_GET["query_date"];
+} elseif (isset($_POST["query_date"])) {
+    $query_date=$_POST["query_date"];
+}
+if (isset($_GET["end_date"])) {
+    $end_date=$_GET["end_date"];
+} elseif (isset($_POST["end_date"])) {
+    $end_date=$_POST["end_date"];
+}
+if (isset($_GET["drop_percent"])) {
+    $drop_percent=$_GET["drop_percent"];
+} elseif (isset($_POST["drop_percent"])) {
+    $drop_percent=$_POST["drop_percent"];
+}
+if (isset($_GET["shift"])) {
+    $shift=$_GET["shift"];
+} elseif (isset($_POST["shift"])) {
+    $shift=$_POST["shift"];
+}
+if (isset($_GET["erlang_type"])) {
+    $erlang_type=$_GET["erlang_type"];
+} elseif (isset($_POST["erlang_type"])) {
+    $erlang_type=$_POST["erlang_type"];
+}
+if (isset($_GET["actual_agents"])) {
+    $actual_agents=$_GET["actual_agents"];
+} elseif (isset($_POST["actual_agents"])) {
+    $actual_agents=$_POST["actual_agents"];
+}
+if (isset($_GET["hourly_pay"])) {
+    $hourly_pay=$_GET["hourly_pay"];
+} elseif (isset($_POST["hourly_pay"])) {
+    $hourly_pay=$_POST["hourly_pay"];
+}
+if (isset($_GET["revenue_per_sale"])) {
+    $revenue_per_sale=$_GET["revenue_per_sale"];
+} elseif (isset($_POST["revenue_per_sale"])) {
+    $revenue_per_sale=$_POST["revenue_per_sale"];
+}
+if (isset($_GET["sale_chance"])) {
+    $sale_chance=$_GET["sale_chance"];
+} elseif (isset($_POST["sale_chance"])) {
+    $sale_chance=$_POST["sale_chance"];
+}
+if (isset($_GET["retry_rate"])) {
+    $retry_rate=$_GET["retry_rate"];
+} elseif (isset($_POST["retry_rate"])) {
+    $retry_rate=$_POST["retry_rate"];
+}
+if (isset($_GET["target_pqueue"])) {
+    $target_pqueue=$_GET["target_pqueue"];
+} elseif (isset($_POST["target_pqueue"])) {
+    $target_pqueue=$_POST["target_pqueue"];
+}
+if (isset($_GET["file_download"])) {
+    $file_download=$_GET["file_download"];
+} elseif (isset($_POST["file_download"])) {
+    $file_download=$_POST["file_download"];
+}
+if (isset($_GET["submit"])) {
+    $submit=$_GET["submit"];
+} elseif (isset($_POST["submit"])) {
+    $submit=$_POST["submit"];
+}
+if (isset($_GET["SUBMIT"])) {
+    $SUBMIT=$_GET["SUBMIT"];
+} elseif (isset($_POST["SUBMIT"])) {
+    $SUBMIT=$_POST["SUBMIT"];
+}
+if (isset($_GET["DB"])) {
+    $DB=$_GET["DB"];
+} elseif (isset($_POST["DB"])) {
+    $DB=$_POST["DB"];
+}
+if (isset($_GET["report_display_type"])) {
+    $report_display_type=$_GET["report_display_type"];
+} elseif (isset($_POST["report_display_type"])) {
+    $report_display_type=$_POST["report_display_type"];
+}
+$DB=preg_replace("/[^0-9a-zA-Z]/", "", $DB);
 $MT[0]='';
 $NOW_DATE = date("Y-m-d");
 $NOW_TIME = date("Y-m-d H:i:s");
 $STARTtime = date("U");
-if (!isset($group)) {$group = array();}
-if (!isset($campaign)) {$campaign = array();}
-if (!isset($drop_percent)) {$drop_percent = '3';}
-if (!isset($query_date)) {$query_date = $NOW_DATE;}
-if (!isset($end_date)) {$end_date = $NOW_DATE;}
-if (strlen($shift)<2) {$shift='ALL';}
+if (!isset($group)) {
+    $group = array();
+}
+if (!isset($campaign)) {
+    $campaign = array();
+}
+if (!isset($drop_percent)) {
+    $drop_percent = '3';
+}
+if (!isset($query_date)) {
+    $query_date = $NOW_DATE;
+}
+if (!isset($end_date)) {
+    $end_date = $NOW_DATE;
+}
+if (strlen($shift)<2) {
+    $shift='ALL';
+}
 $report_name = 'Inbound Forecasting Report';
 $db_source = 'M';
-if ($ignore_afterhours=="checked") {$status_clause=" and status!='AFTHRS'";}
+if ($ignore_afterhours=="checked") {
+    $status_clause=" and status!='AFTHRS'";
+}
 $HTML_text="";
 $report_display_type="HTML";
 switch ($erlang_type) {
@@ -140,8 +210,7 @@ $JS_onload="onload = function() {\n";
 $stmt = "SELECT use_non_latin,outbound_autodial_active,slave_db_server,reports_use_slave_db,enable_languages,language_method,allow_web_debug FROM system_settings;";
 $rslt=mysql_to_mysqli($stmt, $link);
 $qm_conf_ct = mysqli_num_rows($rslt);
-if ($qm_conf_ct > 0)
-    {
+if ($qm_conf_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $non_latin =                    $row[0];
     $outbound_autodial_active =        $row[1];
@@ -150,8 +219,10 @@ if ($qm_conf_ct > 0)
     $SSenable_languages =            $row[4];
     $SSlanguage_method =            $row[5];
     $SSallow_web_debug =            $row[6];
-    }
-if ($SSallow_web_debug < 1) {$DB=0;}
+}
+if ($SSallow_web_debug < 1) {
+    $DB=0;
+}
 $query_date = preg_replace('/[^- \:\_0-9a-zA-Z]/', '', $query_date);
 $end_date = preg_replace('/[^- \:\_0-9a-zA-Z]/', '', $end_date);
 $actual_agents=preg_replace("/[^0-9.]/", "", $actual_agents);
@@ -166,122 +237,119 @@ $erlang_type = preg_replace('/[^-_0-9a-zA-Z]/', '', $erlang_type);
 $target_pqueue = preg_replace('/[^-_0-9a-zA-Z]/', '', $target_pqueue);
 $file_download = preg_replace('/[^-_0-9a-zA-Z]/', '', $file_download);
 $report_display_type = preg_replace('/[^-_0-9a-zA-Z]/', '', $report_display_type);
-if ($non_latin < 1)
-    {
+if ($non_latin < 1) {
     $PHP_AUTH_USER = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_USER);
     $PHP_AUTH_PW = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_PW);
     $shift = preg_replace('/[^-_0-9a-zA-Z]/', '', $shift);
-    }
-else
-    {
+} else {
     $PHP_AUTH_USER = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_USER);
     $PHP_AUTH_PW = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_PW);
     $shift = preg_replace('/[^-_0-9\p{L}]/u', '', $shift);
-    }
+}
 $stmt="SELECT selected_language from vicidial_users where user='$PHP_AUTH_USER';";
-if ($DB) {echo "|$stmt|\n";}
+if ($DB) {
+    echo "|$stmt|\n";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 $sl_ct = mysqli_num_rows($rslt);
-if ($sl_ct > 0)
-    {
+if ($sl_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $VUselected_language =        $row[0];
-    }
+}
 $auth=0;
 $reports_auth=0;
 $admin_auth=0;
-$auth_message = user_authorization($PHP_AUTH_USER,$PHP_AUTH_PW,'REPORTS',1,0);
-if ($auth_message == 'GOOD')
-    {$auth=1;}
-if ($auth > 0)
-    {
+$auth_message = user_authorization($PHP_AUTH_USER, $PHP_AUTH_PW, 'REPORTS', 1, 0);
+if ($auth_message == 'GOOD') {
+    $auth=1;
+}
+if ($auth > 0) {
     $stmt="SELECT count(*) from vicidial_users where user='$PHP_AUTH_USER' and user_level > 7 and view_reports='1';";
-    if ($DB) {echo "|$stmt|\n";}
+    if ($DB) {
+        echo "|$stmt|\n";
+    }
     $rslt=mysql_to_mysqli($stmt, $link);
     $row=mysqli_fetch_row($rslt);
     $admin_auth=$row[0];
     $stmt="SELECT count(*) from vicidial_users where user='$PHP_AUTH_USER' and user_level > 6 and view_reports='1';";
-    if ($DB) {echo "|$stmt|\n";}
+    if ($DB) {
+        echo "|$stmt|\n";
+    }
     $rslt=mysql_to_mysqli($stmt, $link);
     $row=mysqli_fetch_row($rslt);
     $reports_auth=$row[0];
-    if ($reports_auth < 1)
-        {
+    if ($reports_auth < 1) {
         $VDdisplayMESSAGE = "You are not allowed to view reports";
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
-    if ( ($reports_auth > 0) and ($admin_auth < 1) )
-        {
+    }
+    if (($reports_auth > 0) and ($admin_auth < 1)) {
         $ADD=999999;
         $reports_only_user=1;
-        }
     }
-else
-    {
+} else {
     $VDdisplayMESSAGE = _QXZ("Login incorrect, please try again");
-    if ($auth_message == 'LOCK')
-        {
+    if ($auth_message == 'LOCK') {
         $VDdisplayMESSAGE = _QXZ("Too many login attempts, try again in 15 minutes");
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
+    }
     Header("WWW-Authenticate: Basic realm=\"CONTACT-CENTER-ADMIN\"");
     Header("HTTP/1.0 401 Unauthorized");
     echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$PHP_AUTH_PW|$auth_message|\n";
     exit;
-    }
+}
 $stmt="SELECT user_group from vicidial_users where user='$PHP_AUTH_USER';";
-if ($DB) {$MAIN.="|$stmt|\n";}
+if ($DB) {
+    $MAIN.="|$stmt|\n";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 $row=mysqli_fetch_row($rslt);
 $LOGuser_group =            $row[0];
 $stmt="SELECT allowed_campaigns,allowed_reports,admin_viewable_groups,admin_viewable_call_times from vicidial_user_groups where user_group='$LOGuser_group';";
-if ($DB) {$MAIN.="|$stmt|\n";}
+if ($DB) {
+    $MAIN.="|$stmt|\n";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 $row=mysqli_fetch_row($rslt);
 $LOGallowed_campaigns =            $row[0];
 $LOGallowed_reports =            "$row[1],";
 $LOGadmin_viewable_groups =        $row[2];
 $LOGadmin_viewable_call_times =    $row[3];
-if ( (!preg_match("/$report_name,/",$LOGallowed_reports)) and (!preg_match("/ALL REPORTS/",$LOGallowed_reports)) )
-    {
+if ((!preg_match("/$report_name,/", $LOGallowed_reports)) and (!preg_match("/ALL REPORTS/", $LOGallowed_reports))) {
     Header("WWW-Authenticate: Basic realm=\"CONTACT-CENTER-ADMIN\"");
     Header("HTTP/1.0 401 Unauthorized");
     echo _QXZ("You are not allowed to view this report").": |$PHP_AUTH_USER|$report_name|\n";
     exit;
-    }
+}
 $LOGallowed_campaignsSQL='';
 $whereLOGallowed_campaignsSQL='';
-if ( (!preg_match('/\-ALL/i', $LOGallowed_campaigns)) )
-    {
-    $rawLOGallowed_campaignsSQL = preg_replace("/ -/",'',$LOGallowed_campaigns);
-    $rawLOGallowed_campaignsSQL = preg_replace("/ /","','",$rawLOGallowed_campaignsSQL);
+if ((!preg_match('/\-ALL/i', $LOGallowed_campaigns))) {
+    $rawLOGallowed_campaignsSQL = preg_replace("/ -/", '', $LOGallowed_campaigns);
+    $rawLOGallowed_campaignsSQL = preg_replace("/ /", "','", $rawLOGallowed_campaignsSQL);
     $LOGallowed_campaignsSQL = "and campaign_id IN('$rawLOGallowed_campaignsSQL')";
     $whereLOGallowed_campaignsSQL = "where campaign_id IN('$rawLOGallowed_campaignsSQL')";
-    }
+}
 $regexLOGallowed_campaigns = " $LOGallowed_campaigns ";
 $LOGadmin_viewable_groupsSQL='';
 $whereLOGadmin_viewable_groupsSQL='';
-if ( (!preg_match('/\-\-ALL\-\-/i',$LOGadmin_viewable_groups)) and (strlen($LOGadmin_viewable_groups) > 3) )
-    {
-    $rawLOGadmin_viewable_groupsSQL = preg_replace("/ -/",'',$LOGadmin_viewable_groups);
-    $rawLOGadmin_viewable_groupsSQL = preg_replace("/ /","','",$rawLOGadmin_viewable_groupsSQL);
+if ((!preg_match('/\-\-ALL\-\-/i', $LOGadmin_viewable_groups)) and (strlen($LOGadmin_viewable_groups) > 3)) {
+    $rawLOGadmin_viewable_groupsSQL = preg_replace("/ -/", '', $LOGadmin_viewable_groups);
+    $rawLOGadmin_viewable_groupsSQL = preg_replace("/ /", "','", $rawLOGadmin_viewable_groupsSQL);
     $LOGadmin_viewable_groupsSQL = "and user_group IN('---ALL---','$rawLOGadmin_viewable_groupsSQL')";
     $LOGadmin_viewable_and_null_groupsSQL = "and ( user_group IN('---ALL---','$rawLOGadmin_viewable_groupsSQL') OR (user_group is null AND user='VDCL')) )";
     $whereLOGadmin_viewable_groupsSQL = "where user_group IN('---ALL---','$rawLOGadmin_viewable_groupsSQL')";
-    }
+}
 $LOGadmin_viewable_call_timesSQL='';
 $whereLOGadmin_viewable_call_timesSQL='';
-if ( (!preg_match('/\-\-ALL\-\-/i', $LOGadmin_viewable_call_times)) and (strlen($LOGadmin_viewable_call_times) > 3) )
-    {
-    $rawLOGadmin_viewable_call_timesSQL = preg_replace("/ -/",'',$LOGadmin_viewable_call_times);
-    $rawLOGadmin_viewable_call_timesSQL = preg_replace("/ /","','",$rawLOGadmin_viewable_call_timesSQL);
+if ((!preg_match('/\-\-ALL\-\-/i', $LOGadmin_viewable_call_times)) and (strlen($LOGadmin_viewable_call_times) > 3)) {
+    $rawLOGadmin_viewable_call_timesSQL = preg_replace("/ -/", '', $LOGadmin_viewable_call_times);
+    $rawLOGadmin_viewable_call_timesSQL = preg_replace("/ /", "','", $rawLOGadmin_viewable_call_timesSQL);
     $LOGadmin_viewable_call_timesSQL = "and call_time_id IN('---ALL---','$rawLOGadmin_viewable_call_timesSQL')";
     $whereLOGadmin_viewable_call_timesSQL = "where call_time_id IN('---ALL---','$rawLOGadmin_viewable_call_timesSQL')";
-    }
+}
 $LOGip = getenv("REMOTE_ADDR");
 $LOGbrowser = getenv("HTTP_USER_AGENT");
 $LOGscript_name = getenv("SCRIPT_NAME");
@@ -289,184 +357,204 @@ $LOGserver_name = getenv("SERVER_NAME");
 $LOGserver_port = getenv("SERVER_PORT");
 $LOGrequest_uri = getenv("REQUEST_URI");
 $LOGhttp_referer = getenv("HTTP_REFERER");
-$LOGbrowser=preg_replace("/\'|\"|\\\\/","",$LOGbrowser);
-$LOGrequest_uri=preg_replace("/\'|\"|\\\\/","",$LOGrequest_uri);
-$LOGhttp_referer=preg_replace("/\'|\"|\\\\/","",$LOGhttp_referer);
-if (preg_match("/443/i",$LOGserver_port)) {$HTTPprotocol = 'https://';}
-  else {$HTTPprotocol = 'http://';}
-if (($LOGserver_port == '80') or ($LOGserver_port == '443') ) {$LOGserver_port='';}
-else {$LOGserver_port = ":$LOGserver_port";}
+$LOGbrowser=preg_replace("/\'|\"|\\\\/", "", $LOGbrowser);
+$LOGrequest_uri=preg_replace("/\'|\"|\\\\/", "", $LOGrequest_uri);
+$LOGhttp_referer=preg_replace("/\'|\"|\\\\/", "", $LOGhttp_referer);
+if (preg_match("/443/i", $LOGserver_port)) {
+    $HTTPprotocol = 'https://';
+} else {
+    $HTTPprotocol = 'http://';
+}
+if (($LOGserver_port == '80') or ($LOGserver_port == '443')) {
+    $LOGserver_port='';
+} else {
+    $LOGserver_port = ":$LOGserver_port";
+}
 $LOGfull_url = "$HTTPprotocol$LOGserver_name$LOGserver_port$LOGrequest_uri";
 $LOGhostname = php_uname('n');
-if (strlen($LOGhostname)<1) {$LOGhostname='X';}
-if (strlen($LOGserver_name)<1) {$LOGserver_name='X';}
+if (strlen($LOGhostname)<1) {
+    $LOGhostname='X';
+}
+if (strlen($LOGserver_name)<1) {
+    $LOGserver_name='X';
+}
 $stmt="SELECT webserver_id FROM vicidial_webservers where webserver='$LOGserver_name' and hostname='$LOGhostname' LIMIT 1;";
 $rslt=mysql_to_mysqli($stmt, $link);
-if ($DB) {echo "$stmt\n";}
+if ($DB) {
+    echo "$stmt\n";
+}
 $webserver_id_ct = mysqli_num_rows($rslt);
-if ($webserver_id_ct > 0)
-    {
+if ($webserver_id_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $webserver_id = $row[0];
-    }
-else
-    {
+} else {
     $stmt="INSERT INTO vicidial_webservers (webserver,hostname) values('$LOGserver_name','$LOGhostname');";
-    if ($DB) {echo "$stmt\n";}
+    if ($DB) {
+        echo "$stmt\n";
+    }
     $rslt=mysql_to_mysqli($stmt, $link);
     $affected_rows = mysqli_affected_rows($link);
     $webserver_id = mysqli_insert_id($link);
-    }
+}
 $stmt="INSERT INTO vicidial_report_log set event_date=NOW(), user='$PHP_AUTH_USER', ip_address='$LOGip', report_name='$report_name', browser='$LOGbrowser', referer='$LOGhttp_referer', notes='$LOGserver_name:$LOGserver_port $LOGscript_name |$query_date, $end_date, $shift, $file_download, $report_display_type|', url='$LOGfull_url', webserver='$webserver_id';";
-if ($DB) {echo "|$stmt|\n";}
+if ($DB) {
+    echo "|$stmt|\n";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 $report_log_id = mysqli_insert_id($link);
-if ( (strlen($slave_db_server)>5) and (preg_match("/$report_name/",$reports_use_slave_db)) )
-    {
+if ((strlen($slave_db_server)>5) and (preg_match("/$report_name/", $reports_use_slave_db))) {
     mysqli_close($link);
     $use_slave_server=1;
     $db_source = 'S';
     require("dbconnect_mysqli.php");
     $MAIN.="<!-- Using slave server $slave_db_server $db_source -->\n";
-    }
+}
 $stmt="SELECT user_group from vicidial_users where user='$PHP_AUTH_USER';";
-if ($DB) {$MAIN.="|$stmt|\n";}
+if ($DB) {
+    $MAIN.="|$stmt|\n";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 $row=mysqli_fetch_row($rslt);
 $LOGuser_group =            $row[0];
 $stmt="SELECT allowed_campaigns,allowed_reports,admin_viewable_groups,admin_viewable_call_times from vicidial_user_groups where user_group='$LOGuser_group';";
-if ($DB) {$MAIN.="|$stmt|\n";}
+if ($DB) {
+    $MAIN.="|$stmt|\n";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 $row=mysqli_fetch_row($rslt);
 $LOGallowed_campaigns =            $row[0];
 $LOGallowed_reports =            $row[1];
 $LOGadmin_viewable_groups =        $row[2];
 $LOGadmin_viewable_call_times =    $row[3];
-if ( (!preg_match("/$report_name/",$LOGallowed_reports)) and (!preg_match("/ALL REPORTS/",$LOGallowed_reports)) )
-    {
+if ((!preg_match("/$report_name/", $LOGallowed_reports)) and (!preg_match("/ALL REPORTS/", $LOGallowed_reports))) {
     Header("WWW-Authenticate: Basic realm=\"CONTACT-CENTER-ADMIN\"");
     Header("HTTP/1.0 401 Unauthorized");
     echo _QXZ("You are not allowed to view this report").": |$PHP_AUTH_USER|$report_name|\n";
     exit;
-    }
+}
 $stmt="SELECT campaign_id from vicidial_campaigns $whereLOGallowed_campaignsSQL order by campaign_id;";
-if ($DB) {$HTML_text.="$stmt\n";}
+if ($DB) {
+    $HTML_text.="$stmt\n";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 $campaigns_to_print = mysqli_num_rows($rslt);
 $i=0;
 $campaigns_string='|';
 $campaigns_selected=count($campaign);
 $campaigns=array();
-while ($i < $campaigns_to_print)
-    {
+while ($i < $campaigns_to_print) {
     $row=mysqli_fetch_row($rslt);
     $campaigns[$i] =        $row[0];
     $campaigns_string .= "$campaigns[$i]|";
     for ($j=0; $j<$campaigns_selected; $j++) {
-        if ($campaign[$j] && $campaigns[$i]==$campaign[$j]) {$campaign_name_str.="$campaigns[$i] - $campaign_names[$i], ";}
-        if ($campaign[$j]=="--ALL--") {$campaigns_selected_str.="'$campaigns[$i]', ";}
+        if ($campaign[$j] && $campaigns[$i]==$campaign[$j]) {
+            $campaign_name_str.="$campaigns[$i] - $campaign_names[$i], ";
+        }
+        if ($campaign[$j]=="--ALL--") {
+            $campaigns_selected_str.="'$campaigns[$i]', ";
+        }
     }
     $i++;
-    }
+}
 $stmt="select group_id,group_name from vicidial_inbound_groups $whereLOGadmin_viewable_groupsSQL order by group_id;";
 $rslt=mysql_to_mysqli($stmt, $link);
-if ($DB) {$MAIN.="$stmt\n";}
+if ($DB) {
+    $MAIN.="$stmt\n";
+}
 $groups_to_print = mysqli_num_rows($rslt);
 $i=0;
 $groups_string='|';
 $groups_selected=count($group);
 $groups=array();
 $group_names=array();
-while ($i < $groups_to_print)
-    {
+while ($i < $groups_to_print) {
     $row=mysqli_fetch_row($rslt);
     $groups[$i] =        $row[0];
     $group_names[$i] =    $row[1];
     $groups_string .= "$groups[$i]|";
     for ($j=0; $j<$groups_selected; $j++) {
-        if ($group[$j] && $groups[$i]==$group[$j]) {$group_name_str.="$groups[$i] - $group_names[$i], ";}
-        if ($group[$j]=="--ALL--") {$groups_selected_str.="'$groups[$i]', "; $all_groups_selected="selected";}
+        if ($group[$j] && $groups[$i]==$group[$j]) {
+            $group_name_str.="$groups[$i] - $group_names[$i], ";
+        }
+        if ($group[$j]=="--ALL--") {
+            $groups_selected_str.="'$groups[$i]', ";
+            $all_groups_selected="selected";
+        }
     }
     $i++;
-    }
+}
 $groups_selected_str=preg_replace('/, $/', '', $groups_selected_str);
 $group_name_str=preg_replace('/, $/', '', $group_name_str);
 $drop_percent=preg_replace("/[^\.0-9]/", "", $drop_percent);
-if ($drop_percent>100) {$drop_percent=100;}
+if ($drop_percent>100) {
+    $drop_percent=100;
+}
 $drop_rate=$drop_percent/100;
 $pqueue_target=$target_pqueue/100;
 $i=0;
 $group_string='|';
 $group_ct = count($group);
-while($i < $group_ct)
-    {
+while($i < $group_ct) {
     $group[$i] = preg_replace('/[^-_0-9\p{L}]/u', '', $group[$i]);
-    if (in_array("--ALL--", $group))
-        {
+    if (in_array("--ALL--", $group)) {
         $group_string = "--ALL--";
         $group_SQL .= "'$group[$i]',";
         $groupQS = "&group[]=--ALL--";
-        }
-    if ( (strlen($group[$i]) > 0) and (preg_match("/\|$group[$i]\|/",$groups_string)) )
-        {
+    }
+    if ((strlen($group[$i]) > 0) and (preg_match("/\|$group[$i]\|/", $groups_string))) {
         $group_string .= "$group[$i]|";
         $group_SQL .= "'$group[$i]',";
         $groupQS .= "&group[]=$group[$i]";
-        }
+    }
     $i++;
-    }
-if ( (preg_match('/\-\-NONE\-\-/',$group_string) ) or ($group_ct < 1) )
-    {
+}
+if ((preg_match('/\-\-NONE\-\-/', $group_string)) or ($group_ct < 1)) {
     $group_SQL = "''";
-    }
-else
-    {
-    $group_SQL = preg_replace('/,$/i', '',$group_SQL);
-    }
-if (strlen($group_SQL)<3) {$group_SQL="''";}
+} else {
+    $group_SQL = preg_replace('/,$/i', '', $group_SQL);
+}
+if (strlen($group_SQL)<3) {
+    $group_SQL="''";
+}
 $i=0;
 $campaign_string='|';
 $campaign_ct = count($campaign);
-while($i < $campaign_ct)
-    {
+while($i < $campaign_ct) {
     $campaign[$i] = preg_replace('/[^-_0-9\p{L}]/u', '', $campaign[$i]);
-    if (in_array("--ALL--", $campaign))
-        {
+    if (in_array("--ALL--", $campaign)) {
         $campaign_string = "--ALL--";
         $campaign_SQL .= "'$campaign[$i]',";
         $campaignQS = "&campaign[]=--ALL--";
-        }
-    else if ( (strlen($campaign[$i]) > 0) and (preg_match("/\|$campaign[$i]\|/",$campaigns_string)) )
-        {
+    } elseif ((strlen($campaign[$i]) > 0) and (preg_match("/\|$campaign[$i]\|/", $campaigns_string))) {
         $campaign_string .= "$campaign[$i]|";
         $campaign_SQL .= "'$campaign[$i]',";
         $campaignQS .= "&campaign[]=$campaign[$i]";
-        }
+    }
     $i++;
-    }
-if ( (preg_match('/\-\-NONE\-\-/',$campaign_string) ) or ($campaign_ct < 1) )
-    {
+}
+if ((preg_match('/\-\-NONE\-\-/', $campaign_string)) or ($campaign_ct < 1)) {
     $campaign_SQL = "''";
-    }
-else
-    {
-    $campaign_SQL = preg_replace('/,$/i', '',$campaign_SQL);
-    }
-if (strlen($campaign_SQL)<3) {$campaign_SQL="''";}
+} else {
+    $campaign_SQL = preg_replace('/,$/i', '', $campaign_SQL);
+}
+if (strlen($campaign_SQL)<3) {
+    $campaign_SQL="''";
+}
 $stmt="select call_time_id,call_time_name from vicidial_call_times $whereLOGadmin_viewable_call_timesSQL order by call_time_id;";
 $rslt=mysql_to_mysqli($stmt, $link);
-if ($DB) {$MAIN.="$stmt\n";}
+if ($DB) {
+    $MAIN.="$stmt\n";
+}
 $times_to_print = mysqli_num_rows($rslt);
 $i=0;
 $call_times=array();
 $call_time_names=array();
-while ($i < $times_to_print)
-    {
+while ($i < $times_to_print) {
     $row=mysqli_fetch_row($rslt);
     $call_times[$i] =        $row[0];
     $call_time_names[$i] =    $row[1];
     $i++;
-    }
+}
 require("screen_colors.php");
 $NWB = "<IMG SRC=\"help.png\" onClick=\"FillAndShowHelpDiv(event, '";
 $NWE = "')\" WIDTH=20 HEIGHT=20 BORDER=0 ALT=\"HELP\" ALIGN=TOP>";
@@ -496,7 +584,7 @@ $HEADER.="<div id='HelpDisplayDiv' class='help_info' style='display:none;'></div
 $HEADER.="<script language=\"JavaScript\" src=\"calendar_db.js\"></script>\n";
 $HEADER.="<link rel=\"stylesheet\" href=\"calendar.css\">\n";
 $HEADER.="<link rel=\"stylesheet\" href=\"horizontalbargraph.css\">\n";
-$HEADER.="<script src='chart/Chart.js'></script>\n"; 
+$HEADER.="<script src='chart/Chart.js'></script>\n";
 $HEADER.="<script language=\"JavaScript\" src=\"vicidial_chart_functions.js\"></script>\n";
 $HEADER.="<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=utf-8\">\n";
 $HEADER.="<TITLE>"._QXZ("$report_name")."</TITLE></HEAD><BODY BGCOLOR=WHITE marginheight=0 marginwidth=0 leftmargin=0 topmargin=0>\n";
@@ -539,8 +627,7 @@ $MAIN.="<option value=\"--ALL--\"".(in_array("--ALL--", $campaign) ? " selected"
 $MAIN.="<option value=\"--NONE--\"".(in_array("--NONE--", $campaign) ? " selected" : "").">-- "._QXZ("NONE")." --</option>\n";
 $o=0;
 $campaign_SQL="";
-while ($campaigns_to_print > $o)
-{
+while ($campaigns_to_print > $o) {
     $selected="";
     if (in_array($campaigns[$o], $campaign) && !in_array("--ALL--", $campaign)) {
         $selected="selected";
@@ -558,52 +645,53 @@ $MAIN.="<TD VALIGN=TOP> <B>"._QXZ("In-groups").":</B><BR><SELECT SIZE=5 NAME=gro
 $MAIN.="<option value=\"--ALL--\"".(in_array("--ALL--", $group) ? " selected" : "").">--"._QXZ("ALL INGROUPS")."--</option>\n";
 $MAIN.="<option value=\"--NONE--\"".(in_array("--NONE--", $group) ? " selected" : "").">-- "._QXZ("NONE")." --</option>\n";
 $o=0;
-while ($groups_to_print > $o)
-    {
+while ($groups_to_print > $o) {
     $selected="";
-    if (in_array($groups[$o], $group) && !in_array("--ALL--", $group)) {$selected="selected";}
+    if (in_array($groups[$o], $group) && !in_array("--ALL--", $group)) {
+        $selected="selected";
+    }
     $MAIN.="<option $selected value=\"$groups[$o]\">$groups[$o] - $group_names[$o]</option>\n";
     $o++;
-    }
+}
 $MAIN.="</SELECT>\n";
 $MAIN.="</TD>\n";
 $MAIN.="<TD VALIGN=TOP>";
 $MAIN.="<input type='hidden' name='erlang_type' value='B'>";
 $MAIN.="<input type='hidden' name='report_display_rate' value='HTML'>";
-if ($IDR_calltime_available==1)
-    {
+if ($IDR_calltime_available==1) {
     $MAIN.="<SELECT SIZE=1 NAME='shift'>\n";
     $MAIN.="<option value=\"\">--</option>\n";
     $o=0;
-    while ($times_to_print > $o)
-        {
-        if ($call_times[$o] == $shift) {$MAIN.="<option selected value=\"$call_times[$o]\">$call_times[$o] - $call_time_names[$o]</option>\n";}
-        else {$MAIN.="<option value=\"$call_times[$o]\">$call_times[$o] - $call_time_names[$o]</option>\n";}
-        $o++;
+    while ($times_to_print > $o) {
+        if ($call_times[$o] == $shift) {
+            $MAIN.="<option selected value=\"$call_times[$o]\">$call_times[$o] - $call_time_names[$o]</option>\n";
+        } else {
+            $MAIN.="<option value=\"$call_times[$o]\">$call_times[$o] - $call_time_names[$o]</option>\n";
         }
-    $MAIN.="</SELECT>\n";
+        $o++;
     }
+    $MAIN.="</SELECT>\n";
+}
 $MAIN.="<BR><INPUT TYPE=submit NAME='SUBMIT' VALUE='"._QXZ("SUBMIT")."'><BR><BR><FONT FACE=\"Arial,Helvetica\" size=2><a href=\"./Erlang_report.php\">"._QXZ("Advanced Forecasting Report")."</a></FONT><BR><BR><FONT FACE=\"Arial,Helvetica\" size=2><a href=\"$PHP_SELF?query_date=$query_date&end_date=$end_date&drop_percent=$drop_percent&actual_agents=$actual_agents&hourly_pay=$hourly_pay&revenue_per_sale=$revenue_per_sale&sale_chance=$sale_chance&retry_rate=$retry_rate$campaignQS$groupQS&SUBMIT=$SUBMIT&file_download=1\">"._QXZ("DOWNLOAD")."</a></FONT> | <FONT FACE=\"Arial,Helvetica\" size=2><a href=\"./admin.php?ADD=999999\">"._QXZ("REPORTS")."</a></FONT></TD></TR></TABLE>\n";
 $MAIN.="<PRE><FONT SIZE=2>";
-if ($groups_selected==0 && $campaigns_selected==0)
-    {
+if ($groups_selected==0 && $campaigns_selected==0) {
     $MAIN.="\n\n";
     $MAIN.=_QXZ("PLEASE SELECT AN IN-GROUP AND DATE RANGE ABOVE AND CLICK SUBMIT")."\n";
     echo "$HEADER";
     require("admin_header.php");
     echo "$MAIN";
-    }
-else
-    {
+} else {
     $campaign_group_stmt="select closer_campaigns from vicidial_campaigns where campaign_id in ($campaign_SQL)";
-    if ($DB) {echo "|$campaign_group_stmt|\n";}
+    if ($DB) {
+        echo "|$campaign_group_stmt|\n";
+    }
     $campaign_group_rslt=mysql_to_mysqli($campaign_group_stmt, $link);
     $campaign_group_SQL="";
     while ($cg_row=mysqli_fetch_row($campaign_group_rslt)) {
         if (strlen(trim($cg_row[0]))>0) {
             $cg_row[0]=preg_replace("/^\s+|\s\-/", "", $cg_row[0]);
             $campaign_group_SQL.="'".preg_replace("/\s/", "','", $cg_row[0])."',";
-        }        
+        }
     }
     $campaign_group_SQL=$group_SQL.",".$campaign_group_SQL;
     $campaign_group_SQL=preg_replace("/^,|,$/", "", $campaign_group_SQL);
@@ -616,7 +704,9 @@ else
     $HTML_text.=" Campaigns  :  ".preg_replace("/\|/", ", ", $campaign_string)."\n";
     $HTML_text.=" In-groups  :  ".preg_replace("/\|/", ", ", $group_string)."";
     $sale_stmt="select distinct status from vicidial_campaign_statuses where campaign_id in ($campaign_SQL) and sale='Y' UNION select status from vicidial_statuses where sale='Y'";
-    if ($DB) {echo "|$sale_stmt|\n";}
+    if ($DB) {
+        echo "|$sale_stmt|\n";
+    }
     $sale_rslt=mysql_to_mysqli($sale_stmt, $link);
     $sales_array=array();
     while ($sale_row=mysqli_fetch_row($sale_rslt)) {
@@ -631,9 +721,15 @@ else
         $avg_stmt="select avg(length_in_sec) as avg_length from vicidial_log where length_in_sec is not null and campaign_id in ($campaign_SQL) and call_date>='$query_date 00:00:00' and call_date<='$end_date 23:59:59'"; # **
         $wrapup_stmt="select uniqueid from vicidial_log where length_in_sec is not null and user!='VDAD' and campaign_id in ($campaign_SQL) and call_date>='$query_date 00:00:00' and call_date<='$end_date 23:59:59'"; # ***
     }
-    if ($DB) {echo "|$hour_stmt|\n";}
-    if ($DB) {echo "|$avg_stmt|\n";}
-    if ($DB) {echo "|$wrapup_stmt|\n";}
+    if ($DB) {
+        echo "|$hour_stmt|\n";
+    }
+    if ($DB) {
+        echo "|$avg_stmt|\n";
+    }
+    if ($DB) {
+        echo "|$wrapup_stmt|\n";
+    }
     $hour_rslt=mysql_to_mysqli($hour_stmt, $link); # *
     $erlang_calls=mysqli_num_rows($hour_rslt);
     $avg_rslt=mysql_to_mysqli($avg_stmt, $link); # **
@@ -641,7 +737,7 @@ else
     $average_call_length=$avg_row["avg_length"];
     $wrapup_rslt=mysql_to_mysqli($wrapup_stmt, $link); # ***
     $wrapup_calls=mysqli_num_rows($wrapup_rslt);
-    $uid_ct=0; 
+    $uid_ct=0;
     $uid_clause="";
     $dispo_secs=0;
     $talk_secs=0;
@@ -697,12 +793,16 @@ else
         }
     }
     $hours_active=count($erlang_array); # Used for giving total erlangs for day, need to divide by number of hours reported, not one hour
-    $total_erlangs=MathZDC(($erlang_calls*$average_call_length),(3600*$hours_active));
+    $total_erlangs=MathZDC(($erlang_calls*$average_call_length), (3600*$hours_active));
     $total_blocking=MathZDC($drops_blocks, $erlang_calls);
     $sale_percent=MathZDC($sales, $erlang_calls);
     $rpt_header ="+-----------------+-------+-------+------------+----------+-------------+----------+---------+";
-    if ($erlang_type=="B") {$rpt_header.="---------+";}
-    if ($erlang_type=="C") {$rpt_header.="------------+------------+";}
+    if ($erlang_type=="B") {
+        $rpt_header.="---------+";
+    }
+    if ($erlang_type=="C") {
+        $rpt_header.="------------+------------+";
+    }
     $rpt_header.="------------+------------+------------+----------+-----------+------------+------------+------------+\n";
     $ASCII_text.=$rpt_header;
     if ($erlang_type=="B") {
@@ -716,7 +816,7 @@ else
         $ASCII_text.="| ".sprintf("%70s", _QXZ("Sale rate: ")).sprintf("%-5.2f", (100*$sale_percent)).sprintf("%-126s", " %")." |\n";
         $ASCII_text.="| ".sprintf("%70s", _QXZ("Average call duration: ")).sprintf("%-131.2f", "$average_call_length")." |\n";
         $ASCII_text.="| ".sprintf("%70s", _QXZ("Erlangs: ")).sprintf("%-131.4f", $total_erlangs)." |\n";
-    } 
+    }
     if ($erlang_type=="C") {
         if ($actual_agents>0) {
             $ASCII_text.="| ".sprintf("%70s", _QXZ("Actual agents: ")).sprintf("%-147s", "$actual_agents")." |\n";
@@ -750,7 +850,9 @@ else
             while ($GoS>$total_blocking) {
                 $lines++;
                 $GoS=MathZDC((pow($total_erlangs, $lines)/(factorial($lines))), (erlsum(0, $lines, $total_erlangs)));
-                if ($retry_rate>0 && $erlang_type=="B") {$GoS=adjustedGoS($total_erlangs, $GoS, $retry_rate, $lines);} #"B" allows for retry rates, "C" does not.
+                if ($retry_rate>0 && $erlang_type=="B") {
+                    $GoS=adjustedGoS($total_erlangs, $GoS, $retry_rate, $lines);
+                } #"B" allows for retry rates, "C" does not.
                 $ASCII_text.=" $GoS \n";
             }
             $ASCII_text.="\n-->";
@@ -762,16 +864,18 @@ else
         $Pqueue=0;
         $ASA=0;
     }
-    if ($Pqueue>1) {$Pqueue=1;}
+    if ($Pqueue>1) {
+        $Pqueue=1;
+    }
     $est_GoS=$GoS;  # Need this here since we moved the output line further down & need to save it.
     $est_lines=$lines;  # Need this here since we moved the output line further down & need to save it.
     if ($erlang_type=="B") {
         $ASCII_text.="| ".sprintf("%70s", _QXZ("Grade of service: ")).sprintf("%-131s", sprintf("%0.2f", (100*$GoS)." %"))." |\n"; # B
         $ASCII_text.="| ".sprintf("%70s", _QXZ("Estimated agents fielding calls: ")).sprintf("%-131s", $lines)." |\n";
-    } 
+    }
     if ($erlang_type=="C") {
         $ASCII_text.="| ".sprintf("%70s", _QXZ("Estimated queue probability: ")).sprintf("%-5.2f", (100*$Pqueue)).sprintf("%-142s", " %")." |\n"; # C
-        $ASCII_text.="| ".sprintf("%70s", _QXZ("Average speed of answering: ")).sprintf("%-147s", sec_convert($ASA,'H'))." |\n"; # C
+        $ASCII_text.="| ".sprintf("%70s", _QXZ("Average speed of answering: ")).sprintf("%-147s", sec_convert($ASA, 'H'))." |\n"; # C
         $ASCII_text.="| ".sprintf("%70s", _QXZ("Estimated agents fielding calls: ")).sprintf("%-147s", $lines)." |\n";
     }
     if ($erlang_type=="B") {
@@ -779,14 +883,14 @@ else
     }
     if ($erlang_type=="C") {
         $CSV_text.="\""._QXZ("Estimated queue probability: ")."\",\"".sprintf("%.2f", (100*$Pqueue))."%\"\n"; # C
-        $CSV_text.="\""._QXZ("Average speed of answering: ")."\",\"".sec_convert($ASA,'H')."\"\n"; # C
+        $CSV_text.="\""._QXZ("Average speed of answering: ")."\",\"".sec_convert($ASA, 'H')."\"\n"; # C
     }
     $CSV_text.="\""._QXZ("Estimated agents fielding calls: ")."\",\"$lines\"\n";
     if ($erlang_type=="B") {
     }
     if ($erlang_type=="C") {
         $HTML_text.="<tr class='records_list_x'><td><font size=1>"._QXZ("Estimated queue probability: ")."</font></td><td><font size=1>".sprintf("%.2f", (100*$Pqueue))."%</font></td></tr>"; # C
-        $HTML_text.="<tr class='records_list_y'><td><font size=1>"._QXZ("Average speed of answering: ")."</font></td><td><font size=1>".sec_convert($ASA,'H')."</font></td></tr>"; # C
+        $HTML_text.="<tr class='records_list_y'><td><font size=1>"._QXZ("Average speed of answering: ")."</font></td><td><font size=1>".sec_convert($ASA, 'H')."</font></td></tr>"; # C
     }
     $lines=1;
     if ($erlang_type=="B") {
@@ -796,7 +900,9 @@ else
             while ($GoS>$drop_rate) {
                 $lines++;
                 $GoS=MathZDC((pow($total_erlangs, $lines)/(factorial($lines))), (erlsum(0, $lines, $total_erlangs)));
-                if ($retry_rate>0) {$GoS=adjustedGoS($total_erlangs, $GoS, $retry_rate, $lines);}
+                if ($retry_rate>0) {
+                    $GoS=adjustedGoS($total_erlangs, $GoS, $retry_rate, $lines);
+                }
                 $ASCII_text.=" $GoS \n";
             }
             $ASCII_text.="\n-->";
@@ -820,16 +926,24 @@ else
         $ASCII_text.="| ".sprintf("%70s", _QXZ("Recommended agent count: ")).sprintf("%-147s", $lines)." |\n";
     }
     $CSV_text.="\"Recommended agent count:\",\"$lines\"\n";
-    $CSV_text.="\n";    
+    $CSV_text.="\n";
     $ASCII_text.=$rpt_header;
     $ASCII_text.= "| "._QXZ("CALLING HOUR", 15)." | "._QXZ("CALLS", 5)." | "._QXZ("SALES", 5)." | "._QXZ("TOTAL TIME", 10)." | "._QXZ("AVG TIME", 8)." | "._QXZ("DROPPED HRS", 11)." | "._QXZ("BLOCKING", 8)." | "._QXZ("ERLANGS", 7);
-    if ($erlang_type=="B") {$ASCII_text.=" | "._QXZ("GOS", 7);} # B
-    if ($erlang_type=="C") {$ASCII_text.=" | "._QXZ("QUEUE PROB", 10)." | "._QXZ("AVG ANSWER", 10);} # C
+    if ($erlang_type=="B") {
+        $ASCII_text.=" | "._QXZ("GOS", 7);
+    } # B
+    if ($erlang_type=="C") {
+        $ASCII_text.=" | "._QXZ("QUEUE PROB", 10)." | "._QXZ("AVG ANSWER", 10);
+    } # C
     $ASCII_text.=" | "._QXZ("REC AGENTS", 10)." | "._QXZ("EST AGENTS", 10)." | "._QXZ("CALLS/AGNT", 10)." |\n"; #  ." | "._QXZ("REV/CALL", 8)." | "._QXZ("REV/AGENT", 9)." | "._QXZ("TOTAL REV", 10)." | "._QXZ("TOTAL COST", 10)." | "._QXZ("MARGIN", 10)
     $ASCII_text.=$rpt_header;
     $CSV_text.="\""._QXZ("CALLING HOUR")."\",\""._QXZ("CALLS")."\",\""._QXZ("SALES")."\",\""._QXZ("TOTAL TIME")."\",\""._QXZ("AVG TIME")."\",\""._QXZ("DROPPED HRS")."\",\""._QXZ("BLOCKING")."\",\""._QXZ("ERLANGS")."\",";
-    if ($erlang_type=="B") {$CSV_text.="\""._QXZ("GRADE OF SERVICE")."\",";} # B
-    if ($erlang_type=="C") {$CSV_text.="\""._QXZ("QUEUE PROBABILITY")."\",\""._QXZ("AVERAGE ANSWER SPEED")."\",";} # C
+    if ($erlang_type=="B") {
+        $CSV_text.="\""._QXZ("GRADE OF SERVICE")."\",";
+    } # B
+    if ($erlang_type=="C") {
+        $CSV_text.="\""._QXZ("QUEUE PROBABILITY")."\",\""._QXZ("AVERAGE ANSWER SPEED")."\",";
+    } # C
     $CSV_text.="\""._QXZ("REC AGENTS")."\",\""._QXZ("EST AGENTS")."\",\""._QXZ("CALLS/AGNT")."\"\n"; # ,\""._QXZ("REV/CALL")."\",\""._QXZ("REV/AGENT")."\",\""._QXZ("TOTAL REV")."\",\""._QXZ("TOTAL COST")."\",\""._QXZ("MARGIN")."\"
     ksort($erlang_array);
     $HTML_text2="</td><td valign='top'style=\"padding: 3px 0px 0px 10px;\">";
@@ -876,8 +990,14 @@ else
     $graph_stats=array();
     $q=0;
     foreach($erlang_array as $key => $val) {
-        if ($val[0]>$bht) {$bht=$val[0];}
-        if ($q%2==0) {$tdclass="records_list_x";} else {$tdclass="records_list_y";}
+        if ($val[0]>$bht) {
+            $bht=$val[0];
+        }
+        if ($q%2==0) {
+            $tdclass="records_list_x";
+        } else {
+            $tdclass="records_list_y";
+        }
         $average_time=round(MathZDC($val[0], $val[2]));
         $blocking=MathZDC($val[3], $val[2]);
         $erlangs=$val[2]*MathZDC($average_time, 3600); # Row is call per hour, therefore call length average must be in hours.
@@ -889,24 +1009,24 @@ else
         $ASCII_text.=" | ";
         $ASCII_text.=sprintf("%5s", $sales);
         $ASCII_text.=" | ";
-        $ASCII_text.=sprintf("%10s", sec_convert($val[0],'H'));
+        $ASCII_text.=sprintf("%10s", sec_convert($val[0], 'H'));
         $ASCII_text.=" | ";
-        $ASCII_text.=sprintf("%8s", sec_convert($average_time,'H'));
+        $ASCII_text.=sprintf("%8s", sec_convert($average_time, 'H'));
         $ASCII_text.=" | ";
-        $ASCII_text.=sprintf("%11s", sec_convert($val[1],'H'));
+        $ASCII_text.=sprintf("%11s", sec_convert($val[1], 'H'));
         $ASCII_text.=" | ";
         $ASCII_text.=sprintf("%8s", sprintf("%01.4f", $blocking));
         $ASCII_text.=" | ";
-        $ASCII_text.=sprintf("%7s", sprintf("%01.4f", $erlangs)); 
+        $ASCII_text.=sprintf("%7s", sprintf("%01.4f", $erlangs));
         $ASCII_text.=" | ";
-        $CSV_text.="\"".date("Y-m-d ha", mktime(substr($key, -2), 0, 0, substr($key, 5, 2), substr($key, 8, 2), substr($key, 0, 4)))."\",\"".$val[2]."\",\"".$sales."\",\"".sec_convert($val[0],'H')."\",\"".sec_convert($average_time,'H')."\",\"".sec_convert($val[1],'H')."\",\"".sprintf("%01.4f", $blocking)."\",\"".sprintf("%01.4f", $erlangs)."\",";
+        $CSV_text.="\"".date("Y-m-d ha", mktime(substr($key, -2), 0, 0, substr($key, 5, 2), substr($key, 8, 2), substr($key, 0, 4)))."\",\"".$val[2]."\",\"".$sales."\",\"".sec_convert($val[0], 'H')."\",\"".sec_convert($average_time, 'H')."\",\"".sec_convert($val[1], 'H')."\",\"".sprintf("%01.4f", $blocking)."\",\"".sprintf("%01.4f", $erlangs)."\",";
         $HTML_text2.="<tr class='$tdclass'>\n";
         $HTML_text2.="<td><font size=1>".date("Y-m-d ha", mktime(substr($key, -2), 0, 0, substr($key, 5, 2), substr($key, 8, 2), substr($key, 0, 4)))."</font></td>\n";
         $HTML_text2.="<td><font size=1>".$val[2]."</font></td>\n";
         $HTML_text2.="<td><font size=1>".$sales."</font></td>\n";
-        $HTML_text2.="<td><font size=1>".sec_convert($val[0],'H')."</font></td>\n";
-        $HTML_text2.="<td><font size=1>".sec_convert($average_time,'H')."</font></td>\n";
-        $HTML_text2.="<td><font size=1>".sec_convert($val[1],'H')."</font></td>\n";
+        $HTML_text2.="<td><font size=1>".sec_convert($val[0], 'H')."</font></td>\n";
+        $HTML_text2.="<td><font size=1>".sec_convert($average_time, 'H')."</font></td>\n";
+        $HTML_text2.="<td><font size=1>".sec_convert($val[1], 'H')."</font></td>\n";
         $HTML_text2.="<td><font size=1>".sprintf("%01.4f", $blocking)."</font></td>\n";
         $HTML_text2.="<td><font size=1>".sprintf("%01.4f", $erlangs)."</font></td>\n";
         $graph_key=date("Y-m-d ha", mktime(substr($key, -2), 0, 0, substr($key, 5, 2), substr($key, 8, 2), substr($key, 0, 4)));
@@ -924,7 +1044,9 @@ else
                 while ($GoS>$drop_rate) {
                     $lines++;
                     $GoS=MathZDC((pow($erlangs, $lines)/(factorial($lines))), (erlsum(0, $lines, $erlangs)));
-                    if ($retry_rate>0) {$GoS=adjustedGoS($erlangs, $GoS, $retry_rate, $lines);}
+                    if ($retry_rate>0) {
+                        $GoS=adjustedGoS($erlangs, $GoS, $retry_rate, $lines);
+                    }
                     $ASCII_text.=" $GoS \n";
                 }
                 $ASCII_text.="\n-->";
@@ -951,7 +1073,9 @@ else
                 while ($GoS>$blocking) {
                     $lines++;
                     $GoS=MathZDC((pow($erlangs, $lines)/(factorial($lines))), (erlsum(0, $lines, $erlangs)));
-                    if ($retry_rate>0 && $erlang_type=="B") {$GoS=adjustedGoS($erlangs, $GoS, $retry_rate, $lines);}  # "B" allows for retry rates, "C" does not
+                    if ($retry_rate>0 && $erlang_type=="B") {
+                        $GoS=adjustedGoS($erlangs, $GoS, $retry_rate, $lines);
+                    }  # "B" allows for retry rates, "C" does not
                     $ASCII_text.=" $GoS \n";
                 }
                 $ASCII_text.="\n-->";
@@ -968,15 +1092,17 @@ else
             $Pqueue=0;
             $ASA=0;
         }
-        if ($Pqueue>1) {$Pqueue=1;}
+        if ($Pqueue>1) {
+            $Pqueue=1;
+        }
         if ($erlang_type=="B") {
-            $ASCII_text.=sprintf("%7s", sprintf("%0.2f", (100*$GoS))."%"); 
+            $ASCII_text.=sprintf("%7s", sprintf("%0.2f", (100*$GoS))."%");
             $ASCII_text.=" | ";
         }
         if ($erlang_type=="C") {
-            $ASCII_text.=sprintf("%10s", sprintf("%.4f", (100*$Pqueue))."%"); 
+            $ASCII_text.=sprintf("%10s", sprintf("%.4f", (100*$Pqueue))."%");
             $ASCII_text.=" | ";
-            $ASCII_text.=sprintf("%10s", sec_convert($ASA,'H')); 
+            $ASCII_text.=sprintf("%10s", sec_convert($ASA, 'H'));
             $ASCII_text.=" | ";
         }
         $ASCII_text.=sprintf("%10s", $recommended_agents);
@@ -986,7 +1112,7 @@ else
         }
         if ($erlang_type=="C") {
             $CSV_text.="\"".sprintf("%.6f", (100*$Pqueue))."%\","; # C
-            $CSV_text.="\"".sec_convert($ASA,'H')."\","; # C
+            $CSV_text.="\"".sec_convert($ASA, 'H')."\","; # C
         }
         $CSV_text.="\"$recommended_agents\",";
         $graph_stats["$graph_key"][7]=$recommended_agents;
@@ -995,7 +1121,7 @@ else
         }
         if ($erlang_type=="C") {
             $HTML_text2.="<td><font size=1>".sprintf("%.4f", (100*$Pqueue))."%</font></td>\n"; # C
-            $HTML_text2.="<td><font size=1>".sec_convert($ASA,'H')." </font></td>\n"; # C
+            $HTML_text2.="<td><font size=1>".sec_convert($ASA, 'H')." </font></td>\n"; # C
         }
         $HTML_text2.="<td><font size=1>$recommended_agents</font></td>\n";
         $ASCII_text.=sprintf("%10s", $lines);
@@ -1007,22 +1133,22 @@ else
         $CSV_text.="\"".sprintf("%.2f", MathZDC($val[2], $lines))."\",";
         $graph_stats["$graph_key"][6]=$lines;
         $graph_stats["$graph_key"][8]=$drop_rate;
-        $graph_stats["$graph_key"][9]=$sales; 
-        $graph_stats["$graph_key"][10]=number_format(MathZDC(($revenue_per_sale*$sales), $val[2]),2,".",""); # Revenue per call 
-        $graph_stats["$graph_key"][11]=number_format(MathZDC(($revenue_per_sale*$sales), $lines),2,".",""); # Revenue per agent 
-        $graph_stats["$graph_key"][12]=number_format(($revenue_per_sale*$sales),2,".",""); # Total revenue 
-        $graph_stats["$graph_key"][13]=number_format(($lines*$hourly_pay),2,".",""); # Cost 
-        $graph_stats["$graph_key"][14]=number_format((($revenue_per_sale*$sales)-($lines*$hourly_pay)),2,".",",");
-        $graph_stats["$graph_key"][15]=$GoS; 
-        $graph_stats["$graph_key"][16]=$Pqueue; # Cost 
-        $graph_stats["$graph_key"][17]=$ASA; # Cost 
+        $graph_stats["$graph_key"][9]=$sales;
+        $graph_stats["$graph_key"][10]=number_format(MathZDC(($revenue_per_sale*$sales), $val[2]), 2, ".", ""); # Revenue per call
+        $graph_stats["$graph_key"][11]=number_format(MathZDC(($revenue_per_sale*$sales), $lines), 2, ".", ""); # Revenue per agent
+        $graph_stats["$graph_key"][12]=number_format(($revenue_per_sale*$sales), 2, ".", ""); # Total revenue
+        $graph_stats["$graph_key"][13]=number_format(($lines*$hourly_pay), 2, ".", ""); # Cost
+        $graph_stats["$graph_key"][14]=number_format((($revenue_per_sale*$sales)-($lines*$hourly_pay)), 2, ".", ",");
+        $graph_stats["$graph_key"][15]=$GoS;
+        $graph_stats["$graph_key"][16]=$Pqueue; # Cost
+        $graph_stats["$graph_key"][17]=$ASA; # Cost
         $HTML_text2.="<td><font size=1>$lines</font></td>\n";
         $HTML_text2.="<td><font size=1>".sprintf("%.2f", ($val[2]/$lines))."</font></td>\n";
         $HTML_text2.="</tr>\n";
         $q++;
     }
     $ASCII_text.=$rpt_header;
-    $ASCII_text.=" BHT:  ".sec_convert($bht,'H')." ($bht seconds)\n";
+    $ASCII_text.=" BHT:  ".sec_convert($bht, 'H')." ($bht seconds)\n";
     $HTML_text2.="</table>";
     $multigraph_text="";
     $graph_id++;
@@ -1034,17 +1160,17 @@ else
         array_push($graph_array, "ERL_PQUEUEdata|16|QUEUE|percent|Call queue probability");
     }
     $default_graph="line"; # Graph that is initally displayed when page loads
-    include("graph_color_schemas.inc"); 
+    include("graph_color_schemas.inc");
     $graph_colors=array("216,0,0", "0,0,216", "0,216,0", "216,216,0", "216,0,216", "0,216,216");
     $graph_totals_array=array();
     $graph_totals_rawdata=array();
     for ($q=0; $q<count($graph_array); $q++) {
-        $graph_info=explode("|", $graph_array[$q]); 
+        $graph_info=explode("|", $graph_array[$q]);
         $current_graph_total=0;
         $dataset_name=$graph_info[0];
-        $dataset_indices=explode(",", $graph_info[1]); 
+        $dataset_indices=explode(",", $graph_info[1]);
         $dataset_type=$graph_info[3];
-        $dataset_labels=explode(",", $graph_info[4]); 
+        $dataset_labels=explode(",", $graph_info[4]);
         $JS_text.="var $dataset_name = {\n";
         $datasets="\t\tdatasets: [\n";
         $labels="\t\tlabels:[";
@@ -1064,7 +1190,7 @@ else
             $graphConstantsC="\t\t\t\tfillColor: \"rgba(".$graph_colors[($d%count($graph_colors))].",0.1)\"\n";
             foreach($graph_stats as $key => $val) {
                 $val[$dataset_index]=preg_replace("/N\/A/", "0", $val[$dataset_index]);
-                $data.="\"".$val[$dataset_index]."\","; 
+                $data.="\"".$val[$dataset_index]."\",";
                 $current_graph_total+=intval($val[$dataset_index]);
                 $bgcolor=$backgroundColor[($d%count($backgroundColor))];
                 $hbgcolor=$hoverBackgroundColor[($d%count($hoverBackgroundColor))];
@@ -1076,7 +1202,7 @@ else
             $datasets.=$graphConstantsA.$graphConstantsB.$graphConstantsC; # SEE TOP OF SCRIPT
             $datasets.="\t\t\t},\n";
             $graph_totals_rawdata[$d]=$current_graph_total;
-        }    
+        }
         $datasets=preg_replace('/,\n$/', "\n", $datasets);
         switch($dataset_type) {
             case "time":
@@ -1101,48 +1227,43 @@ else
     $graph_count=count($graph_array);
     $graph_title=_QXZ("FORECASTING REPORT");
     $hide_graph_choice="yes";
-    $override_width=900; $override_height=500;
+    $override_width=900;
+    $override_height=500;
     include("graphcanvas.inc");
     $HEADER.=$HTML_graph_head;
     $GRAPH.=$graphCanvas;
-    if ($report_display_type=="HTML")
-        {
+    if ($report_display_type=="HTML") {
         $JS_onload.="}\n";
         $JS_text.=$JS_onload;
         $JS_text.="</script>\n";
         require("chart_button.php");
         $MAIN.=$HTML_text.$GRAPH.$HTML_text2.$JS_text;
-        }
-    else 
-        {
+    } else {
         $MAIN.=$ASCII_text;
-        }
+    }
     $MAIN.="</FORM>";
-if ($file_download>0) 
-    {
-    $FILE_TIME = date("Ymd-His");
-    $CSVfilename = "AST_Erlang_report_$US$FILE_TIME.csv";
-    $CSV_text=preg_replace('/\n +,/', ',', $CSV_text);
-    $CSV_text=preg_replace('/ +\"/', '"', $CSV_text);
-    $CSV_text=preg_replace('/\" +/', '"', $CSV_text);
-    // We'll be outputting a TXT file
-    header('Content-type: application/octet-stream');
-    // It will be called LIST_101_20090209-121212.txt
-    header("Content-Disposition: attachment; filename=\"$CSVfilename\"");
-    header('Expires: 0');
-    header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-    header('Pragma: public');
-    ob_clean();
-    flush();
-    echo "$CSV_text";
+    if ($file_download>0) {
+        $FILE_TIME = date("Ymd-His");
+        $CSVfilename = "AST_Erlang_report_$US$FILE_TIME.csv";
+        $CSV_text=preg_replace('/\n +,/', ',', $CSV_text);
+        $CSV_text=preg_replace('/ +\"/', '"', $CSV_text);
+        $CSV_text=preg_replace('/\" +/', '"', $CSV_text);
+        // We'll be outputting a TXT file
+        header('Content-type: application/octet-stream');
+        // It will be called LIST_101_20090209-121212.txt
+        header("Content-Disposition: attachment; filename=\"$CSVfilename\"");
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+        header('Pragma: public');
+        ob_clean();
+        flush();
+        echo "$CSV_text";
+    } else {
+        header("Content-type: text/html; charset=utf-8");
+        echo "$HEADER";
+        require("admin_header.php");
+        echo "$MAIN";
+        flush();
     }
-else 
-    {
-    header("Content-type: text/html; charset=utf-8");
-    echo "$HEADER";
-    require("admin_header.php");
-    echo "$MAIN";
-    flush();
-    }
-    }
+}
 ?>

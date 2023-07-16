@@ -40,31 +40,53 @@ require("functions.php");
 $PHP_AUTH_USER=$_SERVER['PHP_AUTH_USER'];
 $PHP_AUTH_PW=$_SERVER['PHP_AUTH_PW'];
 $PHP_SELF=$_SERVER['PHP_SELF'];
-$PHP_SELF = preg_replace('/\.php.*/i','.php',$PHP_SELF);
-if (isset($_GET["DB"]))                        {$DB=$_GET["DB"];}
-    elseif (isset($_POST["DB"]))            {$DB=$_POST["DB"];}
-if (isset($_GET["action"]))                    {$action=$_GET["action"];}
-    elseif (isset($_POST["action"]))        {$action=$_POST["action"];}
-if (isset($_GET["stage"]))                    {$stage=$_GET["stage"];}
-    elseif (isset($_POST["stage"]))            {$stage=$_POST["stage"];}
-if (isset($_GET["user"]))                    {$user=$_GET["user"];}
-    elseif (isset($_POST["user"]))            {$user=$_POST["user"];}
-if (isset($_GET["list_id"]))                {$list_id=$_GET["list_id"];}
-    elseif (isset($_POST["list_id"]))        {$list_id=$_POST["list_id"];}
-if (isset($_GET["user_override"]))            {$user_override=$_GET["user_override"];}
-    elseif (isset($_POST["user_override"]))    {$user_override=$_POST["user_override"];}
-if (isset($_GET["SUBMIT"]))                    {$SUBMIT=$_GET["SUBMIT"];}
-    elseif (isset($_POST["SUBMIT"]))        {$SUBMIT=$_POST["SUBMIT"];}
-if (strlen($action) < 2)
-    {$action = 'BLANK';}
-if (strlen($DB) < 1)
-    {$DB=0;}
-$DB=preg_replace("/[^0-9a-zA-Z]/","",$DB);
+$PHP_SELF = preg_replace('/\.php.*/i', '.php', $PHP_SELF);
+if (isset($_GET["DB"])) {
+    $DB=$_GET["DB"];
+} elseif (isset($_POST["DB"])) {
+    $DB=$_POST["DB"];
+}
+if (isset($_GET["action"])) {
+    $action=$_GET["action"];
+} elseif (isset($_POST["action"])) {
+    $action=$_POST["action"];
+}
+if (isset($_GET["stage"])) {
+    $stage=$_GET["stage"];
+} elseif (isset($_POST["stage"])) {
+    $stage=$_POST["stage"];
+}
+if (isset($_GET["user"])) {
+    $user=$_GET["user"];
+} elseif (isset($_POST["user"])) {
+    $user=$_POST["user"];
+}
+if (isset($_GET["list_id"])) {
+    $list_id=$_GET["list_id"];
+} elseif (isset($_POST["list_id"])) {
+    $list_id=$_POST["list_id"];
+}
+if (isset($_GET["user_override"])) {
+    $user_override=$_GET["user_override"];
+} elseif (isset($_POST["user_override"])) {
+    $user_override=$_POST["user_override"];
+}
+if (isset($_GET["SUBMIT"])) {
+    $SUBMIT=$_GET["SUBMIT"];
+} elseif (isset($_POST["SUBMIT"])) {
+    $SUBMIT=$_POST["SUBMIT"];
+}
+if (strlen($action) < 2) {
+    $action = 'BLANK';
+}
+if (strlen($DB) < 1) {
+    $DB=0;
+}
+$DB=preg_replace("/[^0-9a-zA-Z]/", "", $DB);
 $stmt = "SELECT use_non_latin,webroot_writable,enable_languages,language_method,qc_features_active,user_territories_active,user_new_lead_limit,allow_web_debug FROM system_settings;";
 $rslt=mysql_to_mysqli($stmt, $link);
 $ss_conf_ct = mysqli_num_rows($rslt);
-if ($ss_conf_ct > 0)
-    {
+if ($ss_conf_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $non_latin =                    $row[0];
     $webroot_writable =                $row[1];
@@ -74,25 +96,25 @@ if ($ss_conf_ct > 0)
     $SSuser_territories_active =    $row[5];
     $SSuser_new_lead_limit =        $row[6];
     $SSallow_web_debug =            $row[7];
-    }
-if ($SSallow_web_debug < 1) {$DB=0;}
-$list_id = preg_replace('/[^-_0-9a-zA-Z]/','',$list_id);
-$user_override = preg_replace('/[^-0-9]/','',$user_override);
-$action = preg_replace('/[^-_0-9a-zA-Z]/','',$action);
-$stage = preg_replace('/[^-_0-9a-zA-Z]/','',$stage);
-$SUBMIT = preg_replace('/[^-_0-9a-zA-Z]/','',$SUBMIT);
-if ($non_latin < 1)
-    {
-    $PHP_AUTH_USER = preg_replace('/[^-_0-9a-zA-Z]/','',$PHP_AUTH_USER);
-    $PHP_AUTH_PW = preg_replace('/[^-_0-9a-zA-Z]/','',$PHP_AUTH_PW);
-    $user = preg_replace('/[^-_0-9a-zA-Z]/','',$user);
-    }    # end of non_latin
-else
-    {
+}
+if ($SSallow_web_debug < 1) {
+    $DB=0;
+}
+$list_id = preg_replace('/[^-_0-9a-zA-Z]/', '', $list_id);
+$user_override = preg_replace('/[^-0-9]/', '', $user_override);
+$action = preg_replace('/[^-_0-9a-zA-Z]/', '', $action);
+$stage = preg_replace('/[^-_0-9a-zA-Z]/', '', $stage);
+$SUBMIT = preg_replace('/[^-_0-9a-zA-Z]/', '', $SUBMIT);
+if ($non_latin < 1) {
+    $PHP_AUTH_USER = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_USER);
+    $PHP_AUTH_PW = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_PW);
+    $user = preg_replace('/[^-_0-9a-zA-Z]/', '', $user);
+}    # end of non_latin
+else {
     $PHP_AUTH_USER = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_USER);
     $PHP_AUTH_PW = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_PW);
     $user = preg_replace('/[^-_0-9\p{L}]/u', '', $user);
-    }
+}
 $STARTtime = date("U");
 $TODAY = date("Y-m-d");
 $NOW_TIME = date("Y-m-d H:i:s");
@@ -103,49 +125,45 @@ $US='_';
 $NWB = "<IMG SRC=\"help.png\" onClick=\"FillAndShowHelpDiv(event, '";
 $NWE = "')\" WIDTH=20 HEIGHT=20 BORDER=0 ALT=\"HELP\" ALIGN=TOP>";
 $stmt="SELECT selected_language,qc_enabled from vicidial_users where user='$PHP_AUTH_USER';";
-if ($DB) {echo "|$stmt|\n";}
+if ($DB) {
+    echo "|$stmt|\n";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 $sl_ct = mysqli_num_rows($rslt);
-if ($sl_ct > 0)
-    {
+if ($sl_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $VUselected_language =        $row[0];
     $qc_auth =                    $row[1];
-    }
+}
 $auth=0;
-$auth_message = user_authorization($PHP_AUTH_USER,$PHP_AUTH_PW,'',1,0);
-if ( ($auth_message == 'GOOD') or ($auth_message == '2FA') )
-    {
+$auth_message = user_authorization($PHP_AUTH_USER, $PHP_AUTH_PW, '', 1, 0);
+if (($auth_message == 'GOOD') or ($auth_message == '2FA')) {
     $auth=1;
-    if ($auth_message == '2FA')
-        {
-        header ("Content-type: text/html; charset=utf-8");
+    if ($auth_message == '2FA') {
+        header("Content-type: text/html; charset=utf-8");
         echo _QXZ("Your session is expired").". <a href=\"admin.php\">"._QXZ("Click here to log in")."</a>.\n";
         exit;
-        }
     }
-if ($auth < 1)
-    {
+}
+if ($auth < 1) {
     $VDdisplayMESSAGE = _QXZ("Login incorrect, please try again");
-    if ($auth_message == 'LOCK')
-        {
+    if ($auth_message == 'LOCK') {
         $VDdisplayMESSAGE = _QXZ("Too many login attempts, try again in 15 minutes");
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
-    if ($auth_message == 'IPBLOCK')
-        {
+    }
+    if ($auth_message == 'IPBLOCK') {
         $VDdisplayMESSAGE = _QXZ("Your IP Address is not allowed") . ": $ip";
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
+    }
     Header("WWW-Authenticate: Basic realm=\"CONTACT-CENTER-ADMIN\"");
     Header("HTTP/1.0 401 Unauthorized");
     echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$PHP_AUTH_PW|$auth_message|\n";
     exit;
-    }
+}
 $stmt="SELECT full_name,modify_lists,user_level,modify_users,user_group from vicidial_users where user='$PHP_AUTH_USER';";
 $rslt=mysql_to_mysqli($stmt, $link);
 $row=mysqli_fetch_row($rslt);
@@ -154,14 +172,15 @@ $LOGmodify_lists =        $row[1];
 $LOGuser_level =        $row[2];
 $LOGmodify_users =        $row[3];
 $LOGuser_group =        $row[4];
-if ( ($LOGmodify_lists < 1) or ($LOGmodify_users < 1) )
-    {
-    Header ("Content-type: text/html; charset=utf-8");
+if (($LOGmodify_lists < 1) or ($LOGmodify_users < 1)) {
+    Header("Content-type: text/html; charset=utf-8");
     echo _QXZ("You do not have permissions to modify lists and users").": $LOGmodify_lists|$LOGmodify_users\n";
     exit;
-    }
+}
 $stmt="SELECT allowed_campaigns,allowed_reports,admin_viewable_groups,admin_viewable_call_times from vicidial_user_groups where user_group='$LOGuser_group';";
-if ($DB) {echo "|$stmt|\n";}
+if ($DB) {
+    echo "|$stmt|\n";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 $row=mysqli_fetch_row($rslt);
 $LOGallowed_campaigns =            $row[0];
@@ -170,25 +189,23 @@ $LOGadmin_viewable_groups =        $row[2];
 $LOGadmin_viewable_call_times =    $row[3];
 $LOGallowed_campaignsSQL='';
 $whereLOGallowed_campaignsSQL='';
-if ( (!preg_match('/\-ALL/i', $LOGallowed_campaigns)) )
-    {
-    $rawLOGallowed_campaignsSQL = preg_replace("/ -/",'',$LOGallowed_campaigns);
-    $rawLOGallowed_campaignsSQL = preg_replace("/ /","','",$rawLOGallowed_campaignsSQL);
+if ((!preg_match('/\-ALL/i', $LOGallowed_campaigns))) {
+    $rawLOGallowed_campaignsSQL = preg_replace("/ -/", '', $LOGallowed_campaigns);
+    $rawLOGallowed_campaignsSQL = preg_replace("/ /", "','", $rawLOGallowed_campaignsSQL);
     $LOGallowed_campaignsSQL = "and campaign_id IN('$rawLOGallowed_campaignsSQL')";
     $whereLOGallowed_campaignsSQL = "where campaign_id IN('$rawLOGallowed_campaignsSQL')";
-    }
+}
 $regexLOGallowed_campaigns = " $LOGallowed_campaigns ";
 $LOGadmin_viewable_groupsSQL='';
 $vuLOGadmin_viewable_groupsSQL='';
 $whereLOGadmin_viewable_groupsSQL='';
-if ( (!preg_match('/\-\-ALL\-\-/i',$LOGadmin_viewable_groups)) and (strlen($LOGadmin_viewable_groups) > 3) )
-    {
-    $rawLOGadmin_viewable_groupsSQL = preg_replace("/ -/",'',$LOGadmin_viewable_groups);
-    $rawLOGadmin_viewable_groupsSQL = preg_replace("/ /","','",$rawLOGadmin_viewable_groupsSQL);
+if ((!preg_match('/\-\-ALL\-\-/i', $LOGadmin_viewable_groups)) and (strlen($LOGadmin_viewable_groups) > 3)) {
+    $rawLOGadmin_viewable_groupsSQL = preg_replace("/ -/", '', $LOGadmin_viewable_groups);
+    $rawLOGadmin_viewable_groupsSQL = preg_replace("/ /", "','", $rawLOGadmin_viewable_groupsSQL);
     $LOGadmin_viewable_groupsSQL = "and user_group IN('---ALL---','$rawLOGadmin_viewable_groupsSQL')";
     $whereLOGadmin_viewable_groupsSQL = "where user_group IN('---ALL---','$rawLOGadmin_viewable_groupsSQL')";
     $vuLOGadmin_viewable_groupsSQL = "and vicidial_users.user_group IN('---ALL---','$rawLOGadmin_viewable_groupsSQL')";
-    }
+}
 $ADD =                    '311';
 $SUB =                    '1';
 $hh =                    'lists';
@@ -211,33 +228,29 @@ $ingroups_font =    'BLACK';
 $ingroups_color =    '#E6E6E6';
 $lists_font =        'BLACK';
 $lists_color =        '#E6E6E6';
-if ( ($stage == 'overall') and ($list_id == 'NONE') )
-    {
+if (($stage == 'overall') and ($list_id == 'NONE')) {
     $ADD =                    '3';
     $SUB =                    '1';
     $hh =                    'users';
-    }
-if (strlen($list_id) < 1)
-    {
+}
+if (strlen($list_id) < 1) {
     echo _QXZ("ERROR: list not defined:");
     exit;
-    }
-if (strlen($user) < 1)
-    {
+}
+if (strlen($user) < 1) {
     echo _QXZ("ERROR: user not defined:");
     exit;
-    }
+}
 $stmt_name="SELECT list_name from vicidial_lists where list_id='$list_id';";
 $mod_link = "ADD=$ADD&list_id=";
 $event_section = 'LISTS';
 $camp_name='';
 $rslt=mysql_to_mysqli($stmt_name, $link);
 $names_to_print = mysqli_num_rows($rslt);
-if ($names_to_print > 0)
-    {
+if ($names_to_print > 0) {
     $row=mysqli_fetch_row($rslt);
     $camp_name = $row[0];
-    }
+}
 ?>
 <html>
 <head>
@@ -246,17 +259,15 @@ if ($names_to_print > 0)
 <div id='HelpDisplayDiv' class='help_info' style='display:none;'></div>
 <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
 <title><?php echo _QXZ("ADMINISTRATION: User List New Lead Limits"); ?>
-<?php 
+<?php
 require("admin_header.php");
-if ($DB > 0)
-    {
+if ($DB > 0) {
     echo "$DB,$action,$list_id,$user,$user_override,$active\n<BR>";
-    }
-if ( ($list_id == '---ALL---') and ($user == '---ALL---') )
-    {
-    echo _QXZ("ERROR: you must select a list or user",0,'')."\n";
+}
+if (($list_id == '---ALL---') and ($user == '---ALL---')) {
+    echo _QXZ("ERROR: you must select a list or user", 0, '')."\n";
     exit;
-    }
+}
 $bgcolor='bgcolor="#'. $SSstd_row2_background .'"';
 echo "<TABLE><TR><TD>\n";
 echo "<FONT FACE=\"ARIAL,HELVETICA\" COLOR=BLACK SIZE=2>";
@@ -265,144 +276,148 @@ echo "<center><TABLE width=$section_width cellspacing=3>\n";
 echo "<tr><td align=center colspan=2>\n";
 $FORM_list_id='';
 $FORM_user='';
-if ( ($stage == 'overall') and ($list_id == 'NONE') )
-    {
-    echo "<br><b>"._QXZ("User Overall New Limit Entries ALL USERS",0,'')."</b> &nbsp; $NWB#user_list_new_limits$NWE\n";
-    }
-else
-    {
-    if ($list_id != '---ALL---') 
-        {
+if (($stage == 'overall') and ($list_id == 'NONE')) {
+    echo "<br><b>"._QXZ("User Overall New Limit Entries ALL USERS", 0, '')."</b> &nbsp; $NWB#user_list_new_limits$NWE\n";
+} else {
+    if ($list_id != '---ALL---') {
         $FORM_list_id = $list_id;
-        echo "<br><b>"._QXZ("User List New Limit Entries LIST",0,'').": <a href=\"./admin.php?$mod_link$list_id\">$list_id</a></b> &nbsp; $NWB#user_list_new_limits$NWE\n";
-        }
-    if ($user != '---ALL---') 
-        {
-        $FORM_user = $user;
-        echo "<br><b>"._QXZ("User List New Limit Entries USER",0,'').": <a href=\"./admin.php?ADD=3&user=$user\">$user</a></b> &nbsp; $NWB#user_list_new_limits$NWE\n";
-        }
+        echo "<br><b>"._QXZ("User List New Limit Entries LIST", 0, '').": <a href=\"./admin.php?$mod_link$list_id\">$list_id</a></b> &nbsp; $NWB#user_list_new_limits$NWE\n";
     }
+    if ($user != '---ALL---') {
+        $FORM_user = $user;
+        echo "<br><b>"._QXZ("User List New Limit Entries USER", 0, '').": <a href=\"./admin.php?ADD=3&user=$user\">$user</a></b> &nbsp; $NWB#user_list_new_limits$NWE\n";
+    }
+}
 echo "<form action=$PHP_SELF method=POST>\n";
 echo "<input type=hidden name=DB value=\"$DB\">\n";
 echo "<input type=hidden name=action value=USER_LIST_NEW_MODIFY>\n";
 echo "<input type=hidden name=user value=\"$user\">\n";
 echo "<input type=hidden name=list_id value=\"$list_id\">\n";
-if ($stage == 'overall')
-    {echo "<input type=hidden name=stage value=\"overall\">\n";}
+if ($stage == 'overall') {
+    echo "<input type=hidden name=stage value=\"overall\">\n";
+}
 echo "<TABLE width=740 cellspacing=3>\n";
-if ($stage == 'overall')
-    {echo "<tr><td>#</td><td>"._QXZ("USER")."</td><td>"._QXZ("NEW LIMIT")."</td><td>"._QXZ("TODAY")."</td></tr>\n";}
-else
-    {echo "<tr><td>#</td><td>"._QXZ("USER")."</td><td>"._QXZ("LIST")."</td><td>"._QXZ("ACTIVE")."</td><td>"._QXZ("CAMPAIGN")."</td><td>"._QXZ("NEW LIMIT")."</td><td>"._QXZ("TODAY")."</td></tr>\n";}
+if ($stage == 'overall') {
+    echo "<tr><td>#</td><td>"._QXZ("USER")."</td><td>"._QXZ("NEW LIMIT")."</td><td>"._QXZ("TODAY")."</td></tr>\n";
+} else {
+    echo "<tr><td>#</td><td>"._QXZ("USER")."</td><td>"._QXZ("LIST")."</td><td>"._QXZ("ACTIVE")."</td><td>"._QXZ("CAMPAIGN")."</td><td>"._QXZ("NEW LIMIT")."</td><td>"._QXZ("TODAY")."</td></tr>\n";
+}
 $list_idSQL = "list_id='$list_id'";
-if ( ($list_id == '---ALL---') or ($list_id == 'NONE') ) {$list_idSQL = "list_id != 0";}
+if (($list_id == '---ALL---') or ($list_id == 'NONE')) {
+    $list_idSQL = "list_id != 0";
+}
 $userSQL = "user='$user'";
-if ($user == '---ALL---') {$userSQL = "user!=''";}
-else
-    {
+if ($user == '---ALL---') {
+    $userSQL = "user!=''";
+} else {
     $changesLINK="admin.php?ADD=720000000000000&category=USERS&stage=$user";
     $stmt="SELECT user,full_name,user_group from vicidial_users where $userSQL $LOGadmin_viewable_groupsSQL order by user limit 10000;";
-    if ($DB) {echo "$stmt\n";}
+    if ($DB) {
+        echo "$stmt\n";
+    }
     $rslt=mysql_to_mysqli($stmt, $link);
     $users_to_print = mysqli_num_rows($rslt);
-    if ($users_to_print > 0) 
-        {
-        $rowx=mysqli_fetch_row($rslt);            
+    if ($users_to_print > 0) {
+        $rowx=mysqli_fetch_row($rslt);
         $Ruser =            $rowx[0];
         $Rfull_name =        $rowx[1];
         $Ruser_group =        $rowx[2];
         $stmt="SELECT list_id,list_name,campaign_id,user_new_lead_limit,active from vicidial_lists where $list_idSQL $LOGallowed_campaignsSQL order by campaign_id,list_id limit 10000;";
-        if ($DB) {echo "$stmt\n";}
+        if ($DB) {
+            echo "$stmt\n";
+        }
         $rslt=mysql_to_mysqli($stmt, $link);
         $lists_to_print = mysqli_num_rows($rslt);
         $o=0;
-        while ($lists_to_print > $o) 
-            {
-            $rowx=mysqli_fetch_row($rslt);            
+        while ($lists_to_print > $o) {
+            $rowx=mysqli_fetch_row($rslt);
             $Rlist_id[$o] =                $rowx[0];
             $Rlist_name[$o] =            $rowx[1];
             $Rcampaign[$o] =            $rowx[2];
             $Ruser_new_lead_limit[$o] =    $rowx[3];
             $Ractive[$o] =                $rowx[4];
             $o++;
-            }
+        }
         $rollingSQL_log='';
         $vulnl_updates=0;
         $vulnl_inserts=0;
         $vulnl_nochng=0;
         $o=0;
-        while ($lists_to_print > $o) 
-            {
-            if ($action == "USER_LIST_NEW_MODIFY")
-                {
+        while ($lists_to_print > $o) {
+            if ($action == "USER_LIST_NEW_MODIFY") {
                 $Ruser_override='-1';
                 $vulnl_found=0;
                 $stmt="SELECT user_override from vicidial_user_list_new_lead where user='$Ruser' and list_id='$Rlist_id[$o]';";
-                if ($DB) {echo "$stmt\n";}
+                if ($DB) {
+                    echo "$stmt\n";
+                }
                 $rslt=mysql_to_mysqli($stmt, $link);
                 $entries_to_print = mysqli_num_rows($rslt);
-                if ($entries_to_print > 0) 
-                    {
+                if ($entries_to_print > 0) {
                     $rowx=mysqli_fetch_row($rslt);
                     $Ruser_override =    $rowx[0];
-                    $vulnl_found++;;
-                    }
-                if (isset($_GET["$Ruser$US$Rlist_id[$o]"]))                        {$Ruser_overrideNEW=$_GET["$Ruser$US$Rlist_id[$o]"];}
-                    elseif (isset($_POST["$Ruser$US$Rlist_id[$o]"]))            {$Ruser_overrideNEW=$_POST["$Ruser$US$Rlist_id[$o]"];}
+                    $vulnl_found++;
+                    ;
+                }
+                if (isset($_GET["$Ruser$US$Rlist_id[$o]"])) {
+                    $Ruser_overrideNEW=$_GET["$Ruser$US$Rlist_id[$o]"];
+                } elseif (isset($_POST["$Ruser$US$Rlist_id[$o]"])) {
+                    $Ruser_overrideNEW=$_POST["$Ruser$US$Rlist_id[$o]"];
+                }
                 $Ruser_overrideNEW = preg_replace('/[^-_0-9\p{L}]/u', '', $Ruser_overrideNEW);
-                if ( ($Ruser_overrideNEW == $Ruser_override) or (strlen($Ruser_overrideNEW) < 1) )
-                    {
+                if (($Ruser_overrideNEW == $Ruser_override) or (strlen($Ruser_overrideNEW) < 1)) {
                     $vulnl_nochng++;
-                    if ($DB) {echo "NO CHANGE: |$Ruser$US$Rlist_id[$o]|$Ruser_overrideNEW|$Ruser_override|\n";}
+                    if ($DB) {
+                        echo "NO CHANGE: |$Ruser$US$Rlist_id[$o]|$Ruser_overrideNEW|$Ruser_override|\n";
                     }
-                else
-                    {
-                    if ($vulnl_found > 0)
-                        {
+                } else {
+                    if ($vulnl_found > 0) {
                         $stmt="UPDATE vicidial_user_list_new_lead SET user_override='$Ruser_overrideNEW' where list_id='$Rlist_id[$o]' and user='$Ruser';";
                         $rslt=mysql_to_mysqli($stmt, $link);
                         $affected_rows = mysqli_affected_rows($link);
-                        if ($DB > 0) {echo "$affected_rows|$stmt\n<BR>";}
-                        if ($affected_rows > 0)
-                            {
+                        if ($DB > 0) {
+                            echo "$affected_rows|$stmt\n<BR>";
+                        }
+                        if ($affected_rows > 0) {
                             $rollingSQL_log .= "$stmt|";
                             $vulnl_updates++;
-                            }
-                        else
-                            {echo _QXZ("ERROR: Problem modifying USER LIST NEW LIMIT").":  $affected_rows|$stmt\n<BR>";}
+                        } else {
+                            echo _QXZ("ERROR: Problem modifying USER LIST NEW LIMIT").":  $affected_rows|$stmt\n<BR>";
                         }
-                    else
-                        {
+                    } else {
                         $stmt="INSERT INTO vicidial_user_list_new_lead SET list_id='$Rlist_id[$o]',user_override='$Ruser_overrideNEW',user='$Ruser';";
                         $rslt=mysql_to_mysqli($stmt, $link);
                         $affected_rows = mysqli_affected_rows($link);
-                        if ($DB > 0) {echo "$affected_rows|$stmt\n<BR>";}
-                        if ($affected_rows > 0)
-                            {
+                        if ($DB > 0) {
+                            echo "$affected_rows|$stmt\n<BR>";
+                        }
+                        if ($affected_rows > 0) {
                             $rollingSQL_log .= "$stmt|";
                             $vulnl_inserts++;
-                            }
-                        else
-                            {echo _QXZ("ERROR: Problem modifying USER LIST NEW LIMIT").":  $affected_rows|$stmt\n<BR>";}
+                        } else {
+                            echo _QXZ("ERROR: Problem modifying USER LIST NEW LIMIT").":  $affected_rows|$stmt\n<BR>";
                         }
                     }
                 }
+            }
             $Ruser_override='-1';
             $Rnew_count=0;
             $stmt="SELECT user_override,new_count from vicidial_user_list_new_lead where user='$Ruser' and list_id='$Rlist_id[$o]';";
-            if ($DB) {echo "$stmt\n";}
+            if ($DB) {
+                echo "$stmt\n";
+            }
             $rslt=mysql_to_mysqli($stmt, $link);
             $entries_to_print = mysqli_num_rows($rslt);
-            if ($entries_to_print > 0) 
-                {
+            if ($entries_to_print > 0) {
                 $rowx=mysqli_fetch_row($rslt);
                 $Ruser_override =    $rowx[0];
                 $Rnew_count =        $rowx[1];
-                }
-            if (preg_match('/1$|3$|5$|7$|9$/i', $o))
-                {$bgcolor='bgcolor="#'. $SSstd_row2_background .'"';} 
-            else
-                {$bgcolor='bgcolor="#'. $SSstd_row1_background .'"';}
+            }
+            if (preg_match('/1$|3$|5$|7$|9$/i', $o)) {
+                $bgcolor='bgcolor="#'. $SSstd_row2_background .'"';
+            } else {
+                $bgcolor='bgcolor="#'. $SSstd_row1_background .'"';
+            }
             $ct = ($o + 1);
             echo "<tr $bgcolor>";
             echo "<td><font size=1>$ct</td>";
@@ -414,124 +429,129 @@ else
             echo "<td><font size=1>$Rnew_count</td>";
             echo "</tr>\n";
             $o++;
-            }
-        if ($action == "USER_LIST_NEW_MODIFY")
-            {
+        }
+        if ($action == "USER_LIST_NEW_MODIFY") {
             $SQL_log = "$rollingSQL_log|";
             $SQL_log = preg_replace('/;/', '', $SQL_log);
             $SQL_log = addslashes($SQL_log);
             $stmt="INSERT INTO vicidial_admin_log set event_date='$NOW_TIME', user='$PHP_AUTH_USER', ip_address='$ip', event_section='USERS', event_type='MODIFY', record_id='$user', event_code='MODIFY USER LIST NEW LIMIT ENTRIES', event_sql=\"$SQL_log\", event_notes='$user|$o|NOCHANGE: $vulnl_nochng|UPDATES: $vulnl_updates|INSERTS: $vulnl_inserts|';";
             $rslt=mysql_to_mysqli($stmt, $link);
-            if ($DB > 0) {echo "$user|$o|$stmt\n<BR>";}
-            echo "<BR><b>$o "._QXZ("USER LIST NEW LIMIT ENTRIES MODIFIED")." (ID: $user) $o</b><BR><BR>";
+            if ($DB > 0) {
+                echo "$user|$o|$stmt\n<BR>";
             }
+            echo "<BR><b>$o "._QXZ("USER LIST NEW LIMIT ENTRIES MODIFIED")." (ID: $user) $o</b><BR><BR>";
         }
     }
-if ( ($list_id != '---ALL---') and ($list_id != 'NONE') )
-    {
+}
+if (($list_id != '---ALL---') and ($list_id != 'NONE')) {
     $changesLINK="admin.php?ADD=720000000000000&category=LISTS&stage=$list_id";
     $stmt="SELECT list_id,list_name,campaign_id,user_new_lead_limit,active from vicidial_lists where $list_idSQL $LOGallowed_campaignsSQL order by campaign_id,list_id limit 10000;";
-    if ($DB) {echo "$stmt\n";}
+    if ($DB) {
+        echo "$stmt\n";
+    }
     $rslt=mysql_to_mysqli($stmt, $link);
     $lists_to_print = mysqli_num_rows($rslt);
-    if ($lists_to_print > 0) 
-        {
-        $rowx=mysqli_fetch_row($rslt);            
+    if ($lists_to_print > 0) {
+        $rowx=mysqli_fetch_row($rslt);
         $Rlist_id =                $rowx[0];
         $Rlist_name =            $rowx[1];
         $Rcampaign =            $rowx[2];
         $Ruser_new_lead_limit =    $rowx[3];
         $Ractive =                $rowx[4];
         $stmt="SELECT user,full_name,user_group from vicidial_users where active='Y' and $userSQL $LOGadmin_viewable_groupsSQL order by user limit 10000;";
-        if ($DB) {echo "$stmt\n";}
+        if ($DB) {
+            echo "$stmt\n";
+        }
         $rslt=mysql_to_mysqli($stmt, $link);
         $users_to_print = mysqli_num_rows($rslt);
         $o=0;
-        while ($users_to_print > $o) 
-            {
-            $rowx=mysqli_fetch_row($rslt);            
+        while ($users_to_print > $o) {
+            $rowx=mysqli_fetch_row($rslt);
             $Ruser[$o] =            $rowx[0];
             $Rfull_name[$o] =        $rowx[1];
             $Ruser_group[$o] =        $rowx[2];
             $o++;
-            }
+        }
         $rollingSQL_log='';
         $vulnl_updates=0;
         $vulnl_inserts=0;
         $vulnl_nochng=0;
         $o=0;
-        while ($users_to_print > $o) 
-            {
-            if ($action == "USER_LIST_NEW_MODIFY")
-                {
+        while ($users_to_print > $o) {
+            if ($action == "USER_LIST_NEW_MODIFY") {
                 $Ruser_override='-1';
                 $vulnl_found=0;
                 $stmt="SELECT user_override from vicidial_user_list_new_lead where user='$Ruser[$o]' and list_id='$Rlist_id';";
-                if ($DB) {echo "$stmt\n";}
+                if ($DB) {
+                    echo "$stmt\n";
+                }
                 $rslt=mysql_to_mysqli($stmt, $link);
                 $entries_to_print = mysqli_num_rows($rslt);
-                if ($entries_to_print > 0) 
-                    {
+                if ($entries_to_print > 0) {
                     $rowx=mysqli_fetch_row($rslt);
                     $Ruser_override =    $rowx[0];
-                    $vulnl_found++;;
-                    }
-                if (isset($_GET["$Ruser[$o]$US$Rlist_id"]))                        {$Ruser_overrideNEW=$_GET["$Ruser[$o]$US$Rlist_id"];}
-                    elseif (isset($_POST["$Ruser[$o]$US$Rlist_id"]))            {$Ruser_overrideNEW=$_POST["$Ruser[$o]$US$Rlist_id"];}
+                    $vulnl_found++;
+                    ;
+                }
+                if (isset($_GET["$Ruser[$o]$US$Rlist_id"])) {
+                    $Ruser_overrideNEW=$_GET["$Ruser[$o]$US$Rlist_id"];
+                } elseif (isset($_POST["$Ruser[$o]$US$Rlist_id"])) {
+                    $Ruser_overrideNEW=$_POST["$Ruser[$o]$US$Rlist_id"];
+                }
                 $Ruser_overrideNEW = preg_replace('/[^-_0-9\p{L}]/u', '', $Ruser_overrideNEW);
-                if ( ($Ruser_overrideNEW == $Ruser_override) or (strlen($Ruser_overrideNEW) < 1) )
-                    {
+                if (($Ruser_overrideNEW == $Ruser_override) or (strlen($Ruser_overrideNEW) < 1)) {
                     $vulnl_nochng++;
-                    if ($DB) {echo "NO CHANGE: |$Ruser[$o]$US$Rlist_id|$Ruser_overrideNEW|$Ruser_override|\n";}
+                    if ($DB) {
+                        echo "NO CHANGE: |$Ruser[$o]$US$Rlist_id|$Ruser_overrideNEW|$Ruser_override|\n";
                     }
-                else
-                    {
-                    if ($vulnl_found > 0)
-                        {
+                } else {
+                    if ($vulnl_found > 0) {
                         $stmt="UPDATE vicidial_user_list_new_lead SET user_override='$Ruser_overrideNEW' where list_id='$Rlist_id' and user='$Ruser[$o]';";
                         $rslt=mysql_to_mysqli($stmt, $link);
                         $affected_rows = mysqli_affected_rows($link);
-                        if ($DB > 0) {echo "$affected_rows|$stmt\n<BR>";}
-                        if ($affected_rows > 0)
-                            {
+                        if ($DB > 0) {
+                            echo "$affected_rows|$stmt\n<BR>";
+                        }
+                        if ($affected_rows > 0) {
                             $rollingSQL_log .= "$stmt|";
                             $vulnl_updates++;
-                            }
-                        else
-                            {echo _QXZ("ERROR: Problem modifying USER LIST NEW LIMIT").":  $affected_rows|$stmt\n<BR>";}
+                        } else {
+                            echo _QXZ("ERROR: Problem modifying USER LIST NEW LIMIT").":  $affected_rows|$stmt\n<BR>";
                         }
-                    else
-                        {
+                    } else {
                         $stmt="INSERT INTO vicidial_user_list_new_lead SET list_id='$Rlist_id',user_override='$Ruser_overrideNEW',user='$Ruser[$o]';";
                         $rslt=mysql_to_mysqli($stmt, $link);
                         $affected_rows = mysqli_affected_rows($link);
-                        if ($DB > 0) {echo "$affected_rows|$stmt\n<BR>";}
-                        if ($affected_rows > 0)
-                            {
+                        if ($DB > 0) {
+                            echo "$affected_rows|$stmt\n<BR>";
+                        }
+                        if ($affected_rows > 0) {
                             $rollingSQL_log .= "$stmt|";
                             $vulnl_inserts++;
-                            }
-                        else
-                            {echo _QXZ("ERROR: Problem modifying USER LIST NEW LIMIT").":  $affected_rows|$stmt\n<BR>";}
+                        } else {
+                            echo _QXZ("ERROR: Problem modifying USER LIST NEW LIMIT").":  $affected_rows|$stmt\n<BR>";
                         }
                     }
                 }
+            }
             $Ruser_override='-1';
             $Rnew_count=0;
             $stmt="SELECT user_override,new_count from vicidial_user_list_new_lead where user='$Ruser[$o]' and list_id='$Rlist_id';";
-            if ($DB) {echo "$stmt\n";}
+            if ($DB) {
+                echo "$stmt\n";
+            }
             $rslt=mysql_to_mysqli($stmt, $link);
             $entries_to_print = mysqli_num_rows($rslt);
-            if ($entries_to_print > 0) 
-                {
+            if ($entries_to_print > 0) {
                 $rowx=mysqli_fetch_row($rslt);
                 $Ruser_override =    $rowx[0];
                 $Rnew_count =        $rowx[1];
-                }
-            if (preg_match('/1$|3$|5$|7$|9$/i', $o))
-                {$bgcolor='bgcolor="#'. $SSstd_row2_background .'"';} 
-            else
-                {$bgcolor='bgcolor="#'. $SSstd_row1_background .'"';}
+            }
+            if (preg_match('/1$|3$|5$|7$|9$/i', $o)) {
+                $bgcolor='bgcolor="#'. $SSstd_row2_background .'"';
+            } else {
+                $bgcolor='bgcolor="#'. $SSstd_row1_background .'"';
+            }
             $ct = ($o + 1);
             echo "<tr $bgcolor>";
             echo "<td><font size=1>$ct</td>";
@@ -543,111 +563,117 @@ if ( ($list_id != '---ALL---') and ($list_id != 'NONE') )
             echo "<td><font size=1>$Rnew_count</td>";
             echo "</tr>\n";
             $o++;
-            }
-        if ($action == "USER_LIST_NEW_MODIFY")
-            {
+        }
+        if ($action == "USER_LIST_NEW_MODIFY") {
             $SQL_log = "$rollingSQL_log|";
             $SQL_log = preg_replace('/;/', '', $SQL_log);
             $SQL_log = addslashes($SQL_log);
             $stmt="INSERT INTO vicidial_admin_log set event_date='$NOW_TIME', user='$PHP_AUTH_USER', ip_address='$ip', event_section='LISTS', event_type='MODIFY', record_id='$list_id', event_code='MODIFY USER LIST NEW LIMIT ENTRIES', event_sql=\"$SQL_log\", event_notes='$list_id|$o|NOCHANGE: $vulnl_nochng|UPDATES: $vulnl_updates|INSERTS: $vulnl_inserts|';";
             $rslt=mysql_to_mysqli($stmt, $link);
-            if ($DB > 0) {echo "$user|$o|$stmt\n<BR>";}
-            echo "<BR><b>$o "._QXZ("USER LIST NEW LIMIT ENTRIES MODIFIED")." (ID: $list_id) $o</b><BR><BR>";
+            if ($DB > 0) {
+                echo "$user|$o|$stmt\n<BR>";
             }
+            echo "<BR><b>$o "._QXZ("USER LIST NEW LIMIT ENTRIES MODIFIED")." (ID: $list_id) $o</b><BR><BR>";
         }
     }
-if ($list_id == 'NONE')
-    {
+}
+if ($list_id == 'NONE') {
     $changesLINK="admin.php?ADD=720000000000000&category=LISTS&stage=$list_id";
     $stmt="SELECT user,full_name,user_group from vicidial_users where active='Y' $LOGadmin_viewable_groupsSQL order by user limit 10000;";
-    if ($DB) {echo "$stmt\n";}
+    if ($DB) {
+        echo "$stmt\n";
+    }
     $rslt=mysql_to_mysqli($stmt, $link);
     $users_to_print = mysqli_num_rows($rslt);
     $o=0;
-    while ($users_to_print > $o) 
-        {
-        $rowx=mysqli_fetch_row($rslt);            
+    while ($users_to_print > $o) {
+        $rowx=mysqli_fetch_row($rslt);
         $Ruser[$o] =            $rowx[0];
         $Rfull_name[$o] =        $rowx[1];
         $Ruser_group[$o] =        $rowx[2];
         $o++;
-        }
+    }
     $rollingSQL_log='';
     $vulnl_updates=0;
     $vulnl_inserts=0;
     $vulnl_nochng=0;
     $o=0;
-    while ($users_to_print > $o) 
-        {
-        if ($action == "USER_LIST_NEW_MODIFY")
-            {
+    while ($users_to_print > $o) {
+        if ($action == "USER_LIST_NEW_MODIFY") {
             $Ruser_override='-1';
             $vulnl_found=0;
             $stmt="SELECT user_new_lead_limit from vicidial_users where user='$Ruser[$o]';";
-            if ($DB) {echo "$stmt\n";}
+            if ($DB) {
+                echo "$stmt\n";
+            }
             $rslt=mysql_to_mysqli($stmt, $link);
             $entries_to_print = mysqli_num_rows($rslt);
-            if ($entries_to_print > 0) 
-                {
+            if ($entries_to_print > 0) {
                 $rowx=mysqli_fetch_row($rslt);
                 $Ruser_override =    $rowx[0];
-                $vulnl_found++;;
-                }
-            if (isset($_GET["$Ruser[$o]$US$Rlist_id"]))                        {$Ruser_overrideNEW=$_GET["$Ruser[$o]$US$Rlist_id"];}
-                elseif (isset($_POST["$Ruser[$o]$US$Rlist_id"]))            {$Ruser_overrideNEW=$_POST["$Ruser[$o]$US$Rlist_id"];}
+                $vulnl_found++;
+                ;
+            }
+            if (isset($_GET["$Ruser[$o]$US$Rlist_id"])) {
+                $Ruser_overrideNEW=$_GET["$Ruser[$o]$US$Rlist_id"];
+            } elseif (isset($_POST["$Ruser[$o]$US$Rlist_id"])) {
+                $Ruser_overrideNEW=$_POST["$Ruser[$o]$US$Rlist_id"];
+            }
             $Ruser_overrideNEW = preg_replace('/[^-_0-9\p{L}]/u', '', $Ruser_overrideNEW);
-            if ( ($Ruser_overrideNEW == $Ruser_override) or (strlen($Ruser_overrideNEW) < 1) )
-                {
+            if (($Ruser_overrideNEW == $Ruser_override) or (strlen($Ruser_overrideNEW) < 1)) {
                 $vulnl_nochng++;
-                if ($DB) {echo "NO CHANGE: |$Ruser[$o]$US$Rlist_id|$Ruser_overrideNEW|$Ruser_override|\n";}
+                if ($DB) {
+                    echo "NO CHANGE: |$Ruser[$o]$US$Rlist_id|$Ruser_overrideNEW|$Ruser_override|\n";
                 }
-            else
-                {
-                if ($vulnl_found > 0)
-                    {
+            } else {
+                if ($vulnl_found > 0) {
                     $stmt="UPDATE vicidial_users SET user_new_lead_limit='$Ruser_overrideNEW' where user='$Ruser[$o]';";
                     $rslt=mysql_to_mysqli($stmt, $link);
                     $affected_rows = mysqli_affected_rows($link);
-                    if ($DB > 0) {echo "$affected_rows|$stmt\n<BR>";}
-                    if ($affected_rows > 0)
-                        {
+                    if ($DB > 0) {
+                        echo "$affected_rows|$stmt\n<BR>";
+                    }
+                    if ($affected_rows > 0) {
                         $rollingSQL_log .= "$stmt|";
                         $vulnl_updates++;
-                        }
-                    else
-                        {echo _QXZ("ERROR: Problem modifying USER OVERALL NEW LIMIT").":  $affected_rows|$stmt\n<BR>";}
+                    } else {
+                        echo _QXZ("ERROR: Problem modifying USER OVERALL NEW LIMIT").":  $affected_rows|$stmt\n<BR>";
                     }
-                else
-                    {
+                } else {
                     echo _QXZ("ERROR: Problem modifying USER OVERALL NEW LIMIT").":  $vulnl_found|$stmt\n<BR>";
-                    }
                 }
             }
+        }
         $Ruser_override='-1';
         $Rnew_count=0;
         $stmt="SELECT sum(new_count) from vicidial_user_list_new_lead where user='$Ruser[$o]';";
-        if ($DB) {echo "$stmt\n";}
+        if ($DB) {
+            echo "$stmt\n";
+        }
         $rslt=mysql_to_mysqli($stmt, $link);
         $entries_to_print = mysqli_num_rows($rslt);
-        if ($entries_to_print > 0) 
-            {
+        if ($entries_to_print > 0) {
             $rowx=mysqli_fetch_row($rslt);
             $Rnew_count =        $rowx[0];
-            if (strlen($Rnew_count)<1) {$Rnew_count=0;}
+            if (strlen($Rnew_count)<1) {
+                $Rnew_count=0;
             }
+        }
         $stmt="SELECT user_new_lead_limit from vicidial_users where user='$Ruser[$o]';";
-        if ($DB) {echo "$stmt\n";}
+        if ($DB) {
+            echo "$stmt\n";
+        }
         $rslt=mysql_to_mysqli($stmt, $link);
         $entries_to_print = mysqli_num_rows($rslt);
-        if ($entries_to_print > 0) 
-            {
+        if ($entries_to_print > 0) {
             $rowx=mysqli_fetch_row($rslt);
             $Ruser_override =    $rowx[0];
-            }
-        if (preg_match('/1$|3$|5$|7$|9$/i', $o))
-            {$bgcolor='bgcolor="#'. $SSstd_row2_background .'"';} 
-        else
-            {$bgcolor='bgcolor="#'. $SSstd_row1_background .'"';}
+        }
+        if (preg_match('/1$|3$|5$|7$|9$/i', $o)) {
+            $bgcolor='bgcolor="#'. $SSstd_row2_background .'"';
+        } else {
+            $bgcolor='bgcolor="#'. $SSstd_row1_background .'"';
+        }
         $ct = ($o + 1);
         echo "<tr $bgcolor>";
         echo "<td><font size=1>$ct</td>";
@@ -656,18 +682,19 @@ if ($list_id == 'NONE')
         echo "<td><font size=1>$Rnew_count</td>";
         echo "</tr>\n";
         $o++;
-        }
-    if ($action == "USER_LIST_NEW_MODIFY")
-        {
+    }
+    if ($action == "USER_LIST_NEW_MODIFY") {
         $SQL_log = "$rollingSQL_log|";
         $SQL_log = preg_replace('/;/', '', $SQL_log);
         $SQL_log = addslashes($SQL_log);
         $stmt="INSERT INTO vicidial_admin_log set event_date='$NOW_TIME', user='$PHP_AUTH_USER', ip_address='$ip', event_section='LISTS', event_type='MODIFY', record_id='$list_id', event_code='MODIFY USER LIST NEW LIMIT ENTRIES', event_sql=\"$SQL_log\", event_notes='$list_id|$o|NOCHANGE: $vulnl_nochng|UPDATES: $vulnl_updates|INSERTS: $vulnl_inserts|';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB > 0) {echo "$user|$o|$stmt\n<BR>";}
-        echo "<BR><b>$o "._QXZ("USER OVERALL NEW LIMIT ENTRIES MODIFIED")." (ID: $list_id) $o</b><BR><BR>";
+        if ($DB > 0) {
+            echo "$user|$o|$stmt\n<BR>";
         }
+        echo "<BR><b>$o "._QXZ("USER OVERALL NEW LIMIT ENTRIES MODIFIED")." (ID: $list_id) $o</b><BR><BR>";
     }
+}
 echo "<tr bgcolor=white>";
 echo "<td colspan=7 align=center><input type=submit name=SUBMIT value='"._QXZ("SUBMIT")."'></td>";
 echo "</tr>\n";
@@ -679,10 +706,9 @@ echo "<tr $bgcolor>";
 echo "</tr>\n";
 echo "</table></center><br>\n";
 echo "</TABLE>\n";
-if ( ($LOGuser_level >= 9) and ( (preg_match("/Administration Change Log/",$LOGallowed_reports)) or (preg_match("/ALL REPORTS/",$LOGallowed_reports)) ) )
-    {
+if (($LOGuser_level >= 9) and ((preg_match("/Administration Change Log/", $LOGallowed_reports)) or (preg_match("/ALL REPORTS/", $LOGallowed_reports)))) {
     echo "<br><br><font face=\"Arial,Helvetica\"><a href=\"$changesLINK\">"._QXZ("Click here to see Admin changes to this record")."</font>\n";
-    }
+}
 echo "</center>\n";
 echo "</TD></TR></TABLE>\n";
 $ENDtime = date("U");

@@ -32,38 +32,67 @@
 # * Bug reports, feature requests and patches welcome!
 # * ======================================== */
 ?>
-<?php 
+<?php
 $startMS = microtime();
-header ("Content-type: text/html; charset=utf-8");
+header("Content-type: text/html; charset=utf-8");
 require("dbconnect_mysqli.php");
 require("functions.php");
 $PHP_AUTH_USER=$_SERVER['PHP_AUTH_USER'];
 $PHP_AUTH_PW=$_SERVER['PHP_AUTH_PW'];
 $PHP_SELF=$_SERVER['PHP_SELF'];
-$PHP_SELF = preg_replace('/\.php.*/i','.php',$PHP_SELF);
-if (isset($_GET["group"]))                {$group=$_GET["group"];}
-    elseif (isset($_POST["group"]))        {$group=$_POST["group"];}
-if (isset($_GET["DB"]))                    {$DB=$_GET["DB"];}
-    elseif (isset($_POST["DB"]))        {$DB=$_POST["DB"];}
-if (isset($_GET["confirm_run"]))            {$confirm_run=$_GET["confirm_run"];}
-    elseif (isset($_POST["confirm_run"]))    {$confirm_run=$_POST["confirm_run"];}
-if (isset($_GET["submit"]))                {$submit=$_GET["submit"];}
-    elseif (isset($_POST["submit"]))    {$submit=$_POST["submit"];}
-if (isset($_GET["SUBMIT"]))                {$SUBMIT=$_GET["SUBMIT"];}
-    elseif (isset($_POST["SUBMIT"]))    {$SUBMIT=$_POST["SUBMIT"];}
-if (isset($_GET["file_download"]))            {$file_download=$_GET["file_download"];}
-    elseif (isset($_POST["file_download"]))    {$file_download=$_POST["file_download"];}
-if (isset($_GET["report_display_type"]))            {$report_display_type=$_GET["report_display_type"];}
-    elseif (isset($_POST["report_display_type"]))    {$report_display_type=$_POST["report_display_type"];}
-if (isset($_GET["use_lists"]))            {$use_lists=$_GET["use_lists"];}
-    elseif (isset($_POST["use_lists"]))    {$use_lists=$_POST["use_lists"];}
-if (isset($_GET["search_archived_data"]))            {$search_archived_data=$_GET["search_archived_data"];}
-    elseif (isset($_POST["search_archived_data"]))    {$search_archived_data=$_POST["search_archived_data"];}
+$PHP_SELF = preg_replace('/\.php.*/i', '.php', $PHP_SELF);
+if (isset($_GET["group"])) {
+    $group=$_GET["group"];
+} elseif (isset($_POST["group"])) {
+    $group=$_POST["group"];
+}
+if (isset($_GET["DB"])) {
+    $DB=$_GET["DB"];
+} elseif (isset($_POST["DB"])) {
+    $DB=$_POST["DB"];
+}
+if (isset($_GET["confirm_run"])) {
+    $confirm_run=$_GET["confirm_run"];
+} elseif (isset($_POST["confirm_run"])) {
+    $confirm_run=$_POST["confirm_run"];
+}
+if (isset($_GET["submit"])) {
+    $submit=$_GET["submit"];
+} elseif (isset($_POST["submit"])) {
+    $submit=$_POST["submit"];
+}
+if (isset($_GET["SUBMIT"])) {
+    $SUBMIT=$_GET["SUBMIT"];
+} elseif (isset($_POST["SUBMIT"])) {
+    $SUBMIT=$_POST["SUBMIT"];
+}
+if (isset($_GET["file_download"])) {
+    $file_download=$_GET["file_download"];
+} elseif (isset($_POST["file_download"])) {
+    $file_download=$_POST["file_download"];
+}
+if (isset($_GET["report_display_type"])) {
+    $report_display_type=$_GET["report_display_type"];
+} elseif (isset($_POST["report_display_type"])) {
+    $report_display_type=$_POST["report_display_type"];
+}
+if (isset($_GET["use_lists"])) {
+    $use_lists=$_GET["use_lists"];
+} elseif (isset($_POST["use_lists"])) {
+    $use_lists=$_POST["use_lists"];
+}
+if (isset($_GET["search_archived_data"])) {
+    $search_archived_data=$_GET["search_archived_data"];
+} elseif (isset($_POST["search_archived_data"])) {
+    $search_archived_data=$_POST["search_archived_data"];
+}
 $NOW_DATE = date("Y-m-d");
 $NOW_TIME = date("Y-m-d H:i:s");
 $STARTtime = date("U");
-if (!isset($group)) {$group = array();}
-$DB=preg_replace("/[^0-9a-zA-Z]/","",$DB);
+if (!isset($group)) {
+    $group = array();
+}
+$DB=preg_replace("/[^0-9a-zA-Z]/", "", $DB);
 $report_name = 'Lists Pass Report';
 $db_source = 'M';
 $JS_text="<script language='Javascript'>\n";
@@ -75,8 +104,7 @@ $JS_onload="onload = function() {\n";
 $stmt = "SELECT use_non_latin,outbound_autodial_active,slave_db_server,reports_use_slave_db,enable_languages,language_method,report_default_format,allow_web_debug FROM system_settings;";
 $rslt=mysql_to_mysqli($stmt, $link);
 $qm_conf_ct = mysqli_num_rows($rslt);
-if ($qm_conf_ct > 0)
-    {
+if ($qm_conf_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $non_latin =                    $row[0];
     $outbound_autodial_active =        $row[1];
@@ -86,9 +114,13 @@ if ($qm_conf_ct > 0)
     $SSlanguage_method =            $row[5];
     $SSreport_default_format =        $row[6];
     $SSallow_web_debug =            $row[7];
-    }
-if (strlen($report_display_type)<2) {$report_display_type = $SSreport_default_format;}
-if ($SSallow_web_debug < 1) {$DB=0;}
+}
+if (strlen($report_display_type)<2) {
+    $report_display_type = $SSreport_default_format;
+}
+if ($SSallow_web_debug < 1) {
+    $DB=0;
+}
 $confirm_run = preg_replace('/[^-_0-9a-zA-Z]/', '', $confirm_run);
 $submit = preg_replace('/[^-_0-9a-zA-Z]/', '', $submit);
 $SUBMIT = preg_replace('/[^-_0-9a-zA-Z]/', '', $SUBMIT);
@@ -96,90 +128,85 @@ $file_download = preg_replace('/[^-_0-9a-zA-Z]/', '', $file_download);
 $report_display_type = preg_replace('/[^-_0-9a-zA-Z]/', '', $report_display_type);
 $use_lists = preg_replace('/[^-_0-9a-zA-Z]/', '', $use_lists);
 $search_archived_data = preg_replace('/[^-_0-9a-zA-Z]/', '', $search_archived_data);
-if ($non_latin < 1)
-    {
+if ($non_latin < 1) {
     $PHP_AUTH_USER = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_USER);
     $PHP_AUTH_PW = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_PW);
-    }
-else
-    {
+} else {
     $PHP_AUTH_USER = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_USER);
     $PHP_AUTH_PW = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_PW);
-    }
+}
 $archives_available="N";
 $table_name="vicidial_log";
 $archive_table_name=use_archive_table($table_name);
-if ($archive_table_name!=$table_name) {$archives_available="Y";}
-if ($search_archived_data) 
-    {
+if ($archive_table_name!=$table_name) {
+    $archives_available="Y";
+}
+if ($search_archived_data) {
     $vicidial_log_table=use_archive_table("vicidial_log");
-    }
-else
-    {
+} else {
     $vicidial_log_table="vicidial_log";
-    }
+}
 $stmt="SELECT selected_language from vicidial_users where user='$PHP_AUTH_USER';";
-if ($DB) {echo "|$stmt|\n";}
+if ($DB) {
+    echo "|$stmt|\n";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 $sl_ct = mysqli_num_rows($rslt);
-if ($sl_ct > 0)
-    {
+if ($sl_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $VUselected_language =        $row[0];
-    }
+}
 $auth=0;
 $reports_auth=0;
 $admin_auth=0;
-$auth_message = user_authorization($PHP_AUTH_USER,$PHP_AUTH_PW,'REPORTS',1,0);
-if ($auth_message == 'GOOD')
-    {$auth=1;}
-if ($auth > 0)
-    {
+$auth_message = user_authorization($PHP_AUTH_USER, $PHP_AUTH_PW, 'REPORTS', 1, 0);
+if ($auth_message == 'GOOD') {
+    $auth=1;
+}
+if ($auth > 0) {
     $stmt="SELECT count(*) from vicidial_users where user='$PHP_AUTH_USER' and user_level > 7 and view_reports='1';";
-    if ($DB) {echo "|$stmt|\n";}
+    if ($DB) {
+        echo "|$stmt|\n";
+    }
     $rslt=mysql_to_mysqli($stmt, $link);
     $row=mysqli_fetch_row($rslt);
     $admin_auth=$row[0];
     $stmt="SELECT count(*) from vicidial_users where user='$PHP_AUTH_USER' and user_level > 6 and view_reports='1';";
-    if ($DB) {echo "|$stmt|\n";}
+    if ($DB) {
+        echo "|$stmt|\n";
+    }
     $rslt=mysql_to_mysqli($stmt, $link);
     $row=mysqli_fetch_row($rslt);
     $reports_auth=$row[0];
-    if ($reports_auth < 1)
-        {
+    if ($reports_auth < 1) {
         $VDdisplayMESSAGE = _QXZ("You are not allowed to view reports");
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
-    if ( ($reports_auth > 0) and ($admin_auth < 1) )
-        {
+    }
+    if (($reports_auth > 0) and ($admin_auth < 1)) {
         $ADD=999999;
         $reports_only_user=1;
-        }
     }
-else
-    {
+} else {
     $VDdisplayMESSAGE = _QXZ("Login incorrect, please try again");
-    if ($auth_message == 'LOCK')
-        {
+    if ($auth_message == 'LOCK') {
         $VDdisplayMESSAGE = _QXZ("Too many login attempts, try again in 15 minutes");
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
-    if ($auth_message == 'IPBLOCK')
-        {
+    }
+    if ($auth_message == 'IPBLOCK') {
         $VDdisplayMESSAGE = _QXZ("Your IP Address is not allowed") . ": $ip";
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
+    }
     Header("WWW-Authenticate: Basic realm=\"CONTACT-CENTER-ADMIN\"");
     Header("HTTP/1.0 401 Unauthorized");
     echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$PHP_AUTH_PW|$auth_message|\n";
     exit;
-    }
+}
 $LOGip = getenv("REMOTE_ADDR");
 $LOGbrowser = getenv("HTTP_USER_AGENT");
 $LOGscript_name = getenv("SCRIPT_NAME");
@@ -187,168 +214,170 @@ $LOGserver_name = getenv("SERVER_NAME");
 $LOGserver_port = getenv("SERVER_PORT");
 $LOGrequest_uri = getenv("REQUEST_URI");
 $LOGhttp_referer = getenv("HTTP_REFERER");
-$LOGbrowser=preg_replace("/\'|\"|\\\\/","",$LOGbrowser);
-$LOGrequest_uri=preg_replace("/\'|\"|\\\\/","",$LOGrequest_uri);
-$LOGhttp_referer=preg_replace("/\'|\"|\\\\/","",$LOGhttp_referer);
-if (preg_match("/443/i",$LOGserver_port)) {$HTTPprotocol = 'https://';}
-  else {$HTTPprotocol = 'http://';}
-if (($LOGserver_port == '80') or ($LOGserver_port == '443') ) {$LOGserver_port='';}
-else {$LOGserver_port = ":$LOGserver_port";}
+$LOGbrowser=preg_replace("/\'|\"|\\\\/", "", $LOGbrowser);
+$LOGrequest_uri=preg_replace("/\'|\"|\\\\/", "", $LOGrequest_uri);
+$LOGhttp_referer=preg_replace("/\'|\"|\\\\/", "", $LOGhttp_referer);
+if (preg_match("/443/i", $LOGserver_port)) {
+    $HTTPprotocol = 'https://';
+} else {
+    $HTTPprotocol = 'http://';
+}
+if (($LOGserver_port == '80') or ($LOGserver_port == '443')) {
+    $LOGserver_port='';
+} else {
+    $LOGserver_port = ":$LOGserver_port";
+}
 $LOGfull_url = "$HTTPprotocol$LOGserver_name$LOGserver_port$LOGrequest_uri";
 $LOGhostname = php_uname('n');
-if (strlen($LOGhostname)<1) {$LOGhostname='X';}
-if (strlen($LOGserver_name)<1) {$LOGserver_name='X';}
+if (strlen($LOGhostname)<1) {
+    $LOGhostname='X';
+}
+if (strlen($LOGserver_name)<1) {
+    $LOGserver_name='X';
+}
 $stmt="SELECT webserver_id FROM vicidial_webservers where webserver='$LOGserver_name' and hostname='$LOGhostname' LIMIT 1;";
 $rslt=mysql_to_mysqli($stmt, $link);
-if ($DB) {echo "$stmt\n";}
+if ($DB) {
+    echo "$stmt\n";
+}
 $webserver_id_ct = mysqli_num_rows($rslt);
-if ($webserver_id_ct > 0)
-    {
+if ($webserver_id_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $webserver_id = $row[0];
-    }
-else
-    {
+} else {
     $stmt="INSERT INTO vicidial_webservers (webserver,hostname) values('$LOGserver_name','$LOGhostname');";
-    if ($DB) {echo "$stmt\n";}
+    if ($DB) {
+        echo "$stmt\n";
+    }
     $rslt=mysql_to_mysqli($stmt, $link);
     $affected_rows = mysqli_affected_rows($link);
     $webserver_id = mysqli_insert_id($link);
-    }
+}
 $stmt="INSERT INTO vicidial_report_log set event_date=NOW(), user='$PHP_AUTH_USER', ip_address='$LOGip', report_name='$report_name', browser='$LOGbrowser', referer='$LOGhttp_referer', notes='$LOGserver_name:$LOGserver_port $LOGscript_name |$query_date, $end_date, $shift, $file_download, $report_display_type|', url='$LOGfull_url', webserver='$webserver_id';";
-if ($DB) {echo "|$stmt|\n";}
+if ($DB) {
+    echo "|$stmt|\n";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 $report_log_id = mysqli_insert_id($link);
-if ( (strlen($slave_db_server)>5) and (preg_match("/$report_name/",$reports_use_slave_db)) )
-    {
+if ((strlen($slave_db_server)>5) and (preg_match("/$report_name/", $reports_use_slave_db))) {
     mysqli_close($link);
     $use_slave_server=1;
     $db_source = 'S';
     require("dbconnect_mysqli.php");
     $MAIN.="<!-- Using slave server $slave_db_server $db_source -->\n";
-    }
+}
 $stmt="SELECT user_group from vicidial_users where user='$PHP_AUTH_USER';";
-if ($DB) {$MAIN.="|$stmt|\n";}
+if ($DB) {
+    $MAIN.="|$stmt|\n";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 $row=mysqli_fetch_row($rslt);
 $LOGuser_group =            $row[0];
 $stmt="SELECT allowed_campaigns,allowed_reports from vicidial_user_groups where user_group='$LOGuser_group';";
-if ($DB) {$MAIN.="|$stmt|\n";}
+if ($DB) {
+    $MAIN.="|$stmt|\n";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 $row=mysqli_fetch_row($rslt);
 $LOGallowed_campaigns = $row[0];
 $LOGallowed_reports =    $row[1];
-if ( (!preg_match("/$report_name/",$LOGallowed_reports)) and (!preg_match("/ALL REPORTS/",$LOGallowed_reports)) )
-    {
+if ((!preg_match("/$report_name/", $LOGallowed_reports)) and (!preg_match("/ALL REPORTS/", $LOGallowed_reports))) {
     Header("WWW-Authenticate: Basic realm=\"CONTACT-CENTER-ADMIN\"");
     Header("HTTP/1.0 401 Unauthorized");
     echo _QXZ("You are not allowed to view this report").": |$PHP_AUTH_USER|$report_name|\n";
     exit;
-    }
+}
 $i=0;
 $group_string='|';
 $group_ct = count($group);
-while($i < $group_ct)
-    {
-    $group[$i] = preg_replace('/[^-_0-9\p{L}]/u','',$group[$i]);
+while($i < $group_ct) {
+    $group[$i] = preg_replace('/[^-_0-9\p{L}]/u', '', $group[$i]);
     $group_string .= "$group[$i]|";
     $i++;
-    }
+}
 $LOGallowed_campaignsSQL='';
 $whereLOGallowed_campaignsSQL='';
-if ( (!preg_match('/\-ALL/i', $LOGallowed_campaigns)) )
-    {
-    $rawLOGallowed_campaignsSQL = preg_replace("/ -/",'',$LOGallowed_campaigns);
-    $rawLOGallowed_campaignsSQL = preg_replace("/ /","','",$rawLOGallowed_campaignsSQL);
+if ((!preg_match('/\-ALL/i', $LOGallowed_campaigns))) {
+    $rawLOGallowed_campaignsSQL = preg_replace("/ -/", '', $LOGallowed_campaigns);
+    $rawLOGallowed_campaignsSQL = preg_replace("/ /", "','", $rawLOGallowed_campaignsSQL);
     $LOGallowed_campaignsSQL = "and campaign_id IN('$rawLOGallowed_campaignsSQL')";
     $whereLOGallowed_campaignsSQL = "where campaign_id IN('$rawLOGallowed_campaignsSQL')";
-    }
+}
 $regexLOGallowed_campaigns = " $LOGallowed_campaigns ";
 $groups=array();
 $group_names=array();
-if ($use_lists < 1)
-    {
+if ($use_lists < 1) {
     $stmt="select campaign_id,campaign_name from vicidial_campaigns $whereLOGallowed_campaignsSQL order by campaign_id;";
     $rslt=mysql_to_mysqli($stmt, $link);
-    if ($DB) {$MAIN.="$stmt\n";}
+    if ($DB) {
+        $MAIN.="$stmt\n";
+    }
     $campaigns_to_print = mysqli_num_rows($rslt);
     $i=0;
-    while ($i < $campaigns_to_print)
-        {
+    while ($i < $campaigns_to_print) {
         $row=mysqli_fetch_row($rslt);
         $groups[$i] =        $row[0];
         $group_names[$i] =    $row[1];
-        if (preg_match('/\-ALL/',$group_string) )
-            {$group[$i] = $groups[$i];}
-        $i++;
+        if (preg_match('/\-ALL/', $group_string)) {
+            $group[$i] = $groups[$i];
         }
+        $i++;
     }
-else
-    {
+} else {
     $stmt="select list_id,list_name from vicidial_lists $whereLOGallowed_campaignsSQL order by list_id;";
     $rslt=mysql_to_mysqli($stmt, $link);
-    if ($DB) {$MAIN.="$stmt\n";}
+    if ($DB) {
+        $MAIN.="$stmt\n";
+    }
     $campaigns_to_print = mysqli_num_rows($rslt);
     $i=0;
-    while ($i < $campaigns_to_print)
-        {
+    while ($i < $campaigns_to_print) {
         $row=mysqli_fetch_row($rslt);
         $groups[$i] =        $row[0];
         $group_names[$i] =    $row[1];
-        if (preg_match('/\-ALL/',$group_string) )
-            {$group[$i] = $groups[$i];}
-        $i++;
+        if (preg_match('/\-ALL/', $group_string)) {
+            $group[$i] = $groups[$i];
         }
+        $i++;
     }
+}
 $rollover_groups_count=0;
 $i=0;
 $group_string='|';
 $group_ct = count($group);
-while($i < $group_ct)
-    {
-    $group[$i] = preg_replace('/[^-_0-9\p{L}]/u','',$group[$i]);
-    if ( (preg_match("/ $group[$i] /",$regexLOGallowed_campaigns)) or (preg_match("/-ALL/",$LOGallowed_campaigns)) )
-        {
+while($i < $group_ct) {
+    $group[$i] = preg_replace('/[^-_0-9\p{L}]/u', '', $group[$i]);
+    if ((preg_match("/ $group[$i] /", $regexLOGallowed_campaigns)) or (preg_match("/-ALL/", $LOGallowed_campaigns))) {
         $group_string .= "$group[$i]|";
         $group_SQL .= "'$group[$i]',";
         $groupQS .= "&group[]=$group[$i]";
-        }
-    $i++;
     }
-if ($use_lists < 1)
-    {
-    if ( (preg_match('/\-\-ALL\-\-/',$group_string) ) or ($group_ct < 1) or (strlen($group_string) < 2) )
-        {
+    $i++;
+}
+if ($use_lists < 1) {
+    if ((preg_match('/\-\-ALL\-\-/', $group_string)) or ($group_ct < 1) or (strlen($group_string) < 2)) {
         $group_SQL = "$LOGallowed_campaignsSQL";
-        }
-    else
-        {
-        $group_SQL = preg_replace('/,$/i', '',$group_SQL);
+    } else {
+        $group_SQL = preg_replace('/,$/i', '', $group_SQL);
         $group_SQLand = "and campaign_id IN($group_SQL)";
         $group_SQL = "where campaign_id IN($group_SQL)";
-        }
     }
-else
-    {
-    if ( (preg_match('/\-\-ALL\-\-/',$group_string) ) or ($group_ct < 1) or (strlen($group_string) < 2) )
-        {
+} else {
+    if ((preg_match('/\-\-ALL\-\-/', $group_string)) or ($group_ct < 1) or (strlen($group_string) < 2)) {
         $group_SQL = "where list_id IN($group_SQL)";
-        }
-    else
-        {
-        $group_SQL = preg_replace('/,$/i', '',$group_SQL);
+    } else {
+        $group_SQL = preg_replace('/,$/i', '', $group_SQL);
         $group_SQLand = "and list_id IN($group_SQL)";
         $group_SQL = "where list_id IN($group_SQL)";
-        }
     }
+}
 $lists_id_str="";
 $list_stmt="SELECT list_id from vicidial_lists where active IN('Y','N') $group_SQLand";
 $list_rslt=mysql_to_mysqli($list_stmt, $link);
-while ($lrow=mysqli_fetch_row($list_rslt)) 
-    {
+while ($lrow=mysqli_fetch_row($list_rslt)) {
     $lists_id_str.="'$lrow[0]',";
-    }
-$lists_id_str=substr($lists_id_str,0,-1);
+}
+$lists_id_str=substr($lists_id_str, 0, -1);
 $human_answered_statuses='';
 $sale_statuses='';
 $dnc_statuses='';
@@ -357,61 +386,121 @@ $not_interested_statuses='';
 $unworkable_statuses='';
 $stmt="select status,human_answered,sale,dnc,customer_contact,not_interested,unworkable,scheduled_callback,completed,status_name from vicidial_statuses;";
 $rslt=mysql_to_mysqli($stmt, $link);
-if ($DB) {$MAIN.="$stmt\n";}
+if ($DB) {
+    $MAIN.="$stmt\n";
+}
 $statha_to_print = mysqli_num_rows($rslt);
 $i=0;
-while ($i < $statha_to_print)
-    {
+while ($i < $statha_to_print) {
     $row=mysqli_fetch_row($rslt);
     $temp_status = $row[0];
     $statname_list["$temp_status"] = "$row[9]";
-    if ($row[1]=='Y') {$human_answered_statuses .= "'$temp_status',";}
-    if ($row[2]=='Y') {$sale_statuses .= "'$temp_status',";}
-    if ($row[3]=='Y') {$dnc_statuses .= "'$temp_status',";}
-    if ($row[4]=='Y') {$customer_contact_statuses .= "'$temp_status',";}
-    if ($row[5]=='Y') {$not_interested_statuses .= "'$temp_status',";}
-    if ($row[6]=='Y') {$unworkable_statuses .= "'$temp_status',";}
-    if ($row[7]=='Y') {$scheduled_callback_statuses .= "'$temp_status',";}
-    if ($row[8]=='Y') {$completed_statuses .= "'$temp_status',";}
-    $i++;
+    if ($row[1]=='Y') {
+        $human_answered_statuses .= "'$temp_status',";
     }
+    if ($row[2]=='Y') {
+        $sale_statuses .= "'$temp_status',";
+    }
+    if ($row[3]=='Y') {
+        $dnc_statuses .= "'$temp_status',";
+    }
+    if ($row[4]=='Y') {
+        $customer_contact_statuses .= "'$temp_status',";
+    }
+    if ($row[5]=='Y') {
+        $not_interested_statuses .= "'$temp_status',";
+    }
+    if ($row[6]=='Y') {
+        $unworkable_statuses .= "'$temp_status',";
+    }
+    if ($row[7]=='Y') {
+        $scheduled_callback_statuses .= "'$temp_status',";
+    }
+    if ($row[8]=='Y') {
+        $completed_statuses .= "'$temp_status',";
+    }
+    $i++;
+}
 $stmt="select status,human_answered,sale,dnc,customer_contact,not_interested,unworkable,scheduled_callback,completed,status_name from vicidial_campaign_statuses where selectable IN('Y','N');";
 $rslt=mysql_to_mysqli($stmt, $link);
-if ($DB) {$MAIN.="$stmt\n";}
+if ($DB) {
+    $MAIN.="$stmt\n";
+}
 $statha_to_print = mysqli_num_rows($rslt);
 $i=0;
-while ($i < $statha_to_print)
-    {
+while ($i < $statha_to_print) {
     $row=mysqli_fetch_row($rslt);
     $temp_status = $row[0];
     $statname_list["$temp_status"] = "$row[9]";
-    if ( ($row[1]=='Y') and (!preg_match("/'$temp_status'/",$human_answered_statuses)) ) {$human_answered_statuses .= "'$temp_status',";}
-    if ($row[2]=='Y') {$sale_statuses .= "'$temp_status',";}
-    if ($row[3]=='Y') {$dnc_statuses .= "'$temp_status',";}
-    if ($row[4]=='Y') {$customer_contact_statuses .= "'$temp_status',";}
-    if ($row[5]=='Y') {$not_interested_statuses .= "'$temp_status',";}
-    if ($row[6]=='Y') {$unworkable_statuses .= "'$temp_status',";}
-    if ($row[7]=='Y') {$scheduled_callback_statuses .= "'$temp_status',";}
-    if ($row[8]=='Y') {$completed_statuses .= "'$temp_status',";}
-    $i++;
+    if (($row[1]=='Y') and (!preg_match("/'$temp_status'/", $human_answered_statuses))) {
+        $human_answered_statuses .= "'$temp_status',";
     }
-if (strlen($human_answered_statuses)>2)        {$human_answered_statuses = substr("$human_answered_statuses", 0, -1);}
-else {$human_answered_statuses="''";}
-if (strlen($sale_statuses)>2)                {$sale_statuses = substr("$sale_statuses", 0, -1);}
-else {$sale_statuses="''";}
-if (strlen($dnc_statuses)>2)                {$dnc_statuses = substr("$dnc_statuses", 0, -1);}
-else {$dnc_statuses="''";}
-if (strlen($customer_contact_statuses)>2)    {$customer_contact_statuses = substr("$customer_contact_statuses", 0, -1);}
-else {$customer_contact_statuses="''";}
-if (strlen($not_interested_statuses)>2)        {$not_interested_statuses = substr("$not_interested_statuses", 0, -1);}
-else {$not_interested_statuses="''";}
-if (strlen($unworkable_statuses)>2)            {$unworkable_statuses = substr("$unworkable_statuses", 0, -1);}
-else {$unworkable_statuses="''";}
-if (strlen($scheduled_callback_statuses)>2)            {$scheduled_callback_statuses = substr("$scheduled_callback_statuses", 0, -1);}
-else {$scheduled_callback_statuses="''";}
-if (strlen($completed_statuses)>2)            {$completed_statuses = substr("$completed_statuses", 0, -1);}
-else {$completed_statuses="''";}
-if ($DB) {echo "<!-- SALE statuses: $sale_statuses -->";}
+    if ($row[2]=='Y') {
+        $sale_statuses .= "'$temp_status',";
+    }
+    if ($row[3]=='Y') {
+        $dnc_statuses .= "'$temp_status',";
+    }
+    if ($row[4]=='Y') {
+        $customer_contact_statuses .= "'$temp_status',";
+    }
+    if ($row[5]=='Y') {
+        $not_interested_statuses .= "'$temp_status',";
+    }
+    if ($row[6]=='Y') {
+        $unworkable_statuses .= "'$temp_status',";
+    }
+    if ($row[7]=='Y') {
+        $scheduled_callback_statuses .= "'$temp_status',";
+    }
+    if ($row[8]=='Y') {
+        $completed_statuses .= "'$temp_status',";
+    }
+    $i++;
+}
+if (strlen($human_answered_statuses)>2) {
+    $human_answered_statuses = substr("$human_answered_statuses", 0, -1);
+} else {
+    $human_answered_statuses="''";
+}
+if (strlen($sale_statuses)>2) {
+    $sale_statuses = substr("$sale_statuses", 0, -1);
+} else {
+    $sale_statuses="''";
+}
+if (strlen($dnc_statuses)>2) {
+    $dnc_statuses = substr("$dnc_statuses", 0, -1);
+} else {
+    $dnc_statuses="''";
+}
+if (strlen($customer_contact_statuses)>2) {
+    $customer_contact_statuses = substr("$customer_contact_statuses", 0, -1);
+} else {
+    $customer_contact_statuses="''";
+}
+if (strlen($not_interested_statuses)>2) {
+    $not_interested_statuses = substr("$not_interested_statuses", 0, -1);
+} else {
+    $not_interested_statuses="''";
+}
+if (strlen($unworkable_statuses)>2) {
+    $unworkable_statuses = substr("$unworkable_statuses", 0, -1);
+} else {
+    $unworkable_statuses="''";
+}
+if (strlen($scheduled_callback_statuses)>2) {
+    $scheduled_callback_statuses = substr("$scheduled_callback_statuses", 0, -1);
+} else {
+    $scheduled_callback_statuses="''";
+}
+if (strlen($completed_statuses)>2) {
+    $completed_statuses = substr("$completed_statuses", 0, -1);
+} else {
+    $completed_statuses="''";
+}
+if ($DB) {
+    echo "<!-- SALE statuses: $sale_statuses -->";
+}
 require("screen_colors.php");
 $NWB = "<IMG SRC=\"help.png\" onClick=\"FillAndShowHelpDiv(event, '";
 $NWE = "')\" WIDTH=20 HEIGHT=20 BORDER=0 ALT=\"HELP\" ALIGN=TOP>";
@@ -427,7 +516,7 @@ $HEADER.="-->\n";
 $HEADER.=" </STYLE>\n";
 $HEADER.="<link rel=\"stylesheet\" href=\"horizontalbargraph.css\">\n";
 require("chart_button.php");
-$HEADER.="<script src='chart/Chart.js'></script>\n"; 
+$HEADER.="<script src='chart/Chart.js'></script>\n";
 $HEADER.="<script language=\"JavaScript\" src=\"vicidial_chart_functions.js\"></script>\n";
 $HEADER.="<link rel=\"stylesheet\" type=\"text/css\" href=\"vicidial_stylesheet.php\">\n";
 $HEADER.="<script language=\"JavaScript\" src=\"help.js\"></script>\n";
@@ -443,100 +532,90 @@ $MAIN.="<TR><TD colspan='4' class='small_standard'>** Due to the complexity of t
 $MAIN.="<TR><TD VALIGN=TOP>";
 $MAIN.="<INPUT TYPE=HIDDEN NAME=DB VALUE=\"$DB\">\n";
 $MAIN.="<INPUT TYPE=HIDDEN NAME=use_lists VALUE=\"$use_lists\">\n";
-if ($use_lists > 0)
-    {
+if ($use_lists > 0) {
     $MAIN.="</TD><TD VALIGN=TOP class='standard'> "._QXZ("Lists").":<BR>";
     $MAIN.="<SELECT SIZE=5 NAME=group[] multiple>\n";
-    if  (preg_match('/\-\-ALL\-\-/',$group_string))
-        {$MAIN.="<option value=\"--ALL--\" selected>-- "._QXZ("ALL LISTS")." --</option>\n";}
-    else
-        {$MAIN.="<option value=\"--ALL--\">-- "._QXZ("ALL LISTS")." --</option>\n";}
+    if  (preg_match('/\-\-ALL\-\-/', $group_string)) {
+        $MAIN.="<option value=\"--ALL--\" selected>-- "._QXZ("ALL LISTS")." --</option>\n";
+    } else {
+        $MAIN.="<option value=\"--ALL--\">-- "._QXZ("ALL LISTS")." --</option>\n";
+    }
     $o=0;
-    while ($campaigns_to_print > $o)
-        {
-        if (preg_match("/$groups[$o]\|/i",$group_string)) {$MAIN.="<option selected value=\"$groups[$o]\">$groups[$o] - $group_names[$o]</option>\n";}
-          else {$MAIN.="<option value=\"$groups[$o]\">$groups[$o] - $group_names[$o]</option>\n";}
-        $o++;
+    while ($campaigns_to_print > $o) {
+        if (preg_match("/$groups[$o]\|/i", $group_string)) {
+            $MAIN.="<option selected value=\"$groups[$o]\">$groups[$o] - $group_names[$o]</option>\n";
+        } else {
+            $MAIN.="<option value=\"$groups[$o]\">$groups[$o] - $group_names[$o]</option>\n";
         }
+        $o++;
+    }
     $MAIN.="</SELECT>\n<BR>\n";
     $MAIN.="<a href=\"$PHP_SELF?use_lists=0&DB=$DB\">"._QXZ("SWITCH TO CAMPAIGNS")."</a>";
-    }
-else
-    {
+} else {
     $MAIN.="</TD><TD VALIGN=TOP class='standard'> "._QXZ("Campaigns").":<BR>";
     $MAIN.="<SELECT SIZE=5 NAME=group[] multiple>\n";
-    if  (preg_match('/\-\-ALL\-\-/',$group_string))
-        {$MAIN.="<option value=\"--ALL--\" selected>-- "._QXZ("ALL CAMPAIGNS")." --</option>\n";}
-    else
-        {$MAIN.="<option value=\"--ALL--\">-- "._QXZ("ALL CAMPAIGNS")." --</option>\n";}
+    if  (preg_match('/\-\-ALL\-\-/', $group_string)) {
+        $MAIN.="<option value=\"--ALL--\" selected>-- "._QXZ("ALL CAMPAIGNS")." --</option>\n";
+    } else {
+        $MAIN.="<option value=\"--ALL--\">-- "._QXZ("ALL CAMPAIGNS")." --</option>\n";
+    }
     $o=0;
-    while ($campaigns_to_print > $o)
-        {
-        if (preg_match("/$groups[$o]\|/i",$group_string)) {$MAIN.="<option selected value=\"$groups[$o]\">$groups[$o] - $group_names[$o]</option>\n";}
-          else {$MAIN.="<option value=\"$groups[$o]\">$groups[$o] - $group_names[$o]</option>\n";}
-        $o++;
+    while ($campaigns_to_print > $o) {
+        if (preg_match("/$groups[$o]\|/i", $group_string)) {
+            $MAIN.="<option selected value=\"$groups[$o]\">$groups[$o] - $group_names[$o]</option>\n";
+        } else {
+            $MAIN.="<option value=\"$groups[$o]\">$groups[$o] - $group_names[$o]</option>\n";
         }
+        $o++;
+    }
     $MAIN.="</SELECT>\n<BR>\n";
     $MAIN.="<a href=\"$PHP_SELF?use_lists=1&DB=$DB\">"._QXZ("SWITCH TO LISTS")."</a>";
-    }
+}
 $MAIN.="</TD><TD VALIGN=TOP class='standard'>";
 $MAIN.=_QXZ("Display as").":<BR/>";
 $MAIN.="<select name='report_display_type'>";
-if ($report_display_type) {$MAIN.="<option value='$report_display_type' selected>"._QXZ("$report_display_type")."</option>";}
+if ($report_display_type) {
+    $MAIN.="<option value='$report_display_type' selected>"._QXZ("$report_display_type")."</option>";
+}
 $MAIN.="<option value='TEXT'>"._QXZ("TEXT")."</option><option value='HTML'>"._QXZ("HTML")."</option></select>&nbsp; ";
-if ($archives_available=="Y") 
-    {
+if ($archives_available=="Y") {
     $MAIN.="<BR><input type='checkbox' name='search_archived_data' value='checked' $search_archived_data>"._QXZ("Search archived data")."\n";
-    }
+}
 $MAIN.="<BR><BR>\n";
 $MAIN.="<INPUT style='background-color:#$SSbutton_color' type=submit NAME=SUBMIT VALUE='"._QXZ("SUBMIT")."'>\n";
 $MAIN.="</TD><TD VALIGN=TOP class='standard'> &nbsp; &nbsp; &nbsp; &nbsp; ";
-if ($use_lists > 0)
-    {
-    if (strlen($group[0]) > 1)
-        {
+if ($use_lists > 0) {
+    if (strlen($group[0]) > 1) {
         $MAIN.=" <a href=\"./admin.php?ADD=311&list_id=$group[0]\">"._QXZ("MODIFY")."</a> | \n";
         $MAIN.=" <a href=\"./admin.php?ADD=999999\">"._QXZ("REPORTS")."</a>\n";
-        }
-    else
-        {
+    } else {
         $MAIN.=" <a href=\"./admin.php?ADD=100\">"._QXZ("LISTS")."</a> | \n";
         $MAIN.=" <a href=\"./admin.php?ADD=999999\">"._QXZ("REPORTS")."</a>\n";
-        }
     }
-else
-    {
-    if (strlen($group[0]) > 1)
-        {
+} else {
+    if (strlen($group[0]) > 1) {
         $MAIN.=" <a href=\"./admin.php?ADD=34&campaign_id=$group[0]\">"._QXZ("MODIFY")."</a> | \n";
         $MAIN.=" <a href=\"./admin.php?ADD=999999\">"._QXZ("REPORTS")."</a>\n";
-        }
-    else
-        {
+    } else {
         $MAIN.=" <a href=\"./admin.php?ADD=10\">"._QXZ("CAMPAIGNS")."</a> | \n";
         $MAIN.=" <a href=\"./admin.php?ADD=999999\">"._QXZ("REPORTS")."</a>\n";
-        }
     }
+}
 $MAIN.="</TD></TR></TABLE>";
 $MAIN.="</FORM>\n\n";
 $MAIN.="<PRE><FONT SIZE=2>\n\n";
-if (strlen($group[0]) < 1)
-    {
+if (strlen($group[0]) < 1) {
     $MAIN.="\n\n";
     $MAIN.=_QXZ("PLEASE SELECT A CAMPAIGN ABOVE AND CLICK SUBMIT")."\n";
-    }
-else if (strlen($group[0]) >= 1 && !$confirm_run)
-    {
+} elseif (strlen($group[0]) >= 1 && !$confirm_run) {
     $MAIN.="<font color='#900' size='3'><B>"._QXZ("REMINDER - THIS REPORT CAN TAKE A LONG TIME TO RUN AND WILL INTERFERE WITH DIALING IF EXECUTED DURING PRODUCTION.")."<BR>"._QXZ("IF YOU ARE SURE YOU WOULD LIKE TO RUN THE REPORT AT THIS TIME")." <a href=\"$PHP_SELF?DB=$DB$groupQS&SUBMIT=$SUBMIT&confirm_run=1&use_lists=1&search_archived_data=$search_archived_data\">"._QXZ("CLICK HERE")."</a></B></font>";
-    }
-else
-    {
+} else {
     $OUToutput = '';
-    $OUToutput .= _QXZ("Lists Pass Report",45)." $NOW_TIME\n";
+    $OUToutput .= _QXZ("Lists Pass Report", 45)." $NOW_TIME\n";
     $OUToutput .= "\n";
     $TOTALleads = 0;
     $OUToutput .= "\n";
-    $OUToutput .= "---------- "._QXZ("LIST ID SUMMARY",19)." <a href=\"$PHP_SELF?DB=$DB$groupQS&SUBMIT=$SUBMIT&file_download=1&confirm_run=1&use_lists=1&search_archived_data=$search_archived_data\">"._QXZ("DOWNLOAD")."</a>\n";
+    $OUToutput .= "---------- "._QXZ("LIST ID SUMMARY", 19)." <a href=\"$PHP_SELF?DB=$DB$groupQS&SUBMIT=$SUBMIT&file_download=1&confirm_run=1&use_lists=1&search_archived_data=$search_archived_data\">"._QXZ("DOWNLOAD")."</a>\n";
     $OUToutput .= "+------------+------------------------------------------+----------+------------+----------+";
     $OUToutput .= "---------+---------+---------+---------+---------+---------+";
     $OUToutput .= "---------+---------+---------+---------+---------+---------+";
@@ -553,37 +632,37 @@ else
     $OUToutput .= "---------+---------+---------+---------+---------+---------+";
     $OUToutput .= "---------+---------+---------+---------+---------+---------+";
     $OUToutput .= "\n";
-    $OUToutput .= "|   "._QXZ("FIRST",8)." |                                          |          | "._QXZ("LEAD",10)." |          |";
-    $OUToutput .= _QXZ("CONTACTS",9,"r")."|"._QXZ("CONTACTS",9,"r")."|"._QXZ("CONTACTS",9,"r")."|"._QXZ("CONTACTS",9,"r")."|"._QXZ("CONTACTS",9,"r")."|"._QXZ("CONTACTS",9,"r")."|";
-    $OUToutput .= _QXZ("CNT RATE",9,"r")."|"._QXZ("CNT RATE",9,"r")."|"._QXZ("CNT RATE",9,"r")."|"._QXZ("CNT RATE",9,"r")."|"._QXZ("CNT RATE",9,"r")."|"._QXZ("CNT RATE",9,"r")."|";
-    $OUToutput .= _QXZ("SALES",8,"r")." |"._QXZ("SALES",8,"r")." |"._QXZ("SALES",8,"r")." |"._QXZ("SALES",8,"r")." |"._QXZ("SALES",8,"r")." |"._QXZ("SALES",8,"r")." |";
-    $OUToutput .= _QXZ("CONV RATE",9,"r")."|"._QXZ("CONV RATE",9,"r")."|"._QXZ("CONV RATE",9,"r")."|"._QXZ("CONV RATE",9,"r")."|"._QXZ("CONV RATE",9,"r")."|"._QXZ("CONV RATE",9,"r")."|";
-    $OUToutput .= _QXZ("  DNC",8)." | "._QXZ(" DNC",7)." | "._QXZ(" DNC",7)." | "._QXZ(" DNC",7)." | "._QXZ(" DNC",7)." | "._QXZ(" DNC",7)." |";
-    $OUToutput .= _QXZ("DNC RATE",9,"r")."|"._QXZ("DNC RATE",9,"r")."|"._QXZ("DNC RATE",9,"r")."|"._QXZ("DNC RATE",9,"r")."|"._QXZ("DNC RATE",9,"r")."|"._QXZ("DNC RATE",9,"r")."|";
-    $OUToutput .= _QXZ("CUST CONT",9,"r")."|"._QXZ("CUST CONT",9,"r")."|"._QXZ("CUST CONT",9,"r")."|"._QXZ("CUST CONT",9,"r")."|"._QXZ("CUST CONT",9,"r")."|"._QXZ("CUST CONT",9,"r")."|";
-    $OUToutput .= _QXZ("CUCT RATE",9,"r")."|"._QXZ("CUCT RATE",9,"r")."|"._QXZ("CUCT RATE",9,"r")."|"._QXZ("CUCT RATE",9,"r")."|"._QXZ("CUCT RATE",9,"r")."|"._QXZ("CUCT RATE",9,"r")."|";
-    $OUToutput .= _QXZ("UNWORKABL",9,"r")."|"._QXZ("UNWORKABL",9,"r")."|"._QXZ("UNWORKABL",9,"r")."|"._QXZ("UNWORKABL",9,"r")."|"._QXZ("UNWORKABL",9,"r")."|"._QXZ("UNWORKABL",9,"r")."|";
-    $OUToutput .= _QXZ("UNWK RATE",9,"r")."|"._QXZ("UNWK RATE",9,"r")."|"._QXZ("UNWK RATE",9,"r")."|"._QXZ("UNWK RATE",9,"r")."|"._QXZ("UNWK RATE",9,"r")."|"._QXZ("UNWK RATE",9,"r")."|";
-    $OUToutput .= _QXZ("SCHEDL CB",9,"r")."|"._QXZ("SCHEDL CB",9,"r")."|"._QXZ("SCHEDL CB",9,"r")."|"._QXZ("SCHEDL CB",9,"r")."|"._QXZ("SCHEDL CB",9,"r")."|"._QXZ("SCHEDL CB",9,"r")."|";
-    $OUToutput .= _QXZ("SHCB RATE",9,"r")."|"._QXZ("SHCB RATE",9,"r")."|"._QXZ("SHCB RATE",9,"r")."|"._QXZ("SHCB RATE",9,"r")."|"._QXZ("SHCB RATE",9,"r")."|"._QXZ("SHCB RATE",9,"r")."|";
-    $OUToutput .= _QXZ("COMPLETED",9,"r")."|"._QXZ("COMPLETED",9,"r")."|"._QXZ("COMPLETED",9,"r")."|"._QXZ("COMPLETED",9,"r")."|"._QXZ("COMPLETED",9,"r")."|"._QXZ("COMPLETED",9,"r")."|";
-    $OUToutput .= _QXZ("COMP RATE",9,"r")."|"._QXZ("COMP RATE",9,"r")."|"._QXZ("COMP RATE",9,"r")."|"._QXZ("COMP RATE",9,"r")."|"._QXZ("COMP RATE",9,"r")."|"._QXZ("COMP RATE",9,"r")."|";
+    $OUToutput .= "|   "._QXZ("FIRST", 8)." |                                          |          | "._QXZ("LEAD", 10)." |          |";
+    $OUToutput .= _QXZ("CONTACTS", 9, "r")."|"._QXZ("CONTACTS", 9, "r")."|"._QXZ("CONTACTS", 9, "r")."|"._QXZ("CONTACTS", 9, "r")."|"._QXZ("CONTACTS", 9, "r")."|"._QXZ("CONTACTS", 9, "r")."|";
+    $OUToutput .= _QXZ("CNT RATE", 9, "r")."|"._QXZ("CNT RATE", 9, "r")."|"._QXZ("CNT RATE", 9, "r")."|"._QXZ("CNT RATE", 9, "r")."|"._QXZ("CNT RATE", 9, "r")."|"._QXZ("CNT RATE", 9, "r")."|";
+    $OUToutput .= _QXZ("SALES", 8, "r")." |"._QXZ("SALES", 8, "r")." |"._QXZ("SALES", 8, "r")." |"._QXZ("SALES", 8, "r")." |"._QXZ("SALES", 8, "r")." |"._QXZ("SALES", 8, "r")." |";
+    $OUToutput .= _QXZ("CONV RATE", 9, "r")."|"._QXZ("CONV RATE", 9, "r")."|"._QXZ("CONV RATE", 9, "r")."|"._QXZ("CONV RATE", 9, "r")."|"._QXZ("CONV RATE", 9, "r")."|"._QXZ("CONV RATE", 9, "r")."|";
+    $OUToutput .= _QXZ("  DNC", 8)." | "._QXZ(" DNC", 7)." | "._QXZ(" DNC", 7)." | "._QXZ(" DNC", 7)." | "._QXZ(" DNC", 7)." | "._QXZ(" DNC", 7)." |";
+    $OUToutput .= _QXZ("DNC RATE", 9, "r")."|"._QXZ("DNC RATE", 9, "r")."|"._QXZ("DNC RATE", 9, "r")."|"._QXZ("DNC RATE", 9, "r")."|"._QXZ("DNC RATE", 9, "r")."|"._QXZ("DNC RATE", 9, "r")."|";
+    $OUToutput .= _QXZ("CUST CONT", 9, "r")."|"._QXZ("CUST CONT", 9, "r")."|"._QXZ("CUST CONT", 9, "r")."|"._QXZ("CUST CONT", 9, "r")."|"._QXZ("CUST CONT", 9, "r")."|"._QXZ("CUST CONT", 9, "r")."|";
+    $OUToutput .= _QXZ("CUCT RATE", 9, "r")."|"._QXZ("CUCT RATE", 9, "r")."|"._QXZ("CUCT RATE", 9, "r")."|"._QXZ("CUCT RATE", 9, "r")."|"._QXZ("CUCT RATE", 9, "r")."|"._QXZ("CUCT RATE", 9, "r")."|";
+    $OUToutput .= _QXZ("UNWORKABL", 9, "r")."|"._QXZ("UNWORKABL", 9, "r")."|"._QXZ("UNWORKABL", 9, "r")."|"._QXZ("UNWORKABL", 9, "r")."|"._QXZ("UNWORKABL", 9, "r")."|"._QXZ("UNWORKABL", 9, "r")."|";
+    $OUToutput .= _QXZ("UNWK RATE", 9, "r")."|"._QXZ("UNWK RATE", 9, "r")."|"._QXZ("UNWK RATE", 9, "r")."|"._QXZ("UNWK RATE", 9, "r")."|"._QXZ("UNWK RATE", 9, "r")."|"._QXZ("UNWK RATE", 9, "r")."|";
+    $OUToutput .= _QXZ("SCHEDL CB", 9, "r")."|"._QXZ("SCHEDL CB", 9, "r")."|"._QXZ("SCHEDL CB", 9, "r")."|"._QXZ("SCHEDL CB", 9, "r")."|"._QXZ("SCHEDL CB", 9, "r")."|"._QXZ("SCHEDL CB", 9, "r")."|";
+    $OUToutput .= _QXZ("SHCB RATE", 9, "r")."|"._QXZ("SHCB RATE", 9, "r")."|"._QXZ("SHCB RATE", 9, "r")."|"._QXZ("SHCB RATE", 9, "r")."|"._QXZ("SHCB RATE", 9, "r")."|"._QXZ("SHCB RATE", 9, "r")."|";
+    $OUToutput .= _QXZ("COMPLETED", 9, "r")."|"._QXZ("COMPLETED", 9, "r")."|"._QXZ("COMPLETED", 9, "r")."|"._QXZ("COMPLETED", 9, "r")."|"._QXZ("COMPLETED", 9, "r")."|"._QXZ("COMPLETED", 9, "r")."|";
+    $OUToutput .= _QXZ("COMP RATE", 9, "r")."|"._QXZ("COMP RATE", 9, "r")."|"._QXZ("COMP RATE", 9, "r")."|"._QXZ("COMP RATE", 9, "r")."|"._QXZ("COMP RATE", 9, "r")."|"._QXZ("COMP RATE", 9, "r")."|";
     $OUToutput .= "\n";
-    $OUToutput .= "| "._QXZ("LOAD DATE",10,"r")." | "._QXZ("LIST ID and NAME",40)." | "._QXZ("CAMPAIGN",8)." | "._QXZ("COUNT",10)." | "._QXZ("ACTIVE",8)." |";
-    $OUToutput .= " "._QXZ("1st PASS",8,"r")."| "._QXZ("2nd PASS",8,"r")."| "._QXZ("3rd PASS",8,"r")."| "._QXZ("4th PASS",8,"r")."| "._QXZ("5th PASS",8,"r")."| "._QXZ("LIFE",7,"r")." |";
-    $OUToutput .= " "._QXZ("1st PASS",8,"r")."| "._QXZ("2nd PASS",8,"r")."| "._QXZ("3rd PASS",8,"r")."| "._QXZ("4th PASS",8,"r")."| "._QXZ("5th PASS",8,"r")."| "._QXZ("LIFE",7,"r")." |";
-    $OUToutput .= " "._QXZ("1st PASS",8,"r")."| "._QXZ("2nd PASS",8,"r")."| "._QXZ("3rd PASS",8,"r")."| "._QXZ("4th PASS",8,"r")."| "._QXZ("5th PASS",8,"r")."| "._QXZ("LIFE",7,"r")." |";
-    $OUToutput .= " "._QXZ("1st PASS",8,"r")."| "._QXZ("2nd PASS",8,"r")."| "._QXZ("3rd PASS",8,"r")."| "._QXZ("4th PASS",8,"r")."| "._QXZ("5th PASS",8,"r")."| "._QXZ("LIFE",7,"r")." |";
-    $OUToutput .= " "._QXZ("1st PASS",8,"r")."| "._QXZ("2nd PASS",8,"r")."| "._QXZ("3rd PASS",8,"r")."| "._QXZ("4th PASS",8,"r")."| "._QXZ("5th PASS",8,"r")."| "._QXZ("LIFE",7,"r")." |";
-    $OUToutput .= " "._QXZ("1st PASS",8,"r")."| "._QXZ("2nd PASS",8,"r")."| "._QXZ("3rd PASS",8,"r")."| "._QXZ("4th PASS",8,"r")."| "._QXZ("5th PASS",8,"r")."| "._QXZ("LIFE",7,"r")." |";
-    $OUToutput .= " "._QXZ("1st PASS",8,"r")."| "._QXZ("2nd PASS",8,"r")."| "._QXZ("3rd PASS",8,"r")."| "._QXZ("4th PASS",8,"r")."| "._QXZ("5th PASS",8,"r")."| "._QXZ("LIFE",7,"r")." |";
-    $OUToutput .= " "._QXZ("1st PASS",8,"r")."| "._QXZ("2nd PASS",8,"r")."| "._QXZ("3rd PASS",8,"r")."| "._QXZ("4th PASS",8,"r")."| "._QXZ("5th PASS",8,"r")."| "._QXZ("LIFE",7,"r")." |";
-    $OUToutput .= " "._QXZ("1st PASS",8,"r")."| "._QXZ("2nd PASS",8,"r")."| "._QXZ("3rd PASS",8,"r")."| "._QXZ("4th PASS",8,"r")."| "._QXZ("5th PASS",8,"r")."| "._QXZ("LIFE",7,"r")." |";
-    $OUToutput .= " "._QXZ("1st PASS",8,"r")."| "._QXZ("2nd PASS",8,"r")."| "._QXZ("3rd PASS",8,"r")."| "._QXZ("4th PASS",8,"r")."| "._QXZ("5th PASS",8,"r")."| "._QXZ("LIFE",7,"r")." |";
-    $OUToutput .= " "._QXZ("1st PASS",8,"r")."| "._QXZ("2nd PASS",8,"r")."| "._QXZ("3rd PASS",8,"r")."| "._QXZ("4th PASS",8,"r")."| "._QXZ("5th PASS",8,"r")."| "._QXZ("LIFE",7,"r")." |";
-    $OUToutput .= " "._QXZ("1st PASS",8,"r")."| "._QXZ("2nd PASS",8,"r")."| "._QXZ("3rd PASS",8,"r")."| "._QXZ("4th PASS",8,"r")."| "._QXZ("5th PASS",8,"r")."| "._QXZ("LIFE",7,"r")." |";
-    $OUToutput .= " "._QXZ("1st PASS",8,"r")."| "._QXZ("2nd PASS",8,"r")."| "._QXZ("3rd PASS",8,"r")."| "._QXZ("4th PASS",8,"r")."| "._QXZ("5th PASS",8,"r")."| "._QXZ("LIFE",7,"r")." |";
-    $OUToutput .= " "._QXZ("1st PASS",8,"r")."| "._QXZ("2nd PASS",8,"r")."| "._QXZ("3rd PASS",8,"r")."| "._QXZ("4th PASS",8,"r")."| "._QXZ("5th PASS",8,"r")."| "._QXZ("LIFE",7,"r")." |";
+    $OUToutput .= "| "._QXZ("LOAD DATE", 10, "r")." | "._QXZ("LIST ID and NAME", 40)." | "._QXZ("CAMPAIGN", 8)." | "._QXZ("COUNT", 10)." | "._QXZ("ACTIVE", 8)." |";
+    $OUToutput .= " "._QXZ("1st PASS", 8, "r")."| "._QXZ("2nd PASS", 8, "r")."| "._QXZ("3rd PASS", 8, "r")."| "._QXZ("4th PASS", 8, "r")."| "._QXZ("5th PASS", 8, "r")."| "._QXZ("LIFE", 7, "r")." |";
+    $OUToutput .= " "._QXZ("1st PASS", 8, "r")."| "._QXZ("2nd PASS", 8, "r")."| "._QXZ("3rd PASS", 8, "r")."| "._QXZ("4th PASS", 8, "r")."| "._QXZ("5th PASS", 8, "r")."| "._QXZ("LIFE", 7, "r")." |";
+    $OUToutput .= " "._QXZ("1st PASS", 8, "r")."| "._QXZ("2nd PASS", 8, "r")."| "._QXZ("3rd PASS", 8, "r")."| "._QXZ("4th PASS", 8, "r")."| "._QXZ("5th PASS", 8, "r")."| "._QXZ("LIFE", 7, "r")." |";
+    $OUToutput .= " "._QXZ("1st PASS", 8, "r")."| "._QXZ("2nd PASS", 8, "r")."| "._QXZ("3rd PASS", 8, "r")."| "._QXZ("4th PASS", 8, "r")."| "._QXZ("5th PASS", 8, "r")."| "._QXZ("LIFE", 7, "r")." |";
+    $OUToutput .= " "._QXZ("1st PASS", 8, "r")."| "._QXZ("2nd PASS", 8, "r")."| "._QXZ("3rd PASS", 8, "r")."| "._QXZ("4th PASS", 8, "r")."| "._QXZ("5th PASS", 8, "r")."| "._QXZ("LIFE", 7, "r")." |";
+    $OUToutput .= " "._QXZ("1st PASS", 8, "r")."| "._QXZ("2nd PASS", 8, "r")."| "._QXZ("3rd PASS", 8, "r")."| "._QXZ("4th PASS", 8, "r")."| "._QXZ("5th PASS", 8, "r")."| "._QXZ("LIFE", 7, "r")." |";
+    $OUToutput .= " "._QXZ("1st PASS", 8, "r")."| "._QXZ("2nd PASS", 8, "r")."| "._QXZ("3rd PASS", 8, "r")."| "._QXZ("4th PASS", 8, "r")."| "._QXZ("5th PASS", 8, "r")."| "._QXZ("LIFE", 7, "r")." |";
+    $OUToutput .= " "._QXZ("1st PASS", 8, "r")."| "._QXZ("2nd PASS", 8, "r")."| "._QXZ("3rd PASS", 8, "r")."| "._QXZ("4th PASS", 8, "r")."| "._QXZ("5th PASS", 8, "r")."| "._QXZ("LIFE", 7, "r")." |";
+    $OUToutput .= " "._QXZ("1st PASS", 8, "r")."| "._QXZ("2nd PASS", 8, "r")."| "._QXZ("3rd PASS", 8, "r")."| "._QXZ("4th PASS", 8, "r")."| "._QXZ("5th PASS", 8, "r")."| "._QXZ("LIFE", 7, "r")." |";
+    $OUToutput .= " "._QXZ("1st PASS", 8, "r")."| "._QXZ("2nd PASS", 8, "r")."| "._QXZ("3rd PASS", 8, "r")."| "._QXZ("4th PASS", 8, "r")."| "._QXZ("5th PASS", 8, "r")."| "._QXZ("LIFE", 7, "r")." |";
+    $OUToutput .= " "._QXZ("1st PASS", 8, "r")."| "._QXZ("2nd PASS", 8, "r")."| "._QXZ("3rd PASS", 8, "r")."| "._QXZ("4th PASS", 8, "r")."| "._QXZ("5th PASS", 8, "r")."| "._QXZ("LIFE", 7, "r")." |";
+    $OUToutput .= " "._QXZ("1st PASS", 8, "r")."| "._QXZ("2nd PASS", 8, "r")."| "._QXZ("3rd PASS", 8, "r")."| "._QXZ("4th PASS", 8, "r")."| "._QXZ("5th PASS", 8, "r")."| "._QXZ("LIFE", 7, "r")." |";
+    $OUToutput .= " "._QXZ("1st PASS", 8, "r")."| "._QXZ("2nd PASS", 8, "r")."| "._QXZ("3rd PASS", 8, "r")."| "._QXZ("4th PASS", 8, "r")."| "._QXZ("5th PASS", 8, "r")."| "._QXZ("LIFE", 7, "r")." |";
+    $OUToutput .= " "._QXZ("1st PASS", 8, "r")."| "._QXZ("2nd PASS", 8, "r")."| "._QXZ("3rd PASS", 8, "r")."| "._QXZ("4th PASS", 8, "r")."| "._QXZ("5th PASS", 8, "r")."| "._QXZ("LIFE", 7, "r")." |";
     $OUToutput .= "\n";
     $OUToutput .= "+------------+------------------------------------------+----------+------------+----------+";
     $OUToutput .= "---------+---------+---------+---------+---------+---------+";
@@ -625,122 +704,201 @@ else
     $lists_id_str="";
     $list_stmt="SELECT list_id from vicidial_lists where active IN('Y','N') $group_SQLand";
     $list_rslt=mysql_to_mysqli($list_stmt, $link);
-    while ($lrow=mysqli_fetch_row($list_rslt)) 
-        {
+    while ($lrow=mysqli_fetch_row($list_rslt)) {
         $lists_id_str.="'$lrow[0]',";
-        }
-    $lists_id_str=substr($lists_id_str,0,-1);
-    if (strlen($lists_id_str)<3) {$lists_id_str="''";}
+    }
+    $lists_id_str=substr($lists_id_str, 0, -1);
+    if (strlen($lists_id_str)<3) {
+        $lists_id_str="''";
+    }
     $stmt="select count(*),list_id from vicidial_list where list_id IN($lists_id_str) group by list_id;";
     $rslt=mysql_to_mysqli($stmt, $link);
-    if ($DB) {$MAIN.="$stmt\n";}
+    if ($DB) {
+        $MAIN.="$stmt\n";
+    }
     $listids_to_print = mysqli_num_rows($rslt);
     $i=0;
-    while ($i < $listids_to_print)
-        {
+    while ($i < $listids_to_print) {
         $row=mysqli_fetch_row($rslt);
         $LISTIDcalls[$i] =    $row[0];
         $LISTIDlists[$i] =    $row[1];
         $list_id_SQL .=        "'$row[1]',";
-        if ($row[0]>$max_calls) {$max_calls=$row[0];}
+        if ($row[0]>$max_calls) {
+            $max_calls=$row[0];
+        }
         $graph_stats[$i][0]=$row[0];
         $graph_stats[$i][1]=$row[1];
         $graph_stats2[$i][0]=$row[1];
         $i++;
-        }
-    if (strlen($list_id_SQL)>2)        {$list_id_SQL = substr("$list_id_SQL", 0, -1);}
-    else {$list_id_SQL="''";}
+    }
+    if (strlen($list_id_SQL)>2) {
+        $list_id_SQL = substr("$list_id_SQL", 0, -1);
+    } else {
+        $list_id_SQL="''";
+    }
     $i=0;
-    while ($i < $listids_to_print)
-        {
+    while ($i < $listids_to_print) {
         $stmt="select list_name,active,campaign_id from vicidial_lists where list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $list_name_to_print = mysqli_num_rows($rslt);
-        if ($list_name_to_print > 0)
-            {
+        if ($list_name_to_print > 0) {
             $row=mysqli_fetch_row($rslt);
             $LISTIDlist_names[$i] =    $row[0];
             $LISTIDcampaign[$i] =    $row[2];
             $graph_stats[$i][1].=" - $row[0]";
             $graph_stats2[$i][0].=" - $row[0]";
-            if ($row[1]=='Y')
-                {$LISTIDlist_active[$i] = 'ACTIVE  '; $graph_stats[$i][1].=" (ACTIVE)"; $graph_stats2[$i][0].=" (ACTIVE)";}
-            else
-                {$LISTIDlist_active[$i] = 'INACTIVE'; $graph_stats[$i][1].=" (INACTIVE)"; $graph_stats2[$i][0].=" (INACTIVE)";}
+            if ($row[1]=='Y') {
+                $LISTIDlist_active[$i] = 'ACTIVE  ';
+                $graph_stats[$i][1].=" (ACTIVE)";
+                $graph_stats2[$i][0].=" (ACTIVE)";
+            } else {
+                $LISTIDlist_active[$i] = 'INACTIVE';
+                $graph_stats[$i][1].=" (INACTIVE)";
+                $graph_stats2[$i][0].=" (INACTIVE)";
             }
+        }
         $LISTIDentry_date[$i]='';
         $stmt="select entry_date from vicidial_list where list_id='$LISTIDlists[$i]' order by entry_date limit 1;";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $list_name_to_print = mysqli_num_rows($rslt);
-        if ($list_name_to_print > 0)
-            {
+        if ($list_name_to_print > 0) {
             $row=mysqli_fetch_row($rslt);
             $LISTIDentry_date[$i] =    $row[0];
-            }
+        }
         $TOTALleads = ($TOTALleads + $LISTIDcalls[$i]);
-        $LISTIDentry_dateS =    sprintf("%10s", $LISTIDentry_date[$i]); while(strlen($LISTIDentry_dateS)>10) {$LISTIDentry_dateS = substr("$LISTIDentry_dateS", 0, -1);}
-        $LISTIDcampaignS =    sprintf("%8s", $LISTIDcampaign[$i]); while(strlen($LISTIDcampaignS)>8) {$LISTIDcampaignS = substr("$LISTIDcampaignS", 0, -1);}
-        $LISTIDname =    sprintf("%-40s", "$LISTIDlists[$i] - $LISTIDlist_names[$i]"); while(strlen($LISTIDname)>40) {$LISTIDname = substr("$LISTIDname", 0, -1);}
-        $LISTIDcount =    sprintf("%10s", $LISTIDcalls[$i]); while(strlen($LISTIDcount)>10) {$LISTIDcount = substr("$LISTIDcount", 0, -1);}
-        $HA_count=0; $HA_one_count=0; $HA_two_count=0; $HA_three_count=0; $HA_four_count=0; $HA_five_count=0; $HA_all_count=0;
+        $LISTIDentry_dateS =    sprintf("%10s", $LISTIDentry_date[$i]);
+        while(strlen($LISTIDentry_dateS)>10) {
+            $LISTIDentry_dateS = substr("$LISTIDentry_dateS", 0, -1);
+        }
+        $LISTIDcampaignS =    sprintf("%8s", $LISTIDcampaign[$i]);
+        while(strlen($LISTIDcampaignS)>8) {
+            $LISTIDcampaignS = substr("$LISTIDcampaignS", 0, -1);
+        }
+        $LISTIDname =    sprintf("%-40s", "$LISTIDlists[$i] - $LISTIDlist_names[$i]");
+        while(strlen($LISTIDname)>40) {
+            $LISTIDname = substr("$LISTIDname", 0, -1);
+        }
+        $LISTIDcount =    sprintf("%10s", $LISTIDcalls[$i]);
+        while(strlen($LISTIDcount)>10) {
+            $LISTIDcount = substr("$LISTIDcount", 0, -1);
+        }
+        $HA_count=0;
+        $HA_one_count=0;
+        $HA_two_count=0;
+        $HA_three_count=0;
+        $HA_four_count=0;
+        $HA_five_count=0;
+        $HA_all_count=0;
         $stmt="select count(*) from vicidial_list where status IN($human_answered_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $HA_results = mysqli_num_rows($rslt);
-        if ($HA_results > 0)
-            {$row=mysqli_fetch_row($rslt); $HA_count = $row[0];}
+        if ($HA_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $HA_count = $row[0];
+        }
         $stmt="select count(*) from ".$vicidial_log_table." where called_count=1 and status IN($human_answered_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $HA_one_results = mysqli_num_rows($rslt);
-        if ($HA_one_results > 0)
-            {$row=mysqli_fetch_row($rslt); $HA_one_count = $row[0];}
+        if ($HA_one_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $HA_one_count = $row[0];
+        }
         $stmt="select count(*) from ".$vicidial_log_table." where called_count=2 and status IN($human_answered_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $HA_two_results = mysqli_num_rows($rslt);
-        if ($HA_two_results > 0)
-            {$row=mysqli_fetch_row($rslt); $HA_two_count = $row[0];}
+        if ($HA_two_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $HA_two_count = $row[0];
+        }
         $stmt="select count(*) from ".$vicidial_log_table." where called_count=3 and status IN($human_answered_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $HA_three_results = mysqli_num_rows($rslt);
-        if ($HA_three_results > 0)
-            {$row=mysqli_fetch_row($rslt); $HA_three_count = $row[0];}
+        if ($HA_three_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $HA_three_count = $row[0];
+        }
         $stmt="select count(*) from ".$vicidial_log_table." where called_count='4' and status IN($human_answered_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $HA_four_results = mysqli_num_rows($rslt);
-        if ($HA_four_results > 0)
-            {$row=mysqli_fetch_row($rslt); $HA_four_count = $row[0];}
+        if ($HA_four_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $HA_four_count = $row[0];
+        }
         $stmt="select count(*) from ".$vicidial_log_table." where called_count='5' and status IN($human_answered_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $HA_five_results = mysqli_num_rows($rslt);
-        if ($HA_five_results > 0)
-            {$row=mysqli_fetch_row($rslt); $HA_five_count = $row[0];}
+        if ($HA_five_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $HA_five_count = $row[0];
+        }
         $stmt="select count(distinct lead_id) from ".$vicidial_log_table." where status IN($human_answered_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $HA_all_results = mysqli_num_rows($rslt);
-        if ($HA_all_results > 0)
-            {$row=mysqli_fetch_row($rslt); $HA_all_count = $row[0];}
-        if ($HA_all_count > $HA_count) {$HA_count = $HA_all_count;}
-        $HA_countS =    sprintf("%7s", $HA_count); while(strlen($HA_countS)>7) {$HA_countS = substr("$HA_countS", 0, -1);}
-        $HA_one_countS =    sprintf("%7s", $HA_one_count); while(strlen($HA_one_countS)>7) {$HA_one_countS = substr("$HA_one_countS", 0, -1);}
-        $HA_two_countS =    sprintf("%7s", $HA_two_count); while(strlen($HA_two_countS)>7) {$HA_two_countS = substr("$HA_two_countS", 0, -1);}
-        $HA_three_countS =    sprintf("%7s", $HA_three_count); while(strlen($HA_three_countS)>7) {$HA_three_countS = substr("$HA_three_countS", 0, -1);}
-        $HA_four_countS =    sprintf("%7s", $HA_four_count); while(strlen($HA_four_countS)>7) {$HA_four_countS = substr("$HA_four_countS", 0, -1);}
-        $HA_five_countS =    sprintf("%7s", $HA_five_count); while(strlen($HA_five_countS)>7) {$HA_five_countS = substr("$HA_five_countS", 0, -1);}
+        if ($HA_all_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $HA_all_count = $row[0];
+        }
+        if ($HA_all_count > $HA_count) {
+            $HA_count = $HA_all_count;
+        }
+        $HA_countS =    sprintf("%7s", $HA_count);
+        while(strlen($HA_countS)>7) {
+            $HA_countS = substr("$HA_countS", 0, -1);
+        }
+        $HA_one_countS =    sprintf("%7s", $HA_one_count);
+        while(strlen($HA_one_countS)>7) {
+            $HA_one_countS = substr("$HA_one_countS", 0, -1);
+        }
+        $HA_two_countS =    sprintf("%7s", $HA_two_count);
+        while(strlen($HA_two_countS)>7) {
+            $HA_two_countS = substr("$HA_two_countS", 0, -1);
+        }
+        $HA_three_countS =    sprintf("%7s", $HA_three_count);
+        while(strlen($HA_three_countS)>7) {
+            $HA_three_countS = substr("$HA_three_countS", 0, -1);
+        }
+        $HA_four_countS =    sprintf("%7s", $HA_four_count);
+        while(strlen($HA_four_countS)>7) {
+            $HA_four_countS = substr("$HA_four_countS", 0, -1);
+        }
+        $HA_five_countS =    sprintf("%7s", $HA_five_count);
+        while(strlen($HA_five_countS)>7) {
+            $HA_five_countS = substr("$HA_five_countS", 0, -1);
+        }
         $HA_count_tot =    ($HA_count + $HA_count_tot);
         $HA_one_count_tot =    ($HA_one_count + $HA_one_count_tot);
         $HA_two_count_tot =    ($HA_two_count + $HA_two_count_tot);
         $HA_three_count_tot =    ($HA_three_count + $HA_three_count_tot);
         $HA_four_count_tot =    ($HA_four_count + $HA_four_count_tot);
         $HA_five_count_tot =    ($HA_five_count + $HA_five_count_tot);
-        $HR_count=$HA_count; 
+        $HR_count=$HA_count;
         $HR_one_count=$HA_one_count;
         $HR_two_count=$HA_two_count;
         $HR_three_count=$HA_three_count;
@@ -759,75 +917,147 @@ else
         $HR_three_count_pct = (MathZDC($HR_three_count, $LISTIDcalls[$i]) * 100);
         $HR_four_count_pct = (MathZDC($HR_four_count, $LISTIDcalls[$i]) * 100);
         $HR_five_count_pct = (MathZDC($HR_five_count, $LISTIDcalls[$i]) * 100);
-        $HR_countS =    sprintf("%6.2f", $HR_count_pct); while(strlen($HR_countS)>7) {$HR_countS = substr("$HR_countS", 0, -1);}
-        $HR_one_countS =    sprintf("%6.2f", $HR_one_count_pct); while(strlen($HR_one_countS)>7) {$HR_one_countS = substr("$HR_one_countS", 0, -1);}
-        $HR_two_countS =    sprintf("%6.2f", $HR_two_count_pct); while(strlen($HR_two_countS)>7) {$HR_two_countS = substr("$HR_two_countS", 0, -1);}
-        $HR_three_countS =    sprintf("%6.2f", $HR_three_count_pct); while(strlen($HR_three_countS)>7) {$HR_three_countS = substr("$HR_three_countS", 0, -1);}
-        $HR_four_countS =    sprintf("%6.2f", $HR_four_count_pct); while(strlen($HR_four_countS)>7) {$HR_four_countS = substr("$HR_four_countS", 0, -1);}
-        $HR_five_countS =    sprintf("%6.2f", $HR_five_count_pct); while(strlen($HR_five_countS)>7) {$HR_five_countS = substr("$HR_five_countS", 0, -1);}
+        $HR_countS =    sprintf("%6.2f", $HR_count_pct);
+        while(strlen($HR_countS)>7) {
+            $HR_countS = substr("$HR_countS", 0, -1);
+        }
+        $HR_one_countS =    sprintf("%6.2f", $HR_one_count_pct);
+        while(strlen($HR_one_countS)>7) {
+            $HR_one_countS = substr("$HR_one_countS", 0, -1);
+        }
+        $HR_two_countS =    sprintf("%6.2f", $HR_two_count_pct);
+        while(strlen($HR_two_countS)>7) {
+            $HR_two_countS = substr("$HR_two_countS", 0, -1);
+        }
+        $HR_three_countS =    sprintf("%6.2f", $HR_three_count_pct);
+        while(strlen($HR_three_countS)>7) {
+            $HR_three_countS = substr("$HR_three_countS", 0, -1);
+        }
+        $HR_four_countS =    sprintf("%6.2f", $HR_four_count_pct);
+        while(strlen($HR_four_countS)>7) {
+            $HR_four_countS = substr("$HR_four_countS", 0, -1);
+        }
+        $HR_five_countS =    sprintf("%6.2f", $HR_five_count_pct);
+        while(strlen($HR_five_countS)>7) {
+            $HR_five_countS = substr("$HR_five_countS", 0, -1);
+        }
         $HR_count_tot =    ($HR_count + $HR_count_tot);
         $HR_one_count_tot =    ($HR_one_count + $HR_one_count_tot);
         $HR_two_count_tot =    ($HR_two_count + $HR_two_count_tot);
         $HR_three_count_tot =    ($HR_three_count + $HR_three_count_tot);
         $HR_four_count_tot =    ($HR_four_count + $HR_four_count_tot);
         $HR_five_count_tot =    ($HR_five_count + $HR_five_count_tot);
-        $SA_count=0; $SA_one_count=0; $SA_two_count=0; $SA_three_count=0; $SA_four_count=0; $SA_five_count=0; $SA_all_count=0;
+        $SA_count=0;
+        $SA_one_count=0;
+        $SA_two_count=0;
+        $SA_three_count=0;
+        $SA_four_count=0;
+        $SA_five_count=0;
+        $SA_all_count=0;
         $stmt="select count(*) from vicidial_list where status IN($sale_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $SA_results = mysqli_num_rows($rslt);
-        if ($SA_results > 0)
-            {$row=mysqli_fetch_row($rslt); $SA_count = $row[0];}
+        if ($SA_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $SA_count = $row[0];
+        }
         $stmt="select count(*) from ".$vicidial_log_table." where called_count=1 and status IN($sale_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $SA_one_results = mysqli_num_rows($rslt);
-        if ($SA_one_results > 0)
-            {$row=mysqli_fetch_row($rslt); $SA_one_count = $row[0];}
+        if ($SA_one_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $SA_one_count = $row[0];
+        }
         $stmt="select count(*) from ".$vicidial_log_table." where called_count=2 and status IN($sale_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $SA_two_results = mysqli_num_rows($rslt);
-        if ($SA_two_results > 0)
-            {$row=mysqli_fetch_row($rslt); $SA_two_count = $row[0];}
+        if ($SA_two_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $SA_two_count = $row[0];
+        }
         $stmt="select count(*) from ".$vicidial_log_table." where called_count=3 and status IN($sale_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $SA_three_results = mysqli_num_rows($rslt);
-        if ($SA_three_results > 0)
-            {$row=mysqli_fetch_row($rslt); $SA_three_count = $row[0];}
+        if ($SA_three_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $SA_three_count = $row[0];
+        }
         $stmt="select count(*) from ".$vicidial_log_table." where called_count=4 and status IN($sale_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $SA_four_results = mysqli_num_rows($rslt);
-        if ($SA_four_results > 0)
-            {$row=mysqli_fetch_row($rslt); $SA_four_count = $row[0];}
+        if ($SA_four_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $SA_four_count = $row[0];
+        }
         $stmt="select count(*) from ".$vicidial_log_table." where called_count=5 and status IN($sale_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $SA_five_results = mysqli_num_rows($rslt);
-        if ($SA_five_results > 0)
-            {$row=mysqli_fetch_row($rslt); $SA_five_count = $row[0];}
+        if ($SA_five_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $SA_five_count = $row[0];
+        }
         $stmt="select count(distinct lead_id) from ".$vicidial_log_table." where status IN($sale_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $SA_all_results = mysqli_num_rows($rslt);
-        if ($SA_all_results > 0)
-            {$row=mysqli_fetch_row($rslt); $SA_all_count = $row[0];}
-        if ($SA_all_count > $SA_count) {$SA_count = $SA_all_count;}
-        $SA_countS =    sprintf("%7s", $SA_count); while(strlen($SA_countS)>7) {$SA_countS = substr("$SA_countS", 0, -1);}
-        $SA_one_countS =    sprintf("%7s", $SA_one_count); while(strlen($SA_one_countS)>7) {$SA_one_countS = substr("$SA_one_countS", 0, -1);}
-        $SA_two_countS =    sprintf("%7s", $SA_two_count); while(strlen($SA_two_countS)>7) {$SA_two_countS = substr("$SA_two_countS", 0, -1);}
-        $SA_three_countS =    sprintf("%7s", $SA_three_count); while(strlen($SA_three_countS)>7) {$SA_three_countS = substr("$SA_three_countS", 0, -1);}
-        $SA_four_countS =    sprintf("%7s", $SA_four_count); while(strlen($SA_four_countS)>7) {$SA_four_countS = substr("$SA_four_countS", 0, -1);}
-        $SA_five_countS =    sprintf("%7s", $SA_five_count); while(strlen($SA_five_countS)>7) {$SA_five_countS = substr("$SA_five_countS", 0, -1);}
+        if ($SA_all_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $SA_all_count = $row[0];
+        }
+        if ($SA_all_count > $SA_count) {
+            $SA_count = $SA_all_count;
+        }
+        $SA_countS =    sprintf("%7s", $SA_count);
+        while(strlen($SA_countS)>7) {
+            $SA_countS = substr("$SA_countS", 0, -1);
+        }
+        $SA_one_countS =    sprintf("%7s", $SA_one_count);
+        while(strlen($SA_one_countS)>7) {
+            $SA_one_countS = substr("$SA_one_countS", 0, -1);
+        }
+        $SA_two_countS =    sprintf("%7s", $SA_two_count);
+        while(strlen($SA_two_countS)>7) {
+            $SA_two_countS = substr("$SA_two_countS", 0, -1);
+        }
+        $SA_three_countS =    sprintf("%7s", $SA_three_count);
+        while(strlen($SA_three_countS)>7) {
+            $SA_three_countS = substr("$SA_three_countS", 0, -1);
+        }
+        $SA_four_countS =    sprintf("%7s", $SA_four_count);
+        while(strlen($SA_four_countS)>7) {
+            $SA_four_countS = substr("$SA_four_countS", 0, -1);
+        }
+        $SA_five_countS =    sprintf("%7s", $SA_five_count);
+        while(strlen($SA_five_countS)>7) {
+            $SA_five_countS = substr("$SA_five_countS", 0, -1);
+        }
         $SA_count_tot =    ($SA_count + $SA_count_tot);
         $SA_one_count_tot =    ($SA_one_count + $SA_one_count_tot);
         $SA_two_count_tot =    ($SA_two_count + $SA_two_count_tot);
         $SA_three_count_tot =    ($SA_three_count + $SA_three_count_tot);
         $SA_four_count_tot =    ($SA_four_count + $SA_four_count_tot);
         $SA_five_count_tot =    ($SA_five_count + $SA_five_count_tot);
-        $SR_count=$SA_count; 
+        $SR_count=$SA_count;
         $SR_one_count=$SA_one_count;
         $SR_two_count=$SA_two_count;
         $SR_three_count=$SA_three_count;
@@ -846,75 +1076,147 @@ else
         $SR_three_count_pct = (MathZDC($SR_three_count, $LISTIDcalls[$i]) * 100);
         $SR_four_count_pct = (MathZDC($SR_four_count, $LISTIDcalls[$i]) * 100);
         $SR_five_count_pct = (MathZDC($SR_five_count, $LISTIDcalls[$i]) * 100);
-        $SR_countS =    sprintf("%6.2f", $SR_count_pct); while(strlen($SR_countS)>7) {$SR_countS = substr("$SR_countS", 0, -1);}
-        $SR_one_countS =    sprintf("%6.2f", $SR_one_count_pct); while(strlen($SR_one_countS)>7) {$SR_one_countS = substr("$SR_one_countS", 0, -1);}
-        $SR_two_countS =    sprintf("%6.2f", $SR_two_count_pct); while(strlen($SR_two_countS)>7) {$SR_two_countS = substr("$SR_two_countS", 0, -1);}
-        $SR_three_countS =    sprintf("%6.2f", $SR_three_count_pct); while(strlen($SR_three_countS)>7) {$SR_three_countS = substr("$SR_three_countS", 0, -1);}
-        $SR_four_countS =    sprintf("%6.2f", $SR_four_count_pct); while(strlen($SR_four_countS)>7) {$SR_four_countS = substr("$SR_four_countS", 0, -1);}
-        $SR_five_countS =    sprintf("%6.2f", $SR_five_count_pct); while(strlen($SR_five_countS)>7) {$SR_five_countS = substr("$SR_five_countS", 0, -1);}
+        $SR_countS =    sprintf("%6.2f", $SR_count_pct);
+        while(strlen($SR_countS)>7) {
+            $SR_countS = substr("$SR_countS", 0, -1);
+        }
+        $SR_one_countS =    sprintf("%6.2f", $SR_one_count_pct);
+        while(strlen($SR_one_countS)>7) {
+            $SR_one_countS = substr("$SR_one_countS", 0, -1);
+        }
+        $SR_two_countS =    sprintf("%6.2f", $SR_two_count_pct);
+        while(strlen($SR_two_countS)>7) {
+            $SR_two_countS = substr("$SR_two_countS", 0, -1);
+        }
+        $SR_three_countS =    sprintf("%6.2f", $SR_three_count_pct);
+        while(strlen($SR_three_countS)>7) {
+            $SR_three_countS = substr("$SR_three_countS", 0, -1);
+        }
+        $SR_four_countS =    sprintf("%6.2f", $SR_four_count_pct);
+        while(strlen($SR_four_countS)>7) {
+            $SR_four_countS = substr("$SR_four_countS", 0, -1);
+        }
+        $SR_five_countS =    sprintf("%6.2f", $SR_five_count_pct);
+        while(strlen($SR_five_countS)>7) {
+            $SR_five_countS = substr("$SR_five_countS", 0, -1);
+        }
         $SR_count_tot =    ($SR_count + $SR_count_tot);
         $SR_one_count_tot =    ($SR_one_count + $SR_one_count_tot);
         $SR_two_count_tot =    ($SR_two_count + $SR_two_count_tot);
         $SR_three_count_tot =    ($SR_three_count + $SR_three_count_tot);
         $SR_four_count_tot =    ($SR_four_count + $SR_four_count_tot);
         $SR_five_count_tot =    ($SR_five_count + $SR_five_count_tot);
-        $DN_count=0; $DN_one_count=0; $DN_two_count=0; $DN_three_count=0; $DN_four_count=0; $DN_five_count=0; $DN_all_count=0;
+        $DN_count=0;
+        $DN_one_count=0;
+        $DN_two_count=0;
+        $DN_three_count=0;
+        $DN_four_count=0;
+        $DN_five_count=0;
+        $DN_all_count=0;
         $stmt="select count(*) from vicidial_list where status IN($dnc_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $DN_results = mysqli_num_rows($rslt);
-        if ($DN_results > 0)
-            {$row=mysqli_fetch_row($rslt); $DN_count = $row[0];}
+        if ($DN_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $DN_count = $row[0];
+        }
         $stmt="select count(*) from ".$vicidial_log_table." where called_count=1 and status IN($dnc_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $DN_one_results = mysqli_num_rows($rslt);
-        if ($DN_one_results > 0)
-            {$row=mysqli_fetch_row($rslt); $DN_one_count = $row[0];}
+        if ($DN_one_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $DN_one_count = $row[0];
+        }
         $stmt="select count(*) from ".$vicidial_log_table." where called_count=2 and status IN($dnc_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $DN_two_results = mysqli_num_rows($rslt);
-        if ($DN_two_results > 0)
-            {$row=mysqli_fetch_row($rslt); $DN_two_count = $row[0];}
+        if ($DN_two_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $DN_two_count = $row[0];
+        }
         $stmt="select count(*) from ".$vicidial_log_table." where called_count=3 and status IN($dnc_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $DN_three_results = mysqli_num_rows($rslt);
-        if ($DN_three_results > 0)
-            {$row=mysqli_fetch_row($rslt); $DN_three_count = $row[0];}
+        if ($DN_three_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $DN_three_count = $row[0];
+        }
         $stmt="select count(*) from ".$vicidial_log_table." where called_count=4 and status IN($dnc_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $DN_four_results = mysqli_num_rows($rslt);
-        if ($DN_four_results > 0)
-            {$row=mysqli_fetch_row($rslt); $DN_four_count = $row[0];}
+        if ($DN_four_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $DN_four_count = $row[0];
+        }
         $stmt="select count(*) from ".$vicidial_log_table." where called_count=5 and status IN($dnc_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $DN_five_results = mysqli_num_rows($rslt);
-        if ($DN_five_results > 0)
-            {$row=mysqli_fetch_row($rslt); $DN_five_count = $row[0];}
+        if ($DN_five_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $DN_five_count = $row[0];
+        }
         $stmt="select count(distinct lead_id) from ".$vicidial_log_table." where status IN($dnc_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $DN_all_results = mysqli_num_rows($rslt);
-        if ($DN_all_results > 0)
-            {$row=mysqli_fetch_row($rslt); $DN_all_count = $row[0];}
-        if ($DN_all_count > $DN_count) {$DN_count = $DN_all_count;}
-        $DN_countS =    sprintf("%7s", $DN_count); while(strlen($DN_countS)>7) {$DN_countS = substr("$DN_countS", 0, -1);}
-        $DN_one_countS =    sprintf("%7s", $DN_one_count); while(strlen($DN_one_countS)>7) {$DN_one_countS = substr("$DN_one_countS", 0, -1);}
-        $DN_two_countS =    sprintf("%7s", $DN_two_count); while(strlen($DN_two_countS)>7) {$DN_two_countS = substr("$DN_two_countS", 0, -1);}
-        $DN_three_countS =    sprintf("%7s", $DN_three_count); while(strlen($DN_three_countS)>7) {$DN_three_countS = substr("$DN_three_countS", 0, -1);}
-        $DN_four_countS =    sprintf("%7s", $DN_four_count); while(strlen($DN_four_countS)>7) {$DN_four_countS = substr("$DN_four_countS", 0, -1);}
-        $DN_five_countS =    sprintf("%7s", $DN_five_count); while(strlen($DN_five_countS)>7) {$DN_five_countS = substr("$DN_five_countS", 0, -1);}
+        if ($DN_all_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $DN_all_count = $row[0];
+        }
+        if ($DN_all_count > $DN_count) {
+            $DN_count = $DN_all_count;
+        }
+        $DN_countS =    sprintf("%7s", $DN_count);
+        while(strlen($DN_countS)>7) {
+            $DN_countS = substr("$DN_countS", 0, -1);
+        }
+        $DN_one_countS =    sprintf("%7s", $DN_one_count);
+        while(strlen($DN_one_countS)>7) {
+            $DN_one_countS = substr("$DN_one_countS", 0, -1);
+        }
+        $DN_two_countS =    sprintf("%7s", $DN_two_count);
+        while(strlen($DN_two_countS)>7) {
+            $DN_two_countS = substr("$DN_two_countS", 0, -1);
+        }
+        $DN_three_countS =    sprintf("%7s", $DN_three_count);
+        while(strlen($DN_three_countS)>7) {
+            $DN_three_countS = substr("$DN_three_countS", 0, -1);
+        }
+        $DN_four_countS =    sprintf("%7s", $DN_four_count);
+        while(strlen($DN_four_countS)>7) {
+            $DN_four_countS = substr("$DN_four_countS", 0, -1);
+        }
+        $DN_five_countS =    sprintf("%7s", $DN_five_count);
+        while(strlen($DN_five_countS)>7) {
+            $DN_five_countS = substr("$DN_five_countS", 0, -1);
+        }
         $DN_count_tot =    ($DN_count + $DN_count_tot);
         $DN_one_count_tot =    ($DN_one_count + $DN_one_count_tot);
         $DN_two_count_tot =    ($DN_two_count + $DN_two_count_tot);
         $DN_three_count_tot =    ($DN_three_count + $DN_three_count_tot);
         $DN_four_count_tot =    ($DN_four_count + $DN_four_count_tot);
         $DN_five_count_tot =    ($DN_five_count + $DN_five_count_tot);
-        $DR_count=$DN_count; 
+        $DR_count=$DN_count;
         $DR_one_count=$DN_one_count;
         $DR_two_count=$DN_two_count;
         $DR_three_count=$DN_three_count;
@@ -933,75 +1235,147 @@ else
         $DR_three_count_pct = (MathZDC($DR_three_count, $LISTIDcalls[$i]) * 100);
         $DR_four_count_pct = (MathZDC($DR_four_count, $LISTIDcalls[$i]) * 100);
         $DR_five_count_pct = (MathZDC($DR_five_count, $LISTIDcalls[$i]) * 100);
-        $DR_countS =    sprintf("%6.2f", $DR_count_pct); while(strlen($DR_countS)>7) {$DR_countS = substr("$DR_countS", 0, -1);}
-        $DR_one_countS =    sprintf("%6.2f", $DR_one_count_pct); while(strlen($DR_one_countS)>7) {$DR_one_countS = substr("$DR_one_countS", 0, -1);}
-        $DR_two_countS =    sprintf("%6.2f", $DR_two_count_pct); while(strlen($DR_two_countS)>7) {$DR_two_countS = substr("$DR_two_countS", 0, -1);}
-        $DR_three_countS =    sprintf("%6.2f", $DR_three_count_pct); while(strlen($DR_three_countS)>7) {$DR_three_countS = substr("$DR_three_countS", 0, -1);}
-        $DR_four_countS =    sprintf("%6.2f", $DR_four_count_pct); while(strlen($DR_four_countS)>7) {$DR_four_countS = substr("$DR_four_countS", 0, -1);}
-        $DR_five_countS =    sprintf("%6.2f", $DR_five_count_pct); while(strlen($DR_five_countS)>7) {$DR_five_countS = substr("$DR_five_countS", 0, -1);}
+        $DR_countS =    sprintf("%6.2f", $DR_count_pct);
+        while(strlen($DR_countS)>7) {
+            $DR_countS = substr("$DR_countS", 0, -1);
+        }
+        $DR_one_countS =    sprintf("%6.2f", $DR_one_count_pct);
+        while(strlen($DR_one_countS)>7) {
+            $DR_one_countS = substr("$DR_one_countS", 0, -1);
+        }
+        $DR_two_countS =    sprintf("%6.2f", $DR_two_count_pct);
+        while(strlen($DR_two_countS)>7) {
+            $DR_two_countS = substr("$DR_two_countS", 0, -1);
+        }
+        $DR_three_countS =    sprintf("%6.2f", $DR_three_count_pct);
+        while(strlen($DR_three_countS)>7) {
+            $DR_three_countS = substr("$DR_three_countS", 0, -1);
+        }
+        $DR_four_countS =    sprintf("%6.2f", $DR_four_count_pct);
+        while(strlen($DR_four_countS)>7) {
+            $DR_four_countS = substr("$DR_four_countS", 0, -1);
+        }
+        $DR_five_countS =    sprintf("%6.2f", $DR_five_count_pct);
+        while(strlen($DR_five_countS)>7) {
+            $DR_five_countS = substr("$DR_five_countS", 0, -1);
+        }
         $DR_count_tot =    ($DR_count + $DR_count_tot);
         $DR_one_count_tot =    ($DR_one_count + $DR_one_count_tot);
         $DR_two_count_tot =    ($DR_two_count + $DR_two_count_tot);
         $DR_three_count_tot =    ($DR_three_count + $DR_three_count_tot);
         $DR_four_count_tot =    ($DR_four_count + $DR_four_count_tot);
         $DR_five_count_tot =    ($DR_five_count + $DR_five_count_tot);
-        $CC_count=0; $CC_one_count=0; $CC_two_count=0; $CC_three_count=0; $CC_four_count=0; $CC_five_count=0; $CC_all_count=0;
+        $CC_count=0;
+        $CC_one_count=0;
+        $CC_two_count=0;
+        $CC_three_count=0;
+        $CC_four_count=0;
+        $CC_five_count=0;
+        $CC_all_count=0;
         $stmt="select count(*) from vicidial_list where status IN($customer_contact_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $CC_results = mysqli_num_rows($rslt);
-        if ($CC_results > 0)
-            {$row=mysqli_fetch_row($rslt); $CC_count = $row[0];}
+        if ($CC_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $CC_count = $row[0];
+        }
         $stmt="select count(*) from ".$vicidial_log_table." where called_count=1 and status IN($customer_contact_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $CC_one_results = mysqli_num_rows($rslt);
-        if ($CC_one_results > 0)
-            {$row=mysqli_fetch_row($rslt); $CC_one_count = $row[0];}
+        if ($CC_one_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $CC_one_count = $row[0];
+        }
         $stmt="select count(*) from ".$vicidial_log_table." where called_count=2 and status IN($customer_contact_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $CC_two_results = mysqli_num_rows($rslt);
-        if ($CC_two_results > 0)
-            {$row=mysqli_fetch_row($rslt); $CC_two_count = $row[0];}
+        if ($CC_two_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $CC_two_count = $row[0];
+        }
         $stmt="select count(*) from ".$vicidial_log_table." where called_count=3 and status IN($customer_contact_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $CC_three_results = mysqli_num_rows($rslt);
-        if ($CC_three_results > 0)
-            {$row=mysqli_fetch_row($rslt); $CC_three_count = $row[0];}
+        if ($CC_three_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $CC_three_count = $row[0];
+        }
         $stmt="select count(*) from ".$vicidial_log_table." where called_count=4 and status IN($customer_contact_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $CC_four_results = mysqli_num_rows($rslt);
-        if ($CC_four_results > 0)
-            {$row=mysqli_fetch_row($rslt); $CC_four_count = $row[0];}
+        if ($CC_four_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $CC_four_count = $row[0];
+        }
         $stmt="select count(*) from ".$vicidial_log_table." where called_count=5 and status IN($customer_contact_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $CC_five_results = mysqli_num_rows($rslt);
-        if ($CC_five_results > 0)
-            {$row=mysqli_fetch_row($rslt); $CC_five_count = $row[0];}
+        if ($CC_five_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $CC_five_count = $row[0];
+        }
         $stmt="select count(distinct lead_id) from ".$vicidial_log_table." where status IN($customer_contact_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $CC_all_results = mysqli_num_rows($rslt);
-        if ($CC_all_results > 0)
-            {$row=mysqli_fetch_row($rslt); $CC_all_count = $row[0];}
-        if ($CC_all_count > $CC_count) {$CC_count = $CC_all_count;}
-        $CC_countS =    sprintf("%7s", $CC_count); while(strlen($CC_countS)>7) {$CC_countS = substr("$CC_countS", 0, -1);}
-        $CC_one_countS =    sprintf("%7s", $CC_one_count); while(strlen($CC_one_countS)>7) {$CC_one_countS = substr("$CC_one_countS", 0, -1);}
-        $CC_two_countS =    sprintf("%7s", $CC_two_count); while(strlen($CC_two_countS)>7) {$CC_two_countS = substr("$CC_two_countS", 0, -1);}
-        $CC_three_countS =    sprintf("%7s", $CC_three_count); while(strlen($CC_three_countS)>7) {$CC_three_countS = substr("$CC_three_countS", 0, -1);}
-        $CC_four_countS =    sprintf("%7s", $CC_four_count); while(strlen($CC_four_countS)>7) {$CC_four_countS = substr("$CC_four_countS", 0, -1);}
-        $CC_five_countS =    sprintf("%7s", $CC_five_count); while(strlen($CC_five_countS)>7) {$CC_five_countS = substr("$CC_five_countS", 0, -1);}
+        if ($CC_all_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $CC_all_count = $row[0];
+        }
+        if ($CC_all_count > $CC_count) {
+            $CC_count = $CC_all_count;
+        }
+        $CC_countS =    sprintf("%7s", $CC_count);
+        while(strlen($CC_countS)>7) {
+            $CC_countS = substr("$CC_countS", 0, -1);
+        }
+        $CC_one_countS =    sprintf("%7s", $CC_one_count);
+        while(strlen($CC_one_countS)>7) {
+            $CC_one_countS = substr("$CC_one_countS", 0, -1);
+        }
+        $CC_two_countS =    sprintf("%7s", $CC_two_count);
+        while(strlen($CC_two_countS)>7) {
+            $CC_two_countS = substr("$CC_two_countS", 0, -1);
+        }
+        $CC_three_countS =    sprintf("%7s", $CC_three_count);
+        while(strlen($CC_three_countS)>7) {
+            $CC_three_countS = substr("$CC_three_countS", 0, -1);
+        }
+        $CC_four_countS =    sprintf("%7s", $CC_four_count);
+        while(strlen($CC_four_countS)>7) {
+            $CC_four_countS = substr("$CC_four_countS", 0, -1);
+        }
+        $CC_five_countS =    sprintf("%7s", $CC_five_count);
+        while(strlen($CC_five_countS)>7) {
+            $CC_five_countS = substr("$CC_five_countS", 0, -1);
+        }
         $CC_count_tot =    ($CC_count + $CC_count_tot);
         $CC_one_count_tot =    ($CC_one_count + $CC_one_count_tot);
         $CC_two_count_tot =    ($CC_two_count + $CC_two_count_tot);
         $CC_three_count_tot =    ($CC_three_count + $CC_three_count_tot);
         $CC_four_count_tot =    ($CC_four_count + $CC_four_count_tot);
         $CC_five_count_tot =    ($CC_five_count + $CC_five_count_tot);
-        $CR_count=$CC_count; 
+        $CR_count=$CC_count;
         $CR_one_count=$CC_one_count;
         $CR_two_count=$CC_two_count;
         $CR_three_count=$CC_three_count;
@@ -1020,75 +1394,147 @@ else
         $CR_three_count_pct = (MathZDC($CR_three_count, $LISTIDcalls[$i]) * 100);
         $CR_four_count_pct = (MathZDC($CR_four_count, $LISTIDcalls[$i]) * 100);
         $CR_five_count_pct = (MathZDC($CR_five_count, $LISTIDcalls[$i]) * 100);
-        $CR_countS =    sprintf("%6.2f", $CR_count_pct); while(strlen($CR_countS)>7) {$CR_countS = substr("$CR_countS", 0, -1);}
-        $CR_one_countS =    sprintf("%6.2f", $CR_one_count_pct); while(strlen($CR_one_countS)>7) {$CR_one_countS = substr("$CR_one_countS", 0, -1);}
-        $CR_two_countS =    sprintf("%6.2f", $CR_two_count_pct); while(strlen($CR_two_countS)>7) {$CR_two_countS = substr("$CR_two_countS", 0, -1);}
-        $CR_three_countS =    sprintf("%6.2f", $CR_three_count_pct); while(strlen($CR_three_countS)>7) {$CR_three_countS = substr("$CR_three_countS", 0, -1);}
-        $CR_four_countS =    sprintf("%6.2f", $CR_four_count_pct); while(strlen($CR_four_countS)>7) {$CR_four_countS = substr("$CR_four_countS", 0, -1);}
-        $CR_five_countS =    sprintf("%6.2f", $CR_five_count_pct); while(strlen($CR_five_countS)>7) {$CR_five_countS = substr("$CR_five_countS", 0, -1);}
+        $CR_countS =    sprintf("%6.2f", $CR_count_pct);
+        while(strlen($CR_countS)>7) {
+            $CR_countS = substr("$CR_countS", 0, -1);
+        }
+        $CR_one_countS =    sprintf("%6.2f", $CR_one_count_pct);
+        while(strlen($CR_one_countS)>7) {
+            $CR_one_countS = substr("$CR_one_countS", 0, -1);
+        }
+        $CR_two_countS =    sprintf("%6.2f", $CR_two_count_pct);
+        while(strlen($CR_two_countS)>7) {
+            $CR_two_countS = substr("$CR_two_countS", 0, -1);
+        }
+        $CR_three_countS =    sprintf("%6.2f", $CR_three_count_pct);
+        while(strlen($CR_three_countS)>7) {
+            $CR_three_countS = substr("$CR_three_countS", 0, -1);
+        }
+        $CR_four_countS =    sprintf("%6.2f", $CR_four_count_pct);
+        while(strlen($CR_four_countS)>7) {
+            $CR_four_countS = substr("$CR_four_countS", 0, -1);
+        }
+        $CR_five_countS =    sprintf("%6.2f", $CR_five_count_pct);
+        while(strlen($CR_five_countS)>7) {
+            $CR_five_countS = substr("$CR_five_countS", 0, -1);
+        }
         $CR_count_tot =    ($CR_count + $CR_count_tot);
         $CR_one_count_tot =    ($CR_one_count + $CR_one_count_tot);
         $CR_two_count_tot =    ($CR_two_count + $CR_two_count_tot);
         $CR_three_count_tot =    ($CR_three_count + $CR_three_count_tot);
         $CR_four_count_tot =    ($CR_four_count + $CR_four_count_tot);
         $CR_five_count_tot =    ($CR_five_count + $CR_five_count_tot);
-        $UW_count=0; $UW_one_count=0; $UW_two_count=0; $UW_three_count=0; $UW_four_count=0; $UW_five_count=0; $UW_all_count=0;
+        $UW_count=0;
+        $UW_one_count=0;
+        $UW_two_count=0;
+        $UW_three_count=0;
+        $UW_four_count=0;
+        $UW_five_count=0;
+        $UW_all_count=0;
         $stmt="select count(*) from vicidial_list where status IN($unworkable_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $UW_results = mysqli_num_rows($rslt);
-        if ($UW_results > 0)
-            {$row=mysqli_fetch_row($rslt); $UW_count = $row[0];}
+        if ($UW_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $UW_count = $row[0];
+        }
         $stmt="select count(*) from ".$vicidial_log_table." where called_count=1 and status IN($unworkable_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $UW_one_results = mysqli_num_rows($rslt);
-        if ($UW_one_results > 0)
-            {$row=mysqli_fetch_row($rslt); $UW_one_count = $row[0];}
+        if ($UW_one_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $UW_one_count = $row[0];
+        }
         $stmt="select count(*) from ".$vicidial_log_table." where called_count=2 and status IN($unworkable_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $UW_two_results = mysqli_num_rows($rslt);
-        if ($UW_two_results > 0)
-            {$row=mysqli_fetch_row($rslt); $UW_two_count = $row[0];}
+        if ($UW_two_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $UW_two_count = $row[0];
+        }
         $stmt="select count(*) from ".$vicidial_log_table." where called_count=3 and status IN($unworkable_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $UW_three_results = mysqli_num_rows($rslt);
-        if ($UW_three_results > 0)
-            {$row=mysqli_fetch_row($rslt); $UW_three_count = $row[0];}
+        if ($UW_three_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $UW_three_count = $row[0];
+        }
         $stmt="select count(*) from ".$vicidial_log_table." where called_count=4 and status IN($unworkable_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $UW_four_results = mysqli_num_rows($rslt);
-        if ($UW_four_results > 0)
-            {$row=mysqli_fetch_row($rslt); $UW_four_count = $row[0];}
+        if ($UW_four_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $UW_four_count = $row[0];
+        }
         $stmt="select count(*) from ".$vicidial_log_table." where called_count=5 and status IN($unworkable_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $UW_five_results = mysqli_num_rows($rslt);
-        if ($UW_five_results > 0)
-            {$row=mysqli_fetch_row($rslt); $UW_five_count = $row[0];}
+        if ($UW_five_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $UW_five_count = $row[0];
+        }
         $stmt="select count(distinct lead_id) from ".$vicidial_log_table." where status IN($unworkable_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $UW_all_results = mysqli_num_rows($rslt);
-        if ($UW_all_results > 0)
-            {$row=mysqli_fetch_row($rslt); $UW_all_count = $row[0];}
-        if ($UW_all_count > $UW_count) {$UW_count = $UW_all_count;}
-        $UW_countS =    sprintf("%7s", $UW_count); while(strlen($UW_countS)>7) {$UW_countS = substr("$UW_countS", 0, -1);}
-        $UW_one_countS =    sprintf("%7s", $UW_one_count); while(strlen($UW_one_countS)>7) {$UW_one_countS = substr("$UW_one_countS", 0, -1);}
-        $UW_two_countS =    sprintf("%7s", $UW_two_count); while(strlen($UW_two_countS)>7) {$UW_two_countS = substr("$UW_two_countS", 0, -1);}
-        $UW_three_countS =    sprintf("%7s", $UW_three_count); while(strlen($UW_three_countS)>7) {$UW_three_countS = substr("$UW_three_countS", 0, -1);}
-        $UW_four_countS =    sprintf("%7s", $UW_four_count); while(strlen($UW_four_countS)>7) {$UW_four_countS = substr("$UW_four_countS", 0, -1);}
-        $UW_five_countS =    sprintf("%7s", $UW_five_count); while(strlen($UW_five_countS)>7) {$UW_five_countS = substr("$UW_five_countS", 0, -1);}
+        if ($UW_all_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $UW_all_count = $row[0];
+        }
+        if ($UW_all_count > $UW_count) {
+            $UW_count = $UW_all_count;
+        }
+        $UW_countS =    sprintf("%7s", $UW_count);
+        while(strlen($UW_countS)>7) {
+            $UW_countS = substr("$UW_countS", 0, -1);
+        }
+        $UW_one_countS =    sprintf("%7s", $UW_one_count);
+        while(strlen($UW_one_countS)>7) {
+            $UW_one_countS = substr("$UW_one_countS", 0, -1);
+        }
+        $UW_two_countS =    sprintf("%7s", $UW_two_count);
+        while(strlen($UW_two_countS)>7) {
+            $UW_two_countS = substr("$UW_two_countS", 0, -1);
+        }
+        $UW_three_countS =    sprintf("%7s", $UW_three_count);
+        while(strlen($UW_three_countS)>7) {
+            $UW_three_countS = substr("$UW_three_countS", 0, -1);
+        }
+        $UW_four_countS =    sprintf("%7s", $UW_four_count);
+        while(strlen($UW_four_countS)>7) {
+            $UW_four_countS = substr("$UW_four_countS", 0, -1);
+        }
+        $UW_five_countS =    sprintf("%7s", $UW_five_count);
+        while(strlen($UW_five_countS)>7) {
+            $UW_five_countS = substr("$UW_five_countS", 0, -1);
+        }
         $UW_count_tot =    ($UW_count + $UW_count_tot);
         $UW_one_count_tot =    ($UW_one_count + $UW_one_count_tot);
         $UW_two_count_tot =    ($UW_two_count + $UW_two_count_tot);
         $UW_three_count_tot =    ($UW_three_count + $UW_three_count_tot);
         $UW_four_count_tot =    ($UW_four_count + $UW_four_count_tot);
         $UW_five_count_tot =    ($UW_five_count + $UW_five_count_tot);
-        $UR_count=$UW_count; 
+        $UR_count=$UW_count;
         $UR_one_count=$UW_one_count;
         $UR_two_count=$UW_two_count;
         $UR_three_count=$UW_three_count;
@@ -1107,75 +1553,147 @@ else
         $UR_three_count_pct = (MathZDC($UR_three_count, $LISTIDcalls[$i]) * 100);
         $UR_four_count_pct = (MathZDC($UR_four_count, $LISTIDcalls[$i]) * 100);
         $UR_five_count_pct = (MathZDC($UR_five_count, $LISTIDcalls[$i]) * 100);
-        $UR_countS =    sprintf("%6.2f", $UR_count_pct); while(strlen($UR_countS)>7) {$UR_countS = substr("$UR_countS", 0, -1);}
-        $UR_one_countS =    sprintf("%6.2f", $UR_one_count_pct); while(strlen($UR_one_countS)>7) {$UR_one_countS = substr("$UR_one_countS", 0, -1);}
-        $UR_two_countS =    sprintf("%6.2f", $UR_two_count_pct); while(strlen($UR_two_countS)>7) {$UR_two_countS = substr("$UR_two_countS", 0, -1);}
-        $UR_three_countS =    sprintf("%6.2f", $UR_three_count_pct); while(strlen($UR_three_countS)>7) {$UR_three_countS = substr("$UR_three_countS", 0, -1);}
-        $UR_four_countS =    sprintf("%6.2f", $UR_four_count_pct); while(strlen($UR_four_countS)>7) {$UR_four_countS = substr("$UR_four_countS", 0, -1);}
-        $UR_five_countS =    sprintf("%6.2f", $UR_five_count_pct); while(strlen($UR_five_countS)>7) {$UR_five_countS = substr("$UR_five_countS", 0, -1);}
+        $UR_countS =    sprintf("%6.2f", $UR_count_pct);
+        while(strlen($UR_countS)>7) {
+            $UR_countS = substr("$UR_countS", 0, -1);
+        }
+        $UR_one_countS =    sprintf("%6.2f", $UR_one_count_pct);
+        while(strlen($UR_one_countS)>7) {
+            $UR_one_countS = substr("$UR_one_countS", 0, -1);
+        }
+        $UR_two_countS =    sprintf("%6.2f", $UR_two_count_pct);
+        while(strlen($UR_two_countS)>7) {
+            $UR_two_countS = substr("$UR_two_countS", 0, -1);
+        }
+        $UR_three_countS =    sprintf("%6.2f", $UR_three_count_pct);
+        while(strlen($UR_three_countS)>7) {
+            $UR_three_countS = substr("$UR_three_countS", 0, -1);
+        }
+        $UR_four_countS =    sprintf("%6.2f", $UR_four_count_pct);
+        while(strlen($UR_four_countS)>7) {
+            $UR_four_countS = substr("$UR_four_countS", 0, -1);
+        }
+        $UR_five_countS =    sprintf("%6.2f", $UR_five_count_pct);
+        while(strlen($UR_five_countS)>7) {
+            $UR_five_countS = substr("$UR_five_countS", 0, -1);
+        }
         $UR_count_tot =    ($UR_count + $UR_count_tot);
         $UR_one_count_tot =    ($UR_one_count + $UR_one_count_tot);
         $UR_two_count_tot =    ($UR_two_count + $UR_two_count_tot);
         $UR_three_count_tot =    ($UR_three_count + $UR_three_count_tot);
         $UR_four_count_tot =    ($UR_four_count + $UR_four_count_tot);
         $UR_five_count_tot =    ($UR_five_count + $UR_five_count_tot);
-        $BA_count=0; $BA_one_count=0; $BA_two_count=0; $BA_three_count=0; $BA_four_count=0; $BA_five_count=0; $BA_all_count=0;
+        $BA_count=0;
+        $BA_one_count=0;
+        $BA_two_count=0;
+        $BA_three_count=0;
+        $BA_four_count=0;
+        $BA_five_count=0;
+        $BA_all_count=0;
         $stmt="select count(*) from vicidial_list where status IN($scheduled_callback_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $BA_results = mysqli_num_rows($rslt);
-        if ($BA_results > 0)
-            {$row=mysqli_fetch_row($rslt); $BA_count = $row[0];}
+        if ($BA_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $BA_count = $row[0];
+        }
         $stmt="select count(*) from ".$vicidial_log_table." where called_count=1 and status IN($scheduled_callback_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $BA_one_results = mysqli_num_rows($rslt);
-        if ($BA_one_results > 0)
-            {$row=mysqli_fetch_row($rslt); $BA_one_count = $row[0];}
+        if ($BA_one_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $BA_one_count = $row[0];
+        }
         $stmt="select count(*) from ".$vicidial_log_table." where called_count=2 and status IN($scheduled_callback_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $BA_two_results = mysqli_num_rows($rslt);
-        if ($BA_two_results > 0)
-            {$row=mysqli_fetch_row($rslt); $BA_two_count = $row[0];}
+        if ($BA_two_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $BA_two_count = $row[0];
+        }
         $stmt="select count(*) from ".$vicidial_log_table." where called_count=3 and status IN($scheduled_callback_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $BA_three_results = mysqli_num_rows($rslt);
-        if ($BA_three_results > 0)
-            {$row=mysqli_fetch_row($rslt); $BA_three_count = $row[0];}
+        if ($BA_three_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $BA_three_count = $row[0];
+        }
         $stmt="select count(*) from ".$vicidial_log_table." where called_count=4 and status IN($scheduled_callback_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $BA_four_results = mysqli_num_rows($rslt);
-        if ($BA_four_results > 0)
-            {$row=mysqli_fetch_row($rslt); $BA_four_count = $row[0];}
+        if ($BA_four_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $BA_four_count = $row[0];
+        }
         $stmt="select count(*) from ".$vicidial_log_table." where called_count=5 and status IN($scheduled_callback_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $BA_five_results = mysqli_num_rows($rslt);
-        if ($BA_five_results > 0)
-            {$row=mysqli_fetch_row($rslt); $BA_five_count = $row[0];}
+        if ($BA_five_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $BA_five_count = $row[0];
+        }
         $stmt="select count(distinct lead_id) from ".$vicidial_log_table." where status IN($scheduled_callback_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $BA_all_results = mysqli_num_rows($rslt);
-        if ($BA_all_results > 0)
-            {$row=mysqli_fetch_row($rslt); $BA_all_count = $row[0];}
-        if ($BA_all_count > $BA_count) {$BA_count = $BA_all_count;}
-        $BA_countS =    sprintf("%7s", $BA_count); while(strlen($BA_countS)>7) {$BA_countS = substr("$BA_countS", 0, -1);}
-        $BA_one_countS =    sprintf("%7s", $BA_one_count); while(strlen($BA_one_countS)>7) {$BA_one_countS = substr("$BA_one_countS", 0, -1);}
-        $BA_two_countS =    sprintf("%7s", $BA_two_count); while(strlen($BA_two_countS)>7) {$BA_two_countS = substr("$BA_two_countS", 0, -1);}
-        $BA_three_countS =    sprintf("%7s", $BA_three_count); while(strlen($BA_three_countS)>7) {$BA_three_countS = substr("$BA_three_countS", 0, -1);}
-        $BA_four_countS =    sprintf("%7s", $BA_four_count); while(strlen($BA_four_countS)>7) {$BA_four_countS = substr("$BA_four_countS", 0, -1);}
-        $BA_five_countS =    sprintf("%7s", $BA_five_count); while(strlen($BA_five_countS)>7) {$BA_five_countS = substr("$BA_five_countS", 0, -1);}
+        if ($BA_all_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $BA_all_count = $row[0];
+        }
+        if ($BA_all_count > $BA_count) {
+            $BA_count = $BA_all_count;
+        }
+        $BA_countS =    sprintf("%7s", $BA_count);
+        while(strlen($BA_countS)>7) {
+            $BA_countS = substr("$BA_countS", 0, -1);
+        }
+        $BA_one_countS =    sprintf("%7s", $BA_one_count);
+        while(strlen($BA_one_countS)>7) {
+            $BA_one_countS = substr("$BA_one_countS", 0, -1);
+        }
+        $BA_two_countS =    sprintf("%7s", $BA_two_count);
+        while(strlen($BA_two_countS)>7) {
+            $BA_two_countS = substr("$BA_two_countS", 0, -1);
+        }
+        $BA_three_countS =    sprintf("%7s", $BA_three_count);
+        while(strlen($BA_three_countS)>7) {
+            $BA_three_countS = substr("$BA_three_countS", 0, -1);
+        }
+        $BA_four_countS =    sprintf("%7s", $BA_four_count);
+        while(strlen($BA_four_countS)>7) {
+            $BA_four_countS = substr("$BA_four_countS", 0, -1);
+        }
+        $BA_five_countS =    sprintf("%7s", $BA_five_count);
+        while(strlen($BA_five_countS)>7) {
+            $BA_five_countS = substr("$BA_five_countS", 0, -1);
+        }
         $BA_count_tot =    ($BA_count + $BA_count_tot);
         $BA_one_count_tot =    ($BA_one_count + $BA_one_count_tot);
         $BA_two_count_tot =    ($BA_two_count + $BA_two_count_tot);
         $BA_three_count_tot =    ($BA_three_count + $BA_three_count_tot);
         $BA_four_count_tot =    ($BA_four_count + $BA_four_count_tot);
         $BA_five_count_tot =    ($BA_five_count + $BA_five_count_tot);
-        $BR_count=$BA_count; 
+        $BR_count=$BA_count;
         $BR_one_count=$BA_one_count;
         $BR_two_count=$BA_two_count;
         $BR_three_count=$BA_three_count;
@@ -1194,75 +1712,147 @@ else
         $BR_three_count_pct = (MathZDC($BR_three_count, $LISTIDcalls[$i]) * 100);
         $BR_four_count_pct = (MathZDC($BR_four_count, $LISTIDcalls[$i]) * 100);
         $BR_five_count_pct = (MathZDC($BR_five_count, $LISTIDcalls[$i]) * 100);
-        $BR_countS =    sprintf("%6.2f", $BR_count_pct); while(strlen($BR_countS)>7) {$BR_countS = substr("$BR_countS", 0, -1);}
-        $BR_one_countS =    sprintf("%6.2f", $BR_one_count_pct); while(strlen($BR_one_countS)>7) {$BR_one_countS = substr("$BR_one_countS", 0, -1);}
-        $BR_two_countS =    sprintf("%6.2f", $BR_two_count_pct); while(strlen($BR_two_countS)>7) {$BR_two_countS = substr("$BR_two_countS", 0, -1);}
-        $BR_three_countS =    sprintf("%6.2f", $BR_three_count_pct); while(strlen($BR_three_countS)>7) {$BR_three_countS = substr("$BR_three_countS", 0, -1);}
-        $BR_four_countS =    sprintf("%6.2f", $BR_four_count_pct); while(strlen($BR_four_countS)>7) {$BR_four_countS = substr("$BR_four_countS", 0, -1);}
-        $BR_five_countS =    sprintf("%6.2f", $BR_five_count_pct); while(strlen($BR_five_countS)>7) {$BR_five_countS = substr("$BR_five_countS", 0, -1);}
+        $BR_countS =    sprintf("%6.2f", $BR_count_pct);
+        while(strlen($BR_countS)>7) {
+            $BR_countS = substr("$BR_countS", 0, -1);
+        }
+        $BR_one_countS =    sprintf("%6.2f", $BR_one_count_pct);
+        while(strlen($BR_one_countS)>7) {
+            $BR_one_countS = substr("$BR_one_countS", 0, -1);
+        }
+        $BR_two_countS =    sprintf("%6.2f", $BR_two_count_pct);
+        while(strlen($BR_two_countS)>7) {
+            $BR_two_countS = substr("$BR_two_countS", 0, -1);
+        }
+        $BR_three_countS =    sprintf("%6.2f", $BR_three_count_pct);
+        while(strlen($BR_three_countS)>7) {
+            $BR_three_countS = substr("$BR_three_countS", 0, -1);
+        }
+        $BR_four_countS =    sprintf("%6.2f", $BR_four_count_pct);
+        while(strlen($BR_four_countS)>7) {
+            $BR_four_countS = substr("$BR_four_countS", 0, -1);
+        }
+        $BR_five_countS =    sprintf("%6.2f", $BR_five_count_pct);
+        while(strlen($BR_five_countS)>7) {
+            $BR_five_countS = substr("$BR_five_countS", 0, -1);
+        }
         $BR_count_tot =    ($BR_count + $BR_count_tot);
         $BR_one_count_tot =    ($BR_one_count + $BR_one_count_tot);
         $BR_two_count_tot =    ($BR_two_count + $BR_two_count_tot);
         $BR_three_count_tot =    ($BR_three_count + $BR_three_count_tot);
         $BR_four_count_tot =    ($BR_four_count + $BR_four_count_tot);
         $BR_five_count_tot =    ($BR_five_count + $BR_five_count_tot);
-        $MP_count=0; $MP_one_count=0; $MP_two_count=0; $MP_three_count=0; $MP_four_count=0; $MP_five_count=0; $MP_all_count=0;
+        $MP_count=0;
+        $MP_one_count=0;
+        $MP_two_count=0;
+        $MP_three_count=0;
+        $MP_four_count=0;
+        $MP_five_count=0;
+        $MP_all_count=0;
         $stmt="select count(*) from vicidial_list where status IN($completed_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $MP_results = mysqli_num_rows($rslt);
-        if ($MP_results > 0)
-            {$row=mysqli_fetch_row($rslt); $MP_count = $row[0];}
+        if ($MP_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $MP_count = $row[0];
+        }
         $stmt="select count(*) from ".$vicidial_log_table." where called_count=1 and status IN($completed_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $MP_one_results = mysqli_num_rows($rslt);
-        if ($MP_one_results > 0)
-            {$row=mysqli_fetch_row($rslt); $MP_one_count = $row[0];}
+        if ($MP_one_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $MP_one_count = $row[0];
+        }
         $stmt="select count(*) from ".$vicidial_log_table." where called_count=2 and status IN($completed_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $MP_two_results = mysqli_num_rows($rslt);
-        if ($MP_two_results > 0)
-            {$row=mysqli_fetch_row($rslt); $MP_two_count = $row[0];}
+        if ($MP_two_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $MP_two_count = $row[0];
+        }
         $stmt="select count(*) from ".$vicidial_log_table." where called_count=3 and status IN($completed_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $MP_three_results = mysqli_num_rows($rslt);
-        if ($MP_three_results > 0)
-            {$row=mysqli_fetch_row($rslt); $MP_three_count = $row[0];}
+        if ($MP_three_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $MP_three_count = $row[0];
+        }
         $stmt="select count(*) from ".$vicidial_log_table." where called_count=4 and status IN($completed_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $MP_four_results = mysqli_num_rows($rslt);
-        if ($MP_four_results > 0)
-            {$row=mysqli_fetch_row($rslt); $MP_four_count = $row[0];}
+        if ($MP_four_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $MP_four_count = $row[0];
+        }
         $stmt="select count(*) from ".$vicidial_log_table." where called_count=5 and status IN($completed_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $MP_five_results = mysqli_num_rows($rslt);
-        if ($MP_five_results > 0)
-            {$row=mysqli_fetch_row($rslt); $MP_five_count = $row[0];}
+        if ($MP_five_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $MP_five_count = $row[0];
+        }
         $stmt="select count(distinct lead_id) from ".$vicidial_log_table." where status IN($completed_statuses) and list_id='$LISTIDlists[$i]';";
         $rslt=mysql_to_mysqli($stmt, $link);
-        if ($DB) {$MAIN.="$stmt\n";}
+        if ($DB) {
+            $MAIN.="$stmt\n";
+        }
         $MP_all_results = mysqli_num_rows($rslt);
-        if ($MP_all_results > 0)
-            {$row=mysqli_fetch_row($rslt); $MP_all_count = $row[0];}
-        if ($MP_all_count > $MP_count) {$MP_count = $MP_all_count;}
-        $MP_countS =    sprintf("%7s", $MP_count); while(strlen($MP_countS)>7) {$MP_countS = substr("$MP_countS", 0, -1);}
-        $MP_one_countS =    sprintf("%7s", $MP_one_count); while(strlen($MP_one_countS)>7) {$MP_one_countS = substr("$MP_one_countS", 0, -1);}
-        $MP_two_countS =    sprintf("%7s", $MP_two_count); while(strlen($MP_two_countS)>7) {$MP_two_countS = substr("$MP_two_countS", 0, -1);}
-        $MP_three_countS =    sprintf("%7s", $MP_three_count); while(strlen($MP_three_countS)>7) {$MP_three_countS = substr("$MP_three_countS", 0, -1);}
-        $MP_four_countS =    sprintf("%7s", $MP_four_count); while(strlen($MP_four_countS)>7) {$MP_four_countS = substr("$MP_four_countS", 0, -1);}
-        $MP_five_countS =    sprintf("%7s", $MP_five_count); while(strlen($MP_five_countS)>7) {$MP_five_countS = substr("$MP_five_countS", 0, -1);}
+        if ($MP_all_results > 0) {
+            $row=mysqli_fetch_row($rslt);
+            $MP_all_count = $row[0];
+        }
+        if ($MP_all_count > $MP_count) {
+            $MP_count = $MP_all_count;
+        }
+        $MP_countS =    sprintf("%7s", $MP_count);
+        while(strlen($MP_countS)>7) {
+            $MP_countS = substr("$MP_countS", 0, -1);
+        }
+        $MP_one_countS =    sprintf("%7s", $MP_one_count);
+        while(strlen($MP_one_countS)>7) {
+            $MP_one_countS = substr("$MP_one_countS", 0, -1);
+        }
+        $MP_two_countS =    sprintf("%7s", $MP_two_count);
+        while(strlen($MP_two_countS)>7) {
+            $MP_two_countS = substr("$MP_two_countS", 0, -1);
+        }
+        $MP_three_countS =    sprintf("%7s", $MP_three_count);
+        while(strlen($MP_three_countS)>7) {
+            $MP_three_countS = substr("$MP_three_countS", 0, -1);
+        }
+        $MP_four_countS =    sprintf("%7s", $MP_four_count);
+        while(strlen($MP_four_countS)>7) {
+            $MP_four_countS = substr("$MP_four_countS", 0, -1);
+        }
+        $MP_five_countS =    sprintf("%7s", $MP_five_count);
+        while(strlen($MP_five_countS)>7) {
+            $MP_five_countS = substr("$MP_five_countS", 0, -1);
+        }
         $MP_count_tot =    ($MP_count + $MP_count_tot);
         $MP_one_count_tot =    ($MP_one_count + $MP_one_count_tot);
         $MP_two_count_tot =    ($MP_two_count + $MP_two_count_tot);
         $MP_three_count_tot =    ($MP_three_count + $MP_three_count_tot);
         $MP_four_count_tot =    ($MP_four_count + $MP_four_count_tot);
         $MP_five_count_tot =    ($MP_five_count + $MP_five_count_tot);
-        $MR_count=$MP_count; 
+        $MR_count=$MP_count;
         $MR_one_count=$MP_one_count;
         $MR_two_count=$MP_two_count;
         $MR_three_count=$MP_three_count;
@@ -1281,12 +1871,30 @@ else
         $MR_three_count_pct = (MathZDC($MR_three_count, $LISTIDcalls[$i]) * 100);
         $MR_four_count_pct = (MathZDC($MR_four_count, $LISTIDcalls[$i]) * 100);
         $MR_five_count_pct = (MathZDC($MR_five_count, $LISTIDcalls[$i]) * 100);
-        $MR_countS =    sprintf("%6.2f", $MR_count_pct); while(strlen($MR_countS)>7) {$MR_countS = substr("$MR_countS", 0, -1);}
-        $MR_one_countS =    sprintf("%6.2f", $MR_one_count_pct); while(strlen($MR_one_countS)>7) {$MR_one_countS = substr("$MR_one_countS", 0, -1);}
-        $MR_two_countS =    sprintf("%6.2f", $MR_two_count_pct); while(strlen($MR_two_countS)>7) {$MR_two_countS = substr("$MR_two_countS", 0, -1);}
-        $MR_three_countS =    sprintf("%6.2f", $MR_three_count_pct); while(strlen($MR_three_countS)>7) {$MR_three_countS = substr("$MR_three_countS", 0, -1);}
-        $MR_four_countS =    sprintf("%6.2f", $MR_four_count_pct); while(strlen($MR_four_countS)>7) {$MR_four_countS = substr("$MR_four_countS", 0, -1);}
-        $MR_five_countS =    sprintf("%6.2f", $MR_five_count_pct); while(strlen($MR_five_countS)>7) {$MR_five_countS = substr("$MR_five_countS", 0, -1);}
+        $MR_countS =    sprintf("%6.2f", $MR_count_pct);
+        while(strlen($MR_countS)>7) {
+            $MR_countS = substr("$MR_countS", 0, -1);
+        }
+        $MR_one_countS =    sprintf("%6.2f", $MR_one_count_pct);
+        while(strlen($MR_one_countS)>7) {
+            $MR_one_countS = substr("$MR_one_countS", 0, -1);
+        }
+        $MR_two_countS =    sprintf("%6.2f", $MR_two_count_pct);
+        while(strlen($MR_two_countS)>7) {
+            $MR_two_countS = substr("$MR_two_countS", 0, -1);
+        }
+        $MR_three_countS =    sprintf("%6.2f", $MR_three_count_pct);
+        while(strlen($MR_three_countS)>7) {
+            $MR_three_countS = substr("$MR_three_countS", 0, -1);
+        }
+        $MR_four_countS =    sprintf("%6.2f", $MR_four_count_pct);
+        while(strlen($MR_four_countS)>7) {
+            $MR_four_countS = substr("$MR_four_countS", 0, -1);
+        }
+        $MR_five_countS =    sprintf("%6.2f", $MR_five_count_pct);
+        while(strlen($MR_five_countS)>7) {
+            $MR_five_countS = substr("$MR_five_countS", 0, -1);
+        }
         $MR_count_tot =    ($MR_count + $MR_count_tot);
         $MR_one_count_tot =    ($MR_one_count + $MR_one_count_tot);
         $MR_two_count_tot =    ($MR_two_count + $MR_two_count_tot);
@@ -1410,56 +2018,184 @@ else
         $graph_stats2[$i][83]=$MR_five_countS;
         $graph_stats2[$i][84]=$MR_countS;
         $i++;
-        }
+    }
     // CYCLE THROUGH ARRAY TO SEE IF ANY NEW MAX VARS
     for ($q=0; $q<count($graph_stats2); $q++) {
         for ($x=1; $x<count($graph_stats2[$q]); $x++) {
             $graph_stats2[$q][$x]=trim($graph_stats2[$q][$x]);
-            if ($graph_stats2[$q][$x]>$max_stats2[$x]) {$max_stats2[$x]=$graph_stats2[$q][$x];}
+            if ($graph_stats2[$q][$x]>$max_stats2[$x]) {
+                $max_stats2[$x]=$graph_stats2[$q][$x];
+            }
         }
     }
-    $HA_count_totS =    sprintf("%7s", $HA_count_tot); while(strlen($HA_count_totS)>7) {$HA_count_totS = substr("$HA_count_totS", 0, -1);}
-    $HA_one_count_totS =    sprintf("%7s", $HA_one_count_tot); while(strlen($HA_one_count_totS)>7) {$HA_one_count_totS = substr("$HA_one_count_totS", 0, -1);}
-    $HA_two_count_totS =    sprintf("%7s", $HA_two_count_tot); while(strlen($HA_two_count_totS)>7) {$HA_two_count_totS = substr("$HA_two_count_totS", 0, -1);}
-    $HA_three_count_totS =    sprintf("%7s", $HA_three_count_tot); while(strlen($HA_three_count_totS)>7) {$HA_three_count_totS = substr("$HA_three_count_totS", 0, -1);}
-    $HA_four_count_totS =    sprintf("%7s", $HA_four_count_tot); while(strlen($HA_four_count_totS)>7) {$HA_four_count_totS = substr("$HA_four_count_totS", 0, -1);}
-    $HA_five_count_totS =    sprintf("%7s", $HA_five_count_tot); while(strlen($HA_five_count_totS)>7) {$HA_five_count_totS = substr("$HA_five_count_totS", 0, -1);}
-    $SA_count_totS =    sprintf("%7s", $SA_count_tot); while(strlen($SA_count_totS)>7) {$SA_count_totS = substr("$SA_count_totS", 0, -1);}
-    $SA_one_count_totS =    sprintf("%7s", $SA_one_count_tot); while(strlen($SA_one_count_totS)>7) {$SA_one_count_totS = substr("$SA_one_count_totS", 0, -1);}
-    $SA_two_count_totS =    sprintf("%7s", $SA_two_count_tot); while(strlen($SA_two_count_totS)>7) {$SA_two_count_totS = substr("$SA_two_count_totS", 0, -1);}
-    $SA_three_count_totS =    sprintf("%7s", $SA_three_count_tot); while(strlen($SA_three_count_totS)>7) {$SA_three_count_totS = substr("$SA_three_count_totS", 0, -1);}
-    $SA_four_count_totS =    sprintf("%7s", $SA_four_count_tot); while(strlen($SA_four_count_totS)>7) {$SA_four_count_totS = substr("$SA_four_count_totS", 0, -1);}
-    $SA_five_count_totS =    sprintf("%7s", $SA_five_count_tot); while(strlen($SA_five_count_totS)>7) {$SA_five_count_totS = substr("$SA_five_count_totS", 0, -1);}
-    $DN_count_totS =    sprintf("%7s", $DN_count_tot); while(strlen($DN_count_totS)>7) {$DN_count_totS = substr("$DN_count_totS", 0, -1);}
-    $DN_one_count_totS =    sprintf("%7s", $DN_one_count_tot); while(strlen($DN_one_count_totS)>7) {$DN_one_count_totS = substr("$DN_one_count_totS", 0, -1);}
-    $DN_two_count_totS =    sprintf("%7s", $DN_two_count_tot); while(strlen($DN_two_count_totS)>7) {$DN_two_count_totS = substr("$DN_two_count_totS", 0, -1);}
-    $DN_three_count_totS =    sprintf("%7s", $DN_three_count_tot); while(strlen($DN_three_count_totS)>7) {$DN_three_count_totS = substr("$DN_three_count_totS", 0, -1);}
-    $DN_four_count_totS =    sprintf("%7s", $DN_four_count_tot); while(strlen($DN_four_count_totS)>7) {$DN_four_count_totS = substr("$DN_four_count_totS", 0, -1);}
-    $DN_five_count_totS =    sprintf("%7s", $DN_five_count_tot); while(strlen($DN_five_count_totS)>7) {$DN_five_count_totS = substr("$DN_five_count_totS", 0, -1);}
-    $CC_count_totS =    sprintf("%7s", $CC_count_tot); while(strlen($CC_count_totS)>7) {$CC_count_totS = substr("$CC_count_totS", 0, -1);}
-    $CC_one_count_totS =    sprintf("%7s", $CC_one_count_tot); while(strlen($CC_one_count_totS)>7) {$CC_one_count_totS = substr("$CC_one_count_totS", 0, -1);}
-    $CC_two_count_totS =    sprintf("%7s", $CC_two_count_tot); while(strlen($CC_two_count_totS)>7) {$CC_two_count_totS = substr("$CC_two_count_totS", 0, -1);}
-    $CC_three_count_totS =    sprintf("%7s", $CC_three_count_tot); while(strlen($CC_three_count_totS)>7) {$CC_three_count_totS = substr("$CC_three_count_totS", 0, -1);}
-    $CC_four_count_totS =    sprintf("%7s", $CC_four_count_tot); while(strlen($CC_four_count_totS)>7) {$CC_four_count_totS = substr("$CC_four_count_totS", 0, -1);}
-    $CC_five_count_totS =    sprintf("%7s", $CC_five_count_tot); while(strlen($CC_five_count_totS)>7) {$CC_five_count_totS = substr("$CC_five_count_totS", 0, -1);}
-    $UW_count_totS =    sprintf("%7s", $UW_count_tot); while(strlen($UW_count_totS)>7) {$UW_count_totS = substr("$UW_count_totS", 0, -1);}
-    $UW_one_count_totS =    sprintf("%7s", $UW_one_count_tot); while(strlen($UW_one_count_totS)>7) {$UW_one_count_totS = substr("$UW_one_count_totS", 0, -1);}
-    $UW_two_count_totS =    sprintf("%7s", $UW_two_count_tot); while(strlen($UW_two_count_totS)>7) {$UW_two_count_totS = substr("$UW_two_count_totS", 0, -1);}
-    $UW_three_count_totS =    sprintf("%7s", $UW_three_count_tot); while(strlen($UW_three_count_totS)>7) {$UW_three_count_totS = substr("$UW_three_count_totS", 0, -1);}
-    $UW_four_count_totS =    sprintf("%7s", $UW_four_count_tot); while(strlen($UW_four_count_totS)>7) {$UW_four_count_totS = substr("$UW_four_count_totS", 0, -1);}
-    $UW_five_count_totS =    sprintf("%7s", $UW_five_count_tot); while(strlen($UW_five_count_totS)>7) {$UW_five_count_totS = substr("$UW_five_count_totS", 0, -1);}
-    $BA_count_totS =    sprintf("%7s", $BA_count_tot); while(strlen($BA_count_totS)>7) {$BA_count_totS = substr("$BA_count_totS", 0, -1);}
-    $BA_one_count_totS =    sprintf("%7s", $BA_one_count_tot); while(strlen($BA_one_count_totS)>7) {$BA_one_count_totS = substr("$BA_one_count_totS", 0, -1);}
-    $BA_two_count_totS =    sprintf("%7s", $BA_two_count_tot); while(strlen($BA_two_count_totS)>7) {$BA_two_count_totS = substr("$BA_two_count_totS", 0, -1);}
-    $BA_three_count_totS =    sprintf("%7s", $BA_three_count_tot); while(strlen($BA_three_count_totS)>7) {$BA_three_count_totS = substr("$BA_three_count_totS", 0, -1);}
-    $BA_four_count_totS =    sprintf("%7s", $BA_four_count_tot); while(strlen($BA_four_count_totS)>7) {$BA_four_count_totS = substr("$BA_four_count_totS", 0, -1);}
-    $BA_five_count_totS =    sprintf("%7s", $BA_five_count_tot); while(strlen($BA_five_count_totS)>7) {$BA_five_count_totS = substr("$BA_five_count_totS", 0, -1);}
-    $MP_count_totS =    sprintf("%7s", $MP_count_tot); while(strlen($MP_count_totS)>7) {$MP_count_totS = substr("$MP_count_totS", 0, -1);}
-    $MP_one_count_totS =    sprintf("%7s", $MP_one_count_tot); while(strlen($MP_one_count_totS)>7) {$MP_one_count_totS = substr("$MP_one_count_totS", 0, -1);}
-    $MP_two_count_totS =    sprintf("%7s", $MP_two_count_tot); while(strlen($MP_two_count_totS)>7) {$MP_two_count_totS = substr("$MP_two_count_totS", 0, -1);}
-    $MP_three_count_totS =    sprintf("%7s", $MP_three_count_tot); while(strlen($MP_three_count_totS)>7) {$MP_three_count_totS = substr("$MP_three_count_totS", 0, -1);}
-    $MP_four_count_totS =    sprintf("%7s", $MP_four_count_tot); while(strlen($MP_four_count_totS)>7) {$MP_four_count_totS = substr("$MP_four_count_totS", 0, -1);}
-    $MP_five_count_totS =    sprintf("%7s", $MP_five_count_tot); while(strlen($MP_five_count_totS)>7) {$MP_five_count_totS = substr("$MP_five_count_totS", 0, -1);}
+    $HA_count_totS =    sprintf("%7s", $HA_count_tot);
+    while(strlen($HA_count_totS)>7) {
+        $HA_count_totS = substr("$HA_count_totS", 0, -1);
+    }
+    $HA_one_count_totS =    sprintf("%7s", $HA_one_count_tot);
+    while(strlen($HA_one_count_totS)>7) {
+        $HA_one_count_totS = substr("$HA_one_count_totS", 0, -1);
+    }
+    $HA_two_count_totS =    sprintf("%7s", $HA_two_count_tot);
+    while(strlen($HA_two_count_totS)>7) {
+        $HA_two_count_totS = substr("$HA_two_count_totS", 0, -1);
+    }
+    $HA_three_count_totS =    sprintf("%7s", $HA_three_count_tot);
+    while(strlen($HA_three_count_totS)>7) {
+        $HA_three_count_totS = substr("$HA_three_count_totS", 0, -1);
+    }
+    $HA_four_count_totS =    sprintf("%7s", $HA_four_count_tot);
+    while(strlen($HA_four_count_totS)>7) {
+        $HA_four_count_totS = substr("$HA_four_count_totS", 0, -1);
+    }
+    $HA_five_count_totS =    sprintf("%7s", $HA_five_count_tot);
+    while(strlen($HA_five_count_totS)>7) {
+        $HA_five_count_totS = substr("$HA_five_count_totS", 0, -1);
+    }
+    $SA_count_totS =    sprintf("%7s", $SA_count_tot);
+    while(strlen($SA_count_totS)>7) {
+        $SA_count_totS = substr("$SA_count_totS", 0, -1);
+    }
+    $SA_one_count_totS =    sprintf("%7s", $SA_one_count_tot);
+    while(strlen($SA_one_count_totS)>7) {
+        $SA_one_count_totS = substr("$SA_one_count_totS", 0, -1);
+    }
+    $SA_two_count_totS =    sprintf("%7s", $SA_two_count_tot);
+    while(strlen($SA_two_count_totS)>7) {
+        $SA_two_count_totS = substr("$SA_two_count_totS", 0, -1);
+    }
+    $SA_three_count_totS =    sprintf("%7s", $SA_three_count_tot);
+    while(strlen($SA_three_count_totS)>7) {
+        $SA_three_count_totS = substr("$SA_three_count_totS", 0, -1);
+    }
+    $SA_four_count_totS =    sprintf("%7s", $SA_four_count_tot);
+    while(strlen($SA_four_count_totS)>7) {
+        $SA_four_count_totS = substr("$SA_four_count_totS", 0, -1);
+    }
+    $SA_five_count_totS =    sprintf("%7s", $SA_five_count_tot);
+    while(strlen($SA_five_count_totS)>7) {
+        $SA_five_count_totS = substr("$SA_five_count_totS", 0, -1);
+    }
+    $DN_count_totS =    sprintf("%7s", $DN_count_tot);
+    while(strlen($DN_count_totS)>7) {
+        $DN_count_totS = substr("$DN_count_totS", 0, -1);
+    }
+    $DN_one_count_totS =    sprintf("%7s", $DN_one_count_tot);
+    while(strlen($DN_one_count_totS)>7) {
+        $DN_one_count_totS = substr("$DN_one_count_totS", 0, -1);
+    }
+    $DN_two_count_totS =    sprintf("%7s", $DN_two_count_tot);
+    while(strlen($DN_two_count_totS)>7) {
+        $DN_two_count_totS = substr("$DN_two_count_totS", 0, -1);
+    }
+    $DN_three_count_totS =    sprintf("%7s", $DN_three_count_tot);
+    while(strlen($DN_three_count_totS)>7) {
+        $DN_three_count_totS = substr("$DN_three_count_totS", 0, -1);
+    }
+    $DN_four_count_totS =    sprintf("%7s", $DN_four_count_tot);
+    while(strlen($DN_four_count_totS)>7) {
+        $DN_four_count_totS = substr("$DN_four_count_totS", 0, -1);
+    }
+    $DN_five_count_totS =    sprintf("%7s", $DN_five_count_tot);
+    while(strlen($DN_five_count_totS)>7) {
+        $DN_five_count_totS = substr("$DN_five_count_totS", 0, -1);
+    }
+    $CC_count_totS =    sprintf("%7s", $CC_count_tot);
+    while(strlen($CC_count_totS)>7) {
+        $CC_count_totS = substr("$CC_count_totS", 0, -1);
+    }
+    $CC_one_count_totS =    sprintf("%7s", $CC_one_count_tot);
+    while(strlen($CC_one_count_totS)>7) {
+        $CC_one_count_totS = substr("$CC_one_count_totS", 0, -1);
+    }
+    $CC_two_count_totS =    sprintf("%7s", $CC_two_count_tot);
+    while(strlen($CC_two_count_totS)>7) {
+        $CC_two_count_totS = substr("$CC_two_count_totS", 0, -1);
+    }
+    $CC_three_count_totS =    sprintf("%7s", $CC_three_count_tot);
+    while(strlen($CC_three_count_totS)>7) {
+        $CC_three_count_totS = substr("$CC_three_count_totS", 0, -1);
+    }
+    $CC_four_count_totS =    sprintf("%7s", $CC_four_count_tot);
+    while(strlen($CC_four_count_totS)>7) {
+        $CC_four_count_totS = substr("$CC_four_count_totS", 0, -1);
+    }
+    $CC_five_count_totS =    sprintf("%7s", $CC_five_count_tot);
+    while(strlen($CC_five_count_totS)>7) {
+        $CC_five_count_totS = substr("$CC_five_count_totS", 0, -1);
+    }
+    $UW_count_totS =    sprintf("%7s", $UW_count_tot);
+    while(strlen($UW_count_totS)>7) {
+        $UW_count_totS = substr("$UW_count_totS", 0, -1);
+    }
+    $UW_one_count_totS =    sprintf("%7s", $UW_one_count_tot);
+    while(strlen($UW_one_count_totS)>7) {
+        $UW_one_count_totS = substr("$UW_one_count_totS", 0, -1);
+    }
+    $UW_two_count_totS =    sprintf("%7s", $UW_two_count_tot);
+    while(strlen($UW_two_count_totS)>7) {
+        $UW_two_count_totS = substr("$UW_two_count_totS", 0, -1);
+    }
+    $UW_three_count_totS =    sprintf("%7s", $UW_three_count_tot);
+    while(strlen($UW_three_count_totS)>7) {
+        $UW_three_count_totS = substr("$UW_three_count_totS", 0, -1);
+    }
+    $UW_four_count_totS =    sprintf("%7s", $UW_four_count_tot);
+    while(strlen($UW_four_count_totS)>7) {
+        $UW_four_count_totS = substr("$UW_four_count_totS", 0, -1);
+    }
+    $UW_five_count_totS =    sprintf("%7s", $UW_five_count_tot);
+    while(strlen($UW_five_count_totS)>7) {
+        $UW_five_count_totS = substr("$UW_five_count_totS", 0, -1);
+    }
+    $BA_count_totS =    sprintf("%7s", $BA_count_tot);
+    while(strlen($BA_count_totS)>7) {
+        $BA_count_totS = substr("$BA_count_totS", 0, -1);
+    }
+    $BA_one_count_totS =    sprintf("%7s", $BA_one_count_tot);
+    while(strlen($BA_one_count_totS)>7) {
+        $BA_one_count_totS = substr("$BA_one_count_totS", 0, -1);
+    }
+    $BA_two_count_totS =    sprintf("%7s", $BA_two_count_tot);
+    while(strlen($BA_two_count_totS)>7) {
+        $BA_two_count_totS = substr("$BA_two_count_totS", 0, -1);
+    }
+    $BA_three_count_totS =    sprintf("%7s", $BA_three_count_tot);
+    while(strlen($BA_three_count_totS)>7) {
+        $BA_three_count_totS = substr("$BA_three_count_totS", 0, -1);
+    }
+    $BA_four_count_totS =    sprintf("%7s", $BA_four_count_tot);
+    while(strlen($BA_four_count_totS)>7) {
+        $BA_four_count_totS = substr("$BA_four_count_totS", 0, -1);
+    }
+    $BA_five_count_totS =    sprintf("%7s", $BA_five_count_tot);
+    while(strlen($BA_five_count_totS)>7) {
+        $BA_five_count_totS = substr("$BA_five_count_totS", 0, -1);
+    }
+    $MP_count_totS =    sprintf("%7s", $MP_count_tot);
+    while(strlen($MP_count_totS)>7) {
+        $MP_count_totS = substr("$MP_count_totS", 0, -1);
+    }
+    $MP_one_count_totS =    sprintf("%7s", $MP_one_count_tot);
+    while(strlen($MP_one_count_totS)>7) {
+        $MP_one_count_totS = substr("$MP_one_count_totS", 0, -1);
+    }
+    $MP_two_count_totS =    sprintf("%7s", $MP_two_count_tot);
+    while(strlen($MP_two_count_totS)>7) {
+        $MP_two_count_totS = substr("$MP_two_count_totS", 0, -1);
+    }
+    $MP_three_count_totS =    sprintf("%7s", $MP_three_count_tot);
+    while(strlen($MP_three_count_totS)>7) {
+        $MP_three_count_totS = substr("$MP_three_count_totS", 0, -1);
+    }
+    $MP_four_count_totS =    sprintf("%7s", $MP_four_count_tot);
+    while(strlen($MP_four_count_totS)>7) {
+        $MP_four_count_totS = substr("$MP_four_count_totS", 0, -1);
+    }
+    $MP_five_count_totS =    sprintf("%7s", $MP_five_count_tot);
+    while(strlen($MP_five_count_totS)>7) {
+        $MP_five_count_totS = substr("$MP_five_count_totS", 0, -1);
+    }
     $HR_count_Tpc=0;
     $HR_one_count_Tpc=0;
     $HR_two_count_Tpc=0;
@@ -1472,12 +2208,30 @@ else
     $HR_three_count_Tpc = (MathZDC($HR_three_count_tot, $TOTALleads) * 100);
     $HR_four_count_Tpc = (MathZDC($HR_four_count_tot, $TOTALleads) * 100);
     $HR_five_count_Tpc = (MathZDC($HR_five_count_tot, $TOTALleads) * 100);
-    $HR_count_totS =    sprintf("%6.2f", $HR_count_Tpc); while(strlen($HR_count_totS)>7) {$HR_count_totS = substr("$HR_count_totS", 0, -1);}
-    $HR_one_count_totS =    sprintf("%6.2f", $HR_one_count_Tpc); while(strlen($HR_one_count_totS)>7) {$HR_one_count_totS = substr("$HR_one_count_totS", 0, -1);}
-    $HR_two_count_totS =    sprintf("%6.2f", $HR_two_count_Tpc); while(strlen($HR_two_count_totS)>7) {$HR_two_count_totS = substr("$HR_two_count_totS", 0, -1);}
-    $HR_three_count_totS =    sprintf("%6.2f", $HR_three_count_Tpc); while(strlen($HR_three_count_totS)>7) {$HR_three_count_totS = substr("$HR_three_count_totS", 0, -1);}
-    $HR_four_count_totS =    sprintf("%6.2f", $HR_four_count_Tpc); while(strlen($HR_four_count_totS)>7) {$HR_four_count_totS = substr("$HR_four_count_totS", 0, -1);}
-    $HR_five_count_totS =    sprintf("%6.2f", $HR_five_count_Tpc); while(strlen($HR_five_count_totS)>7) {$HR_five_count_totS = substr("$HR_five_count_totS", 0, -1);}
+    $HR_count_totS =    sprintf("%6.2f", $HR_count_Tpc);
+    while(strlen($HR_count_totS)>7) {
+        $HR_count_totS = substr("$HR_count_totS", 0, -1);
+    }
+    $HR_one_count_totS =    sprintf("%6.2f", $HR_one_count_Tpc);
+    while(strlen($HR_one_count_totS)>7) {
+        $HR_one_count_totS = substr("$HR_one_count_totS", 0, -1);
+    }
+    $HR_two_count_totS =    sprintf("%6.2f", $HR_two_count_Tpc);
+    while(strlen($HR_two_count_totS)>7) {
+        $HR_two_count_totS = substr("$HR_two_count_totS", 0, -1);
+    }
+    $HR_three_count_totS =    sprintf("%6.2f", $HR_three_count_Tpc);
+    while(strlen($HR_three_count_totS)>7) {
+        $HR_three_count_totS = substr("$HR_three_count_totS", 0, -1);
+    }
+    $HR_four_count_totS =    sprintf("%6.2f", $HR_four_count_Tpc);
+    while(strlen($HR_four_count_totS)>7) {
+        $HR_four_count_totS = substr("$HR_four_count_totS", 0, -1);
+    }
+    $HR_five_count_totS =    sprintf("%6.2f", $HR_five_count_Tpc);
+    while(strlen($HR_five_count_totS)>7) {
+        $HR_five_count_totS = substr("$HR_five_count_totS", 0, -1);
+    }
     $SR_count_Tpc=0;
     $SR_one_count_Tpc=0;
     $SR_two_count_Tpc=0;
@@ -1490,12 +2244,30 @@ else
     $SR_three_count_Tpc = (MathZDC($SR_three_count_tot, $TOTALleads) * 100);
     $SR_four_count_Tpc = (MathZDC($SR_four_count_tot, $TOTALleads) * 100);
     $SR_five_count_Tpc = (MathZDC($SR_five_count_tot, $TOTALleads) * 100);
-    $SR_count_totS =    sprintf("%6.2f", $SR_count_Tpc); while(strlen($SR_count_totS)>7) {$SR_count_totS = substr("$SR_count_totS", 0, -1);}
-    $SR_one_count_totS =    sprintf("%6.2f", $SR_one_count_Tpc); while(strlen($SR_one_count_totS)>7) {$SR_one_count_totS = substr("$SR_one_count_totS", 0, -1);}
-    $SR_two_count_totS =    sprintf("%6.2f", $SR_two_count_Tpc); while(strlen($SR_two_count_totS)>7) {$SR_two_count_totS = substr("$SR_two_count_totS", 0, -1);}
-    $SR_three_count_totS =    sprintf("%6.2f", $SR_three_count_Tpc); while(strlen($SR_three_count_totS)>7) {$SR_three_count_totS = substr("$SR_three_count_totS", 0, -1);}
-    $SR_four_count_totS =    sprintf("%6.2f", $SR_four_count_Tpc); while(strlen($SR_four_count_totS)>7) {$SR_four_count_totS = substr("$SR_four_count_totS", 0, -1);}
-    $SR_five_count_totS =    sprintf("%6.2f", $SR_five_count_Tpc); while(strlen($SR_five_count_totS)>7) {$SR_five_count_totS = substr("$SR_five_count_totS", 0, -1);}
+    $SR_count_totS =    sprintf("%6.2f", $SR_count_Tpc);
+    while(strlen($SR_count_totS)>7) {
+        $SR_count_totS = substr("$SR_count_totS", 0, -1);
+    }
+    $SR_one_count_totS =    sprintf("%6.2f", $SR_one_count_Tpc);
+    while(strlen($SR_one_count_totS)>7) {
+        $SR_one_count_totS = substr("$SR_one_count_totS", 0, -1);
+    }
+    $SR_two_count_totS =    sprintf("%6.2f", $SR_two_count_Tpc);
+    while(strlen($SR_two_count_totS)>7) {
+        $SR_two_count_totS = substr("$SR_two_count_totS", 0, -1);
+    }
+    $SR_three_count_totS =    sprintf("%6.2f", $SR_three_count_Tpc);
+    while(strlen($SR_three_count_totS)>7) {
+        $SR_three_count_totS = substr("$SR_three_count_totS", 0, -1);
+    }
+    $SR_four_count_totS =    sprintf("%6.2f", $SR_four_count_Tpc);
+    while(strlen($SR_four_count_totS)>7) {
+        $SR_four_count_totS = substr("$SR_four_count_totS", 0, -1);
+    }
+    $SR_five_count_totS =    sprintf("%6.2f", $SR_five_count_Tpc);
+    while(strlen($SR_five_count_totS)>7) {
+        $SR_five_count_totS = substr("$SR_five_count_totS", 0, -1);
+    }
     $DR_count_Tpc=0;
     $DR_one_count_Tpc=0;
     $DR_two_count_Tpc=0;
@@ -1508,12 +2280,30 @@ else
     $DR_three_count_Tpc = (MathZDC($DR_three_count_tot, $TOTALleads) * 100);
     $DR_four_count_Tpc = (MathZDC($DR_four_count_tot, $TOTALleads) * 100);
     $DR_five_count_Tpc = (MathZDC($DR_five_count_tot, $TOTALleads) * 100);
-    $DR_count_totS =    sprintf("%6.2f", $DR_count_Tpc); while(strlen($DR_count_totS)>7) {$DR_count_totS = substr("$DR_count_totS", 0, -1);}
-    $DR_one_count_totS =    sprintf("%6.2f", $DR_one_count_Tpc); while(strlen($DR_one_count_totS)>7) {$DR_one_count_totS = substr("$DR_one_count_totS", 0, -1);}
-    $DR_two_count_totS =    sprintf("%6.2f", $DR_two_count_Tpc); while(strlen($DR_two_count_totS)>7) {$DR_two_count_totS = substr("$DR_two_count_totS", 0, -1);}
-    $DR_three_count_totS =    sprintf("%6.2f", $DR_three_count_Tpc); while(strlen($DR_three_count_totS)>7) {$DR_three_count_totS = substr("$DR_three_count_totS", 0, -1);}
-    $DR_four_count_totS =    sprintf("%6.2f", $DR_four_count_Tpc); while(strlen($DR_four_count_totS)>7) {$DR_four_count_totS = substr("$DR_four_count_totS", 0, -1);}
-    $DR_five_count_totS =    sprintf("%6.2f", $DR_five_count_Tpc); while(strlen($DR_five_count_totS)>7) {$DR_five_count_totS = substr("$DR_five_count_totS", 0, -1);}
+    $DR_count_totS =    sprintf("%6.2f", $DR_count_Tpc);
+    while(strlen($DR_count_totS)>7) {
+        $DR_count_totS = substr("$DR_count_totS", 0, -1);
+    }
+    $DR_one_count_totS =    sprintf("%6.2f", $DR_one_count_Tpc);
+    while(strlen($DR_one_count_totS)>7) {
+        $DR_one_count_totS = substr("$DR_one_count_totS", 0, -1);
+    }
+    $DR_two_count_totS =    sprintf("%6.2f", $DR_two_count_Tpc);
+    while(strlen($DR_two_count_totS)>7) {
+        $DR_two_count_totS = substr("$DR_two_count_totS", 0, -1);
+    }
+    $DR_three_count_totS =    sprintf("%6.2f", $DR_three_count_Tpc);
+    while(strlen($DR_three_count_totS)>7) {
+        $DR_three_count_totS = substr("$DR_three_count_totS", 0, -1);
+    }
+    $DR_four_count_totS =    sprintf("%6.2f", $DR_four_count_Tpc);
+    while(strlen($DR_four_count_totS)>7) {
+        $DR_four_count_totS = substr("$DR_four_count_totS", 0, -1);
+    }
+    $DR_five_count_totS =    sprintf("%6.2f", $DR_five_count_Tpc);
+    while(strlen($DR_five_count_totS)>7) {
+        $DR_five_count_totS = substr("$DR_five_count_totS", 0, -1);
+    }
     $CR_count_Tpc=0;
     $CR_one_count_Tpc=0;
     $CR_two_count_Tpc=0;
@@ -1526,12 +2316,30 @@ else
     $CR_three_count_Tpc = (MathZDC($CR_three_count_tot, $TOTALleads) * 100);
     $CR_four_count_Tpc = (MathZDC($CR_four_count_tot, $TOTALleads) * 100);
     $CR_five_count_Tpc = (MathZDC($CR_five_count_tot, $TOTALleads) * 100);
-    $CR_count_totS =    sprintf("%6.2f", $CR_count_Tpc); while(strlen($CR_count_totS)>7) {$CR_count_totS = substr("$CR_count_totS", 0, -1);}
-    $CR_one_count_totS =    sprintf("%6.2f", $CR_one_count_Tpc); while(strlen($CR_one_count_totS)>7) {$CR_one_count_totS = substr("$CR_one_count_totS", 0, -1);}
-    $CR_two_count_totS =    sprintf("%6.2f", $CR_two_count_Tpc); while(strlen($CR_two_count_totS)>7) {$CR_two_count_totS = substr("$CR_two_count_totS", 0, -1);}
-    $CR_three_count_totS =    sprintf("%6.2f", $CR_three_count_Tpc); while(strlen($CR_three_count_totS)>7) {$CR_three_count_totS = substr("$CR_three_count_totS", 0, -1);}
-    $CR_four_count_totS =    sprintf("%6.2f", $CR_four_count_Tpc); while(strlen($CR_four_count_totS)>7) {$CR_four_count_totS = substr("$CR_four_count_totS", 0, -1);}
-    $CR_five_count_totS =    sprintf("%6.2f", $CR_five_count_Tpc); while(strlen($CR_five_count_totS)>7) {$CR_five_count_totS = substr("$CR_five_count_totS", 0, -1);}
+    $CR_count_totS =    sprintf("%6.2f", $CR_count_Tpc);
+    while(strlen($CR_count_totS)>7) {
+        $CR_count_totS = substr("$CR_count_totS", 0, -1);
+    }
+    $CR_one_count_totS =    sprintf("%6.2f", $CR_one_count_Tpc);
+    while(strlen($CR_one_count_totS)>7) {
+        $CR_one_count_totS = substr("$CR_one_count_totS", 0, -1);
+    }
+    $CR_two_count_totS =    sprintf("%6.2f", $CR_two_count_Tpc);
+    while(strlen($CR_two_count_totS)>7) {
+        $CR_two_count_totS = substr("$CR_two_count_totS", 0, -1);
+    }
+    $CR_three_count_totS =    sprintf("%6.2f", $CR_three_count_Tpc);
+    while(strlen($CR_three_count_totS)>7) {
+        $CR_three_count_totS = substr("$CR_three_count_totS", 0, -1);
+    }
+    $CR_four_count_totS =    sprintf("%6.2f", $CR_four_count_Tpc);
+    while(strlen($CR_four_count_totS)>7) {
+        $CR_four_count_totS = substr("$CR_four_count_totS", 0, -1);
+    }
+    $CR_five_count_totS =    sprintf("%6.2f", $CR_five_count_Tpc);
+    while(strlen($CR_five_count_totS)>7) {
+        $CR_five_count_totS = substr("$CR_five_count_totS", 0, -1);
+    }
     $UR_count_Tpc=0;
     $UR_one_count_Tpc=0;
     $UR_two_count_Tpc=0;
@@ -1544,12 +2352,30 @@ else
     $UR_three_count_Tpc = (MathZDC($UR_three_count_tot, $TOTALleads) * 100);
     $UR_four_count_Tpc = (MathZDC($UR_four_count_tot, $TOTALleads) * 100);
     $UR_five_count_Tpc = (MathZDC($UR_five_count_tot, $TOTALleads) * 100);
-    $UR_count_totS =    sprintf("%6.2f", $UR_count_Tpc); while(strlen($UR_count_totS)>7) {$UR_count_totS = substr("$UR_count_totS", 0, -1);}
-    $UR_one_count_totS =    sprintf("%6.2f", $UR_one_count_Tpc); while(strlen($UR_one_count_totS)>7) {$UR_one_count_totS = substr("$UR_one_count_totS", 0, -1);}
-    $UR_two_count_totS =    sprintf("%6.2f", $UR_two_count_Tpc); while(strlen($UR_two_count_totS)>7) {$UR_two_count_totS = substr("$UR_two_count_totS", 0, -1);}
-    $UR_three_count_totS =    sprintf("%6.2f", $UR_three_count_Tpc); while(strlen($UR_three_count_totS)>7) {$UR_three_count_totS = substr("$UR_three_count_totS", 0, -1);}
-    $UR_four_count_totS =    sprintf("%6.2f", $UR_four_count_Tpc); while(strlen($UR_four_count_totS)>7) {$UR_four_count_totS = substr("$UR_four_count_totS", 0, -1);}
-    $UR_five_count_totS =    sprintf("%6.2f", $UR_five_count_Tpc); while(strlen($UR_five_count_totS)>7) {$UR_five_count_totS = substr("$UR_five_count_totS", 0, -1);}
+    $UR_count_totS =    sprintf("%6.2f", $UR_count_Tpc);
+    while(strlen($UR_count_totS)>7) {
+        $UR_count_totS = substr("$UR_count_totS", 0, -1);
+    }
+    $UR_one_count_totS =    sprintf("%6.2f", $UR_one_count_Tpc);
+    while(strlen($UR_one_count_totS)>7) {
+        $UR_one_count_totS = substr("$UR_one_count_totS", 0, -1);
+    }
+    $UR_two_count_totS =    sprintf("%6.2f", $UR_two_count_Tpc);
+    while(strlen($UR_two_count_totS)>7) {
+        $UR_two_count_totS = substr("$UR_two_count_totS", 0, -1);
+    }
+    $UR_three_count_totS =    sprintf("%6.2f", $UR_three_count_Tpc);
+    while(strlen($UR_three_count_totS)>7) {
+        $UR_three_count_totS = substr("$UR_three_count_totS", 0, -1);
+    }
+    $UR_four_count_totS =    sprintf("%6.2f", $UR_four_count_Tpc);
+    while(strlen($UR_four_count_totS)>7) {
+        $UR_four_count_totS = substr("$UR_four_count_totS", 0, -1);
+    }
+    $UR_five_count_totS =    sprintf("%6.2f", $UR_five_count_Tpc);
+    while(strlen($UR_five_count_totS)>7) {
+        $UR_five_count_totS = substr("$UR_five_count_totS", 0, -1);
+    }
     $BR_count_Tpc=0;
     $BR_one_count_Tpc=0;
     $BR_two_count_Tpc=0;
@@ -1562,12 +2388,30 @@ else
     $BR_three_count_Tpc = (MathZDC($BR_three_count_tot, $TOTALleads) * 100);
     $BR_four_count_Tpc = (MathZDC($BR_four_count_tot, $TOTALleads) * 100);
     $BR_five_count_Tpc = (MathZDC($BR_five_count_tot, $TOTALleads) * 100);
-    $BR_count_totS =    sprintf("%6.2f", $BR_count_Tpc); while(strlen($BR_count_totS)>7) {$BR_count_totS = substr("$BR_count_totS", 0, -1);}
-    $BR_one_count_totS =    sprintf("%6.2f", $BR_one_count_Tpc); while(strlen($BR_one_count_totS)>7) {$BR_one_count_totS = substr("$BR_one_count_totS", 0, -1);}
-    $BR_two_count_totS =    sprintf("%6.2f", $BR_two_count_Tpc); while(strlen($BR_two_count_totS)>7) {$BR_two_count_totS = substr("$BR_two_count_totS", 0, -1);}
-    $BR_three_count_totS =    sprintf("%6.2f", $BR_three_count_Tpc); while(strlen($BR_three_count_totS)>7) {$BR_three_count_totS = substr("$BR_three_count_totS", 0, -1);}
-    $BR_four_count_totS =    sprintf("%6.2f", $BR_four_count_Tpc); while(strlen($BR_four_count_totS)>7) {$BR_four_count_totS = substr("$BR_four_count_totS", 0, -1);}
-    $BR_five_count_totS =    sprintf("%6.2f", $BR_five_count_Tpc); while(strlen($BR_five_count_totS)>7) {$BR_five_count_totS = substr("$BR_five_count_totS", 0, -1);}
+    $BR_count_totS =    sprintf("%6.2f", $BR_count_Tpc);
+    while(strlen($BR_count_totS)>7) {
+        $BR_count_totS = substr("$BR_count_totS", 0, -1);
+    }
+    $BR_one_count_totS =    sprintf("%6.2f", $BR_one_count_Tpc);
+    while(strlen($BR_one_count_totS)>7) {
+        $BR_one_count_totS = substr("$BR_one_count_totS", 0, -1);
+    }
+    $BR_two_count_totS =    sprintf("%6.2f", $BR_two_count_Tpc);
+    while(strlen($BR_two_count_totS)>7) {
+        $BR_two_count_totS = substr("$BR_two_count_totS", 0, -1);
+    }
+    $BR_three_count_totS =    sprintf("%6.2f", $BR_three_count_Tpc);
+    while(strlen($BR_three_count_totS)>7) {
+        $BR_three_count_totS = substr("$BR_three_count_totS", 0, -1);
+    }
+    $BR_four_count_totS =    sprintf("%6.2f", $BR_four_count_Tpc);
+    while(strlen($BR_four_count_totS)>7) {
+        $BR_four_count_totS = substr("$BR_four_count_totS", 0, -1);
+    }
+    $BR_five_count_totS =    sprintf("%6.2f", $BR_five_count_Tpc);
+    while(strlen($BR_five_count_totS)>7) {
+        $BR_five_count_totS = substr("$BR_five_count_totS", 0, -1);
+    }
     $MR_count_Tpc=0;
     $MR_one_count_Tpc=0;
     $MR_two_count_Tpc=0;
@@ -1580,12 +2424,30 @@ else
     $MR_three_count_Tpc = (MathZDC($MR_three_count_tot, $TOTALleads) * 100);
     $MR_four_count_Tpc = (MathZDC($MR_four_count_tot, $TOTALleads) * 100);
     $MR_five_count_Tpc = (MathZDC($MR_five_count_tot, $TOTALleads) * 100);
-    $MR_count_totS =    sprintf("%6.2f", $MR_count_Tpc); while(strlen($MR_count_totS)>7) {$MR_count_totS = substr("$MR_count_totS", 0, -1);}
-    $MR_one_count_totS =    sprintf("%6.2f", $MR_one_count_Tpc); while(strlen($MR_one_count_totS)>7) {$MR_one_count_totS = substr("$MR_one_count_totS", 0, -1);}
-    $MR_two_count_totS =    sprintf("%6.2f", $MR_two_count_Tpc); while(strlen($MR_two_count_totS)>7) {$MR_two_count_totS = substr("$MR_two_count_totS", 0, -1);}
-    $MR_three_count_totS =    sprintf("%6.2f", $MR_three_count_Tpc); while(strlen($MR_three_count_totS)>7) {$MR_three_count_totS = substr("$MR_three_count_totS", 0, -1);}
-    $MR_four_count_totS =    sprintf("%6.2f", $MR_four_count_Tpc); while(strlen($MR_four_count_totS)>7) {$MR_four_count_totS = substr("$MR_four_count_totS", 0, -1);}
-    $MR_five_count_totS =    sprintf("%6.2f", $MR_five_count_Tpc); while(strlen($MR_five_count_totS)>7) {$MR_five_count_totS = substr("$MR_five_count_totS", 0, -1);}
+    $MR_count_totS =    sprintf("%6.2f", $MR_count_Tpc);
+    while(strlen($MR_count_totS)>7) {
+        $MR_count_totS = substr("$MR_count_totS", 0, -1);
+    }
+    $MR_one_count_totS =    sprintf("%6.2f", $MR_one_count_Tpc);
+    while(strlen($MR_one_count_totS)>7) {
+        $MR_one_count_totS = substr("$MR_one_count_totS", 0, -1);
+    }
+    $MR_two_count_totS =    sprintf("%6.2f", $MR_two_count_Tpc);
+    while(strlen($MR_two_count_totS)>7) {
+        $MR_two_count_totS = substr("$MR_two_count_totS", 0, -1);
+    }
+    $MR_three_count_totS =    sprintf("%6.2f", $MR_three_count_Tpc);
+    while(strlen($MR_three_count_totS)>7) {
+        $MR_three_count_totS = substr("$MR_three_count_totS", 0, -1);
+    }
+    $MR_four_count_totS =    sprintf("%6.2f", $MR_four_count_Tpc);
+    while(strlen($MR_four_count_totS)>7) {
+        $MR_four_count_totS = substr("$MR_four_count_totS", 0, -1);
+    }
+    $MR_five_count_totS =    sprintf("%6.2f", $MR_five_count_Tpc);
+    while(strlen($MR_five_count_totS)>7) {
+        $MR_five_count_totS = substr("$MR_five_count_totS", 0, -1);
+    }
     $TOTALleads =        sprintf("%10s", $TOTALleads);
     $OUToutput .= "+------------+------------------------------------------+----------+------------+----------+";
     $OUToutput .= "---------+---------+---------+---------+---------+---------+";
@@ -1603,7 +2465,7 @@ else
     $OUToutput .= "---------+---------+---------+---------+---------+---------+";
     $OUToutput .= "---------+---------+---------+---------+---------+---------+";
     $OUToutput .= "\n";
-    $OUToutput .= "             | "._QXZ("TOTALS",17,"r").":                                  | $TOTALleads |          |";
+    $OUToutput .= "             | "._QXZ("TOTALS", 17, "r").":                                  | $TOTALleads |          |";
     $OUToutput .= " $HA_one_count_totS | $HA_two_count_totS | $HA_three_count_totS | $HA_four_count_totS | $HA_five_count_totS | $HA_count_totS |";
     $OUToutput .= " $HR_one_count_totS% | $HR_two_count_totS% | $HR_three_count_totS% | $HR_four_count_totS% | $HR_five_count_totS% | $HR_count_totS% |";
     $OUToutput .= " $SA_one_count_totS | $SA_two_count_totS | $SA_three_count_totS | $SA_four_count_totS | $SA_five_count_totS | $SA_count_totS |";
@@ -1739,14 +2601,14 @@ else
     $graph_id++;
     $graph_array=array("LIS_CONTACTS1data|1|CONTACTS 1st PASS|integer|", "LIS_CONTACTS2data|2|CONTACTS 2nd PASS|integer|", "LIS_CONTACTS3data|3|CONTACTS 3rd PASS|integer|", "LIS_CONTACTS4data|4|CONTACTS 4th PASS|integer|", "LIS_CONTACTS5data|5|CONTACTS 5th PASS|integer|", "LIS_CONTACTSLIFEdata|6|CONTACTS LIFE|integer|", "LIS_CNTRATE1data|7|CNT RATE 1st PASS|decimal|", "LIS_CNTRATE2data|8|CNT RATE 2nd PASS|decimal|", "LIS_CNTRATE3data|9|CNT RATE 3rd PASS|decimal|", "LIS_CNTRATE4data|10|CNT RATE 4th PASS|decimal|", "LIS_CNTRATE5data|11|CNT RATE 5th PASS|decimal|", "LIS_CNTRATELIFEdata|12|CNT RATE LIFE|decimal|", "LIS_SALES1data|13|SALES 1st PASS|integer|", "LIS_SALES2data|14|SALES 2nd PASS|integer|", "LIS_SALES3data|15|SALES 3rd PASS|integer|", "LIS_SALES4data|16|SALES 4th PASS|integer|", "LIS_SALES5data|17|SALES 5th PASS|integer|", "LIS_SALESLIFEdata|18|SALES LIFE|integer|", "LIS_CONVRATE1data|19|CONV RATE 1st PASS|decimal|", "LIS_CONVRATE2data|20|CONV RATE 2nd PASS|decimal|", "LIS_CONVRATE3data|21|CONV RATE 3rd PASS|decimal|", "LIS_CONVRATE4data|22|CONV RATE 4th PASS|decimal|", "LIS_CONVRATE5data|23|CONV RATE 5th PASS|decimal|", "LIS_CONVLIFE1data|24|CONV RATE LIFE|decimal|", "LIS_DNC1data|25|DNC 1st PASS|integer|", "LIS_DNC2data|26|DNC 2nd PASS|integer|", "LIS_DNC3data|27|DNC 3rd PASS|integer|", "LIS_DNC4data|28|DNC 4th PASS|integer|", "LIS_DNC5data|29|DNC 5th PASS|integer|", "LIS_DNCLIFEdata|30|DNC LIFE|integer|", "LIS_DNCRATE1data|31|DNC RATE 1st PASS|decimal|", "LIS_DNCRATE2data|32|DNC RATE 2nd PASS|decimal|", "LIS_DNCRATE3data|33|DNC RATE 3rd PASS|decimal|", "LIS_DNCRATE4data|34|DNC RATE 4th PASS|decimal|", "LIS_DNCRATE5data|35|DNC RATE 5th PASS|decimal|", "LIS_DNCRATELIFEdata|36|DNC RATE LIFE|decimal|", "LIS_CUSTCNT1data|37|CUST CNT 1st PASS|integer|", "LIS_CUSTCNT2data|38|CUST CNT 2nd PASS|integer|", "LIS_CUSTCNT3data|39|CUST CNT 3rd PASS|integer|", "LIS_CUSTCNT4data|40|CUST CNT 4th PASS|integer|", "LIS_CUSTCNT5data|41|CUST CNT 5th PASS|integer|", "LIS_CUSTCNTLIFEdata|42|CUST CNT LIFE|integer|", "LIS_CUSCNTRATE1data|43|CUST CUSTCNT RATE 1st PASS|decimal|", "LIS_CUSCNTRATE2data|44|CUST CUSTCNT RATE 2nd PASS|decimal|", "LIS_CUSCNTRATE3data|45|CUST CUSTCNT RATE 3rd PASS|decimal|", "LIS_CUSCNTRATE4data|46|CUST CUSTCNT RATE 4th PASS|decimal|", "LIS_CUSCNTRATE5data|47|CUST CUSTCNT RATE 5th PASS|decimal|", "LIS_CUSCNTRATELIFEdata|48|CUST CUSTCNT RATE LIFE|decimal|", "LIS_UNWRK1data|49|UNWRK 1st PASS|integer|", "LIS_UNWRK2data|50|UNWRK 2nd PASS|integer|", "LIS_UNWRK3data|51|UNWRK 3rd PASS|integer|", "LIS_UNWRK4data|52|UNWRK 4th PASS|integer|", "LIS_UNWRK5data|53|UNWRK 5th PASS|integer|", "LIS_UNWRKLIFEdata|54|UNWRK LIFE|integer|", "LIS_UNWRKRATE1data|55|UNWRK RATE 1st PASS|decimal|", "LIS_UNWRKRATE2data|56|UNWRK RATE 2nd PASS|decimal|", "LIS_UNWRKRATE3data|57|UNWRK RATE 3rd PASS|decimal|", "LIS_UNWRKRATE4data|58|UNWRK RATE 4th PASS|decimal|", "LIS_UNWRKRATE5data|59|UNWRK RATE 5th PASS|decimal|", "LIS_UNWRKRATELIFEdata|60|UNWRK RATE LIFE|decimal|", "LIS_SCHDCLBK1data|61|SCHD CLBK 1st PASS|integer|", "LIS_SCHDCLBK2data|62|SCHD CLBK 2nd PASS|integer|", "LIS_SCHDCLBK3data|63|SCHD CLBK 3rd PASS|integer|", "LIS_SCHDCLBK4data|64|SCHD CLBK 4th PASS|integer|", "LIS_SCHDCLBK5data|65|SCHD CLBK 5th PASS|integer|", "LIS_SCHDCLBKLIFEdata|66|SCHD CLBK LIFE|integer|", "LIS_SCHDCLBKRATE1data|67|SCHD CLBK RATE 1st PASS|decimal|", "LIS_SCHDCLBKRATE2data|68|SCHD CLBK RATE 2nd PASS|decimal|", "LIS_SCHDCLBKRATE3data|69|SCHD CLBK RATE 3rd PASS|decimal|", "LIS_SCHDCLBKRATE4data|70|SCHD CLBK RATE 4th PASS|decimal|", "LIS_SCHDCLBKRATE5data|71|SCHD CLBK RATE 5th PASS|decimal|", "LIS_SCHDCLBKRATELIFEdata|72|SCHD CLBK RATE LIFE|decimal|", "LIS_COMPLTD1data|73|COMPLTD 1st PASS|integer|", "LIS_COMPLTD2data|74|COMPLTD 2nd PASS|integer|", "LIS_COMPLTD3data|75|COMPLTD 3rd PASS|integer|", "LIS_COMPLTD4data|76|COMPLTD 4th PASS|integer|", "LIS_COMPLTD5data|77|COMPLTD 5th PASS|integer|", "LIS_COMPLTDLIFEdata|78|COMPLTD LIFE|integer|", "LIS_COMPLTDRATE1data|79|COMPLTD RATE 1st PASS|decimal|", "LIS_COMPLTDRATE2data|80|COMPLTD RATE 2nd PASS|decimal|", "LIS_COMPLTDRATE3data|81|COMPLTD RATE 3rd PASS|decimal|", "LIS_COMPLTDRATE4data|82|COMPLTD RATE 4th PASS|decimal|", "LIS_COMPLTDRATE5data|83|COMPLTD RATE 5th PASS|decimal|", "LIS_COMPLTDRATELIFEdata|84|COMPLTD RATE LIFE|decimal|");
     $default_graph="bar"; # Graph that is initally displayed when page loads
-    include("graph_color_schemas.inc"); 
+    include("graph_color_schemas.inc");
     $graph_totals_array=array();
     $graph_totals_rawdata=array();
     for ($q=0; $q<count($graph_array); $q++) {
-        $graph_info=explode("|", $graph_array[$q]); 
+        $graph_info=explode("|", $graph_array[$q]);
         $current_graph_total=0;
         $dataset_name=$graph_info[0];
-        $dataset_index=$graph_info[1]; 
+        $dataset_index=$graph_info[1];
         $dataset_type=$graph_info[3];
         $JS_text.="var $dataset_name = {\n";
         $datasets="\t\tdatasets: [\n";
@@ -1768,7 +2630,7 @@ else
             $graphConstantsA.="\"$bgcolor\",";
             $graphConstantsB.="\"$hbgcolor\",";
             $graphConstantsC.="\"$hbcolor\",";
-        }    
+        }
         $graphConstantsA.="],\n";
         $graphConstantsB.="],\n";
         $graphConstantsC.="],\n";
@@ -1806,16 +2668,18 @@ else
     $graph_array=array("ALRdata|||integer|");
     $graph_id++;
     $default_graph="bar"; # Graph that is initally displayed when page loads
-    include("graph_color_schemas.inc"); 
+    include("graph_color_schemas.inc");
     $graph_totals_array=array();
     $graph_totals_rawdata=array();
     for ($q=0; $q<count($graph_array); $q++) {
-        $graph_info=explode("|", $graph_array[$q]); 
+        $graph_info=explode("|", $graph_array[$q]);
         $current_graph_total=0;
         $dataset_name=$graph_info[0];
-        $dataset_index=$graph_info[1]; 
+        $dataset_index=$graph_info[1];
         $dataset_type=$graph_info[3];
-        if ($q==0) {$preload_dataset=$dataset_name;}  # Used below to load initial graph
+        if ($q==0) {
+            $preload_dataset=$dataset_name;
+        }  # Used below to load initial graph
         $JS_text.="var $dataset_name = {\n";
         $datasets="\t\tdatasets: [\n";
         $datasets.="\t\t\t{\n";
@@ -1828,7 +2692,7 @@ else
         $graphConstantsC="\t\t\t\thoverBorderColor: [";
         for ($d=0; $d<count($graph_stats); $d++) {
             $labels.="\"".$graph_stats[$d][1]."\",";
-            $data.="\"".$graph_stats[$d][0]."\","; 
+            $data.="\"".$graph_stats[$d][0]."\",";
             $current_graph_total+=$graph_stats[$d][0];
             $bgcolor=$backgroundColor[($d%count($backgroundColor))];
             $hbgcolor=$hoverBackgroundColor[($d%count($hoverBackgroundColor))];
@@ -1836,7 +2700,7 @@ else
             $graphConstantsA.="\"$bgcolor\",";
             $graphConstantsB.="\"$hbgcolor\",";
             $graphConstantsC.="\"$hbcolor\",";
-        }    
+        }
         $graphConstantsA.="],\n";
         $graphConstantsB.="],\n";
         $graphConstantsC.="],\n";
@@ -1871,63 +2735,65 @@ else
     include("graphcanvas.inc");
     $HEADER.=$HTML_graph_head;
     $GRAPH.=$graphCanvas;
-    if ($report_display_type=="HTML")
-        {
+    if ($report_display_type=="HTML") {
         $MAIN.=$GRAPH.$GRAPH2.$GRAPH3;
-        }
-    else
-        {
+    } else {
         $MAIN.="$OUToutput";
-        }
+    }
     $ENDtime = date("U");
     $RUNtime = ($ENDtime - $STARTtime);
     $MAIN.="\n"._QXZ("Run Time").": $RUNtime "._QXZ("seconds")."|$db_source\n";
     $MAIN.="</PRE>\n";
     $MAIN.="</TD></TR></TABLE>\n";
     $MAIN.="</BODY></HTML>\n";
+}
+if ($file_download>0) {
+    $FILE_TIME = date("Ymd-His");
+    $CSVfilename = "AST_LISTS_pass_report_$US$FILE_TIME.csv";
+    $CSV_var="CSV_text1";
+    $CSV_text=preg_replace('/^ +/', '', $$CSV_var);
+    $CSV_text=preg_replace('/\n +,/', ',', $CSV_text);
+    $CSV_text=preg_replace('/ +\"/', '"', $CSV_text);
+    $CSV_text=preg_replace('/\" +/', '"', $CSV_text);
+    // We'll be outputting a TXT file
+    header('Content-type: application/octet-stream');
+    // It will be called LIST_101_20090209-121212.txt
+    header("Content-Disposition: attachment; filename=\"$CSVfilename\"");
+    header('Expires: 0');
+    header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+    header('Pragma: public');
+    ob_clean();
+    flush();
+    echo "$CSV_text";
+} else {
+    $JS_onload.="}\n";
+    if ($report_display_type=='HTML') {
+        $JS_text.=$JS_onload;
     }
-    if ($file_download>0) {
-        $FILE_TIME = date("Ymd-His");
-        $CSVfilename = "AST_LISTS_pass_report_$US$FILE_TIME.csv";
-        $CSV_var="CSV_text1";
-        $CSV_text=preg_replace('/^ +/', '', $$CSV_var);
-        $CSV_text=preg_replace('/\n +,/', ',', $CSV_text);
-        $CSV_text=preg_replace('/ +\"/', '"', $CSV_text);
-        $CSV_text=preg_replace('/\" +/', '"', $CSV_text);
-        // We'll be outputting a TXT file
-        header('Content-type: application/octet-stream');
-        // It will be called LIST_101_20090209-121212.txt
-        header("Content-Disposition: attachment; filename=\"$CSVfilename\"");
-        header('Expires: 0');
-        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-        header('Pragma: public');
-        ob_clean();
-        flush();
-        echo "$CSV_text";
-    } else {
-        $JS_onload.="}\n";
-        if ($report_display_type=='HTML') {$JS_text.=$JS_onload;}
-        $JS_text.="</script>\n";
-        echo $HEADER;
-        require("admin_header.php");
-        echo $MAIN;
-        if ($report_display_type=="HTML") {echo $JS_text;}
+    $JS_text.="</script>\n";
+    echo $HEADER;
+    require("admin_header.php");
+    echo $MAIN;
+    if ($report_display_type=="HTML") {
+        echo $JS_text;
     }
-if ($db_source == 'S')
-    {
+}
+if ($db_source == 'S') {
     mysqli_close($link);
     $use_slave_server=0;
     $db_source = 'M';
     require("dbconnect_mysqli.php");
-    }
+}
 $endMS = microtime();
-$startMSary = explode(" ",$startMS);
-$endMSary = explode(" ",$endMS);
+$startMSary = explode(" ", $startMS);
+$endMSary = explode(" ", $endMS);
 $runS = ($endMSary[0] - $startMSary[0]);
 $runM = ($endMSary[1] - $startMSary[1]);
 $TOTALrun = ($runS + $runM);
 $stmt="UPDATE vicidial_report_log set run_time='$TOTALrun' where report_log_id='$report_log_id';";
-if ($DB) {echo "|$stmt|\n";}
+if ($DB) {
+    echo "|$stmt|\n";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 exit;
 ?>

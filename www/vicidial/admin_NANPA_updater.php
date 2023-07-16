@@ -42,38 +42,73 @@ $server_ip=$WEBserver_ip;
 $PHP_AUTH_USER=$_SERVER['PHP_AUTH_USER'];
 $PHP_AUTH_PW=$_SERVER['PHP_AUTH_PW'];
 $PHP_SELF=$_SERVER['PHP_SELF'];
-$PHP_SELF = preg_replace('/\.php.*/i','.php',$PHP_SELF);
-if (isset($_GET["submit_form"]))            {$submit_form=$_GET["submit_form"];}
-    elseif (isset($_POST["submit_form"]))    {$submit_form=$_POST["submit_form"];}
-if (isset($_GET["delete_trigger_id"]))            {$delete_trigger_id=$_GET["delete_trigger_id"];}
-    elseif (isset($_POST["delete_trigger_id"]))    {$delete_trigger_id=$_POST["delete_trigger_id"];}
-if (isset($_GET["lists"]))            {$lists=$_GET["lists"];}
-    elseif (isset($_POST["lists"]))    {$lists=$_POST["lists"];}
-if (isset($_GET["fields_to_update"]))            {$fields_to_update=$_GET["fields_to_update"];}
-    elseif (isset($_POST["fields_to_update"]))    {$fields_to_update=$_POST["fields_to_update"];}
-if (isset($_GET["vl_field_update"]))            {$vl_field_update=$_GET["vl_field_update"];}
-    elseif (isset($_POST["vl_field_update"]))    {$vl_field_update=$_POST["vl_field_update"];}
-if (isset($_GET["vl_field_exclude"]))            {$vl_field_exclude=$_GET["vl_field_exclude"];}
-    elseif (isset($_POST["vl_field_exclude"]))    {$vl_field_exclude=$_POST["vl_field_exclude"];}
-if (isset($_GET["exclusion_value"]))            {$exclusion_value=$_GET["exclusion_value"];}
-    elseif (isset($_POST["exclusion_value"]))    {$exclusion_value=$_POST["exclusion_value"];}
-if (isset($_GET["cellphone_list_id"]))            {$cellphone_list_id=$_GET["cellphone_list_id"];}
-    elseif (isset($_POST["cellphone_list_id"]))    {$cellphone_list_id=$_POST["cellphone_list_id"];}
-if (isset($_GET["landline_list_id"]))            {$landline_list_id=$_GET["landline_list_id"];}
-    elseif (isset($_POST["landline_list_id"]))    {$landline_list_id=$_POST["landline_list_id"];}
-if (isset($_GET["invalid_list_id"]))            {$invalid_list_id=$_GET["invalid_list_id"];}
-    elseif (isset($_POST["invalid_list_id"]))    {$invalid_list_id=$_POST["invalid_list_id"];}
-if (isset($_GET["activation_delay"]))            {$activation_delay=$_GET["activation_delay"];}
-    elseif (isset($_POST["activation_delay"]))    {$activation_delay=$_POST["activation_delay"];}
-if (isset($_GET["DB"]))                {$DB=$_GET["DB"];}
-    elseif (isset($_POST["DB"]))    {$DB=$_POST["DB"];}
+$PHP_SELF = preg_replace('/\.php.*/i', '.php', $PHP_SELF);
+if (isset($_GET["submit_form"])) {
+    $submit_form=$_GET["submit_form"];
+} elseif (isset($_POST["submit_form"])) {
+    $submit_form=$_POST["submit_form"];
+}
+if (isset($_GET["delete_trigger_id"])) {
+    $delete_trigger_id=$_GET["delete_trigger_id"];
+} elseif (isset($_POST["delete_trigger_id"])) {
+    $delete_trigger_id=$_POST["delete_trigger_id"];
+}
+if (isset($_GET["lists"])) {
+    $lists=$_GET["lists"];
+} elseif (isset($_POST["lists"])) {
+    $lists=$_POST["lists"];
+}
+if (isset($_GET["fields_to_update"])) {
+    $fields_to_update=$_GET["fields_to_update"];
+} elseif (isset($_POST["fields_to_update"])) {
+    $fields_to_update=$_POST["fields_to_update"];
+}
+if (isset($_GET["vl_field_update"])) {
+    $vl_field_update=$_GET["vl_field_update"];
+} elseif (isset($_POST["vl_field_update"])) {
+    $vl_field_update=$_POST["vl_field_update"];
+}
+if (isset($_GET["vl_field_exclude"])) {
+    $vl_field_exclude=$_GET["vl_field_exclude"];
+} elseif (isset($_POST["vl_field_exclude"])) {
+    $vl_field_exclude=$_POST["vl_field_exclude"];
+}
+if (isset($_GET["exclusion_value"])) {
+    $exclusion_value=$_GET["exclusion_value"];
+} elseif (isset($_POST["exclusion_value"])) {
+    $exclusion_value=$_POST["exclusion_value"];
+}
+if (isset($_GET["cellphone_list_id"])) {
+    $cellphone_list_id=$_GET["cellphone_list_id"];
+} elseif (isset($_POST["cellphone_list_id"])) {
+    $cellphone_list_id=$_POST["cellphone_list_id"];
+}
+if (isset($_GET["landline_list_id"])) {
+    $landline_list_id=$_GET["landline_list_id"];
+} elseif (isset($_POST["landline_list_id"])) {
+    $landline_list_id=$_POST["landline_list_id"];
+}
+if (isset($_GET["invalid_list_id"])) {
+    $invalid_list_id=$_GET["invalid_list_id"];
+} elseif (isset($_POST["invalid_list_id"])) {
+    $invalid_list_id=$_POST["invalid_list_id"];
+}
+if (isset($_GET["activation_delay"])) {
+    $activation_delay=$_GET["activation_delay"];
+} elseif (isset($_POST["activation_delay"])) {
+    $activation_delay=$_POST["activation_delay"];
+}
+if (isset($_GET["DB"])) {
+    $DB=$_GET["DB"];
+} elseif (isset($_POST["DB"])) {
+    $DB=$_POST["DB"];
+}
 $block_scheduling_while_running=0;
-$DB=preg_replace("/[^0-9a-zA-Z]/","",$DB);
+$DB=preg_replace("/[^0-9a-zA-Z]/", "", $DB);
 $stmt = "SELECT use_non_latin,outbound_autodial_active,slave_db_server,reports_use_slave_db,active_voicemail_server,enable_languages,language_method,allow_web_debug FROM system_settings;";
 $rslt=mysql_to_mysqli($stmt, $link);
 $qm_conf_ct = mysqli_num_rows($rslt);
-if ($qm_conf_ct > 0)
-    {
+if ($qm_conf_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $non_latin =                    $row[0];
     $outbound_autodial_active =        $row[1];
@@ -83,8 +118,10 @@ if ($qm_conf_ct > 0)
     $SSenable_languages =            $row[5];
     $SSlanguage_method =            $row[6];
     $SSallow_web_debug =            $row[7];
-    }
-if ($SSallow_web_debug < 1) {$DB=0;}
+}
+if ($SSallow_web_debug < 1) {
+    $DB=0;
+}
 $cellphone_list_id=preg_replace('/[^0-9]/', '', $cellphone_list_id);
 $landline_list_id=preg_replace('/[^0-9]/', '', $landline_list_id);
 $invalid_list_id=preg_replace('/[^0-9]/', '', $invalid_list_id);
@@ -96,159 +133,156 @@ $vl_field_update = preg_replace('/[^-_0-9a-zA-Z]/', '', $vl_field_update);
 $vl_field_exclude = preg_replace('/[^-_0-9a-zA-Z]/', '', $vl_field_exclude);
 $activation_delay = preg_replace('/[^- \.\_0-9a-zA-Z]/', '', $activation_delay);
 $fields_to_update = preg_replace('/[^- \,\.\_0-9a-zA-Z]/', '', $fields_to_update);
-if ($non_latin < 1)
-    {
+if ($non_latin < 1) {
     $PHP_AUTH_USER = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_USER);
     $PHP_AUTH_PW = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_PW);
-    }
-else
-    {
+} else {
     $PHP_AUTH_USER = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_USER);
     $PHP_AUTH_PW = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_PW);
-    }
+}
 $NOW_DATE = date("Y-m-d");
 $stmt="SELECT selected_language from vicidial_users where user='$PHP_AUTH_USER';";
-if ($DB) {echo "|$stmt|\n";}
+if ($DB) {
+    echo "|$stmt|\n";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 $sl_ct = mysqli_num_rows($rslt);
-if ($sl_ct > 0)
-    {
+if ($sl_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $VUselected_language =        $row[0];
-    }
+}
 $user_auth=0;
 $auth=0;
 $reports_auth=0;
 $qc_auth=0;
-$auth_message = user_authorization($PHP_AUTH_USER,$PHP_AUTH_PW,'QC',1,0);
-if ( ($auth_message == 'GOOD') or ($auth_message == '2FA') )
-    {
+$auth_message = user_authorization($PHP_AUTH_USER, $PHP_AUTH_PW, 'QC', 1, 0);
+if (($auth_message == 'GOOD') or ($auth_message == '2FA')) {
     $user_auth=1;
-    if ($auth_message == '2FA')
-        {
-        header ("Content-type: text/html; charset=utf-8");
+    if ($auth_message == '2FA') {
+        header("Content-type: text/html; charset=utf-8");
         echo _QXZ("Your session is expired").". <a href=\"admin.php\">"._QXZ("Click here to log in")."</a>.\n";
         exit;
-        }
     }
-if ($user_auth > 0)
-    {
+}
+if ($user_auth > 0) {
     $stmt="SELECT count(*) from vicidial_users where user='$PHP_AUTH_USER' and user_level > 7;";
-    if ($DB) {echo "|$stmt|\n";}
+    if ($DB) {
+        echo "|$stmt|\n";
+    }
     $rslt=mysql_to_mysqli($stmt, $link);
     $row=mysqli_fetch_row($rslt);
     $auth=$row[0];
     $stmt="SELECT count(*) from vicidial_users where user='$PHP_AUTH_USER' and user_level > 6 and view_reports='1';";
-    if ($DB) {echo "|$stmt|\n";}
+    if ($DB) {
+        echo "|$stmt|\n";
+    }
     $rslt=mysql_to_mysqli($stmt, $link);
     $row=mysqli_fetch_row($rslt);
     $reports_auth=$row[0];
     $stmt="SELECT count(*) from vicidial_users where user='$PHP_AUTH_USER' and user_level > 1 and qc_enabled='1';";
-    if ($DB) {echo "|$stmt|\n";}
+    if ($DB) {
+        echo "|$stmt|\n";
+    }
     $rslt=mysql_to_mysqli($stmt, $link);
     $row=mysqli_fetch_row($rslt);
     $qc_auth=$row[0];
     $reports_only_user=0;
     $qc_only_user=0;
-    if ( ($reports_auth > 0) and ($auth < 1) )
-        {
+    if (($reports_auth > 0) and ($auth < 1)) {
         $ADD=999999;
         $reports_only_user=1;
-        }
-    if ( ($qc_auth > 0) and ($reports_auth < 1) and ($auth < 1) )
-        {
-        if ( ($ADD != '881') and ($ADD != '100000000000000') )
-            {
-            $ADD=100000000000000;
-            }
-        $qc_only_user=1;
-        }
-    if ( ($qc_auth < 1) and ($reports_auth < 1) and ($auth < 1) )
-        {
-        $VDdisplayMESSAGE = _QXZ("You do not have permission to be here");
-        Header ("Content-type: text/html; charset=utf-8");
-        echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
-        exit;
-        }
     }
-else
-    {
+    if (($qc_auth > 0) and ($reports_auth < 1) and ($auth < 1)) {
+        if (($ADD != '881') and ($ADD != '100000000000000')) {
+            $ADD=100000000000000;
+        }
+        $qc_only_user=1;
+    }
+    if (($qc_auth < 1) and ($reports_auth < 1) and ($auth < 1)) {
+        $VDdisplayMESSAGE = _QXZ("You do not have permission to be here");
+        Header("Content-type: text/html; charset=utf-8");
+        echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
+        exit;
+    }
+} else {
     $VDdisplayMESSAGE = _QXZ("Login incorrect, please try again");
-    if ($auth_message == 'LOCK')
-        {
+    if ($auth_message == 'LOCK') {
         $VDdisplayMESSAGE = _QXZ("Too many login attempts, try again in 15 minutes");
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
-    if ($auth_message == 'IPBLOCK')
-        {
+    }
+    if ($auth_message == 'IPBLOCK') {
         $VDdisplayMESSAGE = _QXZ("Your IP Address is not allowed") . ": $ip";
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
+    }
     Header("WWW-Authenticate: Basic realm=\"CONTACT-CENTER-ADMIN\"");
     Header("HTTP/1.0 401 Unauthorized");
     echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$PHP_AUTH_PW|$auth_message|\n";
     exit;
-    }
-if (strlen($active_voicemail_server)<7)
-    {
+}
+if (strlen($active_voicemail_server)<7) {
     echo _QXZ("ERROR: Admin -> System Settings -> Active Voicemail Server is not set")."\n";
     exit;
-    }
-if ($delete_trigger_id) 
-    {
+}
+if ($delete_trigger_id) {
     $delete_stmt="delete from vicidial_process_triggers where trigger_id='$delete_trigger_id'";
     $delete_rslt=mysql_to_mysqli($delete_stmt, $link);
-    }
-if (!isset($lists)) {$lists=array();}
+}
+if (!isset($lists)) {
+    $lists=array();
+}
 $list_ct=count($lists);
-if ($submit_form=="SUBMIT" && $list_ct>0 && (strlen($vl_field_update)>0 || strlen($cellphone_list_id)>0 || strlen($landline_list_id)>0 || strlen($invalid_list_id)>0) ) 
-    {
-    for ($i=0; $i<$list_ct; $i++) 
-        {
-        if ($lists[$i]=="---ALL---") 
-            {
+if ($submit_form=="SUBMIT" && $list_ct>0 && (strlen($vl_field_update)>0 || strlen($cellphone_list_id)>0 || strlen($landline_list_id)>0 || strlen($invalid_list_id)>0)) {
+    for ($i=0; $i<$list_ct; $i++) {
+        if ($lists[$i]=="---ALL---") {
             unset($lists);
             $i=$list_ct;
             $j=0;
             $stmt="SELECT list_id from vicidial_lists where active='N' order by list_id asc";
             $rslt=mysql_to_mysqli($stmt, $link);
-            while ($row=mysqli_fetch_array($rslt)) 
-                {
+            while ($row=mysqli_fetch_array($rslt)) {
                 $lists[$j]=$row[0];
                 $j++;
-                }
             }
         }
+    }
     $list_ct=count($lists);
     $options="--user=$PHP_AUTH_USER --pass=$PHP_AUTH_PW ";
     $list_id_str="";
-    for ($i=0; $i<$list_ct; $i++) 
-        {
-        $lists[$i] = preg_replace('/[^0-9]/','',$lists[$i]);
+    for ($i=0; $i<$list_ct; $i++) {
+        $lists[$i] = preg_replace('/[^0-9]/', '', $lists[$i]);
         $list_id_str.=$lists[$i]."--";
-        }
+    }
     $list_id_str=substr($list_id_str, 0, -2);
     $options.="--list-id=$list_id_str ";
-    if (strlen($cellphone_list_id)>0)    {$options.="--cellphone-list-id=$cellphone_list_id ";}
-    if (strlen($landline_list_id)>0)    {$options.="--landline-list-id=$landline_list_id ";}
-    if (strlen($invalid_list_id)>0)        {$options.="--invalid-list-id=$invalid_list_id ";}
-    if (strlen($vl_field_update)>0)        {$options.="--vl-field-update=$vl_field_update ";}
-    if (strlen($vl_field_exclude)>0 && strlen($exclusion_value)>0)        {$options.="--exclude-field=$vl_field_exclude --exclude-value=$exclusion_value ";}
+    if (strlen($cellphone_list_id)>0) {
+        $options.="--cellphone-list-id=$cellphone_list_id ";
+    }
+    if (strlen($landline_list_id)>0) {
+        $options.="--landline-list-id=$landline_list_id ";
+    }
+    if (strlen($invalid_list_id)>0) {
+        $options.="--invalid-list-id=$invalid_list_id ";
+    }
+    if (strlen($vl_field_update)>0) {
+        $options.="--vl-field-update=$vl_field_update ";
+    }
+    if (strlen($vl_field_exclude)>0 && strlen($exclusion_value)>0) {
+        $options.="--exclude-field=$vl_field_exclude --exclude-value=$exclusion_value ";
+    }
     $options=trim($options);
     $uniqueid=date("U").".".rand(1, 9999);
     $ins_stmt="INSERT into vicidial_process_triggers (trigger_id, trigger_name, server_ip, trigger_time, trigger_run, user, trigger_lines) VALUES('NANPA_".$uniqueid."', 'NANPA updater SCREEN', '$active_voicemail_server', now()+INTERVAL $activation_delay MINUTE, '1', '$PHP_AUTH_USER', '/usr/share/astguiclient/nanpa_type_filter.pl --output-to-db $options')";
     $ins_rslt=mysql_to_mysqli($ins_stmt, $link);
-    }
-header ("Content-type: text/html; charset=utf-8");
-if ($SSnocache_admin=='1')
-    {
-    header ("Cache-Control: no-cache, must-revalidate");  // HTTP/1.1
-    header ("Pragma: no-cache");                          // HTTP/1.0
-    }
+}
+header("Content-type: text/html; charset=utf-8");
+if ($SSnocache_admin=='1') {
+    header("Cache-Control: no-cache, must-revalidate");  // HTTP/1.1
+    header("Pragma: no-cache");                          // HTTP/1.0
+}
 $schedule_stmt="SELECT *, sec_to_time(UNIX_TIMESTAMP(trigger_time)-UNIX_TIMESTAMP(now())) as time_until_execution from vicidial_process_triggers where trigger_name='NANPA updater SCREEN' and user='$PHP_AUTH_USER' and trigger_time>=now()";
 $schedule_rslt=mysql_to_mysqli($schedule_stmt, $link);
 $running_stmt="SELECT output_code from vicidial_nanpa_filter_log where user='$PHP_AUTH_USER' and status!='COMPLETED' order by output_code asc";
@@ -274,13 +308,11 @@ $screen_color_stmt="select admin_screen_colors from system_settings";
 $screen_color_rslt=mysql_to_mysqli($screen_color_stmt, $link);
 $screen_color_row=mysqli_fetch_row($screen_color_rslt);
 $agent_screen_colors="$screen_color_row[0]";
-if ($agent_screen_colors != 'default')
-    {
+if ($agent_screen_colors != 'default') {
     $asc_stmt = "SELECT menu_background,frame_background,std_row1_background,std_row2_background,std_row3_background,std_row4_background,std_row5_background,alt_row1_background,alt_row2_background,alt_row3_background,web_logo,button_color FROM vicidial_screen_colors where colors_id='$agent_screen_colors';";
     $asc_rslt=mysql_to_mysqli($asc_stmt, $link);
     $qm_conf_ct = mysqli_num_rows($asc_rslt);
-    if ($qm_conf_ct > 0)
-        {
+    if ($qm_conf_ct > 0) {
         $asc_row=mysqli_fetch_row($asc_rslt);
         $SSmenu_background =            $asc_row[0];
         $SSframe_background =           $asc_row[1];
@@ -294,26 +326,26 @@ if ($agent_screen_colors != 'default')
         $SSalt_row3_background =        $asc_row[9];
         $SSweb_logo =            $asc_row[10];
         $SSbutton_color =         $asc_row[11];
-        }
     }
+}
 echo "<html>\n";
 echo "<head>\n";
 echo "<!-- VERSION: $admin_version   BUILD: $build   ADD: $ADD   PHP_SELF: $PHP_SELF-->\n";
 echo "<META NAME=\"ROBOTS\" CONTENT=\"NONE\">\n";
 echo "<META NAME=\"COPYRIGHT\" CONTENT=\"&copy; 2014 ViciDial Group\">\n";
 echo "<META NAME=\"AUTHOR\" CONTENT=\"ViciDial Group\">\n";
-if ($SSnocache_admin=='1')
-    {
+if ($SSnocache_admin=='1') {
     echo "<META HTTP-EQUIV=\"Pragma\" CONTENT=\"no-cache\">\n";
     echo "<META HTTP-EQUIV=\"Expires\" CONTENT=\"-1\">\n";
     echo "<META HTTP-EQUIV=\"CACHE-CONTROL\" CONTENT=\"NO-CACHE\">\n";
-    }
-if ( ($SSadmin_modify_refresh > 1) and (preg_match("/^3/",$ADD)) )
-    {
+}
+if (($SSadmin_modify_refresh > 1) and (preg_match("/^3/", $ADD))) {
     $modify_refresh_set=1;
-    if (preg_match("/^3/",$ADD)) {$modify_url = "$PHP_SELF?$QUERY_STRING";}
-    echo "<META HTTP-EQUIV=\"REFRESH\" CONTENT=\"$SSadmin_modify_refresh;URL=$modify_url\">\n";
+    if (preg_match("/^3/", $ADD)) {
+        $modify_url = "$PHP_SELF?$QUERY_STRING";
     }
+    echo "<META HTTP-EQUIV=\"REFRESH\" CONTENT=\"$SSadmin_modify_refresh;URL=$modify_url\">\n";
+}
 echo "<title>"._QXZ("ADMIN NANPA UPDATER")."</title>";
 ?>
 <script language="Javascript">
@@ -418,39 +450,38 @@ if (mysqli_num_rows($schedule_rslt)>0 || (mysqli_num_rows($running_rslt)>0)) {
             $vl_update_field="";
             $conversion_lists="";
             for ($q=1; $q<count($trigger_array); $q++) {
-                if (preg_match('/--list-id=/', $trigger_array[$q]))
-                    {
+                if (preg_match('/--list-id=/', $trigger_array[$q])) {
                     $data_in=explode("--list-id=", $trigger_array[$q]);
                     $lists=trim($data_in[1]);
                     $lists=preg_replace('/---/', "", $lists);
                     $lists=preg_replace('/--/', ", ", $lists);
-                    }
-                if (preg_match('/--vl-field-update=/', $trigger_array[$q]))
-                    {
+                }
+                if (preg_match('/--vl-field-update=/', $trigger_array[$q])) {
                     $data_in=explode("--vl-field-update=", $trigger_array[$q]);
                     $vl_update_field=trim($data_in[1]);
-                    }
-                if (preg_match('/--cellphone-list-id=/', $trigger_array[$q]))
-                    {
+                }
+                if (preg_match('/--cellphone-list-id=/', $trigger_array[$q])) {
                     $data_in=explode("--cellphone-list-id=", $trigger_array[$q]);
                     $cellphone_list_id=trim($data_in[1]);
                     $conversion_lists.=_QXZ("Cellphone list").": $cellphone_list_id<BR>";
-                    }
-                if (preg_match('/--landline-list-id=/', $trigger_array[$q]))
-                    {
+                }
+                if (preg_match('/--landline-list-id=/', $trigger_array[$q])) {
                     $data_in=explode("--landline-list-id=", $trigger_array[$q]);
                     $landline_list_id=trim($data_in[1]);
                     $conversion_lists.=_QXZ("Landline list").": $landline_list_id<BR>";
-                    }
-                if (preg_match('/--invalid-list-id=/', $trigger_array[$q]))
-                    {
+                }
+                if (preg_match('/--invalid-list-id=/', $trigger_array[$q])) {
                     $data_in=explode("--invalid-list-id=", $trigger_array[$q]);
                     $invalid_list_id=trim($data_in[1]);
                     $conversion_lists.=_QXZ("Invalid list").": $invalid_list_id<BR>";
-                    }
+                }
             }
-            if (strlen($vl_update_field)==0) {$vl_update_field="**"._QXZ("NONE")."**";}
-            if (strlen($conversion_lists)==0) {$conversion_lists="**"._QXZ("NONE")."**";}
+            if (strlen($vl_update_field)==0) {
+                $vl_update_field="**"._QXZ("NONE")."**";
+            }
+            if (strlen($conversion_lists)==0) {
+                $conversion_lists="**"._QXZ("NONE")."**";
+            }
             echo "<tr>";
             echo "<td align='left'><FONT FACE=\"ARIAL,HELVETICA\" COLOR=BLACK SIZE=2>$row[trigger_time]</font><BR><FONT FACE=\"ARIAL,HELVETICA\" size='1' color='red'>($row[time_until_execution] "._QXZ("until run time").")</font></td>";
             echo "<td align='left'><FONT FACE=\"ARIAL,HELVETICA\" COLOR=BLACK SIZE=2>$lists</font></td>";
@@ -475,10 +506,9 @@ if (mysqli_num_rows($schedule_rslt)>0 || (mysqli_num_rows($running_rslt)>0)) {
         echo "</td></tr>";
     }
 }
-if ( ( (mysqli_num_rows($schedule_rslt)>0) or (mysqli_num_rows($running_rslt)>0) ) and ($block_scheduling_while_running==1) ) 
-    {$do_nothing=1;} 
-else 
-    {
+if (((mysqli_num_rows($schedule_rslt)>0) or (mysqli_num_rows($running_rslt)>0)) and ($block_scheduling_while_running==1)) {
+    $do_nothing=1;
+} else {
     echo "<tr><td>";
     echo "<table width='770' cellpadding=5 cellspacing=0>";
     echo "<tr><th colspan='5' bgcolor='#".$SSmenu_background."'><FONT FACE=\"ARIAL,HELVETICA\" COLOR=WHITE SIZE=2>"._QXZ("NANPA scrub scheduler")." &nbsp; $NWB#nanpa-settings$NWE</th></tr>";
@@ -488,10 +518,9 @@ else
     $rslt=mysql_to_mysqli($stmt, $link);
     echo "<select name='lists[]' multiple size='5'>\n";
     echo "<option value='---ALL---'>---"._QXZ("ALL LISTS")."---</option>\n";
-    while ($row=mysqli_fetch_array($rslt)) 
-        {
+    while ($row=mysqli_fetch_array($rslt)) {
         echo "<option value='$row[0]'>$row[0] - $row[1]</option>\n";
-        }
+    }
     echo "</select></font>";
     echo "</td>";
     echo "<td align='left' valign='top' rowspan='2'><FONT FACE=\"ARIAL,HELVETICA\" COLOR=BLACK SIZE=2>"._QXZ("Field to update (optional)").":<BR/>\n";
@@ -499,14 +528,12 @@ else
     $stmt="SELECT * from vicidial_list limit 1";
     $rslt=mysql_to_mysqli($stmt, $link);
     echo "<option value=''>---"._QXZ("NONE")."---</option>\n";
-    while ($fieldinfo=mysqli_fetch_field($rslt)) 
-        {
+    while ($fieldinfo=mysqli_fetch_field($rslt)) {
         $fieldname=$fieldinfo->name;
-        if (!preg_match("/lead_id|list_id|status|gmt_offset_now|entry_date|modify_date|gender|entry_list_id|date_of_birth|called_since_last_reset|called_count/",$fieldname))
-            {
+        if (!preg_match("/lead_id|list_id|status|gmt_offset_now|entry_date|modify_date|gender|entry_list_id|date_of_birth|called_since_last_reset|called_count/", $fieldname)) {
             echo "<option value='$fieldname'>$fieldname</option>\n";
-            }
         }
+    }
     echo "</select></font></td>";
     echo "<td align='left' valign='top' colspan='2'><FONT FACE=\"ARIAL,HELVETICA\" COLOR=BLACK SIZE=2>"._QXZ("List conversions (optional)").":</font></td>\n";
     echo "<td align='left' valign='top' rowspan='4'><FONT FACE=\"ARIAL,HELVETICA\" COLOR=BLACK SIZE=2>"._QXZ("Time until activation").":<BR/>\n";
@@ -534,11 +561,10 @@ else
     $stmt="SELECT * from vicidial_list limit 1";
     $rslt=mysql_to_mysqli($stmt, $link);
     echo "<option value=''>---"._QXZ("NONE")."---</option>\n";
-    while ($fieldinfo=mysqli_fetch_field($rslt)) 
-        {
+    while ($fieldinfo=mysqli_fetch_field($rslt)) {
         $fieldname=$fieldinfo->name;
         echo "<option value='$fieldname'>$fieldname</option>\n";
-        }
+    }
     echo "</select><BR/><BR/>"._QXZ("Exclusion value").":<BR/><input type='text' name='exclusion_value' size='20' maxlength='50'></font></td>";
     echo "<td align='right'><FONT FACE=\"ARIAL,HELVETICA\" COLOR=BLACK SIZE=2>"._QXZ("Landline").":</font></td><td align='left'><input type='text' name='landline_list_id' size='5' maxlength='10'></td>";
     echo "</tr>";
@@ -547,7 +573,7 @@ else
     echo "<tr><td align='center' colspan='5'><input style='background-color:#$SSbutton_color' type='submit' value='"._QXZ("SUBMIT")."' name='submit_form'></td></tr>";
     echo "</table>";
     echo "</td></tr>";
-    }
+}
 echo "<tr><td>";
 echo "<table width='770' cellpadding=0 cellspacing=0 bgcolor='#".$SSstd_row5_background."'>";
 echo "<tr><td align='center'>";

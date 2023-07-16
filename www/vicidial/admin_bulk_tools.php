@@ -40,7 +40,7 @@ $build = '230522-1726';
 $PHP_AUTH_USER=$_SERVER['PHP_AUTH_USER'];
 $PHP_AUTH_PW=$_SERVER['PHP_AUTH_PW'];
 $PHP_SELF=$_SERVER['PHP_SELF'];
-$PHP_SELF = preg_replace('/\.php.*/i','.php',$PHP_SELF);
+$PHP_SELF = preg_replace('/\.php.*/i', '.php', $PHP_SELF);
 $ip = getenv("REMOTE_ADDR");
 $SQLdate = date("Y-m-d H:i:s");
 $NWB = "<IMG SRC=\"help.png\" onClick=\"FillAndShowHelpDiv(event, '";
@@ -50,43 +50,102 @@ $DB=0;                         # Debug flag
 $INSERTmax_limit = 5000;     # Maximum number of items allowed to insert
 $INSERTgroup_limit = 20;    # Number of items per group to be inserted
 $STARTtime = date("U");
-if (isset($_POST["form_to_run"]))                    {$form_to_run=$_POST["form_to_run"];}
-    elseif (isset($_GET["form_to_run"]))            {$form_to_run=$_GET["form_to_run"];}
-if (isset($_POST["DB"]))                            {$DB=$_POST["DB"];}
-    elseif (isset($_GET["DB"]))                        {$DB=$_GET["DB"];}
-if (isset($_POST["ACCIDcampaign"]))                    {$ACCIDcampaign=$_POST["ACCIDcampaign"];}
-if (isset($_POST["ACCIDareacode"]))                    {$ACCIDareacode=$_POST["ACCIDareacode"];}
-if (isset($_POST["ACCIDdids"]))                        {$ACCIDto_insert_raw=$_POST["ACCIDdids"];}
-if (isset($_POST["ACCIDto_insert"]))                {$ACCIDto_insert_CONFIRMED=$_POST["ACCIDto_insert"];}
-if (isset($_POST["ACCIDdescription"]))                {$ACCIDdescription=$_POST["ACCIDdescription"];}
-if (isset($_POST["ACCIDactive"]))                    {$ACCIDactive=$_POST["ACCIDactive"];}
-if (isset($_POST["ACCIDactiveinput"]))                {$ACCIDactiveinput=$_POST["ACCIDactiveinput"];}
-if (isset($_POST["ACCIDdelete_campaign"]))            {$ACCIDdelete_campaign=$_POST["ACCIDdelete_campaign"];}
-if (isset($_POST["ACCIDdelete_from"]))                {$ACCIDdelete_from=$_POST["ACCIDdelete_from"];}
-if (isset($_POST["ACCIDdelete_from_CONFIRMED"]))    {$ACCIDdelete_from_CONFIRMED=$_POST["ACCIDdelete_from_CONFIRMED"];}
-if (isset($_POST["ACCIDclear_all"]))                {$ACCIDclear_all=$_POST["ACCIDclear_all"];}
-if (isset($_POST["ACCIDclear_all_CONFIRMED"]))        {$ACCIDclear_all_CONFIRMED=$_POST["ACCIDclear_all_CONFIRMED"];}
-if (isset($_POST["ACCIDmethod"]))                    {$ACCIDmethod=$_POST["ACCIDmethod"];}
-if (isset($_POST["DIDcopy_from"]))                    {$DIDcopy_from=$_POST["DIDcopy_from"];}
-if (isset($_POST["DIDto_insert"]))                    {$DIDto_insert_raw=$_POST["DIDto_insert"];}
-if (isset($_POST["DIDto_insert_CONFIRMED"]))        {$DIDto_insert_CONFIRMED=$_POST["DIDto_insert_CONFIRMED"];}
-if (isset($_POST["DIDdelete_from"]))                {$DIDdelete_from=$_POST["DIDdelete_from"];}
-if (isset($_POST["DIDdelete_from_CONFIRMED"]))        {$DIDdelete_from_CONFIRMED=$_POST["DIDdelete_from_CONFIRMED"];}
-if (isset($_POST["USERcopy_from"]))                    {$USERcopy_from=$_POST["USERcopy_from"];}
-if (isset($_POST["USERto_insert"]))                    {$USERto_insert=$_POST["USERto_insert"];}
-if (isset($_POST["USERstart"]))                        {$USERstart=$_POST["USERstart"];}
-if (isset($_POST["USERstop"]))                        {$USERstop=$_POST["USERstop"];}
-if (isset($_POST["USERforce_pw"]))                    {$USERforce_pw=$_POST["USERforce_pw"];}
-if (isset($_POST["USERdelete_from"]))                {$USERdelete_from=$_POST["USERdelete_from"];}
-if (isset($_POST["USERdelete_from_CONFIRMED"]))        {$USERdelete_from_CONFIRMED=$_POST["USERdelete_from_CONFIRMED"];}
-if (isset($_POST["DIDto_delete_TB"]))                {$DIDto_delete_TB=$_POST["DIDto_delete_TB"];}
-$DB=preg_replace("/[^0-9a-zA-Z]/","",$DB);
-if ($DB) {echo "$form_to_run|";}
+if (isset($_POST["form_to_run"])) {
+    $form_to_run=$_POST["form_to_run"];
+} elseif (isset($_GET["form_to_run"])) {
+    $form_to_run=$_GET["form_to_run"];
+}
+if (isset($_POST["DB"])) {
+    $DB=$_POST["DB"];
+} elseif (isset($_GET["DB"])) {
+    $DB=$_GET["DB"];
+}
+if (isset($_POST["ACCIDcampaign"])) {
+    $ACCIDcampaign=$_POST["ACCIDcampaign"];
+}
+if (isset($_POST["ACCIDareacode"])) {
+    $ACCIDareacode=$_POST["ACCIDareacode"];
+}
+if (isset($_POST["ACCIDdids"])) {
+    $ACCIDto_insert_raw=$_POST["ACCIDdids"];
+}
+if (isset($_POST["ACCIDto_insert"])) {
+    $ACCIDto_insert_CONFIRMED=$_POST["ACCIDto_insert"];
+}
+if (isset($_POST["ACCIDdescription"])) {
+    $ACCIDdescription=$_POST["ACCIDdescription"];
+}
+if (isset($_POST["ACCIDactive"])) {
+    $ACCIDactive=$_POST["ACCIDactive"];
+}
+if (isset($_POST["ACCIDactiveinput"])) {
+    $ACCIDactiveinput=$_POST["ACCIDactiveinput"];
+}
+if (isset($_POST["ACCIDdelete_campaign"])) {
+    $ACCIDdelete_campaign=$_POST["ACCIDdelete_campaign"];
+}
+if (isset($_POST["ACCIDdelete_from"])) {
+    $ACCIDdelete_from=$_POST["ACCIDdelete_from"];
+}
+if (isset($_POST["ACCIDdelete_from_CONFIRMED"])) {
+    $ACCIDdelete_from_CONFIRMED=$_POST["ACCIDdelete_from_CONFIRMED"];
+}
+if (isset($_POST["ACCIDclear_all"])) {
+    $ACCIDclear_all=$_POST["ACCIDclear_all"];
+}
+if (isset($_POST["ACCIDclear_all_CONFIRMED"])) {
+    $ACCIDclear_all_CONFIRMED=$_POST["ACCIDclear_all_CONFIRMED"];
+}
+if (isset($_POST["ACCIDmethod"])) {
+    $ACCIDmethod=$_POST["ACCIDmethod"];
+}
+if (isset($_POST["DIDcopy_from"])) {
+    $DIDcopy_from=$_POST["DIDcopy_from"];
+}
+if (isset($_POST["DIDto_insert"])) {
+    $DIDto_insert_raw=$_POST["DIDto_insert"];
+}
+if (isset($_POST["DIDto_insert_CONFIRMED"])) {
+    $DIDto_insert_CONFIRMED=$_POST["DIDto_insert_CONFIRMED"];
+}
+if (isset($_POST["DIDdelete_from"])) {
+    $DIDdelete_from=$_POST["DIDdelete_from"];
+}
+if (isset($_POST["DIDdelete_from_CONFIRMED"])) {
+    $DIDdelete_from_CONFIRMED=$_POST["DIDdelete_from_CONFIRMED"];
+}
+if (isset($_POST["USERcopy_from"])) {
+    $USERcopy_from=$_POST["USERcopy_from"];
+}
+if (isset($_POST["USERto_insert"])) {
+    $USERto_insert=$_POST["USERto_insert"];
+}
+if (isset($_POST["USERstart"])) {
+    $USERstart=$_POST["USERstart"];
+}
+if (isset($_POST["USERstop"])) {
+    $USERstop=$_POST["USERstop"];
+}
+if (isset($_POST["USERforce_pw"])) {
+    $USERforce_pw=$_POST["USERforce_pw"];
+}
+if (isset($_POST["USERdelete_from"])) {
+    $USERdelete_from=$_POST["USERdelete_from"];
+}
+if (isset($_POST["USERdelete_from_CONFIRMED"])) {
+    $USERdelete_from_CONFIRMED=$_POST["USERdelete_from_CONFIRMED"];
+}
+if (isset($_POST["DIDto_delete_TB"])) {
+    $DIDto_delete_TB=$_POST["DIDto_delete_TB"];
+}
+$DB=preg_replace("/[^0-9a-zA-Z]/", "", $DB);
+if ($DB) {
+    echo "$form_to_run|";
+}
 $sys_settings_stmt = "SELECT use_non_latin,enable_languages,language_method,campaign_cid_areacodes_enabled,sounds_central_control_active,contacts_enabled,enable_auto_reports,allow_web_debug FROM system_settings;";
 $sys_settings_rslt=mysql_to_mysqli($sys_settings_stmt, $link);
 $num_rows = mysqli_num_rows($sys_settings_rslt);
-if ($num_rows > 0)
-    {
+if ($num_rows > 0) {
     $sys_settings_row=mysqli_fetch_row($sys_settings_rslt);
     $non_latin =                        $sys_settings_row[0];
     $SSenable_languages =                $sys_settings_row[1];
@@ -96,128 +155,137 @@ if ($num_rows > 0)
     $SScontacts_enabled =                $sys_settings_row[5];
     $SSenable_auto_reports =            $sys_settings_row[6];
     $SSallow_web_debug =                $sys_settings_row[7];
-    }
-else
-    {
+} else {
     echo _QXZ("There are no system settings. You might want to look into that.");
     exit;
-    }
-if ($SSallow_web_debug < 1) {$DB=0;}
+}
+if ($SSallow_web_debug < 1) {
+    $DB=0;
+}
 $ACCIDto_insert_raw = explode("\n", $ACCIDto_insert_raw);
-if ($ACCIDmethod == "CSV") 
-    {
+if ($ACCIDmethod == "CSV") {
     $i=0;
-    while ($i < count($ACCIDto_insert_raw))
-        {
+    while ($i < count($ACCIDto_insert_raw)) {
         $ACCIDrow = explode(",", $ACCIDto_insert_raw[$i]);
         $ACCIDareacode_raw[$i] = $ACCIDrow[0];
         $ACCIDto_insert_raw[$i] = $ACCIDrow[1];
         $ACCIDdescription_raw[$i] = $ACCIDrow[2];
         $ACCIDactiveinput_raw[$i] = $ACCIDrow[3];
         $i++;
-        }
-    $ACCIDareacode_raw = preg_replace('/[^0-9a-zA-Z]/','',$ACCIDareacode_raw);
-    $ACCIDto_insert_raw = preg_replace('/[^0-9]/','',$ACCIDto_insert_raw);
-    $ACCIDto_insert_raw_ArFilter = array_filter($ACCIDto_insert_raw);
-    $ACCIDdescription_raw = preg_replace('/[^-_.0-9a-zA-Z ]/','',$ACCIDdescription_raw);
-    $ACCIDactiveinput_raw = preg_replace('/[^A-Z ]/','',$ACCIDactiveinput_raw);
     }
-else 
-    {
-    $ACCIDto_insert_raw = preg_replace('/[^0-9]/','',$ACCIDto_insert_raw);
+    $ACCIDareacode_raw = preg_replace('/[^0-9a-zA-Z]/', '', $ACCIDareacode_raw);
+    $ACCIDto_insert_raw = preg_replace('/[^0-9]/', '', $ACCIDto_insert_raw);
     $ACCIDto_insert_raw_ArFilter = array_filter($ACCIDto_insert_raw);
-    }
-$DIDto_insert_raw = preg_replace('/[^0-9\n]/','',$DIDto_insert_raw);
+    $ACCIDdescription_raw = preg_replace('/[^-_.0-9a-zA-Z ]/', '', $ACCIDdescription_raw);
+    $ACCIDactiveinput_raw = preg_replace('/[^A-Z ]/', '', $ACCIDactiveinput_raw);
+} else {
+    $ACCIDto_insert_raw = preg_replace('/[^0-9]/', '', $ACCIDto_insert_raw);
+    $ACCIDto_insert_raw_ArFilter = array_filter($ACCIDto_insert_raw);
+}
+$DIDto_insert_raw = preg_replace('/[^0-9\n]/', '', $DIDto_insert_raw);
 $DIDto_insert_raw = explode("\n", $DIDto_insert_raw);
-if ( $form_to_run == "BULKDIDSDELETETB" ) 
-    {
+if ($form_to_run == "BULKDIDSDELETETB") {
     $DIDdelete_from = explode("\n", $DIDto_delete_TB);
-    $DIDdelete_from = preg_replace('/[^0-9]/','',$DIDdelete_from);
-    }
+    $DIDdelete_from = preg_replace('/[^0-9]/', '', $DIDdelete_from);
+}
 $DIDto_insert_raw_ArFilter = array_filter($DIDto_insert_raw);
-$USERstart = preg_replace('/[^0-9]/','',$USERstart);
-$USERstop = preg_replace('/[^0-9]/','',$USERstop);
-$USERfull_name = preg_replace('/[^-_0-9a-zA-Z]/','',$USERfull_name);
-if ( $form_to_run == "ACCIDDELETEconfirmTB" ) 
-    {
+$USERstart = preg_replace('/[^0-9]/', '', $USERstart);
+$USERstop = preg_replace('/[^0-9]/', '', $USERstop);
+$USERfull_name = preg_replace('/[^-_0-9a-zA-Z]/', '', $USERfull_name);
+if ($form_to_run == "ACCIDDELETEconfirmTB") {
     $ACCIDdelete_from = explode("\n", $ACCIDdelete_from);
-    $ACCIDdelete_from = preg_replace('/[^0-9]/','',$ACCIDdelete_from);
-    }
-$ACCIDclear_all = preg_replace('/[^-_0-9a-zA-Z]/','',$ACCIDclear_all);
-$ACCIDclear_all_CONFIRMED = preg_replace('/[^-_0-9a-zA-Z]/','',$ACCIDclear_all_CONFIRMED);
-$DIDcopy_from = preg_replace("/\<|\>|\'|\"|\\\\|;/","",$DIDcopy_from);
-$USERforce_pw = preg_replace('/[^-_0-9a-zA-Z]/','',$USERforce_pw);
-if ($non_latin < 1)
-    {
+    $ACCIDdelete_from = preg_replace('/[^0-9]/', '', $ACCIDdelete_from);
+}
+$ACCIDclear_all = preg_replace('/[^-_0-9a-zA-Z]/', '', $ACCIDclear_all);
+$ACCIDclear_all_CONFIRMED = preg_replace('/[^-_0-9a-zA-Z]/', '', $ACCIDclear_all_CONFIRMED);
+$DIDcopy_from = preg_replace("/\<|\>|\'|\"|\\\\|;/", "", $DIDcopy_from);
+$USERforce_pw = preg_replace('/[^-_0-9a-zA-Z]/', '', $USERforce_pw);
+if ($non_latin < 1) {
     $PHP_AUTH_USER = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_USER);
     $PHP_AUTH_PW = preg_replace('/[^-_0-9a-zA-Z]/', '', $PHP_AUTH_PW);
     $ACCIDcampaign = preg_replace('/[^-_0-9a-zA-Z]/', '', $ACCIDcampaign);
     $ACCIDdelete_campaign = preg_replace('/[^-_0-9a-zA-Z]/', '', $ACCIDdelete_campaign);
     $USERcopy_from = preg_replace('/[^-_0-9a-zA-Z]/', '', $USERcopy_from);
-    }
-else
-    {
+} else {
     $PHP_AUTH_USER = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_USER);
     $PHP_AUTH_PW = preg_replace('/[^-_0-9\p{L}]/u', '', $PHP_AUTH_PW);
     $ACCIDcampaign = preg_replace('/[^-_0-9\p{L}]/u', '', $ACCIDcampaign);
     $ACCIDdelete_campaign = preg_replace('/[^-_0-9\p{L}]/u', '', $ACCIDdelete_campaign);
     $USERcopy_from = preg_replace('/[^-_0-9\p{L}]/u', '', $USERcopy_from);
-    }
-if (empty($USERfull_name))                     {$USERfull_name = "BLANK";}
-if (empty($USERdelete_from))                {$USERdelete_from="BLANK";}
-if (empty($ACCIDto_insert_raw_ArFilter))     {$CIDcheck = "BLANK";}
-if (empty($DIDto_insert_raw_ArFilter))         {$DIDcheck = "BLANK";}
-if (empty($DIDdelete_from))                 {$DIDdelete_from="BLANK";}
-if (empty($USERstart))                         {$USERstart = "BLANK";}
-if (empty($USERstop))                         {$USERstop = "BLANK";}
-if (empty($ACCIDdelete_from))                 {$ACCIDdelete_from = "BLANK";}
-if (empty($ACCIDdelete_campaign))             {$ACCIDdelete_campaign = "BLANK";}
-if ($ACCIDclear_all == "Y")                    {$form_to_run="ACCIDDELETEconfirm";}
+}
+if (empty($USERfull_name)) {
+    $USERfull_name = "BLANK";
+}
+if (empty($USERdelete_from)) {
+    $USERdelete_from="BLANK";
+}
+if (empty($ACCIDto_insert_raw_ArFilter)) {
+    $CIDcheck = "BLANK";
+}
+if (empty($DIDto_insert_raw_ArFilter)) {
+    $DIDcheck = "BLANK";
+}
+if (empty($DIDdelete_from)) {
+    $DIDdelete_from="BLANK";
+}
+if (empty($USERstart)) {
+    $USERstart = "BLANK";
+}
+if (empty($USERstop)) {
+    $USERstop = "BLANK";
+}
+if (empty($ACCIDdelete_from)) {
+    $ACCIDdelete_from = "BLANK";
+}
+if (empty($ACCIDdelete_campaign)) {
+    $ACCIDdelete_campaign = "BLANK";
+}
+if ($ACCIDclear_all == "Y") {
+    $form_to_run="ACCIDDELETEconfirm";
+}
 $stmt="SELECT selected_language from vicidial_users where user='$PHP_AUTH_USER';";
-if ($DB) {echo "$stmt|";}
+if ($DB) {
+    echo "$stmt|";
+}
 $rslt=mysql_to_mysqli($stmt, $link);
 $sl_ct = mysqli_num_rows($rslt);
-if ($sl_ct > 0)
-    {
+if ($sl_ct > 0) {
     $row=mysqli_fetch_row($rslt);
     $VUselected_language =        $row[0];
-    }
+}
 $auth=0;
-$auth_message = user_authorization($PHP_AUTH_USER,$PHP_AUTH_PW,'',1,0);
-if ( ($auth_message == 'GOOD') or ($auth_message == '2FA') )
-    {
+$auth_message = user_authorization($PHP_AUTH_USER, $PHP_AUTH_PW, '', 1, 0);
+if (($auth_message == 'GOOD') or ($auth_message == '2FA')) {
     $auth=1;
-    if ($auth_message == '2FA')
-        {
-        header ("Content-type: text/html; charset=utf-8");
+    if ($auth_message == '2FA') {
+        header("Content-type: text/html; charset=utf-8");
         echo _QXZ("Your session is expired").". <a href=\"admin.php\">"._QXZ("Click here to log in")."</a>.\n";
         exit;
-        }
     }
-if ($auth < 1)
-    {
+}
+if ($auth < 1) {
     $VDdisplayMESSAGE = _QXZ("Login incorrect, please try again");
-    if ($auth_message == 'LOCK')
-        {
+    if ($auth_message == 'LOCK') {
         $VDdisplayMESSAGE = _QXZ("Too many login attempts, try again in 15 minutes");
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
-    if ($auth_message == 'IPBLOCK')
-        {
+    }
+    if ($auth_message == 'IPBLOCK') {
         $VDdisplayMESSAGE = _QXZ("Your IP Address is not allowed") . ": $ip";
-        Header ("Content-type: text/html; charset=utf-8");
+        Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
         exit;
-        }
+    }
     Header("WWW-Authenticate: Basic realm=\"CONTACT-CENTER-ADMIN\"");
     Header("HTTP/1.0 401 Unauthorized");
     echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$PHP_AUTH_PW|$auth_message|\n";
     exit;
-    }    
+}
 $rights_stmt = "SELECT user_group, modify_inbound_dids, delete_inbound_dids, modify_campaigns, delete_campaigns, modify_users, delete_users, user_level, modify_same_user_level from vicidial_users where user='$PHP_AUTH_USER';";
-if ($DB) {echo "$rights_stmt|";}
+if ($DB) {
+    echo "$rights_stmt|";
+}
 $rights_rslt=mysql_to_mysqli($rights_stmt, $link);
 $rights_row=mysqli_fetch_row($rights_rslt);
 $user_group =        $rights_row[0];
@@ -230,72 +298,68 @@ $delete_users =        $rights_row[6];
 $user_level =        $rights_row[7];
 $modify_level =        $rights_row[8];
 $rights_stmt = "SELECT allowed_campaigns,admin_viewable_groups from vicidial_user_groups where user_group='$user_group';";
-if ($DB) {echo "$rights_stmt|";}
+if ($DB) {
+    echo "$rights_stmt|";
+}
 $rights_rslt=mysql_to_mysqli($rights_stmt, $link);
 $rights_row=mysqli_fetch_row($rights_rslt);
 $LOGallowed_campaigns =            $rights_row[0];
 $LOGadmin_viewable_groups =        $rights_row[1];
 $allowed_campaignsSQL='';
-if ( (!preg_match('/\-ALL/i', $LOGallowed_campaigns)) )
-    {
-    $rawLOGallowed_campaignsSQL = preg_replace("/ -/",'',$LOGallowed_campaigns);
-    $rawLOGallowed_campaignsSQL = preg_replace("/ /","','",$rawLOGallowed_campaignsSQL);
+if ((!preg_match('/\-ALL/i', $LOGallowed_campaigns))) {
+    $rawLOGallowed_campaignsSQL = preg_replace("/ -/", '', $LOGallowed_campaigns);
+    $rawLOGallowed_campaignsSQL = preg_replace("/ /", "','", $rawLOGallowed_campaignsSQL);
     $allowed_campaignsSQL = "campaign_id IN('$rawLOGallowed_campaignsSQL')";
-    }
-else
-    {
+} else {
     $rights_stmt = "SELECT campaign_id FROM vicidial_campaigns;";
-    if ($DB) {echo "$rights_stmt|";}
+    if ($DB) {
+        echo "$rights_stmt|";
+    }
     $rights_rslt=mysql_to_mysqli($rights_stmt, $link);
     $rights_rsltCOUNT=mysqli_num_rows($rights_rslt);
     $allowed_campaignsSQL = "campaign_id IN(";
     $i=0;
-    while ($i < $rights_rsltCOUNT)
-        {
+    while ($i < $rights_rsltCOUNT) {
         $rights_row=mysqli_fetch_row($rights_rslt);
         $allowed_campaignsSQL.= "'" . $rights_row[0] . "',";
         $i++;
-        }    
+    }
     $allowed_campaignsSQL.= "'')";
-    }
+}
 $admin_viewable_groupsSQL='';
-if  (!preg_match('/\-\-ALL\-\-/i',$LOGadmin_viewable_groups))
-    {
-    $rawLOGadmin_viewable_groupsSQL = preg_replace("/ -/",'',$LOGadmin_viewable_groups);
-    $rawLOGadmin_viewable_groupsSQL = preg_replace("/ /","','",$rawLOGadmin_viewable_groupsSQL);
+if  (!preg_match('/\-\-ALL\-\-/i', $LOGadmin_viewable_groups)) {
+    $rawLOGadmin_viewable_groupsSQL = preg_replace("/ -/", '', $LOGadmin_viewable_groups);
+    $rawLOGadmin_viewable_groupsSQL = preg_replace("/ /", "','", $rawLOGadmin_viewable_groupsSQL);
     $admin_viewable_groupsSQL = "user_group IN('---ALL---','$rawLOGadmin_viewable_groupsSQL')";
-    }
-else 
-    {
+} else {
     $rights_stmt = "SELECT user_group FROM vicidial_user_groups;";
-    if ($DB) {echo "$rights_stmt|";}
+    if ($DB) {
+        echo "$rights_stmt|";
+    }
     $rights_rslt=mysql_to_mysqli($rights_stmt, $link);
     $rights_rsltCOUNT=mysqli_num_rows($rights_rslt);
     $admin_viewable_groupsSQL = "user_group IN('---ALL---',";
     $i=0;
-    while ($i < $rights_rsltCOUNT)
-        {
+    while ($i < $rights_rsltCOUNT) {
         $rights_row=mysqli_fetch_row($rights_rslt);
         $admin_viewable_groupsSQL.= "'" . $rights_row[0] . "',";
         $i++;
-        }    
-    $admin_viewable_groupsSQL.= "'')";
     }
-header ("Content-type: text/html; charset=utf-8");
-header ("Cache-Control: no-cache, must-revalidate");  // HTTP/1.1
-header ("Pragma: no-cache");      // HTTP/1.0
+    $admin_viewable_groupsSQL.= "'')";
+}
+header("Content-type: text/html; charset=utf-8");
+header("Cache-Control: no-cache, must-revalidate");  // HTTP/1.1
+header("Pragma: no-cache");      // HTTP/1.0
 echo "<html>\n";
 echo "<head>\n";
-if ($user_level < 9) 
-    {
+if ($user_level < 9) {
     echo "You do not have permission to be here.";
     exit;
-    }
+}
 echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"vicidial_stylesheet.php\">\n";
 echo "<script language=\"JavaScript\" src=\"help.js\"></script>\n";
-echo "<div id='HelpDisplayDiv' class='help_info' style='display:none;'></div>";    
-if ($form_to_run == "help")
-    {
+echo "<div id='HelpDisplayDiv' class='help_info' style='display:none;'></div>";
+if ($form_to_run == "help") {
     echo "<title>"._QXZ("ADMINISTRATION: Bulk Tools")."</title>";
     echo "</head><body bgcolor=white><center>";
     echo "<TABLE WIDTH=98% BGCOLOR=#E6E6E6 cellpadding=2 cellspacing=4><TR><TD ALIGN=LEFT><FONT FACE=\"ARIAL,HELVETICA\" COLOR=BLACK SIZE=2><BR>";
@@ -319,7 +383,7 @@ if ($form_to_run == "help")
     echo "<B>"._QXZ("CID Groups and AC-CID Bulk Delete")." -</B> "._QXZ("This will delete the Areacode Caller ID entries you select from the next screen based on the campaign or CID group you select here. Setting Clear All CIDs to YES will bypass the AC-CID selection and wipe all AC-CIDs for the selected campaign or CID group.");
     echo "<BR><BR></TD></TR></TABLE></BODY><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR><BR></HTML>";
     exit;
-    }
+}
 $ADD =  '999998';
 $hh =       'admin';
 $LOGast_admin_access = '1';
@@ -348,69 +412,66 @@ echo "</td>\n";
 echo "<td align=right><font face='ARIAL,HELVETICA' size=2><b> &nbsp; </td>\n";
 echo "</tr>\n";
 echo "<tr bgcolor='#". $SSframe_background ."'><td align=left colspan=2><font face='ARIAL,HELVETICA' color=black size=3> &nbsp; \n";
-if ($form_to_run == "ACCID")
-    {
-    if ($ACCIDcampaign=="BLANK")
-        {
+if ($form_to_run == "ACCID") {
+    if ($ACCIDcampaign=="BLANK") {
         echo _QXZ("Go back, you did not specify a campaign or CID group.")."\n";
         exit;
-        }
-    if ($CIDcheck=="BLANK")
-        {
+    }
+    if ($CIDcheck=="BLANK") {
         echo _QXZ("Go back, you did not specify any CIDs or there was something wrong with them.")."\n";
         exit;
-        }
-    if (count($ACCIDto_insert_raw) > $INSERTmax_limit)
-        {
+    }
+    if (count($ACCIDto_insert_raw) > $INSERTmax_limit) {
         echo _QXZ("This tool has a limit of ")."$INSERTmax_limit"._QXZ(" items. You are trying to insert ") . count($ACCIDto_insert_raw) ._QXZ(". Please go back and make adjustments.")."\n";
         exit;
-        }
+    }
     $CGT = 'AREACODE';
     $SQL="SELECT cid_group_type FROM vicidial_cid_groups WHERE cid_group_id='$ACCIDcampaign';";
-    if ($DB) {echo "$SQL|";}
+    if ($DB) {
+        echo "$SQL|";
+    }
     $SQL_rslt = mysql_to_mysqli($SQL, $link);
     $cgid_count = mysqli_num_rows($SQL_rslt);
-    if ($cgid_count > 0)
-        {
+    if ($cgid_count > 0) {
         $row = mysqli_fetch_row($SQL_rslt);
         $CGT = $row[0];
-        }
+    }
     $areacode = array();
-    if ($ACCIDmethod == "STATEFILL") 
-        {
+    if ($ACCIDmethod == "STATEFILL") {
         $STATEFILLcids = array();
         $STATEFILLareacodes = array();
         $i=0;
         $j=0; # Counts total ACCID to be inserted
-        while ($i < count($ACCIDto_insert_raw))
-            {
+        while ($i < count($ACCIDto_insert_raw)) {
             $STATEFILLareacode[$i] = substr($ACCIDto_insert_raw[$i], 0, 3);
             $SQL = "SELECT state FROM vicidial_phone_codes WHERE country IN('USA','CAN') AND areacode='$STATEFILLareacode[$i]';";
-            if ($DB) {echo "$SQL|";}
+            if ($DB) {
+                echo "$SQL|";
+            }
             $SQL_rslt = mysql_to_mysqli($SQL, $link);
             $state = mysqli_fetch_row($SQL_rslt);
             $SQL = "SELECT areacode FROM vicidial_phone_codes WHERE country IN('USA','CAN') AND state='$state[0]';";
-            if ($DB) {echo "$SQL|";}
+            if ($DB) {
+                echo "$SQL|";
+            }
             $SQL_rslt = mysql_to_mysqli($SQL, $link);
             $areacode_count = mysqli_num_rows($SQL_rslt);
             $k = 0;
-            while ($k < $areacode_count)
-                {
+            while ($k < $areacode_count) {
                 $row = mysqli_fetch_row($SQL_rslt);
                 $areacode[$j] = $row[0];
                 $STATEFILLcids[$j] = $ACCIDto_insert_raw[$i];
                 $j++;
-                $k++;        
-                }
-            $i++;
+                $k++;
             }
-        $i=0;    
-        while ($i < count($STATEFILLcids))
-            {
+            $i++;
+        }
+        $i=0;
+        while ($i < count($STATEFILLcids)) {
             $ACCIDto_insert_raw[$i] = $STATEFILLcids[$i];
             $i++;
-            }
         }
+    }
     $ACCIDduplicate = array();
     $ACCIDinserted = array();
     $ACCIDareacode = array();
@@ -418,98 +479,99 @@ if ($form_to_run == "ACCID")
     $j=0; #duplicate counter
     $k=0; #insert counter
     $l=0; #bad length counter
-    while ($i < count($ACCIDto_insert_raw))
-        {
-        if ($ACCIDmethod == "CID") 
-            {
+    while ($i < count($ACCIDto_insert_raw)) {
+        if ($ACCIDmethod == "CID") {
             $areacode[$i] = substr($ACCIDto_insert_raw[$i], 0, 3);
-            if ($CGT == 'STATE')
-                {
+            if ($CGT == 'STATE') {
                 $SQL = "SELECT state FROM vicidial_phone_codes WHERE country IN('USA','CAN') AND areacode='$areacode[$i]';";
-                if ($DB) {echo "$SQL|";}
+                if ($DB) {
+                    echo "$SQL|";
+                }
                 $SQL_rslt = mysql_to_mysqli($SQL, $link);
                 $row=mysqli_fetch_row($SQL_rslt);
                 $areacode[$i] = $row[0];
-                }
-            if ($CGT == 'NONE')
-                {
-                $areacode[$i] = 'NONE';
-                }
             }
-        if ($ACCIDmethod == "CSV") {$areacode[$i] = $ACCIDareacode_raw[$i];}
+            if ($CGT == 'NONE') {
+                $areacode[$i] = 'NONE';
+            }
+        }
+        if ($ACCIDmethod == "CSV") {
+            $areacode[$i] = $ACCIDareacode_raw[$i];
+        }
         $SQL= "SELECT outbound_cid FROM vicidial_campaign_cid_areacodes WHERE outbound_cid='$ACCIDto_insert_raw[$i]' AND areacode='$areacode[$i]' AND campaign_id='$ACCIDcampaign';";
-        if ($DB) {echo "$SQL|";}
+        if ($DB) {
+            echo "$SQL|";
+        }
         $SQL_rslt=mysql_to_mysqli($SQL, $link);
         $row = mysqli_fetch_row($SQL_rslt);
-        if ($row[0] == $ACCIDto_insert_raw[$i])
-            {
+        if ($row[0] == $ACCIDto_insert_raw[$i]) {
             $ACCIDduplicate[$j] = $ACCIDto_insert_raw[$i];
             $j++;
-            }
-        elseif (strlen($ACCIDto_insert_raw[$i]) < 6 || strlen($ACCIDto_insert_raw[$i]) > 20)
-            {
+        } elseif (strlen($ACCIDto_insert_raw[$i]) < 6 || strlen($ACCIDto_insert_raw[$i]) > 20) {
             $ACCIDbadlen[$l] = $ACCIDto_insert_raw[$i];
             $l++;
-            }
-        else
-            {
+        } else {
             $ACCIDto_insert[$k] = $ACCIDto_insert_raw[$i];
             $ACCIDareacode[$k] = $areacode[$i];
             $k++;
-            }            
-        $i++;
         }
-    if (empty($ACCIDto_insert[0]))
-        {
+        $i++;
+    }
+    if (empty($ACCIDto_insert[0])) {
         echo "<br> <b>"._QXZ("Go back, nothing is going to be created.")."</b> ";
         echo "<br> "._QXZ("The following CID Groups or AC-CIDs are duplicates and will not be created").": ";
-        if (empty($ACCIDduplicate[0])) {echo "<br> "._QXZ("NONE");}
+        if (empty($ACCIDduplicate[0])) {
+            echo "<br> "._QXZ("NONE");
+        }
         $i = 0;
-        while ($i < count($ACCIDduplicate))
-            {
+        while ($i < count($ACCIDduplicate)) {
             echo "<br> $ACCIDduplicate[$i]";
             $i++;
-            }
+        }
         echo "<br> "._QXZ("The following CID Groups or AC-CIDs are of invalid length and will not be created").": ";
-        if (empty($ACCIDbadlen[0])) {echo "<br> "._QXZ("NONE");}
+        if (empty($ACCIDbadlen[0])) {
+            echo "<br> "._QXZ("NONE");
+        }
         $i = 0;
-        while ($i < count($ACCIDbadlen))
-            {
+        while ($i < count($ACCIDbadlen)) {
             echo "<br> $ACCIDbadlen[$i]";
             $i++;
-            }
-        exit;
         }
-    else
-        {
+        exit;
+    } else {
         echo _QXZ("ATTENTION, You are about to add the following AC-CIDs to this campaign").": $ACCIDcampaign";
         $i = 0;
-        while ($i < count($ACCIDto_insert))
-            {
+        while ($i < count($ACCIDto_insert)) {
             echo "<br> $ACCIDto_insert[$i]";
             $i++;
-            }
+        }
         echo "<br> "._QXZ("The following AC-CIDs are duplicates and will not be created").": ";
-        if (empty($ACCIDduplicate[0])) {echo "<br> "._QXZ("NONE");}
+        if (empty($ACCIDduplicate[0])) {
+            echo "<br> "._QXZ("NONE");
+        }
         $i = 0;
-        while ($i < count($ACCIDduplicate))
-            {
+        while ($i < count($ACCIDduplicate)) {
             echo "<br> $ACCIDduplicate[$i]";
             $i++;
-            }
+        }
         echo "<br> "._QXZ("The following AC-CIDs are of invalid length and will not be created").": ";
-        if (empty($ACCIDbadlen[0])) {echo "<br> "._QXZ("NONE");}
+        if (empty($ACCIDbadlen[0])) {
+            echo "<br> "._QXZ("NONE");
+        }
         $i = 0;
-        while ($i < count($ACCIDbadlen))
-            {
+        while ($i < count($ACCIDbadlen)) {
             echo "<br> $ACCIDbadlen[$i]";
             $i++;
-            }
         }
+    }
     $ACCIDto_insert = serialize($ACCIDto_insert);
     $ACCIDareacode = serialize($ACCIDareacode);
-    if ($ACCIDmethod=="CSV") {$ACCIDdescription_raw = serialize($ACCIDdescription_raw);}
-    if ($ACCIDmethod=="CSV") {$ACCIDactiveinput_raw = serialize($ACCIDactiveinput_raw);}
+    if ($ACCIDmethod=="CSV") {
+        $ACCIDdescription_raw = serialize($ACCIDdescription_raw);
+    }
+    if ($ACCIDmethod=="CSV") {
+        $ACCIDactiveinput_raw = serialize($ACCIDactiveinput_raw);
+    }
     echo "<html><form action=$PHP_SELF method=POST>";
     echo "<input type=hidden name=form_to_run value='ACCIDconfirmed'>";
     echo "<input type=hidden name=DB value='$DB'>";
@@ -523,172 +585,163 @@ if ($form_to_run == "ACCID")
     echo "<tr bgcolor=#". $SSstd_row1_background ."><td colspan=2 align=center><input style='background-color:#$SSbutton_color' type=submit name=did_submit value='CONFIRM'></td></tr>\n";
     echo "</table></center></form>\n";
     echo "</html>";
-    }
-elseif ($form_to_run == "ACCIDconfirmed")
-    {
+} elseif ($form_to_run == "ACCIDconfirmed") {
     $CGT = 'AREACODE';
     $SQL="SELECT cid_group_type FROM vicidial_cid_groups WHERE cid_group_id='$ACCIDcampaign';";
-    if ($DB) {echo "$SQL|";}
+    if ($DB) {
+        echo "$SQL|";
+    }
     $SQL_rslt = mysql_to_mysqli($SQL, $link);
     $cgid_count = mysqli_num_rows($SQL_rslt);
-    if ($cgid_count > 0)
-        {
+    if ($cgid_count > 0) {
         $row = mysqli_fetch_row($SQL_rslt);
         $CGT = $row[0];
-        }
+    }
     $ACCIDto_insert_CONFIRMED = unserialize($ACCIDto_insert_CONFIRMED);
     $ACCIDareacode = unserialize($ACCIDareacode);
-    if ($ACCIDmethod=="CSV")
-        {
+    if ($ACCIDmethod=="CSV") {
         $ACCIDdescription = unserialize($ACCIDdescription);
         $ACCIDactiveinput = unserialize($ACCIDactiveinput);
-        }
-    else
-        {
+    } else {
         $ACCIDdescription = array();
         $i = 0;
-        while ($i < count($ACCIDto_insert_CONFIRMED))
-            {
+        while ($i < count($ACCIDto_insert_CONFIRMED)) {
             $ACCIDareacode[$i] = preg_replace('/[^-_0-9\p{L}]/u', '', $ACCIDareacode[$i]);
-            if (!preg_match("/[A-Z]/i",$ACCIDareacode[$i]))
-                {
+            if (!preg_match("/[A-Z]/i", $ACCIDareacode[$i])) {
                 $SQL="SELECT state FROM vicidial_phone_codes WHERE areacode='$ACCIDareacode[$i]';";
                 $SQL_rslt = mysql_to_mysqli($SQL, $link);
                 $row = mysqli_fetch_row($SQL_rslt);
-                if ( $row[0] == null ) #Put something in if NULL because areacode.vicidial_campaign_cid_areacodes cannot be NULL        
-                    {
+                if ($row[0] == null) { #Put something in if NULL because areacode.vicidial_campaign_cid_areacodes cannot be NULL
                     $ACCIDdescription[$i] = " ";
-                    }
-                else
-                    {
+                } else {
                     $ACCIDdescription[$i] = $row[0];
-                    }
                 }
-            else
-                {$ACCIDdescription[$i] = $ACCIDareacode[$i];}
-            $i++;
+            } else {
+                $ACCIDdescription[$i] = $ACCIDareacode[$i];
             }
+            $i++;
         }
+    }
     $INSERTtotal = count($ACCIDto_insert_CONFIRMED);
     $INSERTgroup_counter = 0;
     $INSERTloopflag = "TRUE";
-    if ($INSERTtotal == $INSERTgroup_limit)
-        {
+    if ($INSERTtotal == $INSERTgroup_limit) {
         $INSERTgroup_counter = 0;
         $INSERTremainder = $INSERTtotal;
-        }
-    else
-        {
-        while ($INSERTloopflag == "TRUE")
-            {
+    } else {
+        while ($INSERTloopflag == "TRUE") {
             $INSERTdifference = $INSERTtotal - $INSERTgroup_limit;
-            if ($INSERTdifference > $INSERTgroup_limit) #If the difference is bigger then we still have more groups to divide out
-                    {
-                    $INSERTtotal = $INSERTdifference;
-                    $INSERTgroup_counter++;
-                    }
-            if (($INSERTdifference >= 0) && ($INSERTdifference <= $INSERTgroup_limit)) # If the difference is between 0 and the group limit then we've reached the end
-                    {
-                    $INSERTgroup_counter++;
-                    $INSERTremainder = $INSERTdifference;
-                    $INSERTloopflag="FALSE";
-                    }
-            if ($INSERTdifference < 0) # If the difference is negative then there's only 1 group
-                {
+            if ($INSERTdifference > $INSERTgroup_limit) { #If the difference is bigger then we still have more groups to divide out
+                $INSERTtotal = $INSERTdifference;
+                $INSERTgroup_counter++;
+            }
+            if (($INSERTdifference >= 0) && ($INSERTdifference <= $INSERTgroup_limit)) { # If the difference is between 0 and the group limit then we've reached the end
+                $INSERTgroup_counter++;
+                $INSERTremainder = $INSERTdifference;
+                $INSERTloopflag="FALSE";
+            }
+            if ($INSERTdifference < 0) { # If the difference is negative then there's only 1 group
                 $INSERTgroup_counter = 0;
                 $INSERTremainder = $INSERTtotal;
                 $INSERTloopflag="FALSE";
-                }
             }
-        }    
+        }
+    }
     $INSERTindex = 0;
     $INSERTloopflag = "TRUE";
     $INSERTsqlLOG='';
-    while ($INSERTloopflag == "TRUE")
-        {
+    while ($INSERTloopflag == "TRUE") {
         $tempACCIDactive = $ACCIDactive;
-        if ($ACCIDactive=='F') 
-            {
-            if (strlen($ACCIDactiveinput[$INSERTindex]) > 0) {$tempACCIDactive = $ACCIDactiveinput[$INSERTindex];}
-            else {$tempACCIDactive='N';}
+        if ($ACCIDactive=='F') {
+            if (strlen($ACCIDactiveinput[$INSERTindex]) > 0) {
+                $tempACCIDactive = $ACCIDactiveinput[$INSERTindex];
+            } else {
+                $tempACCIDactive='N';
             }
+        }
         $ACCIDareacode[$INSERTindex] = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $ACCIDareacode[$INSERTindex]);
         $ACCIDto_insert_CONFIRMED[$INSERTindex] = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $ACCIDto_insert_CONFIRMED[$INSERTindex]);
         $ACCIDdescription[$INSERTindex] = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $ACCIDdescription[$INSERTindex]);
         $tempACCIDactive = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $tempACCIDactive);
-        if ($DB) {echo "|ACCIDactive: $ACCIDactive|$ACCIDactiveinput[$INSERTindex]|$tempACCIDactive|";}
+        if ($DB) {
+            echo "|ACCIDactive: $ACCIDactive|$ACCIDactiveinput[$INSERTindex]|$tempACCIDactive|";
+        }
         $SQL = "INSERT IGNORE INTO vicidial_campaign_cid_areacodes (campaign_id,areacode,outbound_cid,active,cid_description) VALUES ('$ACCIDcampaign','$ACCIDareacode[$INSERTindex]','$ACCIDto_insert_CONFIRMED[$INSERTindex]','$tempACCIDactive','$ACCIDdescription[$INSERTindex]')";
         $INSERTindex++;
-        if ($INSERTgroup_counter > 0)
-            {
+        if ($INSERTgroup_counter > 0) {
             $i = 1;
-            while ($i < $INSERTgroup_limit)
-                {
+            while ($i < $INSERTgroup_limit) {
                 $tempACCIDactive = $ACCIDactive;
-                if ($ACCIDactive=='F') 
-                    {
-                    if (strlen($ACCIDactiveinput[$INSERTindex]) > 0) {$tempACCIDactive = $ACCIDactiveinput[$INSERTindex];}
-                    else {$tempACCIDactive='N';}
+                if ($ACCIDactive=='F') {
+                    if (strlen($ACCIDactiveinput[$INSERTindex]) > 0) {
+                        $tempACCIDactive = $ACCIDactiveinput[$INSERTindex];
+                    } else {
+                        $tempACCIDactive='N';
                     }
-                $ACCIDareacode[$INSERTindex] = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $ACCIDareacode[$INSERTindex]);
-                $ACCIDto_insert_CONFIRMED[$INSERTindex] = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $ACCIDto_insert_CONFIRMED[$INSERTindex]);
-                $ACCIDdescription[$INSERTindex] = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $ACCIDdescription[$INSERTindex]);
-                $tempACCIDactive = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $tempACCIDactive);
-                if ($DB) {echo "|ACCIDactive: $ACCIDactive|$ACCIDactiveinput[$INSERTindex]|$tempACCIDactive|";}
-                $SQL.= ",('" . $ACCIDcampaign . "','" . $ACCIDareacode[$INSERTindex] . "','" . $ACCIDto_insert_CONFIRMED[$INSERTindex] . "','" . $tempACCIDactive . "','" . $ACCIDdescription[$INSERTindex] . "')";
-                $SQL_sentence.= " |$ACCIDareacode[$INSERTindex]|$ACCIDto_insert_CONFIRMED[$INSERTindex]|$ACCIDdescription[$INSERTindex]|$tempACCIDactive";
-                $i++;
-                $INSERTindex++;
-                }    
-            $INSERTgroup_counter--;
-            }
-        else 
-            {
-            $i = 1;
-            while ($i < $INSERTremainder)
-                {
-                $tempACCIDactive = $ACCIDactive;
-                if ($ACCIDactive=='F') 
-                    {
-                    if (strlen($ACCIDactiveinput[$INSERTindex]) > 0) {$tempACCIDactive = $ACCIDactiveinput[$INSERTindex];}
-                    else {$tempACCIDactive='N';}
-                    }
-                $ACCIDareacode[$INSERTindex] = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $ACCIDareacode[$INSERTindex]);
-                $ACCIDto_insert_CONFIRMED[$INSERTindex] = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $ACCIDto_insert_CONFIRMED[$INSERTindex]);
-                $ACCIDdescription[$INSERTindex] = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $ACCIDdescription[$INSERTindex]);
-                $tempACCIDactive = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $tempACCIDactive);
-                if ($DB) {echo "|ACCIDactive: $ACCIDactive|$ACCIDactiveinput[$INSERTindex]|$tempACCIDactive|";}
-                $SQL.= ",('" . $ACCIDcampaign . "','" . $ACCIDareacode[$INSERTindex] . "','" . $ACCIDto_insert_CONFIRMED[$INSERTindex] . "','" . $tempACCIDactive . "','" . $ACCIDdescription[$INSERTindex] . "')";
-                $SQL_sentence.= " |$ACCIDareacode[$INSERTindex]|$ACCIDto_insert_CONFIRMED[$INSERTindex]|$ACCIDdescription[$INSERTindex]|$tempACCIDactive";
-                $i++;
-                $INSERTindex++;
                 }
-            $INSERTloopflag="FALSE";
+                $ACCIDareacode[$INSERTindex] = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $ACCIDareacode[$INSERTindex]);
+                $ACCIDto_insert_CONFIRMED[$INSERTindex] = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $ACCIDto_insert_CONFIRMED[$INSERTindex]);
+                $ACCIDdescription[$INSERTindex] = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $ACCIDdescription[$INSERTindex]);
+                $tempACCIDactive = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $tempACCIDactive);
+                if ($DB) {
+                    echo "|ACCIDactive: $ACCIDactive|$ACCIDactiveinput[$INSERTindex]|$tempACCIDactive|";
+                }
+                $SQL.= ",('" . $ACCIDcampaign . "','" . $ACCIDareacode[$INSERTindex] . "','" . $ACCIDto_insert_CONFIRMED[$INSERTindex] . "','" . $tempACCIDactive . "','" . $ACCIDdescription[$INSERTindex] . "')";
+                $SQL_sentence.= " |$ACCIDareacode[$INSERTindex]|$ACCIDto_insert_CONFIRMED[$INSERTindex]|$ACCIDdescription[$INSERTindex]|$tempACCIDactive";
+                $i++;
+                $INSERTindex++;
             }
-        if ($DB) {echo "$SQL|";}
+            $INSERTgroup_counter--;
+        } else {
+            $i = 1;
+            while ($i < $INSERTremainder) {
+                $tempACCIDactive = $ACCIDactive;
+                if ($ACCIDactive=='F') {
+                    if (strlen($ACCIDactiveinput[$INSERTindex]) > 0) {
+                        $tempACCIDactive = $ACCIDactiveinput[$INSERTindex];
+                    } else {
+                        $tempACCIDactive='N';
+                    }
+                }
+                $ACCIDareacode[$INSERTindex] = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $ACCIDareacode[$INSERTindex]);
+                $ACCIDto_insert_CONFIRMED[$INSERTindex] = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $ACCIDto_insert_CONFIRMED[$INSERTindex]);
+                $ACCIDdescription[$INSERTindex] = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $ACCIDdescription[$INSERTindex]);
+                $tempACCIDactive = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $tempACCIDactive);
+                if ($DB) {
+                    echo "|ACCIDactive: $ACCIDactive|$ACCIDactiveinput[$INSERTindex]|$tempACCIDactive|";
+                }
+                $SQL.= ",('" . $ACCIDcampaign . "','" . $ACCIDareacode[$INSERTindex] . "','" . $ACCIDto_insert_CONFIRMED[$INSERTindex] . "','" . $tempACCIDactive . "','" . $ACCIDdescription[$INSERTindex] . "')";
+                $SQL_sentence.= " |$ACCIDareacode[$INSERTindex]|$ACCIDto_insert_CONFIRMED[$INSERTindex]|$ACCIDdescription[$INSERTindex]|$tempACCIDactive";
+                $i++;
+                $INSERTindex++;
+            }
+            $INSERTloopflag="FALSE";
+        }
+        if ($DB) {
+            echo "$SQL|";
+        }
         $SQL_rslt = mysql_to_mysqli($SQL, $link);
         $INSERTsqlLOG.="$SQL|";
-        }
+    }
     $SQL_sentence = "Method: $ACCIDmethod. AC-CIDs inserted into campaign $ACCIDcampaign: " . $SQL_sentence;
     $SQL_log = $INSERTsqlLOG;
     $SQL_log = preg_replace('/;/', '', $SQL_log);
     $SQL_log = addslashes($SQL_log);
     $admin_log_stmt="INSERT INTO vicidial_admin_log set event_date='$SQLdate', user='$PHP_AUTH_USER', ip_address='$ip', event_section='CAMPAIGN_AC-CID', event_type='ADD', record_id='$ACCIDcampaign', event_code='ADMIN ADD BULK CAMPAIGN AC-CID', event_sql=\"$SQL_log\", event_notes='$SQL_sentence';";
-    if ($DB) {echo "$admin_log_stmt|";}
+    if ($DB) {
+        echo "$admin_log_stmt|";
+    }
     $admin_log_rslt=mysql_to_mysqli($admin_log_stmt, $link);
     $ENDtime = date("U");
     $RUNtime = ($ENDtime - $STARTtime);
     echo "<br>AC-CIDs added.";
     echo "\n\n\n<br>\n"._QXZ("runtime").": $RUNtime "._QXZ("seconds");
-    echo "<br><br><a href=\"admin_bulk_tools.php\">"._QXZ("Go back to tools.")."</a>";        
-    }
-elseif ($form_to_run == "ACCIDDELETEselect")
-    {
-    if ($ACCIDdelete_campaign=="BLANK")
-        {
+    echo "<br><br><a href=\"admin_bulk_tools.php\">"._QXZ("Go back to tools.")."</a>";
+} elseif ($form_to_run == "ACCIDDELETEselect") {
+    if ($ACCIDdelete_campaign=="BLANK") {
         echo _QXZ("Go back, you did not select a campaign or CID group.")."\n";
         exit;
-        }
+    }
     echo "<html><form action=$PHP_SELF method=POST>";
     echo "<input type=hidden name=form_to_run value='ACCIDDELETEconfirm'>";
     echo "<input type=hidden name=DB value='$DB'>";
@@ -699,38 +752,34 @@ elseif ($form_to_run == "ACCIDDELETEselect")
     echo "<tr bgcolor=#". $SSstd_row1_background ."><td align=right>"._QXZ("AC-CIDs to delete").": </td><td align=left>\n";
     $ACCIDdelete_from = array();
     $SQL="SELECT areacode,outbound_cid FROM vicidial_campaign_cid_areacodes WHERE campaign_id = '$ACCIDdelete_campaign' ORDER BY outbound_cid ASC;";
-    if ($DB) {echo "$SQL|";}
+    if ($DB) {
+        echo "$SQL|";
+    }
     $SQL_rslt = mysql_to_mysqli($SQL, $link);
     $cid_count = mysqli_num_rows($SQL_rslt);
     $i = 0;
-    while ($i < $cid_count)
-        {
+    while ($i < $cid_count) {
         $row = mysqli_fetch_row($SQL_rslt);
         $ACCIDto_delete_ac[$i] = $row[0];
         $ACCIDto_delete[$i] = $row[1];
         $i++;
-        }
+    }
     echo "<select multiple size=10 name='ACCIDdelete_from[]'>\n";
     $i = 0;
-    while ( $i < $cid_count )
-        {
+    while ($i < $cid_count) {
         echo "<option value='$ACCIDto_delete_ac[$i]x$ACCIDto_delete[$i]'>$ACCIDto_delete_ac[$i] - $ACCIDto_delete[$i]</option>\n";
         $i++;
-        }
+    }
     echo "</select></td></tr>\n";
     echo "<tr bgcolor=#". $SSstd_row1_background ."><td colspan=2 align=center><input style='background-color:#$SSbutton_color' type=submit name=did_submit value='"._QXZ("Submit")."'></td></tr>\n";
     echo "</table></center></form>\n";
     echo "</html>";
-    }
-elseif ($form_to_run == "ACCIDDELETEconfirm" || $form_to_run == "ACCIDDELETEconfirmTB")
-    {
-    if ($ACCIDclear_all == "Y")
-        {
-        if ($ACCIDdelete_campaign=="BLANK")
-            {
+} elseif ($form_to_run == "ACCIDDELETEconfirm" || $form_to_run == "ACCIDDELETEconfirmTB") {
+    if ($ACCIDclear_all == "Y") {
+        if ($ACCIDdelete_campaign=="BLANK") {
             echo _QXZ("Go back, you did not select a campaign or CID group").".\n";
             exit;
-            }
+        }
         echo "<br><font color=red><b><center>"._QXZ("WANRING! You are about to remove all AC-CID entries for campaign")." $ACCIDdelete_campaign "._QXZ("WARNING!")."</center></b></font><br><br>";
         echo "<html><form action=$PHP_SELF method=POST>";
         echo "<input type=hidden name=form_to_run value='ACCIDDELETEconfirmed'>";
@@ -740,35 +789,29 @@ elseif ($form_to_run == "ACCIDDELETEconfirm" || $form_to_run == "ACCIDDELETEconf
         echo "<tr bgcolor=#". $SSstd_row1_background ."><td colspan=2 align=center><input style='background-color:#$SSbutton_color' type=submit name=did_submit value='CONFIRM'></td></tr>\n";
         echo "</table></center></form>\n";
         echo "</html>";
-        }
-    else
-        {
-        if ($ACCIDdelete_from=="BLANK")
-            {
+    } else {
+        if ($ACCIDdelete_from=="BLANK") {
             echo _QXZ("Go back, you did not specify any AC-CIDs to delete.")."\n";
             exit;
-            }
+        }
         $SQL="SELECT COUNT(*) FROM vicidial_campaign_cid_areacodes where campaign_id = '$ACCIDdelete_campaign';";
         $SQL_rslt=mysql_to_mysqli($SQL, $link);
         $row=mysqli_fetch_row($SQL_rslt);
-        if ($row[0] == count($ACCIDdelete_from))
-            {
+        if ($row[0] == count($ACCIDdelete_from)) {
             echo "<b><font color='red'>"._QXZ("WARNING!!!")." <br>";
             echo _QXZ("REALLY DELETE ALL AC-CIDs?!")."</font></b><br>";
-            }
+        }
         echo "<b> "._QXZ("WARNING: The following AC-CIDs will be deleted!!!")."</b>";
         $i = 0;
-        while ($i < count($ACCIDdelete_from))
-            {
+        while ($i < count($ACCIDdelete_from)) {
             echo "<br> $ACCIDdelete_from[$i]";
             $i++;
-            }
+        }
         $ACCIDdelete_from = serialize($ACCIDdelete_from);
         echo "<html><form action=$PHP_SELF method=POST>";
-        if ( $form_to_run == "ACCIDDELETEconfirmTB" ) {
+        if ($form_to_run == "ACCIDDELETEconfirmTB") {
             echo "<input type=hidden name=form_to_run value='ACCIDDELETEconfirmedTB'>";
-        }
-        else {
+        } else {
             echo "<input type=hidden name=form_to_run value='ACCIDDELETEconfirmed'>";
         }
         echo "<input type=hidden name=DB value='$DB'>";
@@ -777,58 +820,55 @@ elseif ($form_to_run == "ACCIDDELETEconfirm" || $form_to_run == "ACCIDDELETEconf
         echo "<tr bgcolor=#". $SSstd_row1_background ."><td colspan=2 align=center><input style='background-color:#$SSbutton_color' type=submit name=did_submit value='CONFIRM'></td></tr>\n";
         echo "</table></center></form>\n";
         echo "</html>";
-        }
     }
-elseif ($form_to_run == "ACCIDDELETEconfirmed" || $form_to_run == "ACCIDDELETEconfirmedTB")
-    {
-    if ($ACCIDclear_all_CONFIRMED == "Y")
-        {
+} elseif ($form_to_run == "ACCIDDELETEconfirmed" || $form_to_run == "ACCIDDELETEconfirmedTB") {
+    if ($ACCIDclear_all_CONFIRMED == "Y") {
         $SQL = "DELETE FROM vicidial_campaign_cid_areacodes WHERE campaign_id='$ACCIDdelete_campaign';";
-        if ($DB) {echo "$SQL|";}
+        if ($DB) {
+            echo "$SQL|";
+        }
         $SQL_rslt = mysql_to_mysqli($SQL, $link);
         $SQL_sentence = " ";
         $SQL_log = "$SQL|";
         $SQL_log = preg_replace('/;/', '', $SQL_log);
         $SQL_log = addslashes($SQL_log);
         $admin_log_stmt="INSERT INTO vicidial_admin_log set event_date='$SQLdate', user='$PHP_AUTH_USER', ip_address='$ip', event_section='CAMPAIGN_AC-CID', event_type='DELETE', record_id='$ACCIDdelete_campaign', event_code='ADMIN DELETE BULK DID', event_sql=\"$SQL_log\", event_notes='$SQL_sentence';";
-        if ($DB) {echo "$admin_log_stmt|";}
+        if ($DB) {
+            echo "$admin_log_stmt|";
+        }
         $admin_log_rslt=mysql_to_mysqli($admin_log_stmt, $link);
         echo "<br>"._QXZ("AC-CIDs have been deleted").".";
-        echo "<br><a href=\"admin_bulk_tools.php\">"._QXZ("Go back to tools").".</a>";        
-        }
-    else
-        {
-        if ($form_to_run == "ACCIDDELETEconfirmedTB" ) {
+        echo "<br><a href=\"admin_bulk_tools.php\">"._QXZ("Go back to tools").".</a>";
+    } else {
+        if ($form_to_run == "ACCIDDELETEconfirmedTB") {
             $DELETEsqlLOG='';
             $ACCIDdelete_from_CONFIRMED = unserialize($ACCIDdelete_from_CONFIRMED); # Go through the data and make a new array then break off the AC and CID
             $SQL_sentence = "$ACCIDdelete_from_CONFIRMED[0] |";
             $i = 1; # loop counter
-            while ($i < count($ACCIDdelete_from_CONFIRMED))
-                {
+            while ($i < count($ACCIDdelete_from_CONFIRMED)) {
                 $ACCIDdelete_from_CONFIRMED[$i] = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $ACCIDdelete_from_CONFIRMED[$i]);
                 $SQL_sentence.= "$ACCIDdelete_from_CONFIRMED[$i] |";
                 $i++;
-                }
+            }
             $i = 0;
-            while ($i < count($ACCIDdelete_from_CONFIRMED))
-                {
-                if ( $ACCIDdelete_campaign == '---ALL---' ) {
+            while ($i < count($ACCIDdelete_from_CONFIRMED)) {
+                if ($ACCIDdelete_campaign == '---ALL---') {
                     $SQL = "DELETE FROM vicidial_campaign_cid_areacodes WHERE outbound_cid='$ACCIDdelete_from_CONFIRMED[$i]';";
-                }
-                else {
+                } else {
                     $SQL = "DELETE FROM vicidial_campaign_cid_areacodes WHERE campaign_id='$ACCIDdelete_campaign' AND outbound_cid='$ACCIDdelete_from_CONFIRMED[$i]';";
                 }
                 $i++;
-                if ($DB) {echo "$SQL|";}
+                if ($DB) {
+                    echo "$SQL|";
+                }
                 $SQL_rslt = mysql_to_mysqli($SQL, $link);
                 $DELETEsqlLOG .= "$SQL|";
-                }
-        }
-        else {
+            }
+        } else {
             $DELETEsqlLOG='';
             $ACCIDdelete_from_CONFIRMED = unserialize($ACCIDdelete_from_CONFIRMED); # Go through the data and make a new array then break off the AC and CID
-            $ACCIDdelete_from_CONFIRMED = implode("x",$ACCIDdelete_from_CONFIRMED);
-            $ACCIDdelete_from_CONFIRMED = explode("x",$ACCIDdelete_from_CONFIRMED);
+            $ACCIDdelete_from_CONFIRMED = implode("x", $ACCIDdelete_from_CONFIRMED);
+            $ACCIDdelete_from_CONFIRMED = explode("x", $ACCIDdelete_from_CONFIRMED);
             $ACCIDdelete_areacode = array();
             $ACCIDdelete_cid = array();
             $ACCIDdelete_areacode[0] = $ACCIDdelete_from_CONFIRMED[0];
@@ -836,34 +876,31 @@ elseif ($form_to_run == "ACCIDDELETEconfirmed" || $form_to_run == "ACCIDDELETEco
             $i = 1; # loop counter
             $j = 0; # CID index counter
             $k = 1; # areacode index counter
-            while ($i < count($ACCIDdelete_from_CONFIRMED))
-                {
+            while ($i < count($ACCIDdelete_from_CONFIRMED)) {
                 $ACCIDdelete_from_CONFIRMED[$i] = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $ACCIDdelete_from_CONFIRMED[$i]);
-                if ($i & 1)
-                    {
+                if ($i & 1) {
                     $ACCIDdelete_cid[$j] = $ACCIDdelete_from_CONFIRMED[$i];
                     $SQL_sentence.= "$ACCIDdelete_cid[$j] |";
                     $j++;
-                    }
-                else
-                    {
+                } else {
                     $ACCIDdelete_areacode[$j] = $ACCIDdelete_from_CONFIRMED[$i];
                     $SQL_sentence.= "$ACCIDdelete_areacode[$k] |";
                     $k++;
-                    }
-                $i++;
                 }
+                $i++;
+            }
             $i = 0;
-            while ($i < count($ACCIDdelete_areacode))
-                {
+            while ($i < count($ACCIDdelete_areacode)) {
                 $ACCIDdelete_cid[$i] = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $ACCIDdelete_cid[$i]);
                 $ACCIDdelete_areacode[$i] = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $ACCIDdelete_areacode[$i]);
                 $SQL = "DELETE FROM vicidial_campaign_cid_areacodes WHERE campaign_id='$ACCIDdelete_campaign' AND outbound_cid='$ACCIDdelete_cid[$i]' AND areacode='$ACCIDdelete_areacode[$i]';";
                 $i++;
-                if ($DB) {echo "$SQL|";}
+                if ($DB) {
+                    echo "$SQL|";
+                }
                 $SQL_rslt = mysql_to_mysqli($SQL, $link);
                 $DELETEsqlLOG .= "$SQL|";
-                }                
+            }
         }
         $SQL_sentence = "ACCID entries removed from campaign $ACCIDdelete_campaign: " . $SQL_sentence;
         $SQL = "DELETE FROM vicidial_campaign_cid_areacodes WHERE campaign_id='$ACCIDdelete_campaign' AND outbound_cid='$ACCIDdelete_cid[0]' AND areacode='$ACCIDdelete_areacode[0]';";
@@ -871,118 +908,109 @@ elseif ($form_to_run == "ACCIDDELETEconfirmed" || $form_to_run == "ACCIDDELETEco
         $SQL_log = preg_replace('/;/', '', $SQL_log);
         $SQL_log = addslashes($SQL_log);
         $admin_log_stmt="INSERT INTO vicidial_admin_log set event_date='$SQLdate', user='$PHP_AUTH_USER', ip_address='$ip', event_section='CAMPAIGN_AC-CID', event_type='DELETE', record_id='0', event_code='ADMIN DELETE BULK ACCID', event_sql=\"$SQL_log\", event_notes='$SQL_sentence';";
-        if ($DB) {echo "$admin_log_stmt|";}
+        if ($DB) {
+            echo "$admin_log_stmt|";
+        }
         $admin_log_rslt=mysql_to_mysqli($admin_log_stmt, $link);
         echo "<br>"._QXZ("AC-CIDs have been deleted").".";
         echo "<br><a href=\"admin_bulk_tools.php\">"._QXZ("Go back to tools").".</a>";
-        }
     }
-elseif ($form_to_run == "BULKDIDS")
-    {
-    if ($DIDcopy_from=="BLANK")
-        {
+} elseif ($form_to_run == "BULKDIDS") {
+    if ($DIDcopy_from=="BLANK") {
         echo _QXZ("Go back, you did not specify a source DID.")."\n";
         exit;
-        }
-    if ($DIDcheck=="BLANK")
-        {
+    }
+    if ($DIDcheck=="BLANK") {
         echo _QXZ("Go back, you did not specify any DIDs or there was something wrong with them.")."\n";
         exit;
-        }
-    if (count($DIDto_insert_raw) > $INSERTmax_limit)
-        {
+    }
+    if (count($DIDto_insert_raw) > $INSERTmax_limit) {
         echo _QXZ("This tool has a limit of")." $INSERTmax_limit"._QXZ(" items. You are trying to insert")." " . count($DIDto_insert_raw) ._QXZ(". Please go back and make adjustments.")."\n";
         exit;
-        }
-        $DIDduplicate = array();
-        $DIDbadlen = array();
-        $DIDinserted = array();
-        $i=0; #loop counter
-        $j=0; #duplicate counter
-        $k=0; #insert counter
-        $l=0; #bad length counter
-        while ($i < count($DIDto_insert_raw))
-            {
-            $SQL= "SELECT did_pattern FROM vicidial_inbound_dids WHERE did_pattern=$DIDto_insert_raw[$i];";
-            if ($DB) {echo "$SQL|";}
-            $SQL_rslt=mysql_to_mysqli($SQL, $link);
-            $row = mysqli_fetch_row($SQL_rslt);
-            if ($row[0] == $DIDto_insert_raw[$i])
-                {
-                $DIDduplicate[$j] = $DIDto_insert_raw[$i];
-                $j++;
-                }
-            elseif (strlen($DIDto_insert_raw[$i]) < 2 || strlen($DIDto_insert_raw[$i]) > 20)
-                {
-                $DIDbadlen[$l] = $DIDto_insert_raw[$i];
-                $l++;
-                }
-            else
-                {
-                $DIDto_insert[$k] = $DIDto_insert_raw[$i];
-                $k++;
-                }
-            $i++;
-            }
-        if (empty($DIDto_insert[0]))
-            {
-            echo "<br> <b>"._QXZ("Go back, nothing is going to be created.")."</b> ";
-            echo "<br> "._QXZ("The following DIDs are duplicates and will not be created").": ";
-            if (empty($DIDduplicate[0])) {echo "<br> "._QXZ("NONE");}
-            $i = 0;
-            while ($i < count($DIDduplicate))
-                {
-                echo "<br> $DIDduplicate[$i]";
-                $i++;
-                }
-            echo "<br> "._QXZ("The following DIDs are of invalid length and will not be created").": ";
-            if (empty($DIDbadlen[0])) {echo "<br> "._QXZ("NONE");}
-            $i = 0;
-            while ($i < count($DIDbadlen))
-                {
-                echo "<br> $DIDbadlen[$i]";
-                $i++;
-                }
-            exit;
-            }
-        else
-            {
-            echo _QXZ("ATTENTION: You are about to add the following DIDs using the settings in DID")." $DIDcopy_from :";
-            $i = 0;
-            while ($i < count($DIDto_insert))
-                {
-                echo "<br> $DIDto_insert[$i]";
-                $i++;
-                }
-            echo "<br> "._QXZ("The following DIDs are duplicates and will not be created").": ";
-            if (empty($DIDduplicate[0])) {echo "<br> "._QXZ("NONE");}
-            $i = 0;
-            while ($i < count($DIDduplicate))
-                {
-                echo "<br> $DIDduplicate[$i]";
-                $i++;
-                }
-            echo "<br> "._QXZ("The following DIDs are of invalid length and will not be created").": ";
-            if (empty($DIDbadlen[0])) {echo "<br> "._QXZ("NONE");}
-            $i = 0;
-            while ($i < count($DIDbadlen))
-                {
-                echo "<br> $DIDbadlen[$i]";
-                $i++;
-                }
-            }
-        $DIDto_insert = serialize($DIDto_insert);
-        echo "<html><form action=$PHP_SELF method=POST>";
-        echo "<input type=hidden name=form_to_run value='DIDADDconfirmed'>";
-        echo "<input type=hidden name=DB value='$DB'>";
-        echo "<input type=hidden name=DIDto_insert_CONFIRMED value='$DIDto_insert'>";
-        echo "<input type=hidden name=DIDcopy_from value='$DIDcopy_from'>";
-        echo "<tr bgcolor=#". $SSstd_row1_background ."><td colspan=2 align=center><input style='background-color:#$SSbutton_color' type=submit name=did_submit value='CONFIRM'></td></tr>\n";
-        echo "</table></center></form>\n";
-        echo "</html>";
     }
-elseif ($form_to_run == "DIDADDconfirmed")
-    {
+    $DIDduplicate = array();
+    $DIDbadlen = array();
+    $DIDinserted = array();
+    $i=0; #loop counter
+    $j=0; #duplicate counter
+    $k=0; #insert counter
+    $l=0; #bad length counter
+    while ($i < count($DIDto_insert_raw)) {
+        $SQL= "SELECT did_pattern FROM vicidial_inbound_dids WHERE did_pattern=$DIDto_insert_raw[$i];";
+        if ($DB) {
+            echo "$SQL|";
+        }
+        $SQL_rslt=mysql_to_mysqli($SQL, $link);
+        $row = mysqli_fetch_row($SQL_rslt);
+        if ($row[0] == $DIDto_insert_raw[$i]) {
+            $DIDduplicate[$j] = $DIDto_insert_raw[$i];
+            $j++;
+        } elseif (strlen($DIDto_insert_raw[$i]) < 2 || strlen($DIDto_insert_raw[$i]) > 20) {
+            $DIDbadlen[$l] = $DIDto_insert_raw[$i];
+            $l++;
+        } else {
+            $DIDto_insert[$k] = $DIDto_insert_raw[$i];
+            $k++;
+        }
+        $i++;
+    }
+    if (empty($DIDto_insert[0])) {
+        echo "<br> <b>"._QXZ("Go back, nothing is going to be created.")."</b> ";
+        echo "<br> "._QXZ("The following DIDs are duplicates and will not be created").": ";
+        if (empty($DIDduplicate[0])) {
+            echo "<br> "._QXZ("NONE");
+        }
+        $i = 0;
+        while ($i < count($DIDduplicate)) {
+            echo "<br> $DIDduplicate[$i]";
+            $i++;
+        }
+        echo "<br> "._QXZ("The following DIDs are of invalid length and will not be created").": ";
+        if (empty($DIDbadlen[0])) {
+            echo "<br> "._QXZ("NONE");
+        }
+        $i = 0;
+        while ($i < count($DIDbadlen)) {
+            echo "<br> $DIDbadlen[$i]";
+            $i++;
+        }
+        exit;
+    } else {
+        echo _QXZ("ATTENTION: You are about to add the following DIDs using the settings in DID")." $DIDcopy_from :";
+        $i = 0;
+        while ($i < count($DIDto_insert)) {
+            echo "<br> $DIDto_insert[$i]";
+            $i++;
+        }
+        echo "<br> "._QXZ("The following DIDs are duplicates and will not be created").": ";
+        if (empty($DIDduplicate[0])) {
+            echo "<br> "._QXZ("NONE");
+        }
+        $i = 0;
+        while ($i < count($DIDduplicate)) {
+            echo "<br> $DIDduplicate[$i]";
+            $i++;
+        }
+        echo "<br> "._QXZ("The following DIDs are of invalid length and will not be created").": ";
+        if (empty($DIDbadlen[0])) {
+            echo "<br> "._QXZ("NONE");
+        }
+        $i = 0;
+        while ($i < count($DIDbadlen)) {
+            echo "<br> $DIDbadlen[$i]";
+            $i++;
+        }
+    }
+    $DIDto_insert = serialize($DIDto_insert);
+    echo "<html><form action=$PHP_SELF method=POST>";
+    echo "<input type=hidden name=form_to_run value='DIDADDconfirmed'>";
+    echo "<input type=hidden name=DB value='$DB'>";
+    echo "<input type=hidden name=DIDto_insert_CONFIRMED value='$DIDto_insert'>";
+    echo "<input type=hidden name=DIDcopy_from value='$DIDcopy_from'>";
+    echo "<tr bgcolor=#". $SSstd_row1_background ."><td colspan=2 align=center><input style='background-color:#$SSbutton_color' type=submit name=did_submit value='CONFIRM'></td></tr>\n";
+    echo "</table></center></form>\n";
+    echo "</html>";
+} elseif ($form_to_run == "DIDADDconfirmed") {
     $DIDto_insert_CONFIRMED = unserialize($DIDto_insert_CONFIRMED);
     $SQL="SELECT did_id,did_pattern,did_description,did_active,did_route,extension,exten_context,voicemail_ext,phone,server_ip,user,user_unavailable_action,user_route_settings_ingroup,group_id,call_handle_method,agent_search_method,list_id,campaign_id,phone_code,menu_id,record_call,filter_inbound_number,filter_phone_group_id,filter_url,filter_action,filter_extension,filter_exten_context,filter_voicemail_ext,filter_phone,filter_server_ip,filter_user,filter_user_unavailable_action,filter_user_route_settings_ingroup,filter_group_id,filter_call_handle_method,filter_agent_search_method,filter_list_id,filter_campaign_id,filter_phone_code,filter_menu_id,filter_clean_cid_number,custom_one,custom_two,custom_three,custom_four,custom_five,user_group,filter_dnc_campaign,filter_url_did_redirect,no_agent_ingroup_redirect,no_agent_ingroup_id,no_agent_ingroup_extension,pre_filter_phone_group_id,pre_filter_extension,entry_list_id,filter_entry_list_id,max_queue_ingroup_calls,max_queue_ingroup_id,max_queue_ingroup_extension,did_carrier_description FROM vicidial_inbound_dids WHERE did_pattern=\"$DIDcopy_from\";";
     $SQL_rslt = mysql_to_mysqli($SQL, $link);
@@ -1050,109 +1078,95 @@ elseif ($form_to_run == "DIDADDconfirmed")
     $INSERTtotal = count($DIDto_insert_CONFIRMED);
     $INSERTgroup_counter = 0;
     $INSERTloopflag = "TRUE";
-    if ($INSERTtotal == $INSERTgroup_limit)
-        {
+    if ($INSERTtotal == $INSERTgroup_limit) {
         $INSERTgroup_counter = 0;
         $INSERTremainder = $INSERTtotal;
-        }
-    else
-        {
-        while ($INSERTloopflag == "TRUE")
-            {
+    } else {
+        while ($INSERTloopflag == "TRUE") {
             $INSERTdifference = $INSERTtotal - $INSERTgroup_limit;
-            if ($INSERTdifference > $INSERTgroup_limit) #If the difference is bigger then we still have more groups to divide out
-                    {
-                    $INSERTtotal = $INSERTdifference;
-                    $INSERTgroup_counter++;
-                    }
-            if (($INSERTdifference >= 0) && ($INSERTdifference <= $INSERTgroup_limit)) # If the difference is between 0 and the group limit then we've reached the end
-                    {
-                    $INSERTgroup_counter++;
-                    $INSERTremainder = $INSERTdifference;
-                    $INSERTloopflag="FALSE";
-                    }
-            if ($INSERTdifference < 0) # If the difference is negative then there's only 1 group and it's less than the grouping number
-                {
+            if ($INSERTdifference > $INSERTgroup_limit) { #If the difference is bigger then we still have more groups to divide out
+                $INSERTtotal = $INSERTdifference;
+                $INSERTgroup_counter++;
+            }
+            if (($INSERTdifference >= 0) && ($INSERTdifference <= $INSERTgroup_limit)) { # If the difference is between 0 and the group limit then we've reached the end
+                $INSERTgroup_counter++;
+                $INSERTremainder = $INSERTdifference;
+                $INSERTloopflag="FALSE";
+            }
+            if ($INSERTdifference < 0) { # If the difference is negative then there's only 1 group and it's less than the grouping number
                 $INSERTgroup_counter = 0;
                 $INSERTremainder = $INSERTtotal;
                 $INSERTloopflag="FALSE";
-                }
             }
-        }    
+        }
+    }
     $INSERTindex = 0;
     $INSERTloopflag = "TRUE";
     $INSERTsqlLOG='';
-    while ($INSERTloopflag == "TRUE")
-        {
+    while ($INSERTloopflag == "TRUE") {
         $DIDto_insert_CONFIRMED[$INSERTindex] = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $DIDto_insert_CONFIRMED[$INSERTindex]);
         $SQL = "INSERT IGNORE INTO vicidial_inbound_dids (did_pattern,did_description,did_active,did_route,extension,exten_context,voicemail_ext,phone,server_ip,user,user_unavailable_action,user_route_settings_ingroup,group_id,call_handle_method,agent_search_method,list_id,campaign_id,phone_code,menu_id,record_call,filter_inbound_number,filter_phone_group_id,filter_url,filter_action,filter_extension,filter_exten_context,filter_voicemail_ext,filter_phone,filter_server_ip,filter_user,filter_user_unavailable_action,filter_user_route_settings_ingroup,filter_group_id,filter_call_handle_method,filter_agent_search_method,filter_list_id,filter_campaign_id,filter_phone_code,filter_menu_id,filter_clean_cid_number,custom_one,custom_two,custom_three,custom_four,custom_five,user_group,filter_dnc_campaign,filter_url_did_redirect,no_agent_ingroup_redirect,no_agent_ingroup_id,no_agent_ingroup_extension,pre_filter_phone_group_id,pre_filter_extension,entry_list_id,filter_entry_list_id,max_queue_ingroup_calls,max_queue_ingroup_id,max_queue_ingroup_extension,did_carrier_description) VALUES ('$DIDto_insert_CONFIRMED[$INSERTindex]','$did_description','$did_active','$did_route','$extension','$exten_context','$voicemail_ext','$phone','$server_ip','$user','$user_unavailable_action','$user_route_settings_ingroup','$group_id','$call_handle_method','$agent_search_method','$list_id','$ACCIDcampaign_id','$phone_code','$menu_id','$record_call','$filter_inbound_number','$filter_phone_group_id','$filter_url','$filter_action','$filter_extension','$filter_exten_context','$filter_voicemail_ext','$filter_phone','$filter_server_ip','$filter_user','$filter_user_unavailable_action','$filter_user_route_settings_ingroup','$filter_group_id','$filter_call_handle_method','$filter_agent_search_method','$filter_list_id','$filter_campaign_id','$filter_phone_code','$filter_menu_id','$filter_clean_cid_number','$custom_one','$custom_two','$custom_three','$custom_four','$custom_five','$user_group','$filter_dnc_campaign','$filter_url_did_redirect','$no_agent_ingroup_redirect','$no_agent_ingroup_id','$no_agent_ingroup_extension','$pre_filter_phone_group_id','$pre_filter_extension','$entry_list_id','$filter_entry_list_id','$max_queue_ingroup_calls','$max_queue_ingroup_id','$max_queue_ingroup_extension','$did_carrier_description')";
         $INSERTindex++;
-        if ($INSERTgroup_counter > 0)
-            {
+        if ($INSERTgroup_counter > 0) {
             $i = 1;
-            while ($i < $INSERTgroup_limit)
-                {
+            while ($i < $INSERTgroup_limit) {
                 $DIDto_insert_CONFIRMED[$INSERTindex] = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $DIDto_insert_CONFIRMED[$INSERTindex]);
                 $SQL.= ",('" . $DIDto_insert_CONFIRMED[$INSERTindex] . "','" . $did_description . "','" . $did_active . "','" . $did_route . "','" . $extension . "','" . $exten_context . "','" . $voicemail_ext . "','" . $phone . "','" . $server_ip . "','" . $user . "','" . $user_unavailable_action . "','" . $user_route_settings_ingroup . "','" . $group_id . "','" . $call_handle_method . "','" . $agent_search_method . "','" . $list_id . "','" . $ACCIDcampaign_id . "','" . $phone_code . "','" . $menu_id . "','" . $record_call . "','" . $filter_inbound_number . "','" . $filter_phone_group_id . "','" . $filter_url . "','" . $filter_action . "','" . $filter_extension . "','" . $filter_exten_context . "','" . $filter_voicemail_ext . "','" . $filter_phone . "','" . $filter_server_ip . "','" . $filter_user . "','" . $filter_user_unavailable_action . "','" . $filter_user_route_settings_ingroup . "','" . $filter_group_id . "','" . $filter_call_handle_method . "','" . $filter_agent_search_method . "','" . $filter_list_id . "','" . $filter_campaign_id . "','" . $filter_phone_code . "','" . $filter_menu_id . "','" . $filter_clean_cid_number . "','" . $custom_one . "','" . $custom_two . "','" . $custom_three . "','" . $custom_four . "','" . $custom_five . "','" . $user_group . "','" . $filter_dnc_campaign . "','" . $filter_url_did_redirect . "','" . $no_agent_ingroup_redirect . "','" . $no_agent_ingroup_id . "','" . $no_agent_ingroup_extension . "','" . $pre_filter_phone_group_id . "','" . $pre_filter_extension . "','" . $entry_list_id . "','" . $filter_entry_list_id . "','" . $max_queue_ingroup_calls . "','" . $max_queue_ingroup_id . "','" . $max_queue_ingroup_extension . "','" . $did_carrier_description . "')";
                 $SQL_sentence.= " |$DIDto_insert_CONFIRMED[$i]";
                 $i++;
                 $INSERTindex++;
-                }    
+            }
             $INSERTgroup_counter--;
-            }
-        else 
-            {
+        } else {
             $i = 1;
-            while ($i < $INSERTremainder)
-                {
+            while ($i < $INSERTremainder) {
                 $DIDto_insert_CONFIRMED[$INSERTindex] = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $DIDto_insert_CONFIRMED[$INSERTindex]);
                 $SQL.= ",('" . $DIDto_insert_CONFIRMED[$INSERTindex] . "','" . $did_description . "','" . $did_active . "','" . $did_route . "','" . $extension . "','" . $exten_context . "','" . $voicemail_ext . "','" . $phone . "','" . $server_ip . "','" . $user . "','" . $user_unavailable_action . "','" . $user_route_settings_ingroup . "','" . $group_id . "','" . $call_handle_method . "','" . $agent_search_method . "','" . $list_id . "','" . $ACCIDcampaign_id . "','" . $phone_code . "','" . $menu_id . "','" . $record_call . "','" . $filter_inbound_number . "','" . $filter_phone_group_id . "','" . $filter_url . "','" . $filter_action . "','" . $filter_extension . "','" . $filter_exten_context . "','" . $filter_voicemail_ext . "','" . $filter_phone . "','" . $filter_server_ip . "','" . $filter_user . "','" . $filter_user_unavailable_action . "','" . $filter_user_route_settings_ingroup . "','" . $filter_group_id . "','" . $filter_call_handle_method . "','" . $filter_agent_search_method . "','" . $filter_list_id . "','" . $filter_campaign_id . "','" . $filter_phone_code . "','" . $filter_menu_id . "','" . $filter_clean_cid_number . "','" . $custom_one . "','" . $custom_two . "','" . $custom_three . "','" . $custom_four . "','" . $custom_five . "','" . $user_group . "','" . $filter_dnc_campaign . "','" . $filter_url_did_redirect . "','" . $no_agent_ingroup_redirect . "','" . $no_agent_ingroup_id . "','" . $no_agent_ingroup_extension . "','" . $pre_filter_phone_group_id . "','" . $pre_filter_extension . "','" . $entry_list_id . "','" . $filter_entry_list_id . "','" . $max_queue_ingroup_calls . "','" . $max_queue_ingroup_id . "','" . $max_queue_ingroup_extension . "','" . $did_carrier_description . "')";
                 $SQL_sentence.= " |$DIDto_insert_CONFIRMED[$i]";
                 $i++;
                 $INSERTindex++;
-                }
-            $INSERTloopflag="FALSE";
             }
-        if ($DB) {echo "$SQL|";}
+            $INSERTloopflag="FALSE";
+        }
+        if ($DB) {
+            echo "$SQL|";
+        }
         $SQL_rslt = mysql_to_mysqli($SQL, $link);
         $INSERTsqlLOG .= "$SQL|";
-        }
+    }
     $SQL_sentence = "DIDs copied from inbound DID #$did_id - $did_pattern:" . $SQL_sentence;
     $SQL_log = $INSERTsqlLOG;
     $SQL_log = preg_replace('/;/', '', $SQL_log);
     $SQL_log = addslashes($SQL_log);
     $admin_log_stmt="INSERT INTO vicidial_admin_log set event_date='$SQLdate', user='$PHP_AUTH_USER', ip_address='$ip', event_section='DIDS', event_type='COPY', record_id='$did_id', event_code='ADMIN COPY BULK DID', event_sql=\"$SQL_log\", event_notes='$SQL_sentence';";
-    if ($DB) {echo "$admin_log_stmt|";}
-    $admin_log_rslt=mysql_to_mysqli($admin_log_stmt, $link);    
+    if ($DB) {
+        echo "$admin_log_stmt|";
+    }
+    $admin_log_rslt=mysql_to_mysqli($admin_log_stmt, $link);
     $ENDtime = date("U");
     $RUNtime = ($ENDtime - $STARTtime);
     echo "<br> "._QXZ("DIDs added").".";
     echo "\n\n\n<br>\n"._QXZ("runtime").": $RUNtime "._QXZ("seconds");
     echo "<br><br><a href=\"admin_bulk_tools.php\">"._QXZ("Go back to tools").".</a>";
-    }
-elseif ($form_to_run == "BULKDIDSDELETE" || $form_to_run == "BULKDIDSDELETETB")
-    {    
-    if ($DIDdelete_from=="BLANK")
-        {
+} elseif ($form_to_run == "BULKDIDSDELETE" || $form_to_run == "BULKDIDSDELETETB") {
+    if ($DIDdelete_from=="BLANK") {
         echo _QXZ("Go back, you did not specify any DIDs to delete.")."\n";
         exit;
-        }
+    }
     $SQL="SELECT COUNT(*) FROM vicidial_inbound_dids where did_pattern not in ('default','did_system_filter');";
     $SQL_rslt=mysql_to_mysqli($SQL, $link);
     $row=mysqli_fetch_row($SQL_rslt);
-    if ($row[0] == count($DIDdelete_from))
-        {
+    if ($row[0] == count($DIDdelete_from)) {
         echo "<b><font color='red'>"._QXZ("WARNING!!!")." <br>";
         echo _QXZ("REALLY DELETE ALL DIDs?!")."</font></b><br>";
-        }
+    }
     echo "<b> "._QXZ("WARNING: The following DIDs will be deleted!!!")."</b>";
     $i = 0;
-    while ($i < count($DIDdelete_from))
-        {
+    while ($i < count($DIDdelete_from)) {
         $DIDdelete_from[$i] = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $DIDdelete_from[$i]);
         echo "<br> $DIDdelete_from[$i]";
         $i++;
-        }
+    }
     $DIDdelete_from = serialize($DIDdelete_from);
     echo "<html><form action=$PHP_SELF method=POST>";
     echo "<input type=hidden name=form_to_run value='BULKDIDSDELETEconfirmed'>";
@@ -1161,136 +1175,120 @@ elseif ($form_to_run == "BULKDIDSDELETE" || $form_to_run == "BULKDIDSDELETETB")
     echo "<tr bgcolor=#". $SSstd_row1_background ."><td colspan=2 align=center><input style='background-color:#$SSbutton_color' type=submit name=did_submit value='CONFIRM'></td></tr>\n";
     echo "</table></center></form>\n";
     echo "</html>";
-    }
-elseif ($form_to_run == "BULKDIDSDELETEconfirmed")
-    {        
+} elseif ($form_to_run == "BULKDIDSDELETEconfirmed") {
     $DIDdelete_from_CONFIRMED = unserialize($DIDdelete_from_CONFIRMED);
     $DIDdelete_from_CONFIRMED[0] = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $DIDdelete_from_CONFIRMED[0]);
     $SQL = "DELETE FROM vicidial_inbound_dids WHERE did_pattern IN ('$DIDdelete_from_CONFIRMED[0]'";
     $i = 1;
-    while ($i < count($DIDdelete_from_CONFIRMED))
-        {
+    while ($i < count($DIDdelete_from_CONFIRMED)) {
         $DIDdelete_from_CONFIRMED[$i] = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $DIDdelete_from_CONFIRMED[$i]);
         $SQL.= ",'" . $DIDdelete_from_CONFIRMED[$i] . "'";
         $i++;
-        }
+    }
     $SQL.= ");";
-    if ($DB) {echo "$SQL|";}
+    if ($DB) {
+        echo "$SQL|";
+    }
     $SQL_rslt = mysql_to_mysqli($SQL, $link);
     $SQL_sentence = " ";
     $SQL_log = "$SQL|";
     $SQL_log = preg_replace('/;/', '', $SQL_log);
     $SQL_log = addslashes($SQL_log);
     $admin_log_stmt="INSERT INTO vicidial_admin_log set event_date='$SQLdate', user='$PHP_AUTH_USER', ip_address='$ip', event_section='DIDS', event_type='DELETE', record_id='0', event_code='ADMIN DELETE BULK DID', event_sql=\"$SQL_log\", event_notes='$SQL_sentence';";
-    if ($DB) {echo "$admin_log_stmt|";}
+    if ($DB) {
+        echo "$admin_log_stmt|";
+    }
     $admin_log_rslt=mysql_to_mysqli($admin_log_stmt, $link);
     echo _QXZ("DIDs have been deleted.")."";
     echo "<br><a href=\"admin_bulk_tools.php\">"._QXZ("Go back to tools").".</a>";
-    }
-elseif ($form_to_run == "BULKUSERS")
-    {
+} elseif ($form_to_run == "BULKUSERS") {
     $USERcount = ($USERstop - $USERstart) + 1;
-    if ($USERstart == "BLANK")
-        {
+    if ($USERstart == "BLANK") {
         echo "<br> "._QXZ("Go back, you have not entered a starting user ID.")."\n";
         exit;
-        }
-    if ($USERstop == "BLANK")
-        {
+    }
+    if ($USERstop == "BLANK") {
         echo "<br> "._QXZ("Go back, You have not entered an ending user ID.")."\n";
         exit;
-        }
-    if ($USERcopy_from == "BLANK")
-        {
+    }
+    if ($USERcopy_from == "BLANK") {
         echo "<br> "._QXZ("Go back, you have not selected a source user to copy from.")."\n";
         exit;
-        }
-    if (strlen($USERstart) < 2 || strlen($USERstart) > 8)
-        {
+    }
+    if (strlen($USERstart) < 2 || strlen($USERstart) > 8) {
         echo _QXZ("Start ID").": $USERstart";
         echo "<br> "._QXZ("Go back, your starting user ID must be between 2 and 8 characters in length.")."\n";
         exit;
-        }
-    if (strlen($USERstop) < 2 || strlen($USERstop) > 8)
-        {
+    }
+    if (strlen($USERstop) < 2 || strlen($USERstop) > 8) {
         echo _QXZ("Stop ID").": $USERstop";
         echo "<br> "._QXZ("Go back, your stopping user ID must be between 2 and 8 characters in length.")."\n";
         exit;
-        }
-    if ($USERstart >= $USERstop)
-        {
+    }
+    if ($USERstart >= $USERstop) {
         echo _QXZ("Start ID").": $USERstart | "._QXZ("Stop ID").": $USERstop";
         echo "<br> "._QXZ("Go back, your starting user ID cannot be more than or equal to your ending user ID.")."\n";
         exit;
-        }
-    if (substr($USERstart, 0, 1) == "0")
-        {
+    }
+    if (substr($USERstart, 0, 1) == "0") {
         echo _QXZ("Start ID").": $USERstart";
         echo "<br> "._QXZ("Go back, your starting user ID cannot begin with a zero.")."\n";
         exit;
-        }
-    if (substr($USERstop, 0, 1) == "0")
-        {
+    }
+    if (substr($USERstop, 0, 1) == "0") {
         echo _QXZ("Stop ID").": $USERstop";
         echo "<br> "._QXZ("Go back, your stopping user ID cannot begin with a zero.")."\n";
         exit;
-        }
-    if ($USERcount > $INSERTmax_limit)
-        {
+    }
+    if ($USERcount > $INSERTmax_limit) {
         echo _QXZ("This tool has a limit of")." $INSERTmax_limit "._QXZ("items. You are trying to insert")." $USERcount. "._QXZ("Please go back and make adjustments.")."\n";
         exit;
-        }
+    }
     $USERduplicate = array();
     $USERto_insert = array();
     $j=0; #duplicate counter
     $k=0; #insert counter
-    while ($USERstart <= $USERstop)
-        {
+    while ($USERstart <= $USERstop) {
         $SQL= "SELECT user FROM vicidial_users WHERE user=$USERstart;";
-        if ($DB) {echo "$SQL|";}
+        if ($DB) {
+            echo "$SQL|";
+        }
         $SQL_rslt=mysql_to_mysqli($SQL, $link);
         $row = mysqli_fetch_row($SQL_rslt);
-        if ($row[0] == $USERstart)
-            {
+        if ($row[0] == $USERstart) {
             $USERduplicate[$j] = $USERstart;
             $j++;
-            }
-        else
-            {
+        } else {
             $USERto_insert[$k] = $USERstart;
             $k++;
-            }
-        $USERstart++;
         }
-    if (empty($USERto_insert[0]))
-        {
+        $USERstart++;
+    }
+    if (empty($USERto_insert[0])) {
         echo "<br> <b>"._QXZ("Go back, all users are duplicates and will not be created").":</b> ";
         $i = 0;
-        while ($i < count($USERduplicate))
-            {
+        while ($i < count($USERduplicate)) {
             echo "<br> $USERduplicate[$i]";
             $i++;
-            }
-        exit;
         }
-    else
-        {
+        exit;
+    } else {
         echo _QXZ("ATTENTION: You are about to insert the following users based off the settings in user")." $USERcopy_from :";
         $i = 0;
-        while ($i < count($USERto_insert))
-            {
+        while ($i < count($USERto_insert)) {
             echo "<br> $USERto_insert[$i]";
             $i++;
-            }
+        }
         echo "<br> "._QXZ("The following users are duplicates and will not be created").": ";
-        if (empty($USERduplicate[0])) {echo "<br> NONE";}
+        if (empty($USERduplicate[0])) {
+            echo "<br> NONE";
+        }
         $i = 0;
-        while ($i < count($USERduplicate))
-            {
+        while ($i < count($USERduplicate)) {
             echo "<br> $USERduplicate[$i]";
             $i++;
-            }
         }
+    }
     $USERto_insert = serialize($USERto_insert);
     echo "<html><form action=$PHP_SELF method=POST>";
     echo "<input type=hidden name=form_to_run value='BULKUSERSconfirmed'>";
@@ -1301,9 +1299,7 @@ elseif ($form_to_run == "BULKUSERS")
     echo "<tr bgcolor=#". $SSstd_row1_background ."><td colspan=2 align=center><input style='background-color:#$SSbutton_color' type=submit name=did_submit value='CONFIRM'></td></tr>\n";
     echo "</table></center></form>\n";
     echo "</html>";
-    }
-elseif ($form_to_run == "BULKUSERSconfirmed")
-    {    
+} elseif ($form_to_run == "BULKUSERSconfirmed") {
     $USERto_insert = unserialize($USERto_insert);
     $SQL = "SELECT user,pass,full_name,user_level,user_group,phone_login,phone_pass,delete_users,delete_user_groups,delete_lists,delete_campaigns,delete_ingroups,delete_remote_agents,load_leads,campaign_detail,ast_admin_access,ast_delete_phones,delete_scripts,modify_leads,hotkeys_active,change_agent_campaign,agent_choose_ingroups,closer_campaigns,scheduled_callbacks,agentonly_callbacks,agentcall_manual,vicidial_recording,vicidial_transfers,delete_filters,alter_agent_interface_options,closer_default_blended,delete_call_times,modify_call_times,modify_users,modify_campaigns,modify_lists,modify_scripts,modify_filters,modify_ingroups,modify_usergroups,modify_remoteagents,modify_servers,view_reports,vicidial_recording_override,alter_custdata_override,qc_enabled,qc_user_level,qc_pass,qc_finish,qc_commit,add_timeclock_log,modify_timeclock_log,delete_timeclock_log,alter_custphone_override,vdc_agent_api_access,modify_inbound_dids,delete_inbound_dids,active,alert_enabled,download_lists,agent_shift_enforcement_override,manager_shift_enforcement_override,shift_override_flag,export_reports,delete_from_dnc,email,user_code,territory,allow_alerts,agent_choose_territories,custom_one,custom_two,custom_three,custom_four,custom_five,voicemail_id,agent_call_log_view_override,callcard_admin,agent_choose_blended,realtime_block_user_info,custom_fields_modify,force_change_password,agent_lead_search_override,modify_shifts,modify_phones,modify_carriers,modify_labels,modify_statuses,modify_voicemail,modify_audiostore,modify_moh,modify_tts,preset_contact_search,modify_contacts,modify_same_user_level,admin_hide_lead_data,admin_hide_phone_data,agentcall_email,modify_email_accounts,failed_login_count,last_login_date,last_ip,pass_hash,alter_admin_interface_options,max_inbound_calls,modify_custom_dialplans,wrapup_seconds_override,modify_languages,selected_language,user_choose_language,ignore_group_on_search,api_list_restrict,api_allowed_functions,lead_filter_id,admin_cf_show_hidden,agentcall_chat,user_hide_realtime,access_recordings,modify_colors,user_nickname,user_new_lead_limit,api_only_user,modify_auto_reports,modify_ip_lists,ignore_ip_list,ready_max_logout,export_gdpr_leads,access_recordings,pause_code_approval,max_hopper_calls,max_hopper_calls_hour,mute_recordings,hide_call_log_info,next_dial_my_callbacks,user_admin_redirect_url,max_inbound_filter_enabled,max_inbound_filter_statuses,max_inbound_filter_ingroups,max_inbound_filter_min_sec,status_group_id,mobile_number,two_factor_override,manual_dial_filter,user_location,download_invalid_files,user_group_two,modify_dial_prefix FROM vicidial_users WHERE user=$USERcopy_from;";
     $SQL_rslt=mysql_to_mysqli($SQL, $link);
@@ -1434,7 +1430,7 @@ elseif ($form_to_run == "BULKUSERSconfirmed")
     $modify_ip_lists                    = $row[123];
     $ignore_ip_list                        = $row[124];
     $ready_max_logout                    = $row[125];
-    $export_gdpr_leads                    = $row[126];    
+    $export_gdpr_leads                    = $row[126];
     $access_recordings                    = $row[127];
     $pause_code_approval                = $row[128];
     $max_hopper_calls                    = $row[129];
@@ -1458,104 +1454,91 @@ elseif ($form_to_run == "BULKUSERSconfirmed")
     $INSERTtotal = count($USERto_insert);
     $INSERTgroup_counter = 0;
     $INSERTloopflag = "TRUE";
-    if ($INSERTtotal == $INSERTgroup_limit)
-        {
+    if ($INSERTtotal == $INSERTgroup_limit) {
         $INSERTremainder = $INSERTtotal;
-        }
-    else
-        {
-        while ($INSERTloopflag == "TRUE")
-            {
+    } else {
+        while ($INSERTloopflag == "TRUE") {
             $INSERTdifference = $INSERTtotal - $INSERTgroup_limit;
-            if ($INSERTdifference > $INSERTgroup_limit) #If the difference is bigger then we still have more groups to divide out
-                    {
-                    $INSERTtotal = $INSERTdifference;
-                    $INSERTgroup_counter++;
-                    }
-            if (($INSERTdifference >= 0) && ($INSERTdifference <= $INSERTgroup_limit)) # If the difference is between 0 and the group limit then we've reached the end
-                    {
-                    $INSERTgroup_counter++;
-                    $INSERTremainder = $INSERTdifference;
-                    $INSERTloopflag="FALSE";
-                    }
-            if ($INSERTdifference < 0) # If the difference is negative then there's only 1 group and it's less than the grouping number
-                {
+            if ($INSERTdifference > $INSERTgroup_limit) { #If the difference is bigger then we still have more groups to divide out
+                $INSERTtotal = $INSERTdifference;
+                $INSERTgroup_counter++;
+            }
+            if (($INSERTdifference >= 0) && ($INSERTdifference <= $INSERTgroup_limit)) { # If the difference is between 0 and the group limit then we've reached the end
+                $INSERTgroup_counter++;
+                $INSERTremainder = $INSERTdifference;
+                $INSERTloopflag="FALSE";
+            }
+            if ($INSERTdifference < 0) { # If the difference is negative then there's only 1 group and it's less than the grouping number
                 $INSERTgroup_counter = 0;
                 $INSERTremainder = $INSERTtotal;
                 $INSERTloopflag="FALSE";
-                }
             }
-        }    
+        }
+    }
     $INSERTindex = 0;
     $INSERTloopflag = "TRUE";
     $INSERTsqlLOG='';
     $users_inserted=0;
-    while ($INSERTloopflag == "TRUE")
-        {
+    while ($INSERTloopflag == "TRUE") {
         $USERto_insert[$INSERTindex] = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $USERto_insert[$INSERTindex]);
         $SQL = "INSERT IGNORE INTO vicidial_users (user,pass,full_name,user_level,user_group,phone_login,phone_pass,delete_users,delete_user_groups,delete_lists,delete_campaigns,delete_ingroups,delete_remote_agents,load_leads,campaign_detail,ast_admin_access,ast_delete_phones,delete_scripts,modify_leads,hotkeys_active,change_agent_campaign,agent_choose_ingroups,closer_campaigns,scheduled_callbacks,agentonly_callbacks,agentcall_manual,vicidial_recording,vicidial_transfers,delete_filters,alter_agent_interface_options,closer_default_blended,delete_call_times,modify_call_times,modify_users,modify_campaigns,modify_lists,modify_scripts,modify_filters,modify_ingroups,modify_usergroups,modify_remoteagents,modify_servers,view_reports,vicidial_recording_override,alter_custdata_override,qc_enabled,qc_user_level,qc_pass,qc_finish,qc_commit,add_timeclock_log,modify_timeclock_log,delete_timeclock_log,alter_custphone_override,vdc_agent_api_access,modify_inbound_dids,delete_inbound_dids,active,alert_enabled,download_lists,agent_shift_enforcement_override,manager_shift_enforcement_override,shift_override_flag,export_reports,delete_from_dnc,email,user_code,territory,allow_alerts,agent_choose_territories,custom_one,custom_two,custom_three,custom_four,custom_five,voicemail_id,agent_call_log_view_override,callcard_admin,agent_choose_blended,realtime_block_user_info,custom_fields_modify,force_change_password,agent_lead_search_override,modify_shifts,modify_phones,modify_carriers,modify_labels,modify_statuses,modify_voicemail,modify_audiostore,modify_moh,modify_tts,preset_contact_search,modify_contacts,modify_same_user_level,admin_hide_lead_data,admin_hide_phone_data,agentcall_email,modify_email_accounts,failed_login_count,last_login_date,last_ip,pass_hash,alter_admin_interface_options,max_inbound_calls,modify_custom_dialplans,wrapup_seconds_override,modify_languages,selected_language,user_choose_language,ignore_group_on_search,api_list_restrict,api_allowed_functions,lead_filter_id,admin_cf_show_hidden,agentcall_chat,user_hide_realtime,access_recordings,modify_colors,user_nickname,user_new_lead_limit,api_only_user,modify_auto_reports,modify_ip_lists,ignore_ip_list,ready_max_logout,export_gdpr_leads,pause_code_approval,max_hopper_calls,max_hopper_calls_hour,mute_recordings,hide_call_log_info,next_dial_my_callbacks,user_admin_redirect_url,max_inbound_filter_enabled,max_inbound_filter_statuses,max_inbound_filter_ingroups,max_inbound_filter_min_sec,status_group_id,mobile_number,two_factor_override,manual_dial_filter,user_location,download_invalid_files,user_group_two,modify_dial_prefix) VALUES ('$USERto_insert[$INSERTindex]','$USERto_insert[$INSERTindex]','$USERto_insert[$INSERTindex]','$user_level','$user_group','$phone_login','$phone_pass','$delete_users','$delete_user_groups','$delete_lists','$delete_campaigns','$delete_ingroups','$delete_remote_agents','$load_leads','$ACCIDcampaign_detail','$ast_admin_access','$ast_delete_phones','$delete_scripts','$modify_leads','$hotkeys_active','$change_agent_campaign','$agent_choose_ingroups','$closer_campaigns','$scheduled_callbacks','$agentonly_callbacks','$agentcall_manual','$vicidial_recording','$vicidial_transfers','$delete_filters','$alter_agent_interface_options','$closer_default_blended','$delete_call_times','$modify_call_times','$modify_users','$modify_campaigns','$modify_lists','$modify_scripts','$modify_filters','$modify_ingroups','$modify_usergroups','$modify_remoteagents','$modify_servers','$view_reports','$vicidial_recording_override','$alter_custdata_override','$qc_enabled','$qc_user_level','$qc_pass','$qc_finish','$qc_commit','$add_timeclock_log','$modify_timeclock_log','$delete_timeclock_log','$alter_custphone_override','$vdc_agent_api_access','$modify_inbound_dids','$delete_inbound_dids','$user_active','$alert_enabled','$download_lists','$agent_shift_enforcement_override','$manager_shift_enforcement_override','$shift_override_flag','$export_reports','$delete_from_dnc','$email','$user_code','$territory','$allow_alerts','$agent_choose_territories','$custom_one','$custom_two','$custom_three','$custom_four','$custom_five','$voicemail_id','$agent_call_log_view_override','$callcard_admin','$agent_choose_blended','$realtime_block_user_info','$custom_fields_modify','$USERforce_pw','$agent_lead_search_override','$modify_shifts','$modify_phones','$modify_carriers','$modify_labels','$modify_statuses','$modify_voicemail','$modify_audiostore','$modify_moh','$modify_tts','$preset_contact_search','$modify_contacts','$modify_same_user_level','$admin_hide_lead_data','$admin_hide_phone_data','$agentcall_email','$modify_email_accounts','$failed_login_count','$last_login_date','$last_ip','$pass_hash','$alter_admin_interface_options','$max_inbound_calls','$modify_custom_dialplans','$wrapup_seconds_override','$modify_languages','$selected_language','$user_choose_language','$ignore_group_on_search','$api_list_restrict','$api_allowed_functions','$lead_filter_id','$admin_cf_show_hidden','$agentcall_chat','$user_hide_realtime','$access_recordings','$modify_colors','$user_nickname','$user_new_lead_limit','$api_only_user','$modify_auto_reports','$modify_ip_lists','$ignore_ip_list','$ready_max_logout','$export_gdpr_leads','$pause_code_approval','$max_hopper_calls','$max_hopper_calls_hour','$mute_recordings','$hide_call_log_info','$next_dial_my_callbacks','$user_admin_redirect_url','$max_inbound_filter_enabled','$max_inbound_filter_statuses','$max_inbound_filter_ingroups','$max_inbound_filter_min_sec','$status_group_id','$mobile_number','$two_factor_override','$manual_dial_filter','$user_location','$download_invalid_files','$user_group_two','$modify_dial_prefix')";
         $INSERTindex++;
         $users_inserted++;
-        if ($INSERTgroup_counter > 0)
-            {
+        if ($INSERTgroup_counter > 0) {
             $i = 1;
-            while ($i < $INSERTgroup_limit)
-                {
+            while ($i < $INSERTgroup_limit) {
                 $USERto_insert[$INSERTindex] = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $USERto_insert[$INSERTindex]);
                 $SQL.= ",('$USERto_insert[$INSERTindex]','$USERto_insert[$INSERTindex]','$USERto_insert[$INSERTindex]','$user_level','$user_group','$phone_login','$phone_pass','$delete_users','$delete_user_groups','$delete_lists','$delete_campaigns','$delete_ingroups','$delete_remote_agents','$load_leads','$ACCIDcampaign_detail','$ast_admin_access','$ast_delete_phones','$delete_scripts','$modify_leads','$hotkeys_active','$change_agent_campaign','$agent_choose_ingroups','$closer_campaigns','$scheduled_callbacks','$agentonly_callbacks','$agentcall_manual','$vicidial_recording','$vicidial_transfers','$delete_filters','$alter_agent_interface_options','$closer_default_blended','$delete_call_times','$modify_call_times','$modify_users','$modify_campaigns','$modify_lists','$modify_scripts','$modify_filters','$modify_ingroups','$modify_usergroups','$modify_remoteagents','$modify_servers','$view_reports','$vicidial_recording_override','$alter_custdata_override','$qc_enabled','$qc_user_level','$qc_pass','$qc_finish','$qc_commit','$add_timeclock_log','$modify_timeclock_log','$delete_timeclock_log','$alter_custphone_override','$vdc_agent_api_access','$modify_inbound_dids','$delete_inbound_dids','$user_active','$alert_enabled','$download_lists','$agent_shift_enforcement_override','$manager_shift_enforcement_override','$shift_override_flag','$export_reports','$delete_from_dnc','$email','$user_code','$territory','$allow_alerts','$agent_choose_territories','$custom_one','$custom_two','$custom_three','$custom_four','$custom_five','$voicemail_id','$agent_call_log_view_override','$callcard_admin','$agent_choose_blended','$realtime_block_user_info','$custom_fields_modify','$USERforce_pw','$agent_lead_search_override','$modify_shifts','$modify_phones','$modify_carriers','$modify_labels','$modify_statuses','$modify_voicemail','$modify_audiostore','$modify_moh','$modify_tts','$preset_contact_search','$modify_contacts','$modify_same_user_level','$admin_hide_lead_data','$admin_hide_phone_data','$agentcall_email','$modify_email_accounts','$failed_login_count','$last_login_date','$last_ip','$pass_hash','$alter_admin_interface_options','$max_inbound_calls','$modify_custom_dialplans','$wrapup_seconds_override','$modify_languages','$selected_language','$user_choose_language','$ignore_group_on_search','$api_list_restrict','$api_allowed_functions','$lead_filter_id','$admin_cf_show_hidden','$agentcall_chat','$user_hide_realtime','$access_recordings','$modify_colors','$user_nickname','$user_new_lead_limit','$api_only_user','$modify_auto_reports','$modify_ip_lists','$ignore_ip_list','$ready_max_logout','$export_gdpr_leads','$pause_code_approval','$max_hopper_calls','$max_hopper_calls_hour','$mute_recordings','$hide_call_log_info','$next_dial_my_callbacks','$user_admin_redirect_url','$max_inbound_filter_enabled','$max_inbound_filter_statuses','$max_inbound_filter_ingroups','$max_inbound_filter_min_sec','$status_group_id','$mobile_number','$two_factor_override','$manual_dial_filter','$user_location','$download_invalid_files','$user_group_two','$modify_dial_prefix')";
                 $SQL_sentence.= " |$USERto_insert[$INSERTindex]";
                 $i++;
                 $INSERTindex++;
                 $users_inserted++;
-                }    
+            }
             $INSERTgroup_counter--;
-            }
-        else 
-            {
+        } else {
             $i = 1;
-            while ($i < $INSERTremainder)
-                {
+            while ($i < $INSERTremainder) {
                 $USERto_insert[$INSERTindex] = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $USERto_insert[$INSERTindex]);
                 $SQL.= ",('$USERto_insert[$INSERTindex]','$USERto_insert[$INSERTindex]','$USERto_insert[$INSERTindex]','$user_level','$user_group','$phone_login','$phone_pass','$delete_users','$delete_user_groups','$delete_lists','$delete_campaigns','$delete_ingroups','$delete_remote_agents','$load_leads','$ACCIDcampaign_detail','$ast_admin_access','$ast_delete_phones','$delete_scripts','$modify_leads','$hotkeys_active','$change_agent_campaign','$agent_choose_ingroups','$closer_campaigns','$scheduled_callbacks','$agentonly_callbacks','$agentcall_manual','$vicidial_recording','$vicidial_transfers','$delete_filters','$alter_agent_interface_options','$closer_default_blended','$delete_call_times','$modify_call_times','$modify_users','$modify_campaigns','$modify_lists','$modify_scripts','$modify_filters','$modify_ingroups','$modify_usergroups','$modify_remoteagents','$modify_servers','$view_reports','$vicidial_recording_override','$alter_custdata_override','$qc_enabled','$qc_user_level','$qc_pass','$qc_finish','$qc_commit','$add_timeclock_log','$modify_timeclock_log','$delete_timeclock_log','$alter_custphone_override','$vdc_agent_api_access','$modify_inbound_dids','$delete_inbound_dids','$user_active','$alert_enabled','$download_lists','$agent_shift_enforcement_override','$manager_shift_enforcement_override','$shift_override_flag','$export_reports','$delete_from_dnc','$email','$user_code','$territory','$allow_alerts','$agent_choose_territories','$custom_one','$custom_two','$custom_three','$custom_four','$custom_five','$voicemail_id','$agent_call_log_view_override','$callcard_admin','$agent_choose_blended','$realtime_block_user_info','$custom_fields_modify','$USERforce_pw','$agent_lead_search_override','$modify_shifts','$modify_phones','$modify_carriers','$modify_labels','$modify_statuses','$modify_voicemail','$modify_audiostore','$modify_moh','$modify_tts','$preset_contact_search','$modify_contacts','$modify_same_user_level','$admin_hide_lead_data','$admin_hide_phone_data','$agentcall_email','$modify_email_accounts','$failed_login_count','$last_login_date','$last_ip','$pass_hash','$alter_admin_interface_options','$max_inbound_calls','$modify_custom_dialplans','$wrapup_seconds_override','$modify_languages','$selected_language','$user_choose_language','$ignore_group_on_search','$api_list_restrict','$api_allowed_functions','$lead_filter_id','$admin_cf_show_hidden','$agentcall_chat','$user_hide_realtime','$access_recordings','$modify_colors','$user_nickname','$user_new_lead_limit','$api_only_user','$modify_auto_reports','$modify_ip_lists','$ignore_ip_list','$ready_max_logout','$export_gdpr_leads','$pause_code_approval','$max_hopper_calls','$max_hopper_calls_hour','$mute_recordings','$hide_call_log_info','$next_dial_my_callbacks','$user_admin_redirect_url','$max_inbound_filter_enabled','$max_inbound_filter_statuses','$max_inbound_filter_ingroups','$max_inbound_filter_min_sec','$status_group_id','$mobile_number','$two_factor_override','$manual_dial_filter','$user_location','$download_invalid_files','$user_group_two','$modify_dial_prefix')";
                 $SQL_sentence.= " |$USERto_insert[$INSERTindex]";
                 $i++;
                 $INSERTindex++;
                 $users_inserted++;
-                }
-            $INSERTloopflag="FALSE";
             }
-        if ($DB) {echo "$SQL|";}
+            $INSERTloopflag="FALSE";
+        }
+        if ($DB) {
+            echo "$SQL|";
+        }
         $SQL_rslt = mysql_to_mysqli($SQL, $link);
         $INSERTsqlLOG .= "$SQL|";
-        }
+    }
     $SQL_sentence = "Users copied from user ID#$user: " . $SQL_sentence;
     $SQL_log = "$INSERTsqlLOG";
     $SQL_log = preg_replace('/;/', '', $SQL_log);
     $SQL_log = addslashes($SQL_log);
     $admin_log_stmt="INSERT INTO vicidial_admin_log set event_date='$SQLdate', user='$PHP_AUTH_USER', ip_address='$ip', event_section='USERS', event_type='COPY', record_id='$USERcopy_from', event_code='ADMIN COPY BULK USERS', event_sql=\"$SQL_log\", event_notes='$users_inserted $SQL_sentence';";
-    if ($DB) {echo "$admin_log_stmt|";}
+    if ($DB) {
+        echo "$admin_log_stmt|";
+    }
     $admin_log_rslt=mysql_to_mysqli($admin_log_stmt, $link);
     $ENDtime = date("U");
     $RUNtime = ($ENDtime - $STARTtime);
     echo "<br> "._QXZ("Users added").": $users_inserted";
     echo "\n\n\n<br>\n"._QXZ("runtime").": $RUNtime "._QXZ("seconds");
     echo "<br><br><a href=\"admin_bulk_tools.php\">"._QXZ("Go back to tools").".</a>";
-    }
-elseif ($form_to_run == "BULKUSERSDELETE") ### BULK USER DELETE
-    {
-    if ($USERdelete_from=="BLANK")
-    {
-    echo _QXZ("Go back, you did not specify any users to delete.")."\n";
-    exit;
+} elseif ($form_to_run == "BULKUSERSDELETE") { ### BULK USER DELETE
+    if ($USERdelete_from=="BLANK") {
+        echo _QXZ("Go back, you did not specify any users to delete.")."\n";
+        exit;
     }
     echo "<b> "._QXZ("WARNING: The following users will be deleted!!!")."</b>";
     $i = 0;
-    while ($i < count($USERdelete_from))
-        {
+    while ($i < count($USERdelete_from)) {
         $USERdelete_from[$i] = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $USERdelete_from[$i]);
         echo "<br> $USERdelete_from[$i]";
         $i++;
-        }
+    }
     $USERdelete_from = serialize($USERdelete_from);
     echo "<html><form action=$PHP_SELF method=POST>";
     echo "<input type=hidden name=form_to_run value='BULKUSERSDELETEconfirmed'>";
@@ -1564,44 +1547,40 @@ elseif ($form_to_run == "BULKUSERSDELETE") ### BULK USER DELETE
     echo "<tr bgcolor=#". $SSstd_row1_background ."><td colspan=2 align=center><input style='background-color:#".$SSbutton_color."' type=submit name=did_submit value='CONFIRM'></td></tr>\n";
     echo "</table></center></form>\n";
     echo "</html>";
-    }
-elseif ($form_to_run == "BULKUSERSDELETEconfirmed")### BULK USER DELETE CONFIRM
-    {
+} elseif ($form_to_run == "BULKUSERSDELETEconfirmed") {### BULK USER DELETE CONFIRM
     $USERdelete_from_CONFIRMED = unserialize($USERdelete_from_CONFIRMED);
     $USERdelete_from_CONFIRMED[0] = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $USERdelete_from_CONFIRMED[0]);
     $SQL = "DELETE FROM vicidial_users WHERE user IN ('$USERdelete_from_CONFIRMED[0]'";
     $i = 1;
-    while ($i < count($USERdelete_from_CONFIRMED))
-        {
+    while ($i < count($USERdelete_from_CONFIRMED)) {
         $USERdelete_from_CONFIRMED[$i] = preg_replace("/\<|\>|\'|\"|\\\\|;/", '', $USERdelete_from_CONFIRMED[$i]);
         $SQL.= ",'" . $USERdelete_from_CONFIRMED[$i] . "'";
         $i++;
-        }
+    }
     $SQL.= ");";
-    if ($DB) {echo "$SQL|";}
+    if ($DB) {
+        echo "$SQL|";
+    }
     $SQL_rslt = mysql_to_mysqli($SQL, $link);
     $SQL_sentence = " ";
     $SQL_log = "|$SQL|";
     $SQL_log = preg_replace('/;/', '', $SQL_log);
     $SQL_log = addslashes($SQL_log);
     $admin_log_stmt="INSERT INTO vicidial_admin_log set event_date='$SQLdate', user='$PHP_AUTH_USER', ip_address='$ip', event_section='USERS', event_type='DELETE', record_id='0', event_code='ADMIN DELETE BULK USERS', event_sql=\"$SQL_log\", event_notes='$SQL_sentence';";
-    if ($DB) {echo "$admin_log_stmt|";}
+    if ($DB) {
+        echo "$admin_log_stmt|";
+    }
     $admin_log_rslt=mysql_to_mysqli($admin_log_stmt, $link);
     echo _QXZ("Deleted.");
     echo "<br><a href=\"admin_bulk_tools.php\">"._QXZ("Go back to tools").".</a>";
-    }
-else
-    {
+} else {
     echo "<html><center><p>"._QXZ("These are tools for adding, copying and deleting DIDs, Campaign AC-CIDs and Users.")."<br>"._QXZ("Adding and copying are limited to")." $INSERTmax_limit "._QXZ("per run").".<br></p>";
-    if ( $modify_dids < 1 )
-        {
+    if ($modify_dids < 1) {
         echo "<center><table width=$section_width cellspacing='3'>";
         echo "<tr bgcolor=#". $SSmenu_background ."><td colspan=2 align=center><font color=white><b>"._QXZ("DID Bulk Copy")."</b></font>$NWB#DIDADD$NWE</td></tr>\n";
         echo "<tr bgcolor=#". $SSstd_row1_background ."><td colspan=2 align=center><font color=black><b>"._QXZ("You do not have permission to use this section.")."</b></font></td></tr>\n";
         echo "</table></center>\n";
-        }
-    else 
-        {
+    } else {
         echo "<form action=$PHP_SELF method='post'>";
         echo "<input type=hidden name=form_to_run value='BULKDIDS'>";
         echo "<input type=hidden name=DB value='$DB'>";
@@ -1611,39 +1590,36 @@ else
         echo "<tr bgcolor=#". $SSstd_row1_background ."><td align=right>"._QXZ("DID to copy from").": </td><td align=left>\n";
         $dids_to_copy = array();
         $SQL="SELECT did_pattern,did_description FROM vicidial_inbound_dids WHERE $admin_viewable_groupsSQL ORDER BY did_pattern ASC;";
-        if ($DB) {echo "$SQL|";}
+        if ($DB) {
+            echo "$SQL|";
+        }
         $SQL_rslt = mysql_to_mysqli($SQL, $link);
         $did_count = mysqli_num_rows($SQL_rslt);
         $i = 0;
-        while ($i < $did_count)
-            {
+        while ($i < $did_count) {
             $row = mysqli_fetch_row($SQL_rslt);
             $dids_to_copy[$i] = $row[0];
             $dids_to_copy_name[$i] = $row[1];
             $i++;
-            }
+        }
         echo "<select size=1 name=DIDcopy_from>\n";
         echo "<option value='BLANK'>"._QXZ("Select a DID")."</option>\n";
         $i = 0;
-        while ( $i < $did_count )
-            {
+        while ($i < $did_count) {
             echo "<option value='$dids_to_copy[$i]'>$dids_to_copy[$i] - $dids_to_copy_name[$i]</option>\n";
             $i++;
-            }
+        }
         echo "</select></td></tr>\n";
         echo "<tr bgcolor=#". $SSstd_row1_background ."><td align=right>"._QXZ("DIDs to insert").":</td><td align=left><textarea name='DIDto_insert' cols='11' rows='10'></textarea></td></td></tr>";
         echo "<tr bgcolor=#". $SSstd_row1_background ."><td colspan=2 align=center><input style='background-color:#$SSbutton_color' type=submit name=did_submit value='"._QXZ("Submit")."'></td></tr>\n";
         echo "</table></center></form>\n";
-        }
-    if ( $modify_dids < 1  || $delete_dids < 1 )
-        {
+    }
+    if ($modify_dids < 1  || $delete_dids < 1) {
         echo "<center><table width=$section_width cellspacing='3'>";
         echo "<tr bgcolor=#". $SSmenu_background ."><td colspan=2 align=center><font color=white><b>"._QXZ("DID Bulk Delete")."</b>$NWB#DIDDELETE$NWE</font></td></tr>\n";
         echo "<tr bgcolor=#". $SSstd_row1_background ."><td colspan=2 align=center><font color=black><b>"._QXZ("You do not have permission to use this section.")."</b></font></td></tr>\n";
         echo "</table></center>\n";
-        }
-    else
-        {
+    } else {
         // Original delete form
         echo "<html><form action=$PHP_SELF method=POST>";
         echo "<input type=hidden name=form_to_run value='BULKDIDSDELETE'>";
@@ -1654,24 +1630,24 @@ else
         echo "<tr bgcolor=#". $SSstd_row1_background ."><td align=right>"._QXZ("DIDs to delete").": </td><td align=left>\n";
         $DIDto_copy = array();
         $SQL="SELECT did_pattern,did_description FROM vicidial_inbound_dids WHERE did_pattern NOT IN ('default','did_system_filter') AND $admin_viewable_groupsSQL ORDER BY did_pattern ASC;";
-        if ($DB) {echo "$SQL|";}
+        if ($DB) {
+            echo "$SQL|";
+        }
         $SQL_rslt = mysql_to_mysqli($SQL, $link);
         $did_count = mysqli_num_rows($SQL_rslt);
         $i = 0;
-        while ($i < $did_count)
-            {
+        while ($i < $did_count) {
             $row = mysqli_fetch_row($SQL_rslt);
             $DIDto_delete[$i] = $row[0];
             $DIDto_delete_desc[$i] = $row[1];
             $i++;
-            }
+        }
         echo "<select multiple size=10 name='DIDdelete_from[]'>\n";
         $i = 0;
-        while ( $i < $did_count )
-            {
+        while ($i < $did_count) {
             echo "<option value='$DIDto_delete[$i]'>$DIDto_delete[$i] - $DIDto_delete_desc[$i]</option>\n";
             $i++;
-            }
+        }
         echo "</select></td></tr>\n";
         echo "<tr bgcolor=#". $SSstd_row1_background ."><td colspan=2 align=center><input style='background-color:#$SSbutton_color' type=submit name=did_submit value='"._QXZ("Submit")."'></td></tr>\n";
         echo "</table></center></form><br>\n";
@@ -1686,23 +1662,20 @@ else
         echo "<tr bgcolor=#". $SSstd_row1_background ."><td colspan=2 align=center><input style='background-color:#$SSbutton_color' type=submit name=did_submit value='"._QXZ("Submit")."'></td></tr>\n";
         echo "</table></center></form>\n";
         echo "</html>";
-        }
-    if ( $modify_campaigns < 1 )
-        {
+    }
+    if ($modify_campaigns < 1) {
         echo "<center><table width=$section_width cellspacing='3'>";
         echo "<tr bgcolor=#". $SSmenu_background ."><td colspan=2 align=center><font color=white><b>"._QXZ("CID Groups and AC-CID Bulk Add")."</b>$NWB#ACCIDADD$NWE</font></td></tr>\n";
         echo "<tr bgcolor=#". $SSstd_row1_background ."><td colspan=2 align=center><font color=black><b>"._QXZ("You do not have permission to use this section.")."</b></font></td></tr>\n";
         echo "</table></center>\n";
-        }
-    else 
-        {
+    } else {
         echo "<form action=$PHP_SELF method='post'>";
         echo "<input type=hidden name=form_to_run value='ACCID'>";
         echo "<input type=hidden name=DB value='$DB'>";
         echo "<center><table width=$section_width cellspacing='3'>";
         echo "<col width=50%><col width=50%>";
         echo "<tr bgcolor=#". $SSmenu_background ."><td colspan=2 align=center><font color=white><b>"._QXZ("CID Groups and AC-CID Bulk Add")."</b>$NWB#ACCIDADD$NWE</font></td></tr>\n";
-        echo "<tr bgcolor=#". $SSstd_row1_background ."><td align=right>"._QXZ("Method").": </td><td align=left><select size=1 name=ACCIDmethod>\n";    
+        echo "<tr bgcolor=#". $SSstd_row1_background ."><td align=right>"._QXZ("Method").": </td><td align=left><select size=1 name=ACCIDmethod>\n";
         echo "<option value='CID'>"._QXZ("STATE LOOKUP")."</option>\n";
         echo "<option value='CSV'>"._QXZ("CSV")."</option>\n";
         echo "<option value='STATEFILL'>"._QXZ("STATE FILL")."</option>\n";
@@ -1710,62 +1683,60 @@ else
         echo "<tr bgcolor=#". $SSstd_row1_background ."><td align=right>"._QXZ("Campaign or CID Group").":</td><td align=left>\n";
         $ACCIDcampaigns_to_copy = array();
         $SQL="SELECT campaign_id,campaign_name FROM vicidial_campaigns WHERE $allowed_campaignsSQL AND $admin_viewable_groupsSQL ORDER BY campaign_id ASC;";
-        if ($DB) {echo "$SQL|";}
+        if ($DB) {
+            echo "$SQL|";
+        }
         $SQL_rslt = mysql_to_mysqli($SQL, $link);
         $camp_count = mysqli_num_rows($SQL_rslt);
         $i = 0;
         $g = 0;
-        while ($i < $camp_count)
-            {
+        while ($i < $camp_count) {
             $row = mysqli_fetch_row($SQL_rslt);
             $ACCIDcampaigns_to_copy[$g] = $row[0];
             $ACCIDcampaigns_to_copy_names[$g] = $row[1];
             $ACCIDcampaigns_to_copy_type[$g] = _QXZ('AREACODE');
             $i++;
             $g++;
-            }
+        }
         $SQL="SELECT cid_group_id,cid_group_notes,cid_group_type FROM vicidial_cid_groups WHERE $admin_viewable_groupsSQL ORDER BY cid_group_id ASC;";
-        if ($DB) {echo "$SQL|";}
+        if ($DB) {
+            echo "$SQL|";
+        }
         $SQL_rslt = mysql_to_mysqli($SQL, $link);
         $cgid_count = mysqli_num_rows($SQL_rslt);
         $i = 0;
-        while ($i < $cgid_count)
-            {
+        while ($i < $cgid_count) {
             $row = mysqli_fetch_row($SQL_rslt);
             $ACCIDcampaigns_to_copy[$g] = $row[0];
             $ACCIDcampaigns_to_copy_names[$g] = $row[1];
             $ACCIDcampaigns_to_copy_type[$g] = _QXZ("$row[2]");
             $i++;
             $g++;
-            }
+        }
         echo "<select size=1 name=ACCIDcampaign>\n";
         echo "<option value='BLANK'>"._QXZ("Select a campaign or CID group")."</option>\n";
         $i = 0;
-        while ( $i < $g )
-            {
+        while ($i < $g) {
             echo "<option value='$ACCIDcampaigns_to_copy[$i]'>$ACCIDcampaigns_to_copy[$i] - $ACCIDcampaigns_to_copy_type[$i] - $ACCIDcampaigns_to_copy_names[$i]</option>\n";
             $i++;
-            }
-        echo "</select></td></tr>\n";    
-        echo "<tr bgcolor=#". $SSstd_row1_background ."><td align=right>"._QXZ("Active")."?:</td><td align=left><select size=1 name=ACCIDactive>\n";    
+        }
+        echo "</select></td></tr>\n";
+        echo "<tr bgcolor=#". $SSstd_row1_background ."><td align=right>"._QXZ("Active")."?:</td><td align=left><select size=1 name=ACCIDactive>\n";
         echo "<option value='N'>"._QXZ("No")."</option>\n";
         echo "<option value='Y'>"._QXZ("Yes")."</option>\n";
         echo "<option value='F'>"._QXZ("Input")."</option>\n";
-        echo "</select></td></tr>\n";    
-        echo "<tr bgcolor=#". $SSstd_row1_background ."><td align=right>"._QXZ("CID Group and AC-CID entries").":</td><td align=left><textarea name='ACCIDdids' cols='70' rows='10'></textarea></td>\n";    
+        echo "</select></td></tr>\n";
+        echo "<tr bgcolor=#". $SSstd_row1_background ."><td align=right>"._QXZ("CID Group and AC-CID entries").":</td><td align=left><textarea name='ACCIDdids' cols='70' rows='10'></textarea></td>\n";
         echo "<tr bgcolor=#". $SSstd_row1_background ."><td colspan=2 align=center><input style='background-color:#$SSbutton_color' type=submit name=accid_submit value='"._QXZ("Submit")."'></td></tr>\n";
         echo "</table></center></form>\n";
         echo "</html>";
-        }
-    if ( $delete_campaigns < 1 )
-        {
+    }
+    if ($delete_campaigns < 1) {
         echo "<center><table width=$section_width cellspacing='3'>";
         echo "<tr bgcolor=#". $SSmenu_background ."><td colspan=2 align=center><font color=white><b>"._QXZ("CID Groups and AC-CID Bulk Delete")."</b>$NWB#ACCIDDELETE$NWE</font></td></tr>\n";
         echo "<tr bgcolor=#". $SSstd_row1_background ."><td colspan=2 align=center><font color=black><b>"._QXZ("You do not have permission to use this section.")."</b></font></td></tr>\n";
         echo "</table></center>\n";
-        }
-    else 
-        {
+    } else {
         echo "<form action=$PHP_SELF method='post'>";
         echo "<input type=hidden name=form_to_run value='ACCIDDELETEselect'>";
         echo "<input type=hidden name=DB value='$DB'>";
@@ -1775,47 +1746,48 @@ else
         echo "<tr bgcolor=#". $SSstd_row1_background ."><td align=right>"._QXZ("Campaign or CID Group").":</td><td align=left>\n";
         $ACCIDdelete_campaign_selection = array();
         $SQL="SELECT campaign_id,campaign_name from vicidial_campaigns WHERE campaign_id IN (select distinct campaign_id from vicidial_campaign_cid_areacodes) AND $allowed_campaignsSQL AND $admin_viewable_groupsSQL ORDER BY campaign_id ASC;";
-        if ($DB) {echo "$SQL|";}
+        if ($DB) {
+            echo "$SQL|";
+        }
         $SQL_rslt = mysql_to_mysqli($SQL, $link);
         $camp_count = mysqli_num_rows($SQL_rslt);
         $i = 0;
         $g = 0;
-        while ($i < $camp_count)
-            {
+        while ($i < $camp_count) {
             $row = mysqli_fetch_row($SQL_rslt);
             $ACCIDdelete_campaign_selection[$g] = $row[0];
             $ACCIDdelete_campaign_name[$g] = $row[1];
             $ACCIDdelete_campaign_type[$g] = _QXZ('AREACODE');
             $i++;
             $g++;
-            }
+        }
         $SQL="SELECT cid_group_id,cid_group_notes,cid_group_type FROM vicidial_cid_groups WHERE $admin_viewable_groupsSQL ORDER BY cid_group_id ASC;";
-        if ($DB) {echo "$SQL|";}
+        if ($DB) {
+            echo "$SQL|";
+        }
         $SQL_rslt = mysql_to_mysqli($SQL, $link);
         $cgid_count = mysqli_num_rows($SQL_rslt);
         $i = 0;
-        while ($i < $cgid_count)
-            {
+        while ($i < $cgid_count) {
             $row = mysqli_fetch_row($SQL_rslt);
             $ACCIDdelete_campaign_selection[$g] = $row[0];
             $ACCIDdelete_campaign_name[$g] = $row[1];
             $ACCIDdelete_campaign_type[$g] = _QXZ("$row[2]");
             $i++;
             $g++;
-            }
+        }
         echo "<select size=1 name=ACCIDdelete_campaign>\n";
         echo "<option value='BLANK'>"._QXZ("Select a campaign or CID group")."</option>\n";
         $i = 0;
-        while ( $i < $g )
-            {
+        while ($i < $g) {
             echo "<option value='$ACCIDdelete_campaign_selection[$i]'>$ACCIDdelete_campaign_selection[$i] - $ACCIDdelete_campaign_type[$i] - $ACCIDdelete_campaign_name[$i]</option>\n";
             $i++;
-            }    
+        }
         echo "</select></td></tr>\n";
-        echo "<tr bgcolor=#". $SSstd_row1_background ."><td align=right>"._QXZ("Clear all CID Group or AC-CID entries?").":</td><td align=left><select size=1 name=ACCIDclear_all>\n";    
+        echo "<tr bgcolor=#". $SSstd_row1_background ."><td align=right>"._QXZ("Clear all CID Group or AC-CID entries?").":</td><td align=left><select size=1 name=ACCIDclear_all>\n";
         echo "<option value='N'>"._QXZ("No")."</option>\n";
         echo "<option value='Y'>"._QXZ("Yes")."</option>\n";
-        echo "</select></td></tr>\n";        
+        echo "</select></td></tr>\n";
         echo "<tr bgcolor=#". $SSstd_row1_background ."><td colspan=2 align=center><input style='background-color:#$SSbutton_color' type=submit name=accid_submit value='"._QXZ("Submit")."'></td></tr>\n";
         echo "</table></center></form>\n";
         echo "</html>";
@@ -1829,58 +1801,56 @@ else
         echo "<tr bgcolor=#". $SSstd_row1_background ."><td align=right>"._QXZ("Campaign or CID Group").":</td><td align=left>\n";
         $ACCIDdelete_campaign_selection = array();
         $SQL="SELECT campaign_id,campaign_name from vicidial_campaigns WHERE campaign_id IN (select distinct campaign_id from vicidial_campaign_cid_areacodes) AND $allowed_campaignsSQL AND $admin_viewable_groupsSQL ORDER BY campaign_id ASC;";
-        if ($DB) {echo "$SQL|";}
+        if ($DB) {
+            echo "$SQL|";
+        }
         $SQL_rslt = mysql_to_mysqli($SQL, $link);
         $camp_count = mysqli_num_rows($SQL_rslt);
         $i = 0;
         $g = 0;
-        while ($i < $camp_count)
-            {
+        while ($i < $camp_count) {
             $row = mysqli_fetch_row($SQL_rslt);
             $ACCIDdelete_campaign_selection[$g] = $row[0];
             $ACCIDdelete_campaign_name[$g] = $row[1];
             $ACCIDdelete_campaign_type[$g] = _QXZ('AREACODE');
             $i++;
             $g++;
-            }
+        }
         $SQL="SELECT cid_group_id,cid_group_notes,cid_group_type FROM vicidial_cid_groups WHERE $admin_viewable_groupsSQL ORDER BY cid_group_id ASC;";
-        if ($DB) {echo "$SQL|";}
+        if ($DB) {
+            echo "$SQL|";
+        }
         $SQL_rslt = mysql_to_mysqli($SQL, $link);
         $cgid_count = mysqli_num_rows($SQL_rslt);
         $i = 0;
-        while ($i < $cgid_count)
-            {
+        while ($i < $cgid_count) {
             $row = mysqli_fetch_row($SQL_rslt);
             $ACCIDdelete_campaign_selection[$g] = $row[0];
             $ACCIDdelete_campaign_name[$g] = $row[1];
             $ACCIDdelete_campaign_type[$g] = _QXZ("$row[2]");
             $i++;
             $g++;
-            }
+        }
         echo "<select size=1 name=ACCIDdelete_campaign>\n";
         echo "<option value='BLANK'>"._QXZ("Select a campaign or CID group")."</option>\n";
         echo "<option value='---ALL---'>---ALL---</option>\n";
         $i = 0;
-        while ( $i < $g )
-            {
+        while ($i < $g) {
             echo "<option value='$ACCIDdelete_campaign_selection[$i]'>$ACCIDdelete_campaign_selection[$i] - $ACCIDdelete_campaign_type[$i] - $ACCIDdelete_campaign_name[$i]</option>\n";
             $i++;
-            }    
+        }
         echo "</select></td></tr>\n";
         echo "<tr bgcolor=#". $SSstd_row1_background ."><td align=right>"._QXZ("CIDs to delete").":</td><td align=left><textarea name='ACCIDdelete_from' cols='11' rows='10'></textarea></td></td></tr>";
         echo "<tr bgcolor=#". $SSstd_row1_background ."><td colspan=2 align=center><input style='background-color:#$SSbutton_color' type=submit name=did_submit value='"._QXZ("Submit")."'></td></tr>\n";
         echo "</table></center></form>\n";
         echo "</html>";
-        }
-    if ( $modify_users < 1 )
-        {
+    }
+    if ($modify_users < 1) {
         echo "<center><table width=$section_width cellspacing='3'>";
         echo "<tr bgcolor=#". $SSmenu_background ."><td colspan=2 align=center><font color=white><b>"._QXZ("User Bulk Copy")."</b>$NWB#USERADD$NWE</font></td></tr>\n";
         echo "<tr bgcolor=#". $SSstd_row1_background ."><td colspan=2 align=center><font color=black><b>"._QXZ("You do not have permission to use this section.")."</b></font></td></tr>\n";
         echo "</table></center>\n";
-        }
-    else
-        {
+    } else {
         echo "<html><form action=$PHP_SELF method=POST>";
         echo "<input type=hidden name=form_to_run value='BULKUSERS'>";
         echo "<input type=hidden name=DB value='$DB'>";
@@ -1890,45 +1860,42 @@ else
         echo "<tr bgcolor=#". $SSstd_row1_background ."><td align=right>"._QXZ("User to copy from").": </td><td align=left>\n";
         $USERto_copy = array();
         $SQL="SELECT user, full_name FROM vicidial_users WHERE user NOT IN ('VDAD','VDCL') AND $admin_viewable_groupsSQL ORDER BY user ASC;";
-        if ($DB) {echo "$SQL|";}
+        if ($DB) {
+            echo "$SQL|";
+        }
         $SQL_rslt = mysql_to_mysqli($SQL, $link);
         $user_count = mysqli_num_rows($SQL_rslt);
         $i = 0;
-        while ($i < $user_count)
-            {
+        while ($i < $user_count) {
             $row = mysqli_fetch_row($SQL_rslt);
             $USERto_copy[$i] = $row[0];
             $USERto_copy_name[$i] = $row[1];
             $i++;
-            }
+        }
         echo "<select size=1 name=USERcopy_from>\n";
         echo "<option value='BLANK'>"._QXZ("Select a user")."</option>\n";
         $i = 0;
-        while ( $i < $user_count )
-            {
+        while ($i < $user_count) {
             echo "<option value='$USERto_copy[$i]'>$USERto_copy[$i] - $USERto_copy_name[$i]</option>\n";
             $i++;
-            }
+        }
         echo "</select></td></tr>\n";
         echo "<tr bgcolor=#". $SSstd_row1_background ."><td align=right>"._QXZ("User Start ID").":</td><td align=left><input type='text' name='USERstart'></td></td></tr>";
         echo "<tr bgcolor=#". $SSstd_row1_background ."><td align=right>"._QXZ("User Stop ID").":</td><td align=left><input type='text' name='USERstop'></td></td></tr>";
-        echo "<tr bgcolor=#". $SSstd_row1_background ."><td align=right>"._QXZ("Force PW change?").":</td><td align=left><select size=1 name=USERforce_pw>\n";    
+        echo "<tr bgcolor=#". $SSstd_row1_background ."><td align=right>"._QXZ("Force PW change?").":</td><td align=left><select size=1 name=USERforce_pw>\n";
         echo "<option value='N'>"._QXZ("No")."</option>\n";
         echo "<option value='Y'>"._QXZ("Yes")."</option>\n";
         echo "</select></td></tr>\n";
         echo "<tr bgcolor=#". $SSstd_row1_background ."><td colspan=2 align=center><input style='background-color:#$SSbutton_color' type=submit name=did_submit value='"._QXZ("Submit")."'></td></tr>\n";
         echo "</table></center></form>\n";
         echo "</html>";
-        }
-    if ( $delete_users < 1 || $modify_users < 1)
-        {
+    }
+    if ($delete_users < 1 || $modify_users < 1) {
         echo "<center><table width=$section_width cellspacing='3'>";
         echo "<tr bgcolor=#". $SSmenu_background ."><td colspan=2 align=center><font color=white><b>"._QXZ("User Bulk Delete")."</b>$NWB#USERDELETE$NWE</font></td></tr>\n";
         echo "<tr bgcolor=#". $SSstd_row1_background ."><td colspan=2 align=center><font color=black><b>"._QXZ("You do not have permission to use this section.")."</b></font></td></tr>\n";
         echo "</table></center>\n";
-        }
-    else
-        {
+    } else {
         echo "<html><form action=$PHP_SELF method=POST>";
         echo "<input type=hidden name=form_to_run value='BULKUSERSDELETE'>";
         echo "<input type=hidden name=DB value='$DB'>";
@@ -1937,56 +1904,51 @@ else
         echo "<tr bgcolor=#". $SSmenu_background ."><td colspan=2 align=center><font color=white><b>"._QXZ("User Bulk Delete")."</b>$NWB#USERDELETE$NWE</font></td></tr>\n";
         echo "<tr bgcolor=#". $SSstd_row1_background ."><td align=right>"._QXZ("Users to delete").": </td><td align=left>\n";
         $SQL = "SELECT user FROM vicidial_live_agents;";
-        if ($DB) {echo "$SQL|";}
+        if ($DB) {
+            echo "$SQL|";
+        }
         $SQL_rslt = mysql_to_mysqli($SQL, $link);
         $user_count = mysqli_num_rows($SQL_rslt);
-        if ($user_count == 0)
-            {
+        if ($user_count == 0) {
             $live_agentsSQL = "''";
-            }
-        else
-            {
+        } else {
             $i = 0;
-            while ($i < $user_count)
-                {
+            while ($i < $user_count) {
                 $row = mysqli_fetch_row($SQL_rslt);
                 $live_agentsSQL.= "'" . $row[0] . "',";
                 $i++;
-                }
+            }
             $live_agentsSQL.="''";
-            }
+        }
         $USERto_delete = array();
-        if ($modify_level != 1)
-            {
+        if ($modify_level != 1) {
             $SQL="SELECT user, full_name FROM vicidial_users WHERE user NOT IN ('VDAD','VDCL','$PHP_AUTH_USER',$live_agentsSQL) AND user_level != 9 AND $admin_viewable_groupsSQL ORDER BY user ASC;";
-            }
-        else
-            {
+        } else {
             $SQL="SELECT user, full_name FROM vicidial_users WHERE user NOT IN ('VDAD','VDCL','$PHP_AUTH_USER',$live_agentsSQL) AND $admin_viewable_groupsSQL ORDER BY user ASC;";
-            }
-        if ($DB) {echo "$SQL|";}
+        }
+        if ($DB) {
+            echo "$SQL|";
+        }
         $SQL_rslt = mysql_to_mysqli($SQL, $link);
         $user_count = mysqli_num_rows($SQL_rslt);
         $i = 0;
-        while ($i < $user_count)
-            {
+        while ($i < $user_count) {
             $row = mysqli_fetch_row($SQL_rslt);
             $USERto_delete[$i] = $row[0];
             $USERto_delete_name[$i] = $row[1];
             $i++;
-            }    
+        }
         echo "<select multiple size=10 name='USERdelete_from[]'>\n";
         $i = 0;
-        while ( $i < $user_count )
-            {
+        while ($i < $user_count) {
             echo "<option value='$USERto_delete[$i]'>$USERto_delete[$i] - $USERto_delete_name[$i]</option>\n";
             $i++;
-            }
+        }
         echo "</select></td></tr>\n";
         echo "<tr bgcolor=#". $SSstd_row1_background ."><td colspan=2 align=center><input style='background-color:#$SSbutton_color' type=submit name=did_submit value='"._QXZ("Submit")."'></td></tr>\n";
         echo "</table></center></form>\n";
         echo "<br> <font size=1><p align=left>"._QXZ("Version").": $version   "._QXZ("Build").": $build</p></font>";
         echo "</html>";
-        }
     }
+}
 ?>
