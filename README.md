@@ -22,7 +22,7 @@ The mDial project manifesto serves as a guiding framework to drive the developme
 You may donate to the project here via Paypal
 
 <a href="https://www.paypal.com/donate/?hosted_button_id=NXHLRZJY6FHM2">
-  <img src="https://raw.githubusercontent.com/stefan-niedermann/paypal-donate-button/master/paypal-donate-button.png" height=40 alt="Donate with PayPal" />
+  <img src="https://raw.githubusercontent.com/stefan-niedermann/paypal-donate-button/master/paypal-donate-button.png" height=80 alt="Donate with PayPal" />
 </a>
 
 # Contact
