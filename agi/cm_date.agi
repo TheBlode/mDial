@@ -31,83 +31,80 @@
 # *
 # * Bug reports, feature requests and patches welcome!
 # * ======================================== */
-$script = 'cm_date.agi';
+$script         = 'cm_date.agi';
 $now_date_epoch = time();
-$now_date = time();
-$AGILOG = '1';   # 1=STDERR output
-$exten='';
+$now_date       = time();
+$AGILOG         = '1';             # 1=STDERR output
+$exten          = '';
 use Asterisk::AGI;
 $AGI = new Asterisk::AGI;
 $AGI->stream_file('sip-silence');
 $AGI->stream_file('sip-silence');
 $AGI->stream_file('sip-silence');
-if (length($ARGV[0])>1)
-	{
-	if ($AGILOG) {$agi_string = "Perl Environment Dump:";   &agi_output;}
-	$i=0;
-	while ($#ARGV >= $i)
-		{
-		$args = "$args $ARGV[$i]";
-		if ($AGILOG) {$agi_string = "$i|$ARGV[$i]";   &agi_output;}
-		$i++;
-		}
-	@ARGV_vars = split(/---/, $ARGV[0]);
-	$epoch_offset = 			$ARGV_vars[0];
-	$datetime_format =			$ARGV_vars[1];
-	}
-$|=1;
-while(<STDIN>) 
-	{
-	chomp;
-	last unless length($_);
-	if ($AGILOG)
-		{
-		if (/^agi_(\w+)\:\s+(.*)$/)
-			{
-			$AGI{$1} = $2;
-			}
-		}
-	if (/^agi_context\:\s+(.*)$/)		{$context = $1;}
-	}
-$new_epoch = ($now_date_epoch + $epoch_offset);
-if ($AGILOG) {$agi_string = "Date Epoch: |$now_date_epoch|$epoch_offset|$new_epoch|    Format: |$datetime_format|";   &agi_output;}
-print "SAY DATETIME $new_epoch 0 \"$datetime_format\"\n";   checkresult($result);
+
+if ( length( $ARGV[0] ) > 1 ) {
+    if ($AGILOG) { $agi_string = "Perl Environment Dump:"; &agi_output; }
+    $i = 0;
+    while ( $#ARGV >= $i ) {
+        $args = "$args $ARGV[$i]";
+        if ($AGILOG) { $agi_string = "$i|$ARGV[$i]"; &agi_output; }
+        $i++;
+    }
+    @ARGV_vars       = split( /---/, $ARGV[0] );
+    $epoch_offset    = $ARGV_vars[0];
+    $datetime_format = $ARGV_vars[1];
+}
+$| = 1;
+while (<STDIN>) {
+    chomp;
+    last unless length($_);
+    if ($AGILOG) {
+        if (/^agi_(\w+)\:\s+(.*)$/) {
+            $AGI{$1} = $2;
+        }
+    }
+    if (/^agi_context\:\s+(.*)$/) { $context = $1; }
+}
+$new_epoch = ( $now_date_epoch + $epoch_offset );
+if ($AGILOG) {
+    $agi_string =
+"Date Epoch: |$now_date_epoch|$epoch_offset|$new_epoch|    Format: |$datetime_format|";
+    &agi_output;
+}
+print "SAY DATETIME $new_epoch 0 \"$datetime_format\"\n";
+checkresult($result);
 exit;
-sub checkresult 
-	{
-	$pass=0;
-	$fail=0;
-	my ($res) = @_;
-	my $retval;
-	$tests++;
-	chomp $res;
-	if ($res =~ /^200/) 
-		{
-		$res =~ /result=(-?\d+)/;
-		if (!length($1)) 
-			{
-			$fail++;
-			} 
-		else 
-			{
-			$pass++;
-			}
-		} 
-	else 
-		{
-		$fail++;
-		}
-	}
-sub agi_output
-	{
-	if ($AGILOG >=2)
-		{
-		open(Lout, ">>$AGILOGfile")
-				|| die "Can't open $AGILOGfile: $!\n";
-		print Lout "$now_date|$script|$agi_string\n";
-		close(Lout);
-		}
-	if ( ($AGILOG == '1') || ($AGILOG == '3') )
-		{print STDERR "$now_date|$script|$agi_string\n";}
-	$agi_string='';
-	}
+
+sub checkresult {
+    $pass = 0;
+    $fail = 0;
+    my ($res) = @_;
+    my $retval;
+    $tests++;
+    chomp $res;
+    if ( $res =~ /^200/ ) {
+        $res =~ /result=(-?\d+)/;
+        if ( !length($1) ) {
+            $fail++;
+        }
+        else {
+            $pass++;
+        }
+    }
+    else {
+        $fail++;
+    }
+}
+
+sub agi_output {
+    if ( $AGILOG >= 2 ) {
+        open( Lout, ">>$AGILOGfile" )
+          || die "Can't open $AGILOGfile: $!\n";
+        print Lout "$now_date|$script|$agi_string\n";
+        close(Lout);
+    }
+    if ( ( $AGILOG == '1' ) || ( $AGILOG == '3' ) ) {
+        print STDERR "$now_date|$script|$agi_string\n";
+    }
+    $agi_string = '';
+}

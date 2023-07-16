@@ -34,44 +34,68 @@
 ?>
 <?php
 require_once("crm_settings.php");
-if (isset($_GET["DB"]))                            {$DB=$_GET["DB"];}
-        elseif (isset($_POST["DB"]))            {$DB=$_POST["DB"];}
-if (isset($_GET["phone_login"]))                {$phone_login=$_GET["phone_login"];}
-        elseif (isset($_POST["phone_login"]))   {$phone_login=$_POST["phone_login"];}
-if (isset($_GET["phone_pass"]))                    {$phone_pass=$_GET["phone_pass"];}
-        elseif (isset($_POST["phone_pass"]))    {$phone_pass=$_POST["phone_pass"];}
-if (isset($_GET["VD_login"]))                    {$VD_login=$_GET["VD_login"];}
-        elseif (isset($_POST["VD_login"]))      {$VD_login=$_POST["VD_login"];}
-if (isset($_GET["VD_pass"]))                    {$VD_pass=$_GET["VD_pass"];}
-        elseif (isset($_POST["VD_pass"]))       {$VD_pass=$_POST["VD_pass"];}
-if (isset($_GET["VD_campaign"]))                {$VD_campaign=$_GET["VD_campaign"];}
-        elseif (isset($_POST["VD_campaign"]))   {$VD_campaign=$_POST["VD_campaign"];}
-if (isset($_GET["relogin"]))                    {$relogin=$_GET["relogin"];}
-        elseif (isset($_POST["relogin"]))       {$relogin=$_POST["relogin"];}
-if (!isset($phone_login)) 
-    {
-    if (isset($_GET["pl"]))                {$phone_login=$_GET["pl"];}
-            elseif (isset($_POST["pl"]))   {$phone_login=$_POST["pl"];}
+if (isset($_GET["DB"])) {
+    $DB=$_GET["DB"];
+} elseif (isset($_POST["DB"])) {
+    $DB=$_POST["DB"];
+}
+if (isset($_GET["phone_login"])) {
+    $phone_login=$_GET["phone_login"];
+} elseif (isset($_POST["phone_login"])) {
+    $phone_login=$_POST["phone_login"];
+}
+if (isset($_GET["phone_pass"])) {
+    $phone_pass=$_GET["phone_pass"];
+} elseif (isset($_POST["phone_pass"])) {
+    $phone_pass=$_POST["phone_pass"];
+}
+if (isset($_GET["VD_login"])) {
+    $VD_login=$_GET["VD_login"];
+} elseif (isset($_POST["VD_login"])) {
+    $VD_login=$_POST["VD_login"];
+}
+if (isset($_GET["VD_pass"])) {
+    $VD_pass=$_GET["VD_pass"];
+} elseif (isset($_POST["VD_pass"])) {
+    $VD_pass=$_POST["VD_pass"];
+}
+if (isset($_GET["VD_campaign"])) {
+    $VD_campaign=$_GET["VD_campaign"];
+} elseif (isset($_POST["VD_campaign"])) {
+    $VD_campaign=$_POST["VD_campaign"];
+}
+if (isset($_GET["relogin"])) {
+    $relogin=$_GET["relogin"];
+} elseif (isset($_POST["relogin"])) {
+    $relogin=$_POST["relogin"];
+}
+if (!isset($phone_login)) {
+    if (isset($_GET["pl"])) {
+        $phone_login=$_GET["pl"];
+    } elseif (isset($_POST["pl"])) {
+        $phone_login=$_POST["pl"];
     }
-if (!isset($phone_pass))
-    {
-    if (isset($_GET["pp"]))                {$phone_pass=$_GET["pp"];}
-            elseif (isset($_POST["pp"]))   {$phone_pass=$_POST["pp"];}
+}
+if (!isset($phone_pass)) {
+    if (isset($_GET["pp"])) {
+        $phone_pass=$_GET["pp"];
+    } elseif (isset($_POST["pp"])) {
+        $phone_pass=$_POST["pp"];
     }
-$DB=preg_replace("/[^0-9a-z]/","",$DB);
-$phone_login=preg_replace("/[^\,0-9a-zA-Z]/","",$phone_login);
-$phone_pass=preg_replace("/[^-_0-9a-zA-Z]/","",$phone_pass);
-$VD_login=preg_replace("/\'|\"|\\\\|;| /","",$VD_login);
-$VD_pass=preg_replace("/\'|\"|\\\\|;| /","",$VD_pass);
-$VD_campaign = preg_replace("/[^-_0-9a-zA-Z]/","",$VD_campaign);
+}
+$DB=preg_replace("/[^0-9a-z]/", "", $DB);
+$phone_login=preg_replace("/[^\,0-9a-zA-Z]/", "", $phone_login);
+$phone_pass=preg_replace("/[^-_0-9a-zA-Z]/", "", $phone_pass);
+$VD_login=preg_replace("/\'|\"|\\\\|;| /", "", $VD_login);
+$VD_pass=preg_replace("/\'|\"|\\\\|;| /", "", $VD_pass);
+$VD_campaign = preg_replace("/[^-_0-9a-zA-Z]/", "", $VD_campaign);
 $StarTtimE = date("U");
 $NOW_TIME = date("Y-m-d H:i:s");
 $PHP_SELF=$_SERVER['PHP_SELF'];
 echo "<HTML><BODY BGCOLOR=white><HEAD>\n";
 echo "<TITLE>CRM Example Agent Screen</TITLE>\n";
 echo "<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=utf-8\">\n";
-if ( (strlen($phone_login) > 1) and (strlen($phone_pass) > 1) and (strlen($VD_login) > 1) and (strlen($VD_pass) > 1) and (strlen($VD_campaign) > 1) )
-    {
+if ((strlen($phone_login) > 1) and (strlen($phone_pass) > 1) and (strlen($VD_login) > 1) and (strlen($VD_pass) > 1) and (strlen($VD_campaign) > 1)) {
     ?>
     <script language="Javascript">
     var MTvar;
@@ -123,9 +147,7 @@ if ( (strlen($phone_login) > 1) and (strlen($phone_pass) > 1) and (strlen($VD_lo
     echo "<span style=\"position:absolute;left:0px;top:5px;height:" . $agent_screen_height . "px;overflow:hidden;z-index:9;background-color:white;\" id=\"AgentSpan\"><table cellpadding=\"0\" cellspacing=\"0\" border=\"0\"><tr><td width=\"5px\" rowspan=\"2\">&nbsp;</td><td align=\"center\">
     <span id=\"agentscreenlink\"><font size=1><a href=\"#\" onclick=\"AgentScreenOpen('agentscreencontent','show','CRMSpan');return false;\">Show Full Agent Screen</a>: &nbsp; +</font></span></td></tr><tr><td align=\"center\"></td></tr></table></span>\n";
     echo "<span style=\"position:absolute;left:0px;top:25px;height:" . $agent_screen_height . "px;width:" . $agent_screen_width . "px;overflow:hidden;z-index:21;background-color:white;\" id=\"agentscreencontent\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">$agent_screen_content</span>\n";
-    }
-else
-    {
+} else {
     echo "</HEAD>\n";
     echo "<BODY BGCOLOR=#FFFFFF marginheight=0 marginwidth=0 leftmargin=0 topmargin=0>\n";
     echo "<form name=\"crm_form\" id=\"crm_form\" action=\"$PHP_SELF\" method=\"post\">\n";
@@ -148,7 +170,7 @@ else
     echo "<tr><td align=\"center\" colspan=\"2\"><input type=\"submit\" name=\"SUBMIT\" value=\"SUBMIT\" /> &nbsp; </td></tr>\n";
     echo "</table></center>\n";
     echo "</form>\n\n";
-    }
+}
 echo "</BODY>\n";
 echo "</HTML>\n";
 exit;

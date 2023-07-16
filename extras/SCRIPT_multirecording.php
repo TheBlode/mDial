@@ -34,32 +34,56 @@
 ?>
 <?php
 require("dbconnect_mysqli.php");
-if (isset($_GET["campaign"]))    {$campaign=$_GET["campaign"];}
-    elseif (isset($_POST["campaign"]))    {$campaign=$_POST["campaign"];}
-if (isset($_GET["lead_id"]))    {$lead_id=$_GET["lead_id"];}
-    elseif (isset($_POST["lead_id"]))    {$lead_id=$_POST["lead_id"];}
-if (isset($_GET["phone_number"]))    {$phone_number=$_GET["phone_number"];}
-    elseif (isset($_POST["phone_number"]))    {$phone_number=$_POST["phone_number"];}
-if (isset($_GET["user"]))    {$user=$_GET["user"];}
-    elseif (isset($_POST["user"]))    {$user=$_POST["user"];}
-if (isset($_GET["session_id"]))    {$session_id=$_GET["session_id"];}
-    elseif (isset($_POST["session_id"]))    {$session_id=$_POST["session_id"];}
-if (isset($_GET["server_ip"]))    {$server_ip=$_GET["server_ip"];}
-    elseif (isset($_POST["server_ip"]))    {$server_ip=$_POST["server_ip"];}
-if (isset($_GET["uniqueid"]))    {$uniqueid=$_GET["uniqueid"];}
-    elseif (isset($_POST["uniqueid"]))    {$uniqueid=$_POST["uniqueid"];}
-if (isset($_GET["vendor_lead_code"]))    {$vendor_lead_code=$_GET["vendor_lead_code"];}
-    elseif (isset($_POST["vendor_lead_code"]))    {$vendor_lead_code=$_POST["vendor_lead_code"];}
-$campaign = preg_replace('/[^-_0-9a-zA-Z]/','',$campaign);
-$phone_number = preg_replace('/[^-_0-9a-zA-Z]/','',$phone_number);
-$lead_id = preg_replace('/[^0-9]/','',$lead_id);
-$session_id = preg_replace('/[^0-9]/','',$session_id);
-$vendor_lead_code = preg_replace("/\||`|&|\'|\"|\\\\|;| /","",$vendor_lead_code);
-$user = preg_replace("/\||`|&|\'|\"|\\\\|;| /","",$user);
-$server_ip = preg_replace('/[^\.0-9]/','',$server_ip);
-$uniqueid = preg_replace('/[^-_\.0-9a-zA-Z]/','',$uniqueid);
-$rec_action = preg_replace('/[^0-9a-zA-Z]/','',$rec_action);
-$recording_channel = preg_replace("/\||`|&|\'|\"|\\\\| /","",$recording_channel);
+if (isset($_GET["campaign"])) {
+    $campaign=$_GET["campaign"];
+} elseif (isset($_POST["campaign"])) {
+    $campaign=$_POST["campaign"];
+}
+if (isset($_GET["lead_id"])) {
+    $lead_id=$_GET["lead_id"];
+} elseif (isset($_POST["lead_id"])) {
+    $lead_id=$_POST["lead_id"];
+}
+if (isset($_GET["phone_number"])) {
+    $phone_number=$_GET["phone_number"];
+} elseif (isset($_POST["phone_number"])) {
+    $phone_number=$_POST["phone_number"];
+}
+if (isset($_GET["user"])) {
+    $user=$_GET["user"];
+} elseif (isset($_POST["user"])) {
+    $user=$_POST["user"];
+}
+if (isset($_GET["session_id"])) {
+    $session_id=$_GET["session_id"];
+} elseif (isset($_POST["session_id"])) {
+    $session_id=$_POST["session_id"];
+}
+if (isset($_GET["server_ip"])) {
+    $server_ip=$_GET["server_ip"];
+} elseif (isset($_POST["server_ip"])) {
+    $server_ip=$_POST["server_ip"];
+}
+if (isset($_GET["uniqueid"])) {
+    $uniqueid=$_GET["uniqueid"];
+} elseif (isset($_POST["uniqueid"])) {
+    $uniqueid=$_POST["uniqueid"];
+}
+if (isset($_GET["vendor_lead_code"])) {
+    $vendor_lead_code=$_GET["vendor_lead_code"];
+} elseif (isset($_POST["vendor_lead_code"])) {
+    $vendor_lead_code=$_POST["vendor_lead_code"];
+}
+$campaign = preg_replace('/[^-_0-9a-zA-Z]/', '', $campaign);
+$phone_number = preg_replace('/[^-_0-9a-zA-Z]/', '', $phone_number);
+$lead_id = preg_replace('/[^0-9]/', '', $lead_id);
+$session_id = preg_replace('/[^0-9]/', '', $session_id);
+$vendor_lead_code = preg_replace("/\||`|&|\'|\"|\\\\|;| /", "", $vendor_lead_code);
+$user = preg_replace("/\||`|&|\'|\"|\\\\|;| /", "", $user);
+$server_ip = preg_replace('/[^\.0-9]/', '', $server_ip);
+$uniqueid = preg_replace('/[^-_\.0-9a-zA-Z]/', '', $uniqueid);
+$rec_action = preg_replace('/[^0-9a-zA-Z]/', '', $rec_action);
+$recording_channel = preg_replace("/\||`|&|\'|\"|\\\\| /", "", $recording_channel);
 ?>
 <html>
 <head>

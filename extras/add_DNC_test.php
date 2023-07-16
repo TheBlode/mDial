@@ -33,7 +33,7 @@
 # * ======================================== */
 ?>
 <?php
-$DB=1; 
+$DB=1;
 $phone_numbers = "9998885555\n9998885556\n9998885557";
 $HTTPuser = '6666';
 $HTTPpass = '1234';
@@ -50,9 +50,8 @@ curl_setopt_array($curl, array(
 ));
 $resp = curl_exec($curl);
 curl_close($curl);
-if ($DB > 0)
-    {
+if ($DB > 0) {
     echo "URL: $url\n";
-    }
+}
 echo "$resp\n";
 ?>

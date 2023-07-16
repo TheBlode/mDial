@@ -32,542 +32,577 @@
 # * Bug reports, feature requests and patches welcome!
 # * ======================================== */
 &get_time_now;
-  $start_epoch = $now_date_epoch;
-$script = 'agi-IVR_recording_verification.agi';
+$start_epoch    = $now_date_epoch;
+$script         = 'agi-IVR_recording_verification.agi';
 $now_date_epoch = time();
-$now_date = "$year-$mon-$mday $hour:$min:$sec";
-($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
-$year = ($year + 1900);
+$now_date       = "$year-$mon-$mday $hour:$min:$sec";
+( $sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst ) =
+  localtime(time);
+$year = ( $year + 1900 );
 $mon++;
-if ($mon < 10) {$mon = "0$mon";}
-if ($mday < 10) {$mday = "0$mday";}
-if ($hour < 10) {$hour = "0$hour";}
-if ($min < 10) {$min = "0$min";}
-if ($sec < 10) {$sec = "0$sec";}
-$US='_';
-$PATHconf =		'/etc/astguiclient.conf';
-open(conf, "$PATHconf") || die "can't open $PATHconf: $!\n";
+if ( $mon < 10 )  { $mon  = "0$mon"; }
+if ( $mday < 10 ) { $mday = "0$mday"; }
+if ( $hour < 10 ) { $hour = "0$hour"; }
+if ( $min < 10 )  { $min  = "0$min"; }
+if ( $sec < 10 )  { $sec  = "0$sec"; }
+$US       = '_';
+$PATHconf = '/etc/astguiclient.conf';
+open( conf, "$PATHconf" ) || die "can't open $PATHconf: $!\n";
 @conf = <conf>;
 close(conf);
-$i=0;
-foreach(@conf)
-	{
-	$line = $conf[$i];
-	$line =~ s/ |>|\n|\r|\t|\#.*|;.*//gi;
-	if ( ($line =~ /^PATHlogs/) && ($CLIlogs < 1) )
-		{$PATHlogs = $line;   $PATHlogs =~ s/.*=//gi;}
-	if ( ($line =~ /^PATHsounds/) && ($CLIsounds < 1) )
-		{$PATHsounds = $line;   $PATHsounds =~ s/.*=//gi;}
-	if ( ($line =~ /^PATHmonitor/) && ($CLImonitor < 1) )
-		{$PATHmonitor = $line;   $PATHmonitor =~ s/.*=//gi;}
-	if ( ($line =~ /^VARserver_ip/) && ($CLIserver_ip < 1) )
-		{$VARserver_ip = $line;   $VARserver_ip =~ s/.*=//gi;}
-	if ( ($line =~ /^VARDB_server/) && ($CLIDB_server < 1) )
-		{$VARDB_server = $line;   $VARDB_server =~ s/.*=//gi;}
-	if ( ($line =~ /^VARDB_database/) && ($CLIDB_database < 1) )
-		{$VARDB_database = $line;   $VARDB_database =~ s/.*=//gi;}
-	if ( ($line =~ /^VARDB_user/) && ($CLIDB_user < 1) )
-		{$VARDB_user = $line;   $VARDB_user =~ s/.*=//gi;}
-	if ( ($line =~ /^VARDB_pass/) && ($CLIDB_pass < 1) )
-		{$VARDB_pass = $line;   $VARDB_pass =~ s/.*=//gi;}
-	if ( ($line =~ /^VARDB_port/) && ($CLIDB_port < 1) )
-		{$VARDB_port = $line;   $VARDB_port =~ s/.*=//gi;}
-	$i++;
-	}
-if (!$VARDB_port) {$VARDB_port='3306';}
-if (!$AGILOGfile) {$AGILOGfile = "$PATHlogs/ivrout.$year-$mon-$mday";}
+$i = 0;
+
+foreach (@conf) {
+    $line = $conf[$i];
+    $line =~ s/ |>|\n|\r|\t|\#.*|;.*//gi;
+    if ( ( $line =~ /^PATHlogs/ ) && ( $CLIlogs < 1 ) ) {
+        $PATHlogs = $line;
+        $PATHlogs =~ s/.*=//gi;
+    }
+    if ( ( $line =~ /^PATHsounds/ ) && ( $CLIsounds < 1 ) ) {
+        $PATHsounds = $line;
+        $PATHsounds =~ s/.*=//gi;
+    }
+    if ( ( $line =~ /^PATHmonitor/ ) && ( $CLImonitor < 1 ) ) {
+        $PATHmonitor = $line;
+        $PATHmonitor =~ s/.*=//gi;
+    }
+    if ( ( $line =~ /^VARserver_ip/ ) && ( $CLIserver_ip < 1 ) ) {
+        $VARserver_ip = $line;
+        $VARserver_ip =~ s/.*=//gi;
+    }
+    if ( ( $line =~ /^VARDB_server/ ) && ( $CLIDB_server < 1 ) ) {
+        $VARDB_server = $line;
+        $VARDB_server =~ s/.*=//gi;
+    }
+    if ( ( $line =~ /^VARDB_database/ ) && ( $CLIDB_database < 1 ) ) {
+        $VARDB_database = $line;
+        $VARDB_database =~ s/.*=//gi;
+    }
+    if ( ( $line =~ /^VARDB_user/ ) && ( $CLIDB_user < 1 ) ) {
+        $VARDB_user = $line;
+        $VARDB_user =~ s/.*=//gi;
+    }
+    if ( ( $line =~ /^VARDB_pass/ ) && ( $CLIDB_pass < 1 ) ) {
+        $VARDB_pass = $line;
+        $VARDB_pass =~ s/.*=//gi;
+    }
+    if ( ( $line =~ /^VARDB_port/ ) && ( $CLIDB_port < 1 ) ) {
+        $VARDB_port = $line;
+        $VARDB_port =~ s/.*=//gi;
+    }
+    $i++;
+}
+if ( !$VARDB_port ) { $VARDB_port = '3306'; }
+if ( !$AGILOGfile ) { $AGILOGfile = "$PATHlogs/ivrout.$year-$mon-$mday"; }
 use DBI;
 use Asterisk::AGI;
-$AGI = new Asterisk::AGI;
-$dbhA = DBI->connect("DBI:mysql:$VARDB_database:$VARDB_server:$VARDB_port", "$VARDB_user", "$VARDB_pass")
-    or die "Couldn't connect to database: " . DBI->errstr;
-$stmtA = "SELECT agi_output,ext_context,asterisk_version FROM servers where server_ip = '$VARserver_ip';";
-$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
-$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
-$sthArows=$sthA->rows;
-$rec_count=0;
-while ($sthArows > $rec_count)
-	{
-	$AGILOG = '0';
-	@aryA = $sthA->fetchrow_array;
-	$DBagi_output =			$aryA[0];
-	$ext_context =			$aryA[1];
-	$asterisk_version =		$aryA[2];
-	if ($DBagi_output =~ /STDERR/)	{$AGILOG = '1';}
-	if ($DBagi_output =~ /FILE/)	{$AGILOG = '2';}
-	if ($DBagi_output =~ /BOTH/)	{$AGILOG = '3';}
-	$rec_count++;
-	}
+$AGI  = new Asterisk::AGI;
+$dbhA = DBI->connect( "DBI:mysql:$VARDB_database:$VARDB_server:$VARDB_port",
+    "$VARDB_user", "$VARDB_pass" )
+  or die "Couldn't connect to database: " . DBI->errstr;
+$stmtA =
+"SELECT agi_output,ext_context,asterisk_version FROM servers where server_ip = '$VARserver_ip';";
+$sthA = $dbhA->prepare($stmtA) or die "preparing: ",        $dbhA->errstr;
+$sthA->execute                 or die "executing: $stmtA ", $dbhA->errstr;
+$sthArows  = $sthA->rows;
+$rec_count = 0;
+
+while ( $sthArows > $rec_count ) {
+    $AGILOG           = '0';
+    @aryA             = $sthA->fetchrow_array;
+    $DBagi_output     = $aryA[0];
+    $ext_context      = $aryA[1];
+    $asterisk_version = $aryA[2];
+    if ( $DBagi_output =~ /STDERR/ ) { $AGILOG = '1'; }
+    if ( $DBagi_output =~ /FILE/ )   { $AGILOG = '2'; }
+    if ( $DBagi_output =~ /BOTH/ )   { $AGILOG = '3'; }
+    $rec_count++;
+}
 $sthA->finish();
-if (length($ARGV[0])>1)
-	{
-	if ($ARGV[0] =~ /---/)
-		{
-		@ARGV_vars = split(/---/, $ARGV[0]);
-		$inbound_number =	$ARGV_vars[0];
-		$play_ID =			$ARGV_vars[1];
-		$record_call =		$ARGV_vars[2];
-		$company_ID_ask =	$ARGV_vars[3];
-		$user_ID_ask =		$ARGV_vars[4];
-		$cust_phone_ask =	$ARGV_vars[5];
-		$say_date =			$ARGV_vars[6];
-		$prompts =			$ARGV_vars[7];
-		$last_prompt =		$ARGV_vars[8];
-		$AGI_output =		$ARGV_vars[9];
-		@prompts_list = split(/-/, $prompts);
-		$prompts_count = $#prompts_list;
-		if ($play_ID =~ /Y/)
-			{
-			@play_IDary = split(/-/, $play_ID);
-			$play_ID_prompt = $play_IDary[1];
-			}
-		if ($company_ID_ask =~ /Y/)
-			{
-			@company_ID = split(/-/, $company_ID_ask);
-			$company_ID_length = $company_ID[1];
-			$company_ID_prompt = $company_ID[2];
-			}
-		if ($user_ID_ask =~ /Y/)
-			{
-			@user_ID = split(/-/, $user_ID_ask);
-			$user_ID_length = $user_ID[1];
-			$user_ID_prompt = $user_ID[2];
-			}
-		if ($cust_phone_ask =~ /Y/)
-			{
-			@cust_phone_ID = split(/-/, $cust_phone_ask);
-			$cust_phone_length = $cust_phone_ID[1];
-			$cust_phone_prompt = $cust_phone_ID[2];
-			}
-		if ($say_date =~ /Y/)
-			{
-			@say_date_ID = split(/-/, $say_date);
-			$say_date_prompt = $say_date_ID[1];
-			}
-		if ($AGI_output =~ /STDERR/)	{$AGILOG = '1';}
-		if ($AGI_output =~ /FILE/)	{$AGILOG = '2';}
-		if ($AGI_output =~ /BOTH/)	{$AGILOG = '3';}
-		}
-	}
-$|=1;
-while(<STDIN>) 
-	{
-	chomp;
-	last unless length($_);
-	if ($V)
-		{
-		if (/^agi_(\w+)\:\s+(.*)$/)
-			{
-			$AGI{$1} = $2;
-			}
-		}
-	if (/^agi_uniqueid\:\s+(.*)$/)		{$unique_id = $1;}
-	if (/^agi_extension\:\s+(.*)$/)		{$extension = $1;}
-	if (/^agi_channel\:\s+(.*)$/)		{$channel = $1;}
-	if (/^agi_callerid\:\s+(.*)$/)		{$callerid = $1;}
-	if (/^agi_calleridname\:\s+(.*)$/)	{$calleridname = $1;}
-	}
-if ( ($callerid =~ /\".*\"/) && ( (!$calleridname) or ($calleridname =~ /unknown/) ) )
-	{
-	$calleridname = $callerid;
-	$calleridname =~ s/\<\d\d\d\d\d\d\d\d\d\d\>//gi;
-	$calleridname =~ s/\"|\" //gi;
-	}
-	$callerid =~ s/\D//gi;
-	$calleridname =~ s/unknown//gi;
-if ( (!$callerid) or ($callerid =~ /unknown/) )
-	{$callerid = $calleridname;}
-$phone_number=$callerid;
-if ($extension =~ /^832\d\d\*|^833\d\d\*/)
-	{
-	@EXT_vars = split(/\*/, $extension);
-	$referring_extension =	$EXT_vars[0];	# initial extension sent
-	$phone_number =			$EXT_vars[1];	# phone number
-	$lead_id =				$EXT_vars[2];	# lead_id in vicidial_list
-	$campaign_id =			$EXT_vars[3];	# campaign id
-	$product_code =			$EXT_vars[4];	# product code
-	$user =					$EXT_vars[5];	# vicidial_user that sent the call here
-	}
-$stmtA = "INSERT INTO vicidial_ivr (entry_time,length_in_sec,inbound_number,phone_number,lead_id,campaign_id,product_code,user) values('$now_date','0','$inbound_number','$phone_number','$lead_id','$campaign_id','$product_code','$user');";
+if ( length( $ARGV[0] ) > 1 ) {
+    if ( $ARGV[0] =~ /---/ ) {
+        @ARGV_vars      = split( /---/, $ARGV[0] );
+        $inbound_number = $ARGV_vars[0];
+        $play_ID        = $ARGV_vars[1];
+        $record_call    = $ARGV_vars[2];
+        $company_ID_ask = $ARGV_vars[3];
+        $user_ID_ask    = $ARGV_vars[4];
+        $cust_phone_ask = $ARGV_vars[5];
+        $say_date       = $ARGV_vars[6];
+        $prompts        = $ARGV_vars[7];
+        $last_prompt    = $ARGV_vars[8];
+        $AGI_output     = $ARGV_vars[9];
+        @prompts_list   = split( /-/, $prompts );
+        $prompts_count  = $#prompts_list;
+
+        if ( $play_ID =~ /Y/ ) {
+            @play_IDary     = split( /-/, $play_ID );
+            $play_ID_prompt = $play_IDary[1];
+        }
+        if ( $company_ID_ask =~ /Y/ ) {
+            @company_ID        = split( /-/, $company_ID_ask );
+            $company_ID_length = $company_ID[1];
+            $company_ID_prompt = $company_ID[2];
+        }
+        if ( $user_ID_ask =~ /Y/ ) {
+            @user_ID        = split( /-/, $user_ID_ask );
+            $user_ID_length = $user_ID[1];
+            $user_ID_prompt = $user_ID[2];
+        }
+        if ( $cust_phone_ask =~ /Y/ ) {
+            @cust_phone_ID     = split( /-/, $cust_phone_ask );
+            $cust_phone_length = $cust_phone_ID[1];
+            $cust_phone_prompt = $cust_phone_ID[2];
+        }
+        if ( $say_date =~ /Y/ ) {
+            @say_date_ID     = split( /-/, $say_date );
+            $say_date_prompt = $say_date_ID[1];
+        }
+        if ( $AGI_output =~ /STDERR/ ) { $AGILOG = '1'; }
+        if ( $AGI_output =~ /FILE/ )   { $AGILOG = '2'; }
+        if ( $AGI_output =~ /BOTH/ )   { $AGILOG = '3'; }
+    }
+}
+$| = 1;
+while (<STDIN>) {
+    chomp;
+    last unless length($_);
+    if ($V) {
+        if (/^agi_(\w+)\:\s+(.*)$/) {
+            $AGI{$1} = $2;
+        }
+    }
+    if (/^agi_uniqueid\:\s+(.*)$/)     { $unique_id    = $1; }
+    if (/^agi_extension\:\s+(.*)$/)    { $extension    = $1; }
+    if (/^agi_channel\:\s+(.*)$/)      { $channel      = $1; }
+    if (/^agi_callerid\:\s+(.*)$/)     { $callerid     = $1; }
+    if (/^agi_calleridname\:\s+(.*)$/) { $calleridname = $1; }
+}
+if (   ( $callerid =~ /\".*\"/ )
+    && ( ( !$calleridname ) or ( $calleridname =~ /unknown/ ) ) )
+{
+    $calleridname = $callerid;
+    $calleridname =~ s/\<\d\d\d\d\d\d\d\d\d\d\>//gi;
+    $calleridname =~ s/\"|\" //gi;
+}
+$callerid     =~ s/\D//gi;
+$calleridname =~ s/unknown//gi;
+if ( ( !$callerid ) or ( $callerid =~ /unknown/ ) ) {
+    $callerid = $calleridname;
+}
+$phone_number = $callerid;
+if ( $extension =~ /^832\d\d\*|^833\d\d\*/ ) {
+    @EXT_vars            = split( /\*/, $extension );
+    $referring_extension = $EXT_vars[0];              # initial extension sent
+    $phone_number        = $EXT_vars[1];              # phone number
+    $lead_id             = $EXT_vars[2];              # lead_id in vicidial_list
+    $campaign_id         = $EXT_vars[3];              # campaign id
+    $product_code        = $EXT_vars[4];              # product code
+    $user                = $EXT_vars[5]; # vicidial_user that sent the call here
+}
+$stmtA =
+"INSERT INTO vicidial_ivr (entry_time,length_in_sec,inbound_number,phone_number,lead_id,campaign_id,product_code,user) values('$now_date','0','$inbound_number','$phone_number','$lead_id','$campaign_id','$product_code','$user');";
 $affected_rows = $dbhA->do($stmtA);
-$cbc=0;
-$stmtA = "select LAST_INSERT_ID() LIMIT 1;";
-$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
+$cbc           = 0;
+$stmtA         = "select LAST_INSERT_ID() LIMIT 1;";
+$sthA          = $dbhA->prepare($stmtA) or die "preparing: ", $dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
-$sthArows=$sthA->rows;
-while ($sthArows > $cbc)
-	{
-	@aryA = $sthA->fetchrow_array;
-	$ivr_id = "$aryA[0]";
-	$cbc++;
-	}
-$sthA->finish();	
-if ($AGILOG) {$agi_string = "IVR START- $ivr_id   $inbound_number|$record_call|$company_ID_ask|$cust_phone_ask|$prompts|$last_prompt|$AGI_output";   &agi_output;}
+$sthArows = $sthA->rows;
+
+while ( $sthArows > $cbc ) {
+    @aryA   = $sthA->fetchrow_array;
+    $ivr_id = "$aryA[0]";
+    $cbc++;
+}
+$sthA->finish();
+if ($AGILOG) {
+    $agi_string =
+"IVR START- $ivr_id   $inbound_number|$record_call|$company_ID_ask|$cust_phone_ask|$prompts|$last_prompt|$AGI_output";
+    &agi_output;
+}
 $AGI->stream_file('beep');
-if ($play_ID =~ /Y/)
-	{
-	$AGI->stream_file("$play_ID_prompt");
-	$AGI->say_digits("$ivr_id");
-	sleep(1);
-	$AGI->stream_file('beep');   
-	$AGI->say_digits("$ivr_id");
-	sleep(1);
-	}
-if ($company_ID_ask =~ /Y/)
-	{
-	&company_ID_gather_response;
-	  $company_ID = $totalDTMF;
-	&get_time_now;
-	  $length_in_sec = ($now_date_epoch - $start_epoch);
-	$stmtA = "UPDATE vicidial_ivr SET company_id='$company_ID', length_in_sec='$length_in_sec' where ivr_id='$ivr_id';";
-		if ($AGILOG) {$agi_string = "IVR- $ivr_id     company: $company_ID   length: $length_in_sec";   &agi_output;}
-	$affected_rows = $dbhA->do($stmtA);
-	}
-if ($user_ID_ask =~ /Y/)
-	{
-	&user_ID_gather_response;
-	  $user_ID = $totalDTMF;
-	&get_time_now;
-	  $length_in_sec = ($now_date_epoch - $start_epoch);
-	$stmtA = "UPDATE vicidial_ivr SET user='$user_ID', length_in_sec='$length_in_sec' where ivr_id='$ivr_id';";
-		if ($AGILOG) {$agi_string = "IVR- $ivr_id     user: $user_ID   length: $length_in_sec";   &agi_output;}
-	$affected_rows = $dbhA->do($stmtA);
-	}
-if ($cust_phone_ask =~ /Y/)
-	{
-	&cust_phone_gather_response;
-	  $phone_number = $totalDTMF;
-	&get_time_now;
-	  $length_in_sec = ($now_date_epoch - $start_epoch);
-	$stmtA = "UPDATE vicidial_ivr SET phone_number='$phone_number', length_in_sec='$length_in_sec' where ivr_id='$ivr_id';";
-		if ($AGILOG) {$agi_string = "IVR- $ivr_id     phone: $phone_number   length: $length_in_sec";   &agi_output;}
-	$affected_rows = $dbhA->do($stmtA);
-	}
-if ($record_call =~ /Y/)
-	{
-	$filename = "$ivr_id";
-	%ast_ver_str = parse_asterisk_version($asterisk_version);
-	if (( $ast_ver_str{major} = 1 ) && ($ast_ver_str{minor} < 6))
-		{
-		$AGI->exec("Monitor wav|/var/spool/asterisk/monitor/MIX/$filename|m");
-		}
-	else
-		{
-		$AGI->exec("Monitor","wav,/var/spool/asterisk/monitor/MIX/$filename,m"); 
-		}
-	$stmtA = "INSERT INTO recording_log (channel,server_ip,extension,start_time,start_epoch,length_in_sec,filename,lead_id,user,location) values('$channel','$server_ip','$inbound_number','$now_date','start_epoch','0','$filename','$lead_id','$user','$ivr_id');";
-	$affected_rows = $dbhA->do($stmtA);
-	$cbc=0;
-	$stmtA = "select LAST_INSERT_ID() LIMIT 1;";
-	$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
-	$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
-	$sthArows=$sthA->rows;
-	while ($sthArows > $cbc)
-		{
-		@aryA = $sthA->fetchrow_array;
-		$recording_id = "$aryA[0]";
-		$cbc++;
-		}
-	$sthA->finish();
-	$stmtA = "UPDATE vicidial_ivr SET recording_id='$recording_id', recording_filename='$filename' where ivr_id='$ivr_id';";
-		if ($AGILOG) {$agi_string = "RECORDING- $recording_id $ivr_id START    filename: $filename";   &agi_output;}
-	$affected_rows = $dbhA->do($stmtA);
-	}
-if ($say_date =~ /Y/)
-	{
-	if ($AGILOG) {$agi_string = "SAYING DATETIME $now_date_epoch";   &agi_output;}
-	if (length($say_date_prompt)>0) {$AGI->stream_file("$say_date_prompt");}
-	sleep(1);
-	$AGI->exec("SayUnixtime"); 
-	sleep(1);
-	}
-	@prompts_list = split(/--/, $prompts);
-	$prompts_count = $#prompts_list;
-$i=0;
-$j=1;
-while($prompts_count >= $i)
-	{
-	$prompt_ary = $prompts_list[$i];
-		@prompts_specs = split(/-/, $prompt_ary);
-		$prompt = $prompts_specs[0];
-		$wait_sec = $prompts_specs[1];
-		if ($wait_sec < 1) {$wait_sec=10;}
-	$response = '';
-	$prompt_name = "prompt_audio_$j";
-	$response_name = "prompt_response_$j";
-	sleep(1);
-	&prompt_gather_response;
-	  $response = $totalDTMF;
-	&get_time_now;
-	  $length_in_sec = ($now_date_epoch - $start_epoch);
-	$stmtA = "UPDATE vicidial_ivr SET $prompt_name='$prompt', $response_name='$response', length_in_sec='$length_in_sec' where ivr_id='$ivr_id';";
-		if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
-	$affected_rows = $dbhA->do($stmtA);
-	if ($AGILOG) {$agi_string = "IVR- $ivr_id $i   prompt: $prompt - $wait_sec   response: $response   length: $length_in_sec";   &agi_output;}
-	$i++;
-	$j++;
-	}
-	$AGI->stream_file("$last_prompt");
-	$AGI->say_digits("$ivr_id");
-	&get_time_now;
-	  $length_in_sec = ($now_date_epoch - $start_epoch);
-	$stmtA = "UPDATE vicidial_ivr SET length_in_sec='$length_in_sec' where ivr_id='$ivr_id';";
-		if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
-	$affected_rows = $dbhA->do($stmtA);
-	if ($AGILOG) {$agi_string = "IVR- $ivr_id END   prompt: $last_prompt   length: $length_in_sec";   &agi_output;}
-	if ($record_call =~ /Y/)
-		{
-		$stmtA = "UPDATE recording_log SET length_in_sec='$length_in_sec' where recording_id='$recording_id';";
-			if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
-		$affected_rows = $dbhA->do($stmtA);
-		if ($AGILOG) {$agi_string = "RECORDING- $recording_id   length: $length_in_sec";   &agi_output;}
-		}
-	sleep(1);
-	$AGI->stream_file('beep');   
-	$AGI->say_digits("$ivr_id");
-	sleep(1);
-	$AGI->stream_file('vm-goodbye');
-if ($AGILOG) {$agi_string = "IVR- ID: $ivr_id   DONE Exiting";   &agi_output;}
+if ( $play_ID =~ /Y/ ) {
+    $AGI->stream_file("$play_ID_prompt");
+    $AGI->say_digits("$ivr_id");
+    sleep(1);
+    $AGI->stream_file('beep');
+    $AGI->say_digits("$ivr_id");
+    sleep(1);
+}
+if ( $company_ID_ask =~ /Y/ ) {
+    &company_ID_gather_response;
+    $company_ID = $totalDTMF;
+    &get_time_now;
+    $length_in_sec = ( $now_date_epoch - $start_epoch );
+    $stmtA =
+"UPDATE vicidial_ivr SET company_id='$company_ID', length_in_sec='$length_in_sec' where ivr_id='$ivr_id';";
+    if ($AGILOG) {
+        $agi_string =
+          "IVR- $ivr_id     company: $company_ID   length: $length_in_sec";
+        &agi_output;
+    }
+    $affected_rows = $dbhA->do($stmtA);
+}
+if ( $user_ID_ask =~ /Y/ ) {
+    &user_ID_gather_response;
+    $user_ID = $totalDTMF;
+    &get_time_now;
+    $length_in_sec = ( $now_date_epoch - $start_epoch );
+    $stmtA =
+"UPDATE vicidial_ivr SET user='$user_ID', length_in_sec='$length_in_sec' where ivr_id='$ivr_id';";
+    if ($AGILOG) {
+        $agi_string =
+          "IVR- $ivr_id     user: $user_ID   length: $length_in_sec";
+        &agi_output;
+    }
+    $affected_rows = $dbhA->do($stmtA);
+}
+if ( $cust_phone_ask =~ /Y/ ) {
+    &cust_phone_gather_response;
+    $phone_number = $totalDTMF;
+    &get_time_now;
+    $length_in_sec = ( $now_date_epoch - $start_epoch );
+    $stmtA =
+"UPDATE vicidial_ivr SET phone_number='$phone_number', length_in_sec='$length_in_sec' where ivr_id='$ivr_id';";
+    if ($AGILOG) {
+        $agi_string =
+          "IVR- $ivr_id     phone: $phone_number   length: $length_in_sec";
+        &agi_output;
+    }
+    $affected_rows = $dbhA->do($stmtA);
+}
+if ( $record_call =~ /Y/ ) {
+    $filename    = "$ivr_id";
+    %ast_ver_str = parse_asterisk_version($asterisk_version);
+    if ( ( $ast_ver_str{major} = 1 ) && ( $ast_ver_str{minor} < 6 ) ) {
+        $AGI->exec("Monitor wav|/var/spool/asterisk/monitor/MIX/$filename|m");
+    }
+    else {
+        $AGI->exec( "Monitor",
+            "wav,/var/spool/asterisk/monitor/MIX/$filename,m" );
+    }
+    $stmtA =
+"INSERT INTO recording_log (channel,server_ip,extension,start_time,start_epoch,length_in_sec,filename,lead_id,user,location) values('$channel','$server_ip','$inbound_number','$now_date','start_epoch','0','$filename','$lead_id','$user','$ivr_id');";
+    $affected_rows = $dbhA->do($stmtA);
+    $cbc           = 0;
+    $stmtA         = "select LAST_INSERT_ID() LIMIT 1;";
+    $sthA          = $dbhA->prepare($stmtA) or die "preparing: ", $dbhA->errstr;
+    $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
+    $sthArows = $sthA->rows;
+
+    while ( $sthArows > $cbc ) {
+        @aryA         = $sthA->fetchrow_array;
+        $recording_id = "$aryA[0]";
+        $cbc++;
+    }
+    $sthA->finish();
+    $stmtA =
+"UPDATE vicidial_ivr SET recording_id='$recording_id', recording_filename='$filename' where ivr_id='$ivr_id';";
+    if ($AGILOG) {
+        $agi_string =
+          "RECORDING- $recording_id $ivr_id START    filename: $filename";
+        &agi_output;
+    }
+    $affected_rows = $dbhA->do($stmtA);
+}
+if ( $say_date =~ /Y/ ) {
+    if ($AGILOG) {
+        $agi_string = "SAYING DATETIME $now_date_epoch";
+        &agi_output;
+    }
+    if ( length($say_date_prompt) > 0 ) {
+        $AGI->stream_file("$say_date_prompt");
+    }
+    sleep(1);
+    $AGI->exec("SayUnixtime");
+    sleep(1);
+}
+@prompts_list  = split( /--/, $prompts );
+$prompts_count = $#prompts_list;
+$i             = 0;
+$j             = 1;
+while ( $prompts_count >= $i ) {
+    $prompt_ary    = $prompts_list[$i];
+    @prompts_specs = split( /-/, $prompt_ary );
+    $prompt        = $prompts_specs[0];
+    $wait_sec      = $prompts_specs[1];
+    if ( $wait_sec < 1 ) { $wait_sec = 10; }
+    $response      = '';
+    $prompt_name   = "prompt_audio_$j";
+    $response_name = "prompt_response_$j";
+    sleep(1);
+    &prompt_gather_response;
+    $response = $totalDTMF;
+    &get_time_now;
+    $length_in_sec = ( $now_date_epoch - $start_epoch );
+    $stmtA =
+"UPDATE vicidial_ivr SET $prompt_name='$prompt', $response_name='$response', length_in_sec='$length_in_sec' where ivr_id='$ivr_id';";
+    if ($AGILOG) { $agi_string = "|$stmtA|"; &agi_output; }
+    $affected_rows = $dbhA->do($stmtA);
+
+    if ($AGILOG) {
+        $agi_string =
+"IVR- $ivr_id $i   prompt: $prompt - $wait_sec   response: $response   length: $length_in_sec";
+        &agi_output;
+    }
+    $i++;
+    $j++;
+}
+$AGI->stream_file("$last_prompt");
+$AGI->say_digits("$ivr_id");
+&get_time_now;
+$length_in_sec = ( $now_date_epoch - $start_epoch );
+$stmtA =
+"UPDATE vicidial_ivr SET length_in_sec='$length_in_sec' where ivr_id='$ivr_id';";
+if ($AGILOG) { $agi_string = "|$stmtA|"; &agi_output; }
+$affected_rows = $dbhA->do($stmtA);
+
+if ($AGILOG) {
+    $agi_string =
+      "IVR- $ivr_id END   prompt: $last_prompt   length: $length_in_sec";
+    &agi_output;
+}
+if ( $record_call =~ /Y/ ) {
+    $stmtA =
+"UPDATE recording_log SET length_in_sec='$length_in_sec' where recording_id='$recording_id';";
+    if ($AGILOG) { $agi_string = "|$stmtA|"; &agi_output; }
+    $affected_rows = $dbhA->do($stmtA);
+    if ($AGILOG) {
+        $agi_string = "RECORDING- $recording_id   length: $length_in_sec";
+        &agi_output;
+    }
+}
+sleep(1);
+$AGI->stream_file('beep');
+$AGI->say_digits("$ivr_id");
+sleep(1);
+$AGI->stream_file('vm-goodbye');
+if ($AGILOG) { $agi_string = "IVR- ID: $ivr_id   DONE Exiting"; &agi_output; }
 exit;
-sub company_ID_gather_response
-	{
-	$digit='';
-	$interrupt_digit='';
-	$interrupt_digit = $AGI->stream_file("$company_ID_prompt",'1234567890');
-		print STDERR "interrupt_digit |$interrupt_digit|\n";
-	$digits_being_entered=1;
-	$digit_loop_counter=0;
-	$totalDTMF='';
-	if ($interrupt_digit > 1)
-		{
-		if ($interrupt_digit == 48) {$interrupt_digit=0;}
-		if ($interrupt_digit == 49) {$interrupt_digit=1;}
-		if ($interrupt_digit == 50) {$interrupt_digit=2;}
-		if ($interrupt_digit == 51) {$interrupt_digit=3;}
-		if ($interrupt_digit == 52) {$interrupt_digit=4;}
-		if ($interrupt_digit == 53) {$interrupt_digit=5;}
-		if ($interrupt_digit == 54) {$interrupt_digit=6;}
-		if ($interrupt_digit == 55) {$interrupt_digit=7;}
-		if ($interrupt_digit == 56) {$interrupt_digit=8;}
-		if ($interrupt_digit == 57) {$interrupt_digit=9;}
-		$totalDTMF=$interrupt_digit;
-		$digit_loop_counter++;
-		}
-	while ($digit_loop_counter < $company_ID_length)
-		{
-		$digit = chr($AGI->wait_for_digit('100000'));  # wait 100 seconds for input
-		if ($digit =~ /\d/)
-			{
-			$totalDTMF = "$totalDTMF$digit";
-			print STDERR "digit |$digit|     TotalDTMF |$totalDTMF|\n";
-			undef $digit;
-			}
-		else
-			{
-			$digit_loop_counter=$company_ID_length;
-			}
-		$digit_loop_counter++;
-		}
-	}
-sub user_ID_gather_response
-	{
-	$digit='';
-	$interrupt_digit='';
-	$interrupt_digit = $AGI->stream_file("$user_ID_prompt",'1234567890');
-		print STDERR "interrupt_digit |$interrupt_digit|\n";
-	$digits_being_entered=1;
-	$digit_loop_counter=0;
-	$totalDTMF='';
-	if ($interrupt_digit > 1)
-		{
-		if ($interrupt_digit == 48) {$interrupt_digit=0;}
-		if ($interrupt_digit == 49) {$interrupt_digit=1;}
-		if ($interrupt_digit == 50) {$interrupt_digit=2;}
-		if ($interrupt_digit == 51) {$interrupt_digit=3;}
-		if ($interrupt_digit == 52) {$interrupt_digit=4;}
-		if ($interrupt_digit == 53) {$interrupt_digit=5;}
-		if ($interrupt_digit == 54) {$interrupt_digit=6;}
-		if ($interrupt_digit == 55) {$interrupt_digit=7;}
-		if ($interrupt_digit == 56) {$interrupt_digit=8;}
-		if ($interrupt_digit == 57) {$interrupt_digit=9;}
-		$totalDTMF=$interrupt_digit;
-		$digit_loop_counter++;
-		}
-	while ($digit_loop_counter < $user_ID_length)
-		{
-		$digit = chr($AGI->wait_for_digit('100000'));  # wait 100 seconds for input
-		if ($digit =~ /\d/)
-			{
-			$totalDTMF = "$totalDTMF$digit";
-			print STDERR "digit |$digit|     TotalDTMF |$totalDTMF|\n";
-			undef $digit;
-			}
-		else
-			{
-			$digit_loop_counter=$user_ID_length;
-			}
-		$digit_loop_counter++;
-		}
-	}
-sub cust_phone_gather_response
-	{
-	$digit='';
-	$interrupt_digit='';
-	$interrupt_digit = $AGI->stream_file("$cust_phone_prompt",'1234567890');
-		print STDERR "interrupt_digit |$interrupt_digit|\n";
-	$digits_being_entered=1;
-	$digit_loop_counter=0;
-	$totalDTMF='';
-	if ($interrupt_digit > 1)
-		{
-		if ($interrupt_digit == 48) {$interrupt_digit=0;}
-		if ($interrupt_digit == 49) {$interrupt_digit=1;}
-		if ($interrupt_digit == 50) {$interrupt_digit=2;}
-		if ($interrupt_digit == 51) {$interrupt_digit=3;}
-		if ($interrupt_digit == 52) {$interrupt_digit=4;}
-		if ($interrupt_digit == 53) {$interrupt_digit=5;}
-		if ($interrupt_digit == 54) {$interrupt_digit=6;}
-		if ($interrupt_digit == 55) {$interrupt_digit=7;}
-		if ($interrupt_digit == 56) {$interrupt_digit=8;}
-		if ($interrupt_digit == 57) {$interrupt_digit=9;}
-		$totalDTMF=$interrupt_digit;
-		$digit_loop_counter++;
-		}
-	while ($digit_loop_counter < $cust_phone_length)
-		{
-		$digit = chr($AGI->wait_for_digit('100000'));  # wait 100 seconds for input
-		if ($digit =~ /\d/)
-			{
-			$totalDTMF = "$totalDTMF$digit";
-			print STDERR "digit |$digit|     TotalDTMF |$totalDTMF|\n";
-			undef $digit;
-			}
-		else
-			{
-			$digit_loop_counter=$cust_phone_length;
-			}
-		$digit_loop_counter++;
-		}
-	}
-sub prompt_gather_response
-	{
-	$digit='';
-	$interrupt_digit='';
-	$interrupt_digit = $AGI->stream_file("$prompt",'123456789');
-		print STDERR "interrupt_digit |$interrupt_digit|\n";
-	$digits_being_entered=1;
-	$digit_loop_counter=0;
-	$totalDTMF='';
-	if ($interrupt_digit > 1)
-		{
-		if ($interrupt_digit == 49) {$interrupt_digit=1;}
-		if ($interrupt_digit == 50) {$interrupt_digit=2;}
-		if ($interrupt_digit == 51) {$interrupt_digit=3;}
-		if ($interrupt_digit == 52) {$interrupt_digit=4;}
-		if ($interrupt_digit == 53) {$interrupt_digit=5;}
-		if ($interrupt_digit == 54) {$interrupt_digit=6;}
-		if ($interrupt_digit == 55) {$interrupt_digit=7;}
-		if ($interrupt_digit == 56) {$interrupt_digit=8;}
-		if ($interrupt_digit == 57) {$interrupt_digit=9;}
-		$totalDTMF=$interrupt_digit;
-		$digit_loop_counter++;
-		}
-	while ($digit_loop_counter < 1)
-		{
-		$wait_ms = ($wait_sec * 1000);
-		$digit = chr($AGI->wait_for_digit("$wait_ms"));  # wait number of milli-seconds for input
-		if ($digit =~ /\d/)
-			{
-			$totalDTMF = "$totalDTMF$digit";
-			print STDERR "digit |$digit|     TotalDTMF |$totalDTMF|\n";
-			undef $digit;
-			}
-		else
-			{
-			$digit_loop_counter=-1;
-			}
-		$digit_loop_counter++;
-		}
-	}
-sub get_time_now	#get the current date and time and epoch for logging call lengths and datetimes
-	{
-	($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
-	$year = ($year + 1900);
-	$mon++;
-	if ($mon < 10) {$mon = "0$mon";}
-	if ($mday < 10) {$mday = "0$mday";}
-	if ($hour < 10) {$hour = "0$hour";}
-	if ($min < 10) {$min = "0$min";}
-	if ($sec < 10) {$sec = "0$sec";}
-	$now_date_epoch = time();
-	$now_date = "$year-$mon-$mday $hour:$min:$sec";
-	$filedate = "$year$mon$mday$hour$min$sec";
-	}
-sub checkresult 
-	{
-	my ($res) = @_;
-	my $retval;
-	$tests++;
-	chomp $res;
-	if ($res =~ /^200/) 
-		{
-		$res =~ /result=(-?\d+)/;
-		if (!length($1)) 
-			{
-			print STDERR "FAIL ($res)\n";
-			$fail++;
-			} 
-		else 
-			{
-			print STDERR "PASS ($1)\n";
-			$pass++;
-			}
-		} 
-	else 
-		{
-		print STDERR "FAIL (unexpected result '$res')\n";
-		$fail++;
-		}
-	}
-sub agi_output
-	{
-	if ($AGILOG >=2)
-		{
-		open(Lout, ">>$AGILOGfile")
-				|| die "Can't open $AGILOGfile: $!\n";
-		print Lout "$now_date|$script|$agi_string\n";
-		close(Lout);
-		}
-	if ( ($AGILOG == '1') || ($AGILOG == '3') )
-		{print STDERR "$now_date|$script|$agi_string\n";}
-	$agi_string='';
-	}
-sub parse_asterisk_version
-	{
-	my $ast_ver_str = $_[0];
-	my @hyphen_parts = split( /-/ , $ast_ver_str );
-	my $ast_ver_postfix = $hyphen_parts[1];
-	my @dot_parts = split( /\./ , $hyphen_parts[0] );
-	my %ast_ver_hash;
-	if ( $dot_parts[0] <= 1 )
-		{
-			%ast_ver_hash = (
-				"major" => $dot_parts[0],
-				"minor" => $dot_parts[1],
-				"build" => $dot_parts[2],
-				"revision" => $dot_parts[3],
-				"postfix" => $ast_ver_postfix
-			);
-		}
-	if ( $dot_parts[0] > 1 )
-		{
-			%ast_ver_hash = (
-				"major" => 1,
-				"minor" => $dot_parts[0],
-				"build" => $dot_parts[1],
-				"revision" => $dot_parts[2],
-				"postfix" => $ast_ver_postfix
-			);
-		}
-	return ( %ast_ver_hash );
-	}
+
+sub company_ID_gather_response {
+    $digit           = '';
+    $interrupt_digit = '';
+    $interrupt_digit = $AGI->stream_file( "$company_ID_prompt", '1234567890' );
+    print STDERR "interrupt_digit |$interrupt_digit|\n";
+    $digits_being_entered = 1;
+    $digit_loop_counter   = 0;
+    $totalDTMF            = '';
+    if ( $interrupt_digit > 1 ) {
+        if ( $interrupt_digit == 48 ) { $interrupt_digit = 0; }
+        if ( $interrupt_digit == 49 ) { $interrupt_digit = 1; }
+        if ( $interrupt_digit == 50 ) { $interrupt_digit = 2; }
+        if ( $interrupt_digit == 51 ) { $interrupt_digit = 3; }
+        if ( $interrupt_digit == 52 ) { $interrupt_digit = 4; }
+        if ( $interrupt_digit == 53 ) { $interrupt_digit = 5; }
+        if ( $interrupt_digit == 54 ) { $interrupt_digit = 6; }
+        if ( $interrupt_digit == 55 ) { $interrupt_digit = 7; }
+        if ( $interrupt_digit == 56 ) { $interrupt_digit = 8; }
+        if ( $interrupt_digit == 57 ) { $interrupt_digit = 9; }
+        $totalDTMF = $interrupt_digit;
+        $digit_loop_counter++;
+    }
+    while ( $digit_loop_counter < $company_ID_length ) {
+        $digit =
+          chr( $AGI->wait_for_digit('100000') );    # wait 100 seconds for input
+        if ( $digit =~ /\d/ ) {
+            $totalDTMF = "$totalDTMF$digit";
+            print STDERR "digit |$digit|     TotalDTMF |$totalDTMF|\n";
+            undef $digit;
+        }
+        else {
+            $digit_loop_counter = $company_ID_length;
+        }
+        $digit_loop_counter++;
+    }
+}
+
+sub user_ID_gather_response {
+    $digit           = '';
+    $interrupt_digit = '';
+    $interrupt_digit = $AGI->stream_file( "$user_ID_prompt", '1234567890' );
+    print STDERR "interrupt_digit |$interrupt_digit|\n";
+    $digits_being_entered = 1;
+    $digit_loop_counter   = 0;
+    $totalDTMF            = '';
+    if ( $interrupt_digit > 1 ) {
+        if ( $interrupt_digit == 48 ) { $interrupt_digit = 0; }
+        if ( $interrupt_digit == 49 ) { $interrupt_digit = 1; }
+        if ( $interrupt_digit == 50 ) { $interrupt_digit = 2; }
+        if ( $interrupt_digit == 51 ) { $interrupt_digit = 3; }
+        if ( $interrupt_digit == 52 ) { $interrupt_digit = 4; }
+        if ( $interrupt_digit == 53 ) { $interrupt_digit = 5; }
+        if ( $interrupt_digit == 54 ) { $interrupt_digit = 6; }
+        if ( $interrupt_digit == 55 ) { $interrupt_digit = 7; }
+        if ( $interrupt_digit == 56 ) { $interrupt_digit = 8; }
+        if ( $interrupt_digit == 57 ) { $interrupt_digit = 9; }
+        $totalDTMF = $interrupt_digit;
+        $digit_loop_counter++;
+    }
+    while ( $digit_loop_counter < $user_ID_length ) {
+        $digit =
+          chr( $AGI->wait_for_digit('100000') );    # wait 100 seconds for input
+        if ( $digit =~ /\d/ ) {
+            $totalDTMF = "$totalDTMF$digit";
+            print STDERR "digit |$digit|     TotalDTMF |$totalDTMF|\n";
+            undef $digit;
+        }
+        else {
+            $digit_loop_counter = $user_ID_length;
+        }
+        $digit_loop_counter++;
+    }
+}
+
+sub cust_phone_gather_response {
+    $digit           = '';
+    $interrupt_digit = '';
+    $interrupt_digit = $AGI->stream_file( "$cust_phone_prompt", '1234567890' );
+    print STDERR "interrupt_digit |$interrupt_digit|\n";
+    $digits_being_entered = 1;
+    $digit_loop_counter   = 0;
+    $totalDTMF            = '';
+    if ( $interrupt_digit > 1 ) {
+        if ( $interrupt_digit == 48 ) { $interrupt_digit = 0; }
+        if ( $interrupt_digit == 49 ) { $interrupt_digit = 1; }
+        if ( $interrupt_digit == 50 ) { $interrupt_digit = 2; }
+        if ( $interrupt_digit == 51 ) { $interrupt_digit = 3; }
+        if ( $interrupt_digit == 52 ) { $interrupt_digit = 4; }
+        if ( $interrupt_digit == 53 ) { $interrupt_digit = 5; }
+        if ( $interrupt_digit == 54 ) { $interrupt_digit = 6; }
+        if ( $interrupt_digit == 55 ) { $interrupt_digit = 7; }
+        if ( $interrupt_digit == 56 ) { $interrupt_digit = 8; }
+        if ( $interrupt_digit == 57 ) { $interrupt_digit = 9; }
+        $totalDTMF = $interrupt_digit;
+        $digit_loop_counter++;
+    }
+    while ( $digit_loop_counter < $cust_phone_length ) {
+        $digit =
+          chr( $AGI->wait_for_digit('100000') );    # wait 100 seconds for input
+        if ( $digit =~ /\d/ ) {
+            $totalDTMF = "$totalDTMF$digit";
+            print STDERR "digit |$digit|     TotalDTMF |$totalDTMF|\n";
+            undef $digit;
+        }
+        else {
+            $digit_loop_counter = $cust_phone_length;
+        }
+        $digit_loop_counter++;
+    }
+}
+
+sub prompt_gather_response {
+    $digit           = '';
+    $interrupt_digit = '';
+    $interrupt_digit = $AGI->stream_file( "$prompt", '123456789' );
+    print STDERR "interrupt_digit |$interrupt_digit|\n";
+    $digits_being_entered = 1;
+    $digit_loop_counter   = 0;
+    $totalDTMF            = '';
+    if ( $interrupt_digit > 1 ) {
+        if ( $interrupt_digit == 49 ) { $interrupt_digit = 1; }
+        if ( $interrupt_digit == 50 ) { $interrupt_digit = 2; }
+        if ( $interrupt_digit == 51 ) { $interrupt_digit = 3; }
+        if ( $interrupt_digit == 52 ) { $interrupt_digit = 4; }
+        if ( $interrupt_digit == 53 ) { $interrupt_digit = 5; }
+        if ( $interrupt_digit == 54 ) { $interrupt_digit = 6; }
+        if ( $interrupt_digit == 55 ) { $interrupt_digit = 7; }
+        if ( $interrupt_digit == 56 ) { $interrupt_digit = 8; }
+        if ( $interrupt_digit == 57 ) { $interrupt_digit = 9; }
+        $totalDTMF = $interrupt_digit;
+        $digit_loop_counter++;
+    }
+    while ( $digit_loop_counter < 1 ) {
+        $wait_ms = ( $wait_sec * 1000 );
+        $digit   = chr( $AGI->wait_for_digit("$wait_ms") )
+          ;    # wait number of milli-seconds for input
+        if ( $digit =~ /\d/ ) {
+            $totalDTMF = "$totalDTMF$digit";
+            print STDERR "digit |$digit|     TotalDTMF |$totalDTMF|\n";
+            undef $digit;
+        }
+        else {
+            $digit_loop_counter = -1;
+        }
+        $digit_loop_counter++;
+    }
+}
+
+sub get_time_now #get the current date and time and epoch for logging call lengths and datetimes
+{
+    ( $sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst ) =
+      localtime(time);
+    $year = ( $year + 1900 );
+    $mon++;
+    if ( $mon < 10 )  { $mon  = "0$mon"; }
+    if ( $mday < 10 ) { $mday = "0$mday"; }
+    if ( $hour < 10 ) { $hour = "0$hour"; }
+    if ( $min < 10 )  { $min  = "0$min"; }
+    if ( $sec < 10 )  { $sec  = "0$sec"; }
+    $now_date_epoch = time();
+    $now_date       = "$year-$mon-$mday $hour:$min:$sec";
+    $filedate       = "$year$mon$mday$hour$min$sec";
+}
+
+sub checkresult {
+    my ($res) = @_;
+    my $retval;
+    $tests++;
+    chomp $res;
+    if ( $res =~ /^200/ ) {
+        $res =~ /result=(-?\d+)/;
+        if ( !length($1) ) {
+            print STDERR "FAIL ($res)\n";
+            $fail++;
+        }
+        else {
+            print STDERR "PASS ($1)\n";
+            $pass++;
+        }
+    }
+    else {
+        print STDERR "FAIL (unexpected result '$res')\n";
+        $fail++;
+    }
+}
+
+sub agi_output {
+    if ( $AGILOG >= 2 ) {
+        open( Lout, ">>$AGILOGfile" )
+          || die "Can't open $AGILOGfile: $!\n";
+        print Lout "$now_date|$script|$agi_string\n";
+        close(Lout);
+    }
+    if ( ( $AGILOG == '1' ) || ( $AGILOG == '3' ) ) {
+        print STDERR "$now_date|$script|$agi_string\n";
+    }
+    $agi_string = '';
+}
+
+sub parse_asterisk_version {
+    my $ast_ver_str     = $_[0];
+    my @hyphen_parts    = split( /-/, $ast_ver_str );
+    my $ast_ver_postfix = $hyphen_parts[1];
+    my @dot_parts       = split( /\./, $hyphen_parts[0] );
+    my %ast_ver_hash;
+    if ( $dot_parts[0] <= 1 ) {
+        %ast_ver_hash = (
+            "major"    => $dot_parts[0],
+            "minor"    => $dot_parts[1],
+            "build"    => $dot_parts[2],
+            "revision" => $dot_parts[3],
+            "postfix"  => $ast_ver_postfix
+        );
+    }
+    if ( $dot_parts[0] > 1 ) {
+        %ast_ver_hash = (
+            "major"    => 1,
+            "minor"    => $dot_parts[0],
+            "build"    => $dot_parts[1],
+            "revision" => $dot_parts[2],
+            "postfix"  => $ast_ver_postfix
+        );
+    }
+    return (%ast_ver_hash);
+}
