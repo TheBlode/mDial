@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+<?php
 #/* ========================================
 # * ███╗   ███╗██████╗ ██╗ █████╗ ██╗
 # * ████╗ ████║██╔══██╗██║██╔══██╗██║
@@ -31,6 +31,7 @@
 # *
 # * Bug reports, feature requests and patches welcome!
 # * ======================================== */
+?>
 <?php
 if (isset($_GET["lead_id"]))                {$lead_id=$_GET["lead_id"];}
     elseif (isset($_POST["lead_id"]))        {$lead_id=$_POST["lead_id"];}

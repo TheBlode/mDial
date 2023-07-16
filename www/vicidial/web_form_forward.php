@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+<?php
 #/* ========================================
 # * ███╗   ███╗██████╗ ██╗ █████╗ ██╗
 # * ████╗ ████║██╔══██╗██║██╔══██╗██║
@@ -31,6 +31,7 @@
 # *
 # * Bug reports, feature requests and patches welcome!
 # * ======================================== */
+?>
 <?php
 if (isset($_GET["phone_number"]))    {$phone_number=$_GET["phone_number"];}
 if (isset($_GET["source_id"]))        {$source_id=$_GET["source_id"];}

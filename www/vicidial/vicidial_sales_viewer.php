@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+<?php
 #/* ========================================
 # * ███╗   ███╗██████╗ ██╗ █████╗ ██╗
 # * ████╗ ████║██╔══██╗██║██╔══██╗██║
@@ -31,6 +31,7 @@
 # *
 # * Bug reports, feature requests and patches welcome!
 # * ======================================== */
+?>
 <?php header("Pragma: no-cache"); 
 if (isset($_GET["dcampaign"]))                    {$dcampaign=$_GET["dcampaign"];}
     elseif (isset($_POST["dcampaign"]))            {$dcampaign=$_POST["dcampaign"];}

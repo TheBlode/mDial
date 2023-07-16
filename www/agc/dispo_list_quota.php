@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+<?php
 #/* ========================================
 # * ███╗   ███╗██████╗ ██╗ █████╗ ██╗
 # * ████╗ ████║██╔══██╗██║██╔══██╗██║
@@ -31,6 +31,7 @@
 # *
 # * Bug reports, feature requests and patches welcome!
 # * ======================================== */
+?>
 <?php
 $api_script = 'dispo_list_quota';
 $php_script = 'dispo_list_quota.php';

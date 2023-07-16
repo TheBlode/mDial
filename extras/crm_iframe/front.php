@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+<?php
 #/* ========================================
 # * ███╗   ███╗██████╗ ██╗ █████╗ ██╗
 # * ████╗ ████║██╔══██╗██║██╔══██╗██║
@@ -31,6 +31,7 @@
 # *
 # * Bug reports, feature requests and patches welcome!
 # * ======================================== */
+?>
 <?php
 require_once("crm_settings.php");
 if (isset($_GET["DB"]))                            {$DB=$_GET["DB"];}

@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+<?php
 #/* ========================================
 # * ███╗   ███╗██████╗ ██╗ █████╗ ██╗
 # * ████╗ ████║██╔══██╗██║██╔══██╗██║
@@ -31,4 +31,5 @@
 # *
 # * Bug reports, feature requests and patches welcome!
 # * ======================================== */
+?>
 this file is unsupported and has been moved to the "extras/old_vtiger/" directory

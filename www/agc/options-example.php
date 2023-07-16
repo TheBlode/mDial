@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+<?php
 #/* ========================================
 # * ███╗   ███╗██████╗ ██╗ █████╗ ██╗
 # * ████╗ ████║██╔══██╗██║██╔══██╗██║
@@ -31,6 +31,7 @@
 # *
 # * Bug reports, feature requests and patches welcome!
 # * ======================================== */
+?>
 <?php
 $conf_silent_prefix        = '5';    # vicidial_conferences prefix to enter silently and muted for recording
 $dtmf_silent_prefix        = '7';    # vicidial_conferences prefix to enter silently
