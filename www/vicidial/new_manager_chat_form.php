@@ -1,13 +1,35 @@
+#!/usr/bin/perl
+#/* ========================================
+# * ███╗   ███╗██████╗ ██╗ █████╗ ██╗
+# * ████╗ ████║██╔══██╗██║██╔══██╗██║
+# * ██╔████╔██║██║  ██║██║███████║██║
+# * ██║╚██╔╝██║██║  ██║██║██╔══██║██║
+# * ██║ ╚═╝ ██║██████╔╝██║██║  ██║███████╗
+# * ╚═╝     ╚═╝╚═════╝ ╚═╝╚═╝  ╚═╝╚══════╝
+# * ========================================
+# * mDial - Omni-Channel Contact Centre Suite.
+# * Initially Written by Martin McCarthy.
+# * Contributions welcome.
+# * Active: 2020 - 2023.
+# *
+# * This software is licensed under AGPLv2.
+# * You can find more information here;
+# * https://www.gnu.org/licenses/agpl-3.0.en.html
+# * A copy of the license is also shipped with this build.
+# *
+# * Important note: this software is provided to you free of charge.
+# * If you paid for this software, you were ripped off.
+# *
+# * This project is a fork of the awesome FOSS project, ViCiDial.
+# * ViCiDial is copyrighted by Matt Florell and the ViCiDial Group
+# * under the AGPLv2 license.
+# *
+# * You can find out more about ViCiDial;
+# * Web: https://www.vicidial.com/
+# * Email: Matt Florell <vicidial@gmail.com>
+# * IRC: Libera.Chat - ##vicidial
+# *
+# * Bug reports, feature requests and patches welcome!
+# * ======================================== */
 <?php
-# new_manager_chat_form.php
-# 
-# Copyright (C) 2015  Joe Johnson, Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
-#
-# This page is for managers (level 8 or higher) to chat with live agents
-#
-# changes:
-# 150608-2041 - First Build
-# 151219-0718 - Added translation code where missing
-# 151219-1858 - Depricated
-#
 ?>

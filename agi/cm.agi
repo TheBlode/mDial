@@ -1,42 +1,37 @@
 #!/usr/bin/perl
-#
-# cm.agi   version 2.14
-# 
-# Used by Call Menus to log digit presses if enabled in the settings. You should
-# not need to manually use this script, it is used by the dialplan builder.
-#
-# You need to put lines similar to those below in your extensions.conf file:
-# ; Below are the parameters needed for the script to be run properly
-# ; 1. the in-group to take settings from
-# ; 2. digit pressed
-# ; 3. field(in vicidial_list) to update with DTMF pressed (only if lead_id populated)
-# ; 4. alt-log(enable alternate logging)
-# ; 5. question number used if alt-logging is enabled
-# ;
-# ;inbound calls check calltime:
-#exten => 1,1,AGI(cm.agi,INBOUND-----1-----province----------)
-#exten => 1,2,...
-#
-# ;to allow for multi-digit entries, put similar entry in the Custom Dialplan Entry:
-#exten => _XXXXX,1,AGI(cm.agi,INBOUND-----${EXTEN}-----postal_code)
-#exten => _XXXXX,n,Goto(next_callmenu_here,s,1)
-#
-# Copyright (C) 2023  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
-#
-# changes:
-# 110525-2100 - First Build
-# 111003-2150 - Added field to update
-# 120730-0729 - Changed to allow inbound logging when lead is defined
-# 130925-1822 - Added variable filter to prevent DID SQL injection attack
-# 130926-1547 - Added new queue_log IVR entries for QM
-# 160305-2244 - Added Alt IVR Logging options
-# 161102-1039 - Fixed QM partition problem
-# 191011-0921 - Fixed logging issue with missing active call record
-# 230118-1634 - Added response logging for manual dial outbound calls
-#
-
+#/* ========================================
+# * ███╗   ███╗██████╗ ██╗ █████╗ ██╗
+# * ████╗ ████║██╔══██╗██║██╔══██╗██║
+# * ██╔████╔██║██║  ██║██║███████║██║
+# * ██║╚██╔╝██║██║  ██║██║██╔══██║██║
+# * ██║ ╚═╝ ██║██████╔╝██║██║  ██║███████╗
+# * ╚═╝     ╚═╝╚═════╝ ╚═╝╚═╝  ╚═╝╚══════╝
+# * ========================================
+# * mDial - Omni-Channel Contact Centre Suite.
+# * Initially Written by Martin McCarthy.
+# * Contributions welcome.
+# * Active: 2020 - 2023.
+# *
+# * This software is licensed under AGPLv2.
+# * You can find more information here;
+# * https://www.gnu.org/licenses/agpl-3.0.en.html
+# * A copy of the license is also shipped with this build.
+# *
+# * Important note: this software is provided to you free of charge.
+# * If you paid for this software, you were ripped off.
+# *
+# * This project is a fork of the awesome FOSS project, ViCiDial.
+# * ViCiDial is copyrighted by Matt Florell and the ViCiDial Group
+# * under the AGPLv2 license.
+# *
+# * You can find out more about ViCiDial;
+# * Web: https://www.vicidial.com/
+# * Email: Matt Florell <vicidial@gmail.com>
+# * IRC: Libera.Chat - ##vicidial
+# *
+# * Bug reports, feature requests and patches welcome!
+# * ======================================== */
 $script = 'cm.agi';
-
 ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
 $year = ($year + 1900);
 $mon++;
@@ -45,17 +40,10 @@ if ($mday < 10) {$mday = "0$mday";}
 if ($hour < 10) {$hour = "0$hour";}
 if ($min < 10) {$min = "0$min";}
 if ($sec < 10) {$sec = "0$sec";}
-
 $now_date_epoch = time();
 $now_date = "$year-$mon-$mday $hour:$min:$sec";
-
 $vicidial_list_fields = '|vendor_lead_code|source_id|phone_code|title|first_name|middle_initial|last_name|address1|address2|address3|city|state|province|postal_code|country_code|alt_phone|email|security_phrase|comments|rank|owner|status|user|q01|q02|q03|q04|q05|q06|q07|q08|q09|q10|q11|q12|q13|q14|q15|q16|q17|q18|q19|q20|q21|q22|q23|q24|q25|q26|q27|q28|q29|q30|q31|q32|q33|q34|q35|q36|q37|q38|q39|q40|q41|q42|q43|q44|q45|q46|q47|q48|q49|q50|q51|q52|q53|q54|q55|q56|q57|q58|q59|q60|q61|q62|q63|q64|q65|q66|q67|q68|q69|q70|q71|q72|q73|q74|q75|q76|q77|q78|q79|q80|q81|q82|q83|q84|q85|q86|q87|q88|q89|q90|q91|q92|q93|q94|q95|q96|q97|q98|q99|';
-
-
-
-# default path to astguiclient configuration file:
 $PATHconf =		'/etc/astguiclient.conf';
-
 open(conf, "$PATHconf") || die "can't open $PATHconf: $!\n";
 @conf = <conf>;
 close(conf);
@@ -90,19 +78,14 @@ foreach(@conf)
 		{$VARDB_port = $line;   $VARDB_port =~ s/.*=//gi;}
 	$i++;
 	}
-
 if (!$VARDB_port) {$VARDB_port='3306';}
 if (!$AGILOGfile) {$AGILOGfile = "$PATHlogs/agiout.$year-$mon-$mday";}
-
 use DBI;
 use Time::HiRes ('gettimeofday','usleep','sleep');  # necessary to have perl sleep command of less than one second
 use Asterisk::AGI;
 $AGI = new Asterisk::AGI;
-
 $dbhA = DBI->connect("DBI:mysql:$VARDB_database:$VARDB_server:$VARDB_port", "$VARDB_user", "$VARDB_pass")
     or die "Couldn't connect to database: " . DBI->errstr;
-
-### Grab Server values from the database
 $stmtA = "SELECT agi_output FROM servers where server_ip = '$VARserver_ip';";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -117,9 +100,6 @@ if ($sthArows > 0)
 	if ($DBagi_output =~ /BOTH/)	{$AGILOG = '3';}
 	}
 $sthA->finish();
-
-#############################################
-##### START QUEUEMETRICS LOGGING LOOKUP #####
 $stmtA = "SELECT enable_queuemetrics_logging,queuemetrics_server_ip,queuemetrics_dbname,queuemetrics_login,queuemetrics_pass,queuemetrics_log_id,queuemetrics_eq_prepend FROM system_settings;";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -136,11 +116,6 @@ if ($sthArows > 0)
 	$queuemetrics_eq_prepend =	$aryA[6];
 	}
 $sthA->finish();
-##### END QUEUEMETRICS LOGGING LOOKUP #####
-###########################################
-
-
-### begin parsing run-time options ###
 if (length($ARGV[0])>1)
 	{
 	if ($AGILOG) {$agi_string = "Perl Environment Dump:";   &agi_output;}
@@ -151,17 +126,13 @@ if (length($ARGV[0])>1)
 		if ($AGILOG) {$agi_string = "$i|$ARGV[$i]";   &agi_output;}
 		$i++;
 		}
-	
-	### list of command-line array arguments:
 	@ARGV_vars = split(/-----/, $ARGV[0]);
-
 	$channel_group = 	$ARGV_vars[0];
 	$dtmf =				$ARGV_vars[1];
 	$field =			$ARGV_vars[2];
 	$alt_logging =		$ARGV_vars[3];
 	$alt_question =		$ARGV_vars[4];
 	}
-
 $|=1;
 while(<STDIN>) 
 	{
@@ -174,7 +145,6 @@ while(<STDIN>)
 			$AGI{$1} = $2;
 			}
 		}
-
 	if (/^agi_context\:\s+(.*)$/)		{$context = $1;}
 	if (/^agi_priority\:\s+(.*)$/)		{$priority = $1;}
 	if (/^agi_uniqueid\:\s+(.*)$/)		{$unique_id = $1; $uniqueid = $unique_id;}
@@ -187,7 +157,6 @@ while(<STDIN>)
 $callerid =~ s/\'|\\\\|\\\|\\|\\;|\\\;|\;|;//gi;
 $calleridname =~ s/\'|\\\\|\\\|\\|\\;|\\\;|\;|;//gi;
 $extension =~ s/\'|\"|\\\\|\\\|\\|\\;|\\\;|\;|;//gi;
-
 $outboundIVR=0;
 $fieldUPDATE=0;
 if ($calleridname =~ /^V\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d|^M\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d/)
@@ -195,7 +164,6 @@ if ($calleridname =~ /^V\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d|^M\d\d\d\d\d\d\d\
 	$phone_number = $callerid;
 	$callerid = $calleridname;
 	$outboundIVR=1;
-
 	$stmtA = "SELECT campaign_id,lead_id FROM vicidial_auto_calls where callerid='$callerid';";
 	$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 	$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -219,7 +187,6 @@ elsif ($calleridname =~ /^Y\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d/)
 	$lead_id = ($lead_id + 0);
 	$phone_number = $callerid;
 	$callerid = $calleridname;
-
 	$stmtA = "SELECT campaign_id FROM vicidial_auto_calls where callerid='$callerid';";
 	$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 	$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -230,7 +197,6 @@ elsif ($calleridname =~ /^Y\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d/)
 		$campaign_id =	$aryA[0];
 		}
 	$sthA->finish();
-
 	if ( (length($field)>2) && ($vicidial_list_fields =~ /\|$field\|/) )
 		{
 		$fieldUPDATE=1;
@@ -244,53 +210,38 @@ else
 		$calleridname =~ s/\<\d\d\d\d\d\d\d\d\d\d\>//gi;
 		$calleridname =~ s/\"|\" //gi;
 		}
-
 	$callerid =~ s/\D|\'//gi;
 	$calleridname =~ s/unknown|\'//gi;
 	if ( (!$callerid) or ($callerid =~ /unknown/) )
 		{$callerid = $calleridname;}
-
 	if (length($callerid)>0) {$phone_number = $callerid;}
 	   else {$phone_number = '';}
 	if (length($calleridname)>0) {$VLcomments = $calleridname;}
 	   else {$VLcomments = '';}
    }
-
 if (length($callerid)<8) {$callerid = $parked_by;}
 if (length($pin)>0) {$callerid = $pin;}
-
-
 foreach $i (sort keys %AGI) 
 	{
 	if ($AGILOG) {$agi_string = " -- $i = $AGI{$i}";   &agi_output;}
 	}
-
 if ($AGILOG) {$agi_string = "AGI Variables: |$unique_id|$channel|$extension|$type|$callerid|";   &agi_output;}
-
-
 if (length($pin) < 1) {$pin=$inbound_number;}
-
 $fronter = $pin;
-
 if ($AGILOG) {$agi_string = "+++++ DTMF LOG STARTED : |$channel_group|$callerid-$pin|$now_date";   &agi_output;}
-
 $VDADphone='';
 $VDADphone_code='';
-
 if ($channel =~ /Local/i)
 	{
 	if ($AGILOG) {$agi_string = "+++++ VDAD START LOCAL CHANNEL: EXITING- $priority";   &agi_output;}
 	exit;
 	}
-
-### insert an IVR record to the vicidial_auto_calls table
 if ($outboundIVR > 0)
 	{
 	$stmtA = "INSERT INTO vicidial_outbound_ivr_log (uniqueid,caller_code,event_date,campaign_id,lead_id,menu_id,menu_action) values('$uniqueid','$callerid','$now_date','$campaign_id','$lead_id','$context>$dtmf','$dtmf');";
 		if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 	$affected_rowsL = $dbhA->do($stmtA);
 	if ($AGILOG) {$agi_string = "--    VOIL insert: |$affected_rowsL|$uniqueid|$callerid|$campaign_id|$lead_id|$context|";   &agi_output;}
-
 	if ( (length($field)>2) && ($vicidial_list_fields =~ /\|$field\|/) )
 		{
 		if ( ($field =~ /^q/i) && ($dtmf !~ /[0-9]/) )
@@ -322,13 +273,11 @@ else
 			if ($AGILOG) {$agi_string = "--    VL update: |$affected_rowsL|$field|$dtmf|$lead_id|$context|";   &agi_output;}
 			}
 		}
-
 	$stmtA = "INSERT INTO live_inbound_log (uniqueid,channel,server_ip,caller_id,extension,phone_ext,start_time,comment_a,comment_b,comment_d,comment_e) values('$uniqueid','$channel','$VARserver_ip','$callerid','$extension','$phone_number','$now_date','$channel_group','$dtmf','$context>$dtmf','$priority');";
 		if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 	$affected_rowsL = $dbhA->do($stmtA);
 	if ($AGILOG) {$agi_string = "--    LIL insert: |$affected_rowsL|$uniqueid|$callerid|$extension|";   &agi_output;}
 	}
-
 if ( ($alt_logging =~ /1/) && ($alt_question =~ /\d/) )
 	{
 	$stmtA = "INSERT INTO vicidial_ivr_response (btn,lead_id,question,response,uniqueid,campaign) values('$phone_number','$lead_id','$alt_question','$dtmf','$uniqueid','$campaign_id');";
@@ -336,45 +285,30 @@ if ( ($alt_logging =~ /1/) && ($alt_question =~ /\d/) )
 	$affected_rowsAI = $dbhA->do($stmtA);
 	if ($AGILOG) {$agi_string = "--    VIR insert: |$affected_rowsAI|$uniqueid|$phone_number|$lead_id|";   &agi_output;}
 	}
-
-
-### QueueMetrics logging if enabled
 if ($enable_queuemetrics_logging > 0)
 	{
 	$dbhB = DBI->connect("DBI:mysql:$queuemetrics_dbname:$queuemetrics_server_ip:3306", "$queuemetrics_login", "$queuemetrics_pass")
 	 or die "Couldn't connect to database: " . DBI->errstr;
-
 	if ($DBX) {print "CONNECTED TO QueueMetrics DATABASE:  $queuemetrics_server_ip|$queuemetrics_dbname\n";}
-
 	if ($outboundIVR > 0)
 		{$uniqueid = $caller_id;}
-
 	$stmtB = "INSERT INTO queue_log SET `partition`='P01',time_id='$now_date_epoch',call_id='$uniqueid',queue='NONE',agent='NONE',verb='INFO',data1='IVRAPPEND',data2='$dtmf',data3='$context',serverid='$queuemetrics_log_id';";
 		if ($AGILOG) {$agi_string = "|$stmtB|";   &agi_output;}
 	$Baffected_rows = $dbhB->do($stmtB);
 	$dbhB->disconnect();
 	}
-
-
 $sthA->finish();
 $dbhA->disconnect();
-
 exit;
-
-
-
-##### SUBROUTINES #####
 sub agi_output
 	{
 	if ($AGILOG >=2)
 		{
-		### open the log file for writing ###
 		open(Lout, ">>$AGILOGfile")
 				|| die "Can't open $AGILOGfile: $!\n";
 		print Lout "$now_date|$script|$agi_string\n";
 		close(Lout);
 		}
-		### send to STDERR writing ###
 	if ( ($AGILOG == '1') || ($AGILOG == '3') )
 		{print STDERR "$now_date|$script|$agi_string\n";}
 	$agi_string='';

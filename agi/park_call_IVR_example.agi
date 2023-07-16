@@ -1,40 +1,37 @@
 #!/usr/bin/perl
-#
-# park_call_IVR_example.agi version 2.4
-# 
-# NOTE: this script is an example of how you can use a custom AGI script with 
-# the new Park Call IVR feature in campaigns. You will most likely need to 
-# significantly alter this script to suit your specific needs
-#
-# Defined in the Park Call AGI IVR field of a campaign, this script will ask
-# customer for their ID and then populate it in the vicidial_list table and then
-# send the call back to the agent. If the customer enters nothing X number of
-# times then the call can be kicked out to a separate in-group
-# 
-# Here is a list of the variables that you can set:
-#  1.  Language - default: en (English), other options are es-Spanish, fr-French
-#  2.  First prompt - default: please_enter_id_number
-#  3.  You-Entered prompt - default: you-entered
-#  4.  Confirmation prompt - default: confirm_id_number
-#  5.  Thank you prompt - default: auth-thankyou
-#  6.  Invalid prompt - default: buzz
-#  7.  Attempts before kick-out - default: 2
-#  8.  Kick-out prompt - default: outside-transfer
-#  9.  Kick-out In-Group
-#
-# Example Park Call AGI IVR field:
-# park_call_IVR_example.agi|en---please_enter_id_number---you-entered---confirm_id_number---auth-thankyou---buzz---2---outside-transfer---TEST_IN
-#
-# NOTE: For Asterisk 1.8 and higher, use a comma instead of a pipe in the Park Call AGI IVR field
-#
-# Copyright (C) 2010  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
-#
-# changes:
-# 101004-1132 - First build
-#
-
+#/* ========================================
+# * ███╗   ███╗██████╗ ██╗ █████╗ ██╗
+# * ████╗ ████║██╔══██╗██║██╔══██╗██║
+# * ██╔████╔██║██║  ██║██║███████║██║
+# * ██║╚██╔╝██║██║  ██║██║██╔══██║██║
+# * ██║ ╚═╝ ██║██████╔╝██║██║  ██║███████╗
+# * ╚═╝     ╚═╝╚═════╝ ╚═╝╚═╝  ╚═╝╚══════╝
+# * ========================================
+# * mDial - Omni-Channel Contact Centre Suite.
+# * Initially Written by Martin McCarthy.
+# * Contributions welcome.
+# * Active: 2020 - 2023.
+# *
+# * This software is licensed under AGPLv2.
+# * You can find more information here;
+# * https://www.gnu.org/licenses/agpl-3.0.en.html
+# * A copy of the license is also shipped with this build.
+# *
+# * Important note: this software is provided to you free of charge.
+# * If you paid for this software, you were ripped off.
+# *
+# * This project is a fork of the awesome FOSS project, ViCiDial.
+# * ViCiDial is copyrighted by Matt Florell and the ViCiDial Group
+# * under the AGPLv2 license.
+# *
+# * You can find out more about ViCiDial;
+# * Web: https://www.vicidial.com/
+# * Email: Matt Florell <vicidial@gmail.com>
+# * IRC: Libera.Chat - ##vicidial
+# *
+# * Bug reports, feature requests and patches welcome!
+# * ======================================== */
 $script = 'park_call_IVR_example.agi';
-
 ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
 $year = ($year + 1900);
 $mon++;
@@ -46,10 +43,7 @@ if ($sec < 10) {$sec = "0$sec";}
 $now_date_epoch = time();
 $now_date = "$year-$mon-$mday $hour:$min:$sec";
 $S='*';
-
-# default path to astguiclient configuration file:
 $PATHconf =		'/etc/astguiclient.conf';
-
 open(conf, "$PATHconf") || die "can't open $PATHconf: $!\n";
 @conf = <conf>;
 close(conf);
@@ -84,19 +78,13 @@ foreach(@conf)
 		{$VARDB_port = $line;   $VARDB_port =~ s/.*=//gi;}
 	$i++;
 	}
-
-
 if (!$VARDB_port) {$VARDB_port='3306';}
 if (!$AGILOGfile) {$AGILOGfile = "$PATHlogs/agiout.$year-$mon-$mday";}
-
 use DBI;
 use Asterisk::AGI;
 $AGI = new Asterisk::AGI;
-
 $dbhA = DBI->connect("DBI:mysql:$VARDB_database:$VARDB_server:$VARDB_port", "$VARDB_user", "$VARDB_pass")
     or die "Couldn't connect to database: " . DBI->errstr;
-
-### Grab Server values from the database
 $stmtA = "SELECT agi_output,ext_context FROM servers where server_ip = '$VARserver_ip';";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -114,9 +102,6 @@ while ($sthArows > $rec_count)
 	$rec_count++;
 	}
 $sthA->finish();
-
-
-### begin parsing run-time options ###
 if (length($ARGV[0])>1)
 	{
 	if ($AGILOG) {$agi_string = "Perl Environment Dump:";   &agi_output;}
@@ -127,10 +112,7 @@ if (length($ARGV[0])>1)
 		if ($AGILOG) {$agi_string = "$i|$ARGV[$i]";   &agi_output;}
 		$i++;
 		}
-	
-	### list of command-line array arguments:
 	@ARGV_vars = split(/---/, $ARGV[0]);
-
 	$language =				$ARGV_vars[0];
 	$first_prompt = 		$ARGV_vars[1];
 	$you_entered_prompt = 	$ARGV_vars[2];
@@ -141,7 +123,6 @@ if (length($ARGV[0])>1)
 	$kickout_prompt =		$ARGV_vars[7];
 	$kickout_ingroup =		$ARGV_vars[8];
 	}
-
 if (length($language)<1)			{$language='en';}
 if (length($first_prompt)<1)		{$first_prompt='please_enter_id_number';}
 if (length($you_entered_prompt)<1)	{$you_entered_prompt='you-entered';}
@@ -150,7 +131,6 @@ if (length($thank_you_prompt)<1)	{$thank_you_prompt='auth-thankyou';}
 if (length($invalid_prompt)<1)		{$invalid_prompt='buzz';}
 if (length($kickout_attempts)<1)	{$kickout_attempts='2';}
 if (length($kickout_prompt)<1)		{$kickout_prompt='outside-transfer';}
-
 $|=1;
 while(<STDIN>) 
 	{
@@ -163,7 +143,6 @@ while(<STDIN>)
 			$AGI{$1} = $2;
 			}
 		}
-
 	if (/^agi_uniqueid\:\s+(.*)$/)		{$unique_id = $1;}
 	if (/^agi_channel\:\s+(.*)$/)		{$channel = $1;}
 	if (/^agi_extension\:\s+(.*)$/)		{$extension = $1;}
@@ -177,8 +156,6 @@ while(<STDIN>)
 			{$callerid = $calleridname;}
 		if ( ($callerid =~ / /) && (length($callerid) > 20) )
 			{$callerid =~ s/ .*//gi;}
-
-		### allow for ANI being sent with the DNIS "*3125551212*9999*"
 		if ($extension =~ /^\*\d\d\d\d\d\d\d\d\d\d\*/)
 			{
 			$callerid = $extension;
@@ -190,25 +167,17 @@ while(<STDIN>)
 		$calleridname = $callerid;
 		}
 	}
-
 if ($AGILOG) {$agi_string = "AGI Environment Dump:";   &agi_output;}
-
 foreach $i (sort keys %AGI) 
 	{
 	if ($AGILOG) {$agi_string = " -- $i = $AGI{$i}";   &agi_output;}
 	}
-
-
 if ($AGILOG) {$agi_string = "AGI Variables: |$unique_id|$channel|$extension|$type|$callerid|";   &agi_output;}
-
 if ($AGILOG) {$agi_string = "PARKED CALL IVR STARTED";   &agi_output;}
-
-
 $stmtA = "UPDATE parked_channels set channel_group='$callerid' where server_ip='$VARserver_ip' and channel='$channel';";
 	if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 	$affected_rows = $dbhA->do($stmtA);
 if ($AGILOG) {$agi_string = "--    Park record updated: |$affected_rows|   |$callerid|$channel|$VARserver_ip";   &agi_output;}
-
 $VACcount=0;
 $VAC_campaign_id='';
 $VAC_call_type='';
@@ -218,7 +187,6 @@ $VLA_user='';
 $VLA_campaign_id='';
 $VCcount=0;
 $MOHfiles=0;
-
 $stmtA = "SELECT campaign_id,call_type,extension,phone_number,lead_id FROM vicidial_auto_calls where callerid='$callerid';";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -234,8 +202,6 @@ if ($VACcount > 0)
 	if ($AGILOG) {$agi_string = "--    VAC Call Found: |$callerid|$VAC_campaign_id|$VAC_call_type|$VAC_extension|$VAC_phone_number|$VAC_lead_id|";   &agi_output;}
 	}
 $sthA->finish();
-
-
 if ($VACcount > 0)
 	{
 	$stmtA = "SELECT user,campaign_id,server_ip,conf_exten FROM vicidial_live_agents where callerid='$callerid';";
@@ -254,9 +220,6 @@ if ($VACcount > 0)
 	if ($VLAcount > 0)
 		{
 		if ($AGILOG) {$agi_string = "--    Starting Gather Data: |$VLA_user|$VLA_campaign_id|$kickout_attempts|   |$callerid|";   &agi_output;}
-
-
-		### BEGIN prompt for customer ID number ($customer_id_number) ###
 		$customer_id_number='';
 		$variable='';
 		$confirmation=0;
@@ -271,11 +234,8 @@ if ($VACcount > 0)
 			while ( ($entry_chances < $kickout_attempts) && (length($variable) < 1) ) 
 				{
 				$entry_chances++;
-
 				&customer_variable_gather;
-
 				$customer_id_number = $variable;
-
 				if ( (length($customer_id_number) < 1) || (length($customer_id_number) > 20) )
 					{
 					if ($AGILOG) {$agi_string = "--    CUSTOMER ID GATHER FAIL : |$customer_id_number|";   &agi_output;}
@@ -284,14 +244,11 @@ if ($VACcount > 0)
 					}
 				}
 			$confirmation_chances++;
-
 			if ( (length($customer_id_number) > 0) || (length($customer_id_number) <= 20) ) 
 				{
 				$audio_file = $confirm_entry_prompt;   &play_audio;
 				$AGI->say_digits("$variable");
-
 				&confirm_entry;
-
 				if ($ANSWER_confirm > 1)
 					{$variable='';}
 				if ( ($ANSWER_confirm > 0) && ($ANSWER_confirm < 2) )
@@ -303,39 +260,29 @@ if ($VACcount > 0)
 					{$confirmation_chances=$kickout_attempts;}
 				}
 			}
-
-		### customer ID confirmed, update in vicidial_list and tag agent for update
 		if ($confirmation > 0)
 			{
 			$stmtA = "UPDATE vicidial_list set vendor_lead_code='$customer_id_number' where lead_id='$VAC_lead_id';";
 				$affected_rows = $dbhA->do($stmtA);
 			if ($AGILOG) {$agi_string = "--    Lead record updated: |$affected_rows|   |$callerid|$stmtA|";   &agi_output;}
-
 			$stmtA = "UPDATE vicidial_live_agents set external_update_fields='1',external_update_fields_data='vendor_lead_code' where user='$VLA_user';";
 				$affected_rows = $dbhA->do($stmtA);
 			if ($AGILOG) {$agi_string = "--    Agent data update triggered: |$affected_rows|   |$callerid|$stmtA|";   &agi_output;}
 			}
-
-		### no valid customer ID received, send customer to kickout in-group if defined
 		if ( ($confirmation < 1) && (length($kickout_ingroup)>0) )
 			{
 			$audio_file = $kickout_prompt;   &play_audio;
 			sleep(1);
-
 			$stmtA = "UPDATE vicidial_live_agents set external_transferconf='LOCAL_CLOSER---$kickout_ingroup' where user='$VLA_user';";
 				$affected_rows = $dbhA->do($stmtA);
 			if ($AGILOG) {$agi_string = "--    AGI Done, kick-out, sending call to kickout ingroup:  |$affected_rows|   |$callerid|$kickout_ingroup|$stmtA";   &agi_output;}
 			}
-		### END prompt for customer ID number ($customer_id_number) ###
 		else
 			{
-			### send API command to have agent grab call back
-
 			$AGI->stream_file('sip-silence');
 			$AGI->stream_file('sip-silence');
 			$AGI->stream_file('sip-silence');
 			$AGI->stream_file('sip-silence');
-
 			$stmtA = "UPDATE vicidial_live_agents set external_park='GRAB_IVR_CUSTOMER' where user='$VLA_user';";
 				$affected_rows = $dbhA->do($stmtA);
 			if ($AGILOG) {$agi_string = "--    AGI Done, sending call back to agent: |$affected_rows|   |$callerid|$stmtA|$VLA_user|";   &agi_output;}
@@ -346,38 +293,23 @@ else
 	{
 	if ($AGILOG) {$agi_string = "--    Call Not Found in vicidial_auto_calls:  |$callerid|";   &agi_output;}
 	}
-
-
 $dbhA->disconnect();
-
-
 $AGI->stream_file('sip-silence');
-
 if ($AGILOG) {$agi_string = "--    Exiting Park Call IVR:  |$callerid|";   &agi_output;}
-
 exit;
-
-
-
-
-
 sub agi_output
 	{
 	if ($AGILOG >=2)
 		{
-		### open the log file for writing ###
 		open(Lout, ">>$AGILOGfile")
 				|| die "Can't open $AGILOGfile: $!\n";
 		print Lout "$now_date|$script|$agi_string\n";
 		close(Lout);
 		}
-		### send to STDERR writing ###
 	if ( ($AGILOG == '1') || ($AGILOG == '3') )
 		{print STDERR "$now_date|$script|$agi_string\n";}
 	$agi_string='';
 	}
-
-
 sub checkresult 
 	{
 	my ($res) = @_;
@@ -389,23 +321,18 @@ sub checkresult
 		$res =~ /result=(-?\d+)/;
 		if (!length($1)) 
 			{
-		#	print STDERR "FAIL ($res)\n";
 			$fail++;
 			}
 		else 
 			{
-		#	print STDERR "PASS ($1)\n";
 			$pass++;
 			}
 		}
 	else 
 		{
-		#	print STDERR "FAIL (unexpected result '$res')\n";
 			$fail++;
 		}
 	}
-
-
 sub leading_zero($) 
 	{
 	$_ = $_[0];
@@ -413,9 +340,6 @@ sub leading_zero($)
 	s/^(\d\d)$/0$1/;
 	return $_;
 	} # End of the leading_zero() routine.
-
-
-### play audio, check for existing other language if defined ###
 sub play_audio
 	{
 	if ($language =~ /es/) 
@@ -440,18 +364,12 @@ sub play_audio
 		}
 	else 
 		{$audio_suffix='';}
-
 	$AGI->stream_file("$audio_file$audio_suffix");
 	}
-
-
-
-##### BEGIN collect the customer variable ###############################################
 sub customer_variable_gather
 	{
 	$interrupt_digit='';
 	$audio_file = "$variable_entry_prompt";
-
 	if ($language =~ /es/) 
 		{
 		$file_extension_gsm='.gsm';
@@ -474,17 +392,12 @@ sub customer_variable_gather
 		}
 	else 
 		{$audio_suffix='';}
-
 	$interrupt_digit = $AGI->stream_file("$audio_file$audio_suffix",'0123456789');   
-
 		print STDERR "interrupt_digit |$interrupt_digit|\n";
-
 	$digits_being_entered=1;
 	$PASS_word='';
 	if ($interrupt_digit > 0)
 		{
-	#	if ($interrupt_digit == 35) {$interrupt_digit='#';}
-	#	if ($interrupt_digit == 42) {$interrupt_digit='*';}
 		if ($interrupt_digit == 48) {$interrupt_digit=0;}
 		if ($interrupt_digit == 49) {$interrupt_digit=1;}
 		if ($interrupt_digit == 50) {$interrupt_digit=2;}
@@ -495,10 +408,8 @@ sub customer_variable_gather
 		if ($interrupt_digit == 55) {$interrupt_digit=7;}
 		if ($interrupt_digit == 56) {$interrupt_digit=8;}
 		if ($interrupt_digit == 57) {$interrupt_digit=9;}
-		
 		$PASS_word=$interrupt_digit;
 		}
-
 	$digit_loop_counter=0;
 	while ($digits_being_entered > 0)
 		{
@@ -507,7 +418,6 @@ sub customer_variable_gather
 			{
 			$PASS_word = "$PASS_word$digit";
 			print STDERR "digit |$digit|     PASS_word |$PASS_word|\n";
-	#		$AGI->say_digits("$digit");
 			undef $digit;
 			}
 		else
@@ -518,26 +428,17 @@ sub customer_variable_gather
 			{
 			$digits_being_entered=0;
 			}
-		
 		$digit_loop_counter++;
 		}
-
 	$PASS_word =~ s/\D//gi;
 	$variable = $PASS_word;
 	if ($PASS_word) {print STDERR "digit |$digit|     PASS_word |$PASS_word| variable |$variable|\n";}
 	$collect_digits='99';
 	}
-##### END collect the customer variable ###############################################
-
-
-
-
-##### BEGIN confirm entry ######################################
 sub confirm_entry
 	{
 	$interrupt_digit='';
 	$audio_file = "$confirmation_prompt";
-
 	if ($language =~ /es/) 
 		{
 		$file_extension_gsm='.gsm';
@@ -560,17 +461,12 @@ sub confirm_entry
 		}
 	else 
 		{$audio_suffix='';}
-
 	$interrupt_digit = $AGI->stream_file("$audio_file$audio_suffix",'12');   
-
 		print STDERR "interrupt_digit |$interrupt_digit|\n";
-
 	$digits_being_entered=1;
 	$ANSWER_confirm='';
 	if ($interrupt_digit > 0)
 		{
-	#	if ($interrupt_digit == 35) {$interrupt_digit='#';}
-	#	if ($interrupt_digit == 42) {$interrupt_digit='*';}
 		if ($interrupt_digit == 48) {$interrupt_digit=0;}
 		if ($interrupt_digit == 49) {$interrupt_digit=1;}
 		if ($interrupt_digit == 50) {$interrupt_digit=2;}
@@ -581,10 +477,8 @@ sub confirm_entry
 		if ($interrupt_digit == 55) {$interrupt_digit=7;}
 		if ($interrupt_digit == 56) {$interrupt_digit=8;}
 		if ($interrupt_digit == 57) {$interrupt_digit=9;}
-		
 		$ANSWER_confirm=$interrupt_digit;
 		}
-
 	if (length($ANSWER_confirm) < 1)
 		{
 		$digit_loop_counter=0;
@@ -595,19 +489,15 @@ sub confirm_entry
 				{
 				$ANSWER_confirm = "$ANSWER_confirm$digit";
 				print STDERR "digit |$digit|     ANSWER_confirm |$ANSWER_confirm|\n";
-		#		$AGI->say_digits("$digit");
 				undef $digit;
 				}
 			else
 				{
 				$digits_being_entered=0;
 				}
-			
 			$digit_loop_counter++;
 			}
 		}
-
 	$ANSWER_confirm =~ s/\D//gi;
 	if ($ANSWER_confirm) {print STDERR "digit |$digit|     ANSWER_confirm |$ANSWER_confirm|\n";}
 	}
-##### END confirm entry ######################################

@@ -1,27 +1,49 @@
 #!/usr/bin/perl
-
+#/* ========================================
+# * ███╗   ███╗██████╗ ██╗ █████╗ ██╗
+# * ████╗ ████║██╔══██╗██║██╔══██╗██║
+# * ██╔████╔██║██║  ██║██║███████║██║
+# * ██║╚██╔╝██║██║  ██║██║██╔══██║██║
+# * ██║ ╚═╝ ██║██████╔╝██║██║  ██║███████╗
+# * ╚═╝     ╚═╝╚═════╝ ╚═╝╚═╝  ╚═╝╚══════╝
+# * ========================================
+# * mDial - Omni-Channel Contact Centre Suite.
+# * Initially Written by Martin McCarthy.
+# * Contributions welcome.
+# * Active: 2020 - 2023.
+# *
+# * This software is licensed under AGPLv2.
+# * You can find more information here;
+# * https://www.gnu.org/licenses/agpl-3.0.en.html
+# * A copy of the license is also shipped with this build.
+# *
+# * Important note: this software is provided to you free of charge.
+# * If you paid for this software, you were ripped off.
+# *
+# * This project is a fork of the awesome FOSS project, ViCiDial.
+# * ViCiDial is copyrighted by Matt Florell and the ViCiDial Group
+# * under the AGPLv2 license.
+# *
+# * You can find out more about ViCiDial;
+# * Web: https://www.vicidial.com/
+# * Email: Matt Florell <vicidial@gmail.com>
+# * IRC: Libera.Chat - ##vicidial
+# *
+# * Bug reports, feature requests and patches welcome!
+# * ======================================== */
 use strict;
 use DBI;
 use Cwd;
-
 my $pwd = cwd();
-
-# change this to the name of the csv file that you are reading in.
 my $datafile = "carrier_rates.csv";
-
-# change this to the string needed to place the call through this carrier
 my $carrier_string = "SIP/provider1";
-
-# default path to astguiclient configuration file:
 my $PATHconf = '/etc/astguiclient.conf';
 my $VARDB_server = 'localhost';
 my $VARDB_database = 'asterisk';
 my $VARDB_user = 'cron';
 my $VARDB_pass = '1234';
 my $VARDB_port = '3306';
-
 print "Reading Vicidial configs\n";
-
 open( conf, "$PATHconf" ) || die "can't open $PATHconf: $!\n";
 my @conf = <conf>;
 close(conf);
@@ -51,20 +73,14 @@ foreach (@conf) {
         }
         $i++;
 }
-
 print "Opening connection to the database\n";
-
 my $dbhA = DBI->connect(
         "DBI:mysql:$VARDB_database:$VARDB_server:$VARDB_port",
         "$VARDB_user",
         "$VARDB_pass"
 ) or die "Couldn't connect to database: " . DBI->errstr;
-
-
 print "opening the file $datafile\n";
-
 open( DATAFILE, "$datafile" ) or die "no such file $datafile";
-
 my $npanxx; 
 my $state; 
 my $lata5;
@@ -73,35 +89,23 @@ my $ocn;
 my $rate;
 my $billing_zone;
 my $nothing;
-
 my $stmtA = "INSERT IGNORE INTO lcr ( npanxx, rate, carrier_string  ) VALUES ( ?,?,? );";
-
 print "Inserting data into the lcr table\n";
-
 my $index = 0;
 while (<DATAFILE>) {
         my $line = $_;
         $line =~ s/\r\n/\n/gi;
         chomp($line);
         if ( $index > 0 ) {
-                # parse the comma delimited line
                 ( $npanxx, $state, $lata5, $lata_name, $ocn, $rate, $billing_zone, $nothing ) = split ( ",", $line);
-
-                # remove the extra white space
                 chomp( $npanxx );
                 chomp( $rate );
-                
-                # remove any quotes that might be in the csv
                 $npanxx =~ s/\"//g;
                 $rate =~ s/\"//g;
-
-                # put it into the db
                 my $sthA = $dbhA->prepare_cached($stmtA) or die "preparing: ", $dbhA->errstr;
                 $sthA->execute( $npanxx, $rate, $carrier_string) or die "executing: $stmtA ", $dbhA->errstr;
                 $sthA->finish();
-
         }
         $index++;
 }
-
 close( data );

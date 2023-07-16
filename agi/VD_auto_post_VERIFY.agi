@@ -1,39 +1,43 @@
 #!/usr/bin/perl
-#
-# VD_auto_post_VERIFY.agi version 2.0.5   *DBI-version*
-#
-# NOTE: This script is only used with auto-message campaigns with dynamic data
-# 
-# runs after a call is answered
-#
-# You need to put lines similar to those below in your extensions.conf file:
-# 
-# ; VICIDIAL_auto_dialer transfer script AMD with Load Balanced:
-#exten => 8320,1,WaitForSilence(2000,2) ; wait for 2 seconds of silence
-#exten => 8320,2,AGI(VD_auto_post_VERIFY.agi,${EXTEN})
-#exten => 8320,3,Hangup
-# 
-#
-# Copyright (C) 2008  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
-#
-# changes:
-# 60915-1616 - first build
-# 100903-0041 - Changed lead_id max length to 10 digits
-#
-
+#/* ========================================
+# * ███╗   ███╗██████╗ ██╗ █████╗ ██╗
+# * ████╗ ████║██╔══██╗██║██╔══██╗██║
+# * ██╔████╔██║██║  ██║██║███████║██║
+# * ██║╚██╔╝██║██║  ██║██║██╔══██║██║
+# * ██║ ╚═╝ ██║██████╔╝██║██║  ██║███████╗
+# * ╚═╝     ╚═╝╚═════╝ ╚═╝╚═╝  ╚═╝╚══════╝
+# * ========================================
+# * mDial - Omni-Channel Contact Centre Suite.
+# * Initially Written by Martin McCarthy.
+# * Contributions welcome.
+# * Active: 2020 - 2023.
+# *
+# * This software is licensed under AGPLv2.
+# * You can find more information here;
+# * https://www.gnu.org/licenses/agpl-3.0.en.html
+# * A copy of the license is also shipped with this build.
+# *
+# * Important note: this software is provided to you free of charge.
+# * If you paid for this software, you were ripped off.
+# *
+# * This project is a fork of the awesome FOSS project, ViCiDial.
+# * ViCiDial is copyrighted by Matt Florell and the ViCiDial Group
+# * under the AGPLv2 license.
+# *
+# * You can find out more about ViCiDial;
+# * Web: https://www.vicidial.com/
+# * Email: Matt Florell <vicidial@gmail.com>
+# * IRC: Libera.Chat - ##vicidial
+# *
+# * Bug reports, feature requests and patches welcome!
+# * ======================================== */
 $script = 'VD_auto_post_VERIFY.agi';
-
-### files to play for message of not interested or DNC and your request has been processed
 $goodbye_audio_file = 'US_reminder_goodbye';
 $mc_one_file = '85100019';
 $mc_two_file = '85100021';
 $visa_one_file = '85100018';
 $visa_two_file = '85100020';
-
-
-#$A = 1;		# set to 1 for AMD output messages mode
 $AMD_LOG = 0;	# set to 1 for logfile
-
 ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
 $year = ($year + 1900);
 $mon++;
@@ -42,7 +46,6 @@ if ($mday < 10) {$mday = "0$mday";}
 if ($hour < 10) {$hour = "0$hour";}
 if ($min < 10) {$min = "0$min";}
 if ($sec < 10) {$sec = "0$sec";}
-
 $now_date_epoch = time();
 $now_date = "$year-$mon-$mday $hour:$min:$sec";
 $start_time=$now_date;
@@ -50,10 +53,7 @@ $start_time=$now_date;
 	$tsSQLdate = "$year$mon$mday$hour$min$sec";
 	$SQLdate = "$year-$mon-$mday $hour:$min:$sec";
 	$SQLdateBEGIN = $SQLdate;
-
-# default path to astguiclient configuration file:
 $PATHconf =		'/etc/astguiclient.conf';
-
 open(conf, "$PATHconf") || die "can't open $PATHconf: $!\n";
 @conf = <conf>;
 close(conf);
@@ -88,18 +88,13 @@ foreach(@conf)
 		{$VARDB_port = $line;   $VARDB_port =~ s/.*=//gi;}
 	$i++;
 	}
-
 if (!$VARDB_port) {$VARDB_port='3306';}
 if (!$AGILOGfile) {$AGILOGfile = "$PATHlogs/agiout.$year-$mon-$mday";}
-
 use DBI;
 use Asterisk::AGI;
 $AGI = new Asterisk::AGI;
-
 $dbhA = DBI->connect("DBI:mysql:$VARDB_database:$VARDB_server:$VARDB_port", "$VARDB_user", "$VARDB_pass")
     or die "Couldn't connect to database: " . DBI->errstr;
-
-### Grab Server values from the database
 $stmtA = "SELECT agi_output FROM servers where server_ip = '$VARserver_ip';";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -116,8 +111,6 @@ while ($sthArows > $rec_count)
 	 $rec_count++;
 	}
 $sthA->finish();
-
-### begin parsing run-time options ###
 if (length($ARGV[0])>1)
 {
 	if ($AGILOG) {$agi_string = "Perl Environment Dump:";   &agi_output;}
@@ -128,7 +121,6 @@ if (length($ARGV[0])>1)
 	if ($AGILOG) {$agi_string = "$i|$ARGV[$i]";   &agi_output;}
 	$i++;
 	}
-
 	if ($args =~ /--help/i)
 	{
 	print "allowed run time options:\n  [-q] = quiet\n  [-t] = test\n  [-debug] = verbose debug messages\n\n";
@@ -159,7 +151,6 @@ if (length($ARGV[0])>1)
 		}
 	}
 }
-
 $|=1;
 while(<STDIN>) 
 {
@@ -172,7 +163,6 @@ while(<STDIN>)
 			$AGI{$1} = $2;
 		}
 	}
-
 	if (/^agi_uniqueid\:\s+(.*)$/)		{$unique_id = $1; $uniqueid = $unique_id;}
 	if (/^agi_priority\:\s+(.*)$/)		{$priority = $1;}
 	if (/^agi_channel\:\s+(.*)$/)		{$channel = $1;}
@@ -181,93 +171,48 @@ while(<STDIN>)
 	if (/^agi_callerid\:\s+(.*)$/)		{$callerid = $1;}
 	if (/^agi_calleridname\:\s+(.*)$/)	{$calleridname = $1;}
 }
-
 if ( (length($callerid)>20) && ($callerid =~ /\"\S\S\S\S\S\S\S\S\S\S\S\S\S\S\S\S\S\S/) )
   {
    $callerid =~ s/^\"//gi;
    $callerid =~ s/\".*$//gi;
-#	### set the callerid to the ACQS value(calleridname)
-#	print "SET CALLERID $callerid\n";
-#	checkresult($result);
-#	print STDERR "callerID changed: $callerid\n";
-
   }
 if ( (
 (length($calleridname)>5) && ( (!$callerid) or ($callerid =~ /unknown|private|00000000/i) or ($callerid =~ /5551212/) )
 ) or ( (length($calleridname)>17) && ($calleridname =~ /\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d/) ) )
   {
    $callerid = $calleridname;
-#	### set the callerid to the ACQS value(calleridname)
-#	print "SET CALLERID $callerid\n";
-#	checkresult($result);
-#	print STDERR "callerID changed: $callerid\n";
   }
-
-
 if ($AGILOG) {$agi_string = "AGI Environment Dump:";   &agi_output;}
-
 foreach $i (sort keys %AGI) 
 {
 	if ($AGILOG) {$agi_string = " -- $i = $AGI{$i}";   &agi_output;}
 }
-
 if ($AGILOG) {$agi_string = "AGI Variables: |$unique_id|$channel|$extension|$type|$callerid|$calleridname|$priority|";   &agi_output;}
-
 $VDADcampaign='';
 $VDADphone='';
 $VDADphone_code='';
-
-
 $callerid =~ s/ .*//gi;
 $callerid =~ s/\"//gi;
 $CIDlead_id = $callerid;
 $CIDlead_id = substr($CIDlead_id, 10, 10);
 $CIDlead_id = ($CIDlead_id + 0);
 $VD_lead_id = $CIDlead_id;
-
 if ($AGILOG) {$agi_string = "+++++ VD amd START: |$CIDlead_id|$now_date|$AST_ver|";   &agi_output;}
-
 if ( ($channel =~ /Local/i) && ($AST_ver !~ /^1\.0\.8|^1\.0\.9/) )
 {
 if ($AGILOG) {$agi_string = "+++++ VDAD START LOCAL CHANNEL: EXITING- $priority";   &agi_output;}
 if ($priority > 2) {sleep(1);}
 exit;
 }
-
-
-#	Thank you for your recent purchase of ACME Sprockets, we have
-#	confirmed your enrollment in the 
-
-#	[Verified by Visa| MasterCard SecureCode]
-
-#	program. Please go to www.iconfirm.net and enter your name and
-#	verification code 
-
-#	[verification code] 
-
-#	within the next (x amount of hours) to
-#	complete 
-
-#	[Verified by Visa|MasterCard SecureCode] 
-
-#	authentication. Your
-#	participation is optional and does not effect the processing of your
-#	purchase. Thank you."
-
-
 $AGI->stream_file('beep');
-
 $stmtA = "UPDATE vicidial_log set status='PU' where lead_id='$VD_lead_id' order by call_date desc limit 1;";
 	if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 $affected_rows = $dbhA->do($stmtA);
 if ($AGILOG) {$agi_string = "--    VDAD vicidial_log PU update: |$affected_rows|$uniqueid|";   &agi_output;}
-
 $stmtA = "UPDATE vicidial_list set status='PU' where lead_id='$VD_lead_id';";
 	if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 $affected_rows = $dbhA->do($stmtA);
 if ($AGILOG) {$agi_string = "--    VDAD vicidial_list PU update: |$affected_rows|$uniqueid|";   &agi_output;}
-
-### Check to see if the number is in the system ###
 $stmtA= "SELECT security_phrase,comments from vicidial_list where lead_id='$VD_lead_id';";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -283,8 +228,6 @@ else
 	{
 	$AGI->stream_file("$goodbye_audio_file");
 	}
-
-### first read of the message
 if ($comments =~ /Master/i)
 	{
 	$message_one = $mc_one_file;
@@ -295,66 +238,30 @@ else
 	$message_one = $visa_one_file;
 	$message_two = $visa_two_file;
 	}
-
 if ($AGILOG) {$agi_string = "Verify message playing: |$VD_lead_id|$security_phrase|$comments|$message_one|$message_two|";   &agi_output;}
-
 $AGI->stream_file("$message_one");
-
 	sleep(1);
-
 $AGI->stream_file("letters/v");
 $AGI->say_digits("$security_phrase");
-
 	sleep(1);
-
-
 $AGI->stream_file("$message_two");
-
-
-
-
-
 $stmtA = "UPDATE vicidial_log set status='AL' where lead_id='$VD_lead_id' order by call_date desc limit 1;";
 	if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 $affected_rows = $dbhA->do($stmtA);
 if ($AGILOG) {$agi_string = "--    VDAD vicidial_log AM update: |$affected_rows|$uniqueid|";   &agi_output;}
-
 $stmtA = "UPDATE vicidial_list set status='AL' where lead_id='$VD_lead_id';";
 	if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 $affected_rows = $dbhA->do($stmtA);
 if ($AGILOG) {$agi_string = "--    VDAD vicidial_list AM update: |$affected_rows|$uniqueid|";   &agi_output;}
-
 $dbhA->disconnect();
-
-
-
-
-### second read of the message
-
 $AGI->stream_file("$message_one");
-
 	sleep(1);
-
 $AGI->stream_file("letters/v");
 $AGI->say_digits("$security_phrase");
-
 	sleep(1);
-
-
 $AGI->stream_file("$message_two");
-
-
 	$AGI->stream_file("$goodbye_audio_file");
-
-
-
-
-
-
-
-
 exit;
-
 sub checkresult {
 	my ($res) = @_;
 	my $retval;
@@ -363,31 +270,23 @@ sub checkresult {
 	if ($res =~ /^200/) {
 		$res =~ /result=(-?\d+)/;
 		if (!length($1)) {
-		#	print STDERR "FAIL ($res)\n";
 			$fail++;
 		} else {
-		#	print STDERR "PASS ($1)\n";
 			$pass++;
 		}
 	} else {
-	#	print STDERR "FAIL (unexpected result '$res')\n";
 		$fail++;
 	}
 }
-
-
-
 sub agi_output
 {
 if ($AGILOG >=2)
 	{
-	### open the log file for writing ###
 	open(Lout, ">>$AGILOGfile")
 			|| die "Can't open $AGILOGfile: $!\n";
 	print Lout "$now_date|$script|$agi_string\n";
 	close(Lout);
 	}
-	### send to STDERR writing ###
 if ( ($AGILOG == '1') || ($AGILOG == '3') )
 	{print STDERR "$now_date|$script|$agi_string\n";}
 $agi_string='';

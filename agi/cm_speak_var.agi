@@ -1,31 +1,38 @@
 #!/usr/bin/perl
-#
-# cm_speak_var.agi version 2.14
-#
-# runs after a call has lead_id assigned to it, speaks letters/numbers
-#
-# You need to put lines similar to those below in your Custom Dialplan:
-# 
-# exten => 8412,1,Answer
-# exten => 8412,n,AGI(cm_speak_var.agi,say_digits---security_phrase---DB)
-# exten => 8412,n,Hangup
-#
-# CLI FLAG OPTIONS:
-# 1. function: (say_digits, say_number, say_alpha, say_datetime, say_phonetic, stream_file)
-# 2. field: (any vicidial_list field)
-# 3. variable type: DB(default) or DP(Asterisk Dialplan Variable)
-# 
-# Copyright (C) 2021  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
-#
-# changes:
-# 140619-2005 - first build
-# 210311-1710 - Added variable type option, and ability to use Asterisk dialplan variables
-#
-
+#/* ========================================
+# * ███╗   ███╗██████╗ ██╗ █████╗ ██╗
+# * ████╗ ████║██╔══██╗██║██╔══██╗██║
+# * ██╔████╔██║██║  ██║██║███████║██║
+# * ██║╚██╔╝██║██║  ██║██║██╔══██║██║
+# * ██║ ╚═╝ ██║██████╔╝██║██║  ██║███████╗
+# * ╚═╝     ╚═╝╚═════╝ ╚═╝╚═╝  ╚═╝╚══════╝
+# * ========================================
+# * mDial - Omni-Channel Contact Centre Suite.
+# * Initially Written by Martin McCarthy.
+# * Contributions welcome.
+# * Active: 2020 - 2023.
+# *
+# * This software is licensed under AGPLv2.
+# * You can find more information here;
+# * https://www.gnu.org/licenses/agpl-3.0.en.html
+# * A copy of the license is also shipped with this build.
+# *
+# * Important note: this software is provided to you free of charge.
+# * If you paid for this software, you were ripped off.
+# *
+# * This project is a fork of the awesome FOSS project, ViCiDial.
+# * ViCiDial is copyrighted by Matt Florell and the ViCiDial Group
+# * under the AGPLv2 license.
+# *
+# * You can find out more about ViCiDial;
+# * Web: https://www.vicidial.com/
+# * Email: Matt Florell <vicidial@gmail.com>
+# * IRC: Libera.Chat - ##vicidial
+# *
+# * Bug reports, feature requests and patches welcome!
+# * ======================================== */
 $script = 'cm_speak_var.agi';
-
 $CM_LOG = 1;	# set to 1 for logfile
-
 ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
 $year = ($year + 1900);
 $mon++;
@@ -34,13 +41,9 @@ if ($mday < 10) {$mday = "0$mday";}
 if ($hour < 10) {$hour = "0$hour";}
 if ($min < 10) {$min = "0$min";}
 if ($sec < 10) {$sec = "0$sec";}
-
 $now_date_epoch = time();
 $now_date = "$year-$mon-$mday $hour:$min:$sec";
-
-# default path to astguiclient configuration file:
 $PATHconf =		'/etc/astguiclient.conf';
-
 open(conf, "$PATHconf") || die "can't open $PATHconf: $!\n";
 @conf = <conf>;
 close(conf);
@@ -75,20 +78,14 @@ foreach(@conf)
 		{$VARDB_port = $line;   $VARDB_port =~ s/.*=//gi;}
 	$i++;
 	}
-
 if (!$VARDB_port)	{$VARDB_port='3306';}
 if (!$CMLOGfile)	{$CMLOGfile = "$PATHlogs/cmout.$year-$mon-$mday";}
 if (!$AGILOGfile)	{$AGILOGfile = "$PATHlogs/agiout.$year-$mon-$mday";}
-
 use DBI;
 use Asterisk::AGI;
 $AGI = new Asterisk::AGI;
-
-  
 $dbhA = DBI->connect("DBI:mysql:$VARDB_database:$VARDB_server:$VARDB_port", "$VARDB_user", "$VARDB_pass")
     or die "Couldn't connect to database: " . DBI->errstr;
-
-### Grab Server values from the database
 $stmtA = "SELECT agi_output,asterisk_version,ext_context FROM servers where server_ip = '$VARserver_ip';";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -106,8 +103,6 @@ if ($sthArows > 0)
 	if ($DBagi_output =~ /BOTH/)	{$AGILOG = '3';}
 	}
 $sthA->finish();
-
-### begin parsing run-time options ###
 if (length($ARGV[0])>1)
 	{
 	if ($AGILOG) 
@@ -119,8 +114,6 @@ if (length($ARGV[0])>1)
 		if ($AGILOG) {$agi_string = "$i|$ARGV[$i]";   &agi_output;}
 		$i++;
 		}
-	
-	### list of command-line array arguments:
 	@ARGV_vars = split(/---/, $ARGV[0]);
 	$CLI_function =	$ARGV_vars[0];
 	$CLI_field = 	$ARGV_vars[1];
@@ -128,7 +121,6 @@ if (length($ARGV[0])>1)
 	}
 if ( ($CLI_var_type != 'DB') && ($CLI_var_type != 'DP') )
 	{$CLI_var_type='DB';}
-
 $|=1;
 while(<STDIN>) 
 	{
@@ -141,7 +133,6 @@ while(<STDIN>)
 			$AGI{$1} = $2;
 			}
 		}
-
 	if (/^agi_uniqueid\:\s+(.*)$/)		{$unique_id = $1; $uniqueid = $unique_id;}
 	if (/^agi_priority\:\s+(.*)$/)		{$priority = $1;}
 	if (/^agi_channel\:\s+(.*)$/)		{$channel = $1;}
@@ -150,7 +141,6 @@ while(<STDIN>)
 	if (/^agi_callerid\:\s+(.*)$/)		{$callerid = $1;   $calleridnum = $callerid;}
 	if (/^agi_calleridname\:\s+(.*)$/)	{$calleridname = $1;}
 	}
-
 if ( (length($callerid)>20) && ($callerid =~ /\"\S\S\S\S\S\S\S\S\S\S\S\S\S\S\S\S\S\S/) )
 	{
 	$callerid =~ s/^\"//gi;
@@ -162,18 +152,12 @@ if ( (
 	{
 	$callerid = $calleridname;
 	}
-
-
 if ($AGILOG) {$agi_string = "AGI Environment Dump:";   &agi_output;}
-
 foreach $i (sort keys %AGI) 
 	{
 	if ($AGILOG) {$agi_string = " -- $i = $AGI{$i}";   &agi_output;}
 	}
-
 if ($AGILOG) {$agi_string = "AGI Variables: |$unique_id|$channel|$extension|$type|$callerid|";   &agi_output;}
-
-
 $callerid =~ s/\"//gi;
 $callerid =~ s/ .*//gi;
 $CIDlead_id = $callerid;
@@ -184,9 +168,7 @@ else
 $CIDlead_id = ($CIDlead_id + 0);
 if ( ($CLIlead_id > 0) && ($CIDlead_id < 1) ) {$CIDlead_id = $CLIlead_id;}
 $VD_lead_id = $CIDlead_id;
-
 if ($AGILOG) {$agi_string = "+++++ cm_speak_var START : |$CLI_function|$CLI_field|$CLI_var_type|$CIDlead_id|$now_date|$AST_ver|$priority|$calleridname|";   &agi_output;}
-
 if ($CM_LOG) 
 	{
 	open(Lout, ">>$CMLOGfile")
@@ -194,10 +176,8 @@ if ($CM_LOG)
 	print Lout "$now_date|$VD_lead_id|      |$CLI_function|$CLI_field|$CLI_var_type|$calleridnum|$callerid|\n";
 	close(Lout);
 	}
-
 $AGI->stream_file('sip-silence');
 $AGI->stream_file('sip-silence');
-
 if ($CLI_var_type == 'DP') 
 	{
 	$field_value = $AGI->get_variable("$CLI_field");
@@ -244,7 +224,6 @@ else
 		$CM_owner =				$aryA[30];
 		}
 	$sthA->finish();
-
 	if ($CLI_field =~ /lead_id/)			{$field_value = $CM_lead_id;}
 	if ($CLI_field =~ /entry_date/)			{$field_value = $CM_entry_date;}
 	if ($CLI_field =~ /modify_date/)		{$field_value = $CM_modify_date;}
@@ -277,7 +256,6 @@ else
 	if ($CLI_field =~ /rank/)				{$field_value = $CM_rank;}
 	if ($CLI_field =~ /owner/)				{$field_value = $CM_owner;}
 	}
-
 if ($CLI_function =~ /say_digits/) 
 	{
 	$AGI->say_digits("$field_value");
@@ -302,16 +280,8 @@ if ($CLI_function =~ /stream_file/)
 	{
 	$AGI->stream_file("$field_value");
 	}
-
 $dbhA->disconnect();
-
-#$AGI->hangup($channel);
-
-
-
-
 exit;
-
 sub checkresult 
 	{
 	my ($res) = @_;
@@ -323,56 +293,38 @@ sub checkresult
 		$res =~ /result=(-?\d+)/;
 		if (!length($1)) 
 			{
-		#	print STDERR "FAIL ($res)\n";
 			$fail++;
 			} 
 		else 
 			{
-		#	print STDERR "PASS ($1)\n";
 			$pass++;
 			}
 		}
 	else
 		{
-	#	print STDERR "FAIL (unexpected result '$res')\n";
 		$fail++;
 		}
 	}
-
-
 sub agi_output
 	{
 	if ($AGILOG >=2)
 		{
-		### open the log file for writing ###
 		open(Lout, ">>$AGILOGfile")
 				|| die "Can't open $AGILOGfile: $!\n";
 		print Lout "$now_date|$script|$agi_string\n";
 		close(Lout);
 		}
-		### send to STDERR writing ###
 	if ( ($AGILOG == '1') || ($AGILOG == '3') )
 		{print STDERR "$now_date|$script|$agi_string\n";}
 	$agi_string='';
 	}
-
-# subroutine to parse the asterisk version
-# and return a hash with the various part
 sub parse_asterisk_version
 	{
-	# grab the arguments
 	my $ast_ver_str = $_[0];
-
-	# get everything after the - and put it in $ast_ver_postfix
 	my @hyphen_parts = split( /-/ , $ast_ver_str );
-
 	my $ast_ver_postfix = $hyphen_parts[1];
-
-	# now split everything before the - up by the .
 	my @dot_parts = split( /\./ , $hyphen_parts[0] );
-
 	my %ast_ver_hash;
-
 	if ( $dot_parts[0] <= 1 )
 		{
 			%ast_ver_hash = (
@@ -383,8 +335,6 @@ sub parse_asterisk_version
 				"postfix" => $ast_ver_postfix
 			);
 		}
-
-	# digium dropped the 1 from asterisk 10 but we still need it
 	if ( $dot_parts[0] > 1 )
 		{
 			%ast_ver_hash = (
@@ -395,6 +345,5 @@ sub parse_asterisk_version
 				"postfix" => $ast_ver_postfix
 			);
 		}
-
 	return ( %ast_ver_hash );
 	}

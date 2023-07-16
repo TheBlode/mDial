@@ -1,42 +1,37 @@
 #!/usr/bin/perl
-#
-# cm_sc_areacode.agi version 2.14
-# 
-# Designed to work with Call Menus to allow searching of the areacode of the 
-# caller ID phone number the customer called in with to be searched within the 
-# vicidial_phone_codes table to gather the state, or use the lead_id of the 
-# already-established call, then use the settings container ID to gather the 
-# state routing parameters to find the destination for that state
-#
-# If areacode is not found, call will go to the 'D' option in the call menu
-# If destination is not found, call will go to the 'C' option in the call menu
-#
-# Flag Options:
-# 1- Country code to search the areacode within, default 1
-# 2- Length of areacode in digits, default 3
-# 3- container_id for settings container with state and routing parameters
-#
-# example of what to set in the Call Menu:
-# Set the prompt to "sip-silence"
-# Set the Timeout to 1 second
-# Option: "Timeout" Route: "AGI" AGI: "cm_sc_areacode.agi,1---3---east_west"
-#
-# example of what to put in settings container:
-# NOTE: if you want any state non-matches to go to a destination, put that line FIRST
-#<destination type>|<destination>|<states list separated by spaces>
-#DID|9998881111|--NOMATCHES--
-#DID|9998882222|FL TX NY CA
-#EXTEN|919998887112|AL MS MO TN KY
-#CALLMENU|test_menu|IL MN WI MI IA
-#
-# Copyright (C) 2016  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
-#
-# changes:
-# 161205-1627 - First build
-#
-
+#/* ========================================
+# * ███╗   ███╗██████╗ ██╗ █████╗ ██╗
+# * ████╗ ████║██╔══██╗██║██╔══██╗██║
+# * ██╔████╔██║██║  ██║██║███████║██║
+# * ██║╚██╔╝██║██║  ██║██║██╔══██║██║
+# * ██║ ╚═╝ ██║██████╔╝██║██║  ██║███████╗
+# * ╚═╝     ╚═╝╚═════╝ ╚═╝╚═╝  ╚═╝╚══════╝
+# * ========================================
+# * mDial - Omni-Channel Contact Centre Suite.
+# * Initially Written by Martin McCarthy.
+# * Contributions welcome.
+# * Active: 2020 - 2023.
+# *
+# * This software is licensed under AGPLv2.
+# * You can find more information here;
+# * https://www.gnu.org/licenses/agpl-3.0.en.html
+# * A copy of the license is also shipped with this build.
+# *
+# * Important note: this software is provided to you free of charge.
+# * If you paid for this software, you were ripped off.
+# *
+# * This project is a fork of the awesome FOSS project, ViCiDial.
+# * ViCiDial is copyrighted by Matt Florell and the ViCiDial Group
+# * under the AGPLv2 license.
+# *
+# * You can find out more about ViCiDial;
+# * Web: https://www.vicidial.com/
+# * Email: Matt Florell <vicidial@gmail.com>
+# * IRC: Libera.Chat - ##vicidial
+# *
+# * Bug reports, feature requests and patches welcome!
+# * ======================================== */
 $script = 'cm_sc_areacode.agi';
-
 ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
 $year = ($year + 1900);
 $mon++;
@@ -45,7 +40,6 @@ if ($mday < 10) {$mday = "0$mday";}
 if ($hour < 10) {$hour = "0$hour";}
 if ($min < 10) {$min = "0$min";}
 if ($sec < 10) {$sec = "0$sec";}
-
 $now_date_epoch = time();
 $now_date = "$year-$mon-$mday $hour:$min:$sec";
 $start_time=$now_date;
@@ -55,10 +49,7 @@ $SQLdate = "$year-$mon-$mday $hour:$min:$sec";
 $SQLdateBEGIN = $SQLdate;
 $state='';
 $CIDlead_id='';
-
-# default path to astguiclient configuration file:
 $PATHconf =		'/etc/astguiclient.conf';
-
 open(conf, "$PATHconf") || die "can't open $PATHconf: $!\n";
 @conf = <conf>;
 close(conf);
@@ -93,18 +84,13 @@ foreach(@conf)
 		{$VARDB_port = $line;   $VARDB_port =~ s/.*=//gi;}
 	$i++;
 	}
-
 if (!$VARDB_port) {$VARDB_port='3306';}
 if (!$AGILOGfile) {$AGILOGfile = "$PATHlogs/agiout.$year-$mon-$mday";}
-
 use DBI;
 use Asterisk::AGI;
 $AGI = new Asterisk::AGI;
-
 $dbhA = DBI->connect("DBI:mysql:$VARDB_database:$VARDB_server:$VARDB_port", "$VARDB_user", "$VARDB_pass")
     or die "Couldn't connect to database: " . DBI->errstr;
-
-### Grab Server values from the database
 $stmtA = "SELECT agi_output FROM servers where server_ip = '$VARserver_ip';";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -121,9 +107,6 @@ while ($sthArows > $rec_count)
 	$rec_count++;
 	}
 $sthA->finish();
-
-
-### begin parsing run-time options ###
 if (length($ARGV[0])>1)
 	{
 	if ($AGILOG) {$agi_string = "Perl Environment Dump:";   &agi_output;}
@@ -134,20 +117,15 @@ if (length($ARGV[0])>1)
 		if ($AGILOG) {$agi_string = "$i|$ARGV[$i]";   &agi_output;}
 		$i++;
 		}
-	
-	### list of command-line array arguments:
 	@ARGV_vars = split(/---/, $ARGV[0]);
-
 	$country_code = 	$ARGV_vars[0];
 	$ac_length = 		$ARGV_vars[1];
 	$container_id = 	$ARGV_vars[2];
 	}
-
 if (length($country_code) < 1)
 	{$country_code = '1';}
 if (length($ac_length) < 1)
 	{$ac_length = '3';}
-
 $no_container=0;
 if (length($container_id) < 1)
 	{$no_container=1;}
@@ -167,7 +145,6 @@ else
 		{$no_container=2;}
 	$sthA->finish();
 	}
-
 if ($no_container > 0) 
 	{
 	if ($AGILOG) {$agi_string = "container_id not set($container_id|$no_container), exiting the cm_sc_areacode.agi app, transferring call to C @ $context";   &agi_output;}
@@ -180,10 +157,8 @@ if ($no_container > 0)
 	print "SET PRIORITY 1\n";
 		$result = <STDIN>;
 		checkresult($result);
-	
 	exit;
 	}
-
 $|=1;
 while(<STDIN>) 
 	{
@@ -196,7 +171,6 @@ while(<STDIN>)
 			$AGI{$1} = $2;
 			}
 		}
-
 	if (/^agi_context\:\s+(.*)$/)		{$context = $1;}
 	if (/^agi_uniqueid\:\s+(.*)$/)		{$unique_id = $1; $uniqueid = $unique_id;}
 	if (/^agi_channel\:\s+(.*)$/)		{$channel = $1;}
@@ -209,11 +183,9 @@ foreach $i (sort keys %AGI)
 	{
 	if ($AGILOG) {$agi_string = " -- $i = $AGI{$i}";   &agi_output;}
 	}
-
 $callerid =~ s/\'|\\\\|\\\|\\|\\;|\\\;|\;|;//gi;
 $calleridname =~ s/\'|\\\\|\\\|\\|\\;|\\\;|\;|;//gi;
 $extension =~ s/\'|\"|\\\\|\\\|\\|\\;|\\\;|\;|;//gi;
-
 if ($calleridname =~ /^V\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d|^Y\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d|^M\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d/)
 	{
 	$callerid = $calleridname;
@@ -222,8 +194,6 @@ if ($calleridname =~ /^V\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d|^Y\d\d\d\d\d\d\d\
 	$CIDlead_id = $callerid;
 	$CIDlead_id = substr($CIDlead_id, 10, 10);
 	$CIDlead_id = ($CIDlead_id + 0);
-
-	### gather state and phone_number from lead record ###
 	$stmtA= "SELECT state,phone_number from vicidial_list where lead_id='$CIDlead_id';";
 	$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 	$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -237,14 +207,12 @@ if ($calleridname =~ /^V\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d|^Y\d\d\d\d\d\d\d\
 		}
 	$sthA->finish();
 	}
-
 if ( ($callerid =~ /\".*\"/) && ( (!$calleridname) or ($calleridname =~ /unknown/) ) )
 	{
 	$calleridname = $callerid;
 	$calleridname =~ s/\<\d\d\d\d\d\d\d\d\d\d\>//gi;
 	$calleridname =~ s/\"|\" //gi;
 	}
-
 if ($callerid !~ /^V\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d|^Y\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d|^M\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d/)
 	{
 	$callerid =~ s/\D|\'//gi;
@@ -259,19 +227,13 @@ if ($callerid !~ /^V\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d|^Y\d\d\d\d\d\d\d\d\d\
 	if (length($pin)>0) {$callerid = $pin;}
 	}
 $phone_ac = substr($phone_number, 0, $ac_length);
-
 if ($AGILOG) {$agi_string = "AGI Variables: |$unique_id|$channel|$extension|$type|$callerid|     |$country_code|$phone_number($phone_ac)|$ac_length|";   &agi_output;}
-
 $AGI->stream_file('sip-silence');
 $AGI->stream_file('sip-silence');
 $AGI->stream_file('sip-silence');
-
-
 $g=0;
-### only perform search if minimum digits entered is valid and state is not already set ###
 if ( (length($phone_ac) >= $ac_length) && (length($state) < 2) )
 	{
-	### search for state using areacode of caller id number ###
 	$stmtA= "SELECT state from vicidial_phone_codes where country_code='$country_code' and areacode='$phone_ac';";
 	$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 	$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -285,8 +247,6 @@ if ( (length($phone_ac) >= $ac_length) && (length($state) < 2) )
 		}
 	$sthA->finish();
 	}
-
-# State not found, send call to 'D' option in call menu
 if ( ($g < 1) && (length($state) < 2) )
 	{
 	if ($AGILOG) {$agi_string = "entry not found($phone_ac), exiting the cm_sc_areacode.agi app, transferring call to D @ $context";   &agi_output;}
@@ -299,13 +259,8 @@ if ( ($g < 1) && (length($state) < 2) )
 	print "SET PRIORITY 1\n";
 		$result = <STDIN>;
 		checkresult($result);
-
 	exit;
 	}
-
-
-### search for state within the settings container container_entry ###
-
 $match=0;
 if (length($container_entry) > 5) 
 	{
@@ -317,14 +272,12 @@ if (length($container_entry) > 5)
 		if ( (length($container_lines[$i]) > 5) && ($container_lines[$i] =~ /\|/i) )
 			{
 			if($DBX){print STDERR "$container_lines[$i]\n";}
-
 			if ($container_lines[$i] =~ /\|--NOMATCHES--/i)
 				{
 				@line_details = split(/\|/,$container_lines[$i]);
 				$match++;
 				$destination_type =		$line_details[0];
 				$destination =			$line_details[1];
-
 				if (!$Q) {print " - NOMATCHES line found($i) $destination_type|$destination|$destination_states\n";}
 				}
 			else
@@ -375,11 +328,7 @@ else
 		print "ERROR: SETTINGS CONTAINER EMPTY: $container_id $container_entry $g\n";
 		}
 	}
-
-
 $dbhA->disconnect();
-
-# Destination not found in settings container, send call to 'C' option in call menu
 if ($match < 1) 
 	{
 	if ($AGILOG) {$agi_string = "entry not found($state|$phone_ac), exiting the cm_sc_areacode.agi app, transferring call to C @ $context";   &agi_output;}
@@ -392,13 +341,11 @@ if ($match < 1)
 	print "SET PRIORITY 1\n";
 		$result = <STDIN>;
 		checkresult($result);
-
 	exit;
 	}
 else
 	{
 	$AGI->exec("EXEC Set(_state=$state)");
-
 	if ($AGILOG) {$agi_string = "entry found($state|$phone_ac|$destination_type), exiting the cm_sc_areacode.agi app, transferring call to $destination_exten @ $destination_context";   &agi_output;}
 	print "SET CONTEXT $destination_context\n";
 		$result = <STDIN>;
@@ -409,32 +356,21 @@ else
 	print "SET PRIORITY 1\n";
 		$result = <STDIN>;
 		checkresult($result);
-
 	exit;
 	}
-
-
-
-
-##### SUBROUTINES #####
-
 sub agi_output
 {
 if ($AGILOG >=2)
 	{
-	### open the log file for writing ###
 	open(Lout, ">>$AGILOGfile")
 			|| die "Can't open $AGILOGfile: $!\n";
 	print Lout "$now_date|$script|$agi_string\n";
 	close(Lout);
 	}
-	### send to STDERR writing ###
 if ( ($AGILOG == '1') || ($AGILOG == '3') )
 	{print STDERR "$now_date|$script|$agi_string\n";}
 $agi_string='';
 }
-
-
 sub checkresult 
 	{
 	my ($res) = @_;
@@ -446,18 +382,15 @@ sub checkresult
 		$res =~ /result=(-?\d+)/;
 		if (!length($1)) 
 			{
-		#	print STDERR "FAIL ($res)\n";
 			$fail++;
 			} 
 		else 
 			{
-		#	print STDERR "PASS ($1)\n";
 			$pass++;
 			}
 		} 
 	else 
 		{
-	#	print STDERR "FAIL (unexpected result '$res')\n";
 		$fail++;
 		}
 	}

@@ -1,19 +1,37 @@
 #!/usr/bin/perl
-
-# getAGENTchannel.agi by Omar Rodriguez  www.ItContinental.com
-# Copyright (C) 2016  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
-# This script is able to return the name of the channel that belongs to the agent, 
-# to allow administrators to whisper to the agents
-# Has been made using Vicidial code as Base
-
-# CHANGELOG:
-# 150728-1315 - First build
-# 150804-0944 - Rewritten to work on multi-server systems and with different dialplan
-# 160523-2352 - Fixed issue with local channels in session
-#
-
+#/* ========================================
+# * ███╗   ███╗██████╗ ██╗ █████╗ ██╗
+# * ████╗ ████║██╔══██╗██║██╔══██╗██║
+# * ██╔████╔██║██║  ██║██║███████║██║
+# * ██║╚██╔╝██║██║  ██║██║██╔══██║██║
+# * ██║ ╚═╝ ██║██████╔╝██║██║  ██║███████╗
+# * ╚═╝     ╚═╝╚═════╝ ╚═╝╚═╝  ╚═╝╚══════╝
+# * ========================================
+# * mDial - Omni-Channel Contact Centre Suite.
+# * Initially Written by Martin McCarthy.
+# * Contributions welcome.
+# * Active: 2020 - 2023.
+# *
+# * This software is licensed under AGPLv2.
+# * You can find more information here;
+# * https://www.gnu.org/licenses/agpl-3.0.en.html
+# * A copy of the license is also shipped with this build.
+# *
+# * Important note: this software is provided to you free of charge.
+# * If you paid for this software, you were ripped off.
+# *
+# * This project is a fork of the awesome FOSS project, ViCiDial.
+# * ViCiDial is copyrighted by Matt Florell and the ViCiDial Group
+# * under the AGPLv2 license.
+# *
+# * You can find out more about ViCiDial;
+# * Web: https://www.vicidial.com/
+# * Email: Matt Florell <vicidial@gmail.com>
+# * IRC: Libera.Chat - ##vicidial
+# *
+# * Bug reports, feature requests and patches welcome!
+# * ======================================== */
 $script = 'getAGENTchannel.agi';
-
 ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
 $year = ($year + 1900);
 $mon++;
@@ -22,10 +40,7 @@ if ($mday < 10) {$mday = "0$mday";}
 if ($hour < 10) {$hour = "0$hour";}
 if ($min < 10) {$min = "0$min";}
 if ($sec < 10) {$sec = "0$sec";}
-
-# default path to astguiclient configuration file:
 $PATHconf =		'/etc/astguiclient.conf';
-
 open(conf, "$PATHconf") || die "can't open $PATHconf: $!\n";
 @conf = <conf>;
 close(conf);
@@ -60,19 +75,14 @@ foreach(@conf)
 		{$VARDB_port = $line;   $VARDB_port =~ s/.*=//gi;}
 	$i++;
 	}
-
 if (!$VARDB_port)	{$VARDB_port='3306';}
 if (!$AGILOGfile)	{$AGILOGfile = "$PATHlogs/agiout.$year-$mon-$mday";}
-
 use DBI;
 use Time::HiRes ('gettimeofday','usleep','sleep');  # necessary to have perl sleep command of less than one second
 use Asterisk::AGI;
 $AGI = new Asterisk::AGI;
-
 $dbhA = DBI->connect("DBI:mysql:$VARDB_database:$VARDB_server:$VARDB_port", "$VARDB_user", "$VARDB_pass")
     or die "Couldn't connect to database: " . DBI->errstr;
-
-### Grab Server values from the database
 $stmtA = "SELECT agi_output,local_gmt FROM servers where server_ip = '$VARserver_ip';";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -88,10 +98,7 @@ if ($sthArows > 0)
 	if ($DBagi_output =~ /BOTH/)	{$AGILOG = '3';}
 	}
 $sthA->finish();
-
 $agent_zap_channel =		"101";
-########## FIND playfilename  ##########
-
 $|=1;
 while(<STDIN>) 
 	{
@@ -104,7 +111,6 @@ while(<STDIN>)
 			$AGI{$1} = $2;
 			}
 		}
-
 	if (/^agi_uniqueid\:\s+(.*)$/)		{$unique_id = $1; $uniqueid = $unique_id;}
 	if (/^agi_channel\:\s+(.*)$/)		{$channel = $1;}
 	if (/^agi_extension\:\s+(.*)$/)		{$extension = $1;}
@@ -112,18 +118,10 @@ while(<STDIN>)
 	if (/^agi_callerid\:\s+(.*)$/)		{$callerid = $1;}
 	if (/^agi_calleridname\:\s+(.*)$/)	{$calleridname = $1;}
 	}
-
 if (length($extension) > 7) 
 	{$extension = substr($extension, -7);}
 if ($AGILOG) {$agi_string = "Agent session: $extension| Channel: $channel| CID: $calleridname <$callerid>|";   &agi_output;}
-
-
-#$stmtA = "SELECT channel   FROM vicidial_live_agents  WHERE conf_exten = '$canal' AND ifnull(trim(channel), '') <> ''      and (channel in (select channel from live_channels) or comments='MANUAL')  LIMIT 1";
-
 $stmtA = "SELECT channel FROM live_sip_channels WHERE server_ip='$VARserver_ip' AND extension=right('$extension',7) AND ifnull(trim(channel), '') <> '' limit 10;";
-
-#$AGI->verbose($stmtA); 
-
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
 $sthArows=$sthA->rows;
@@ -131,7 +129,6 @@ $s=0;
 while ($sthArows > $s)
 	{
 	@aryA = $sthA->fetchrow_array;
-	# channel priority(highest to lowest): SIP, IAX, Local
 	if ($aryA[0] =~ /^SIP/i) 
 		{$agent_zap_channel =		$aryA[0];}
 	if ( ($aryA[0] =~ /^IAX/i) && ( (length($agent_zap_channel) < 4) || ($agent_zap_channel =~ /^Local/i) ) )
@@ -142,15 +139,8 @@ while ($sthArows > $s)
 	}
 $sthA->finish();
 if ($AGILOG) {$agi_string = "$sthArows|$agent_zap_channel|$stmtA|";   &agi_output;}
-
-#$AGI->verbose("agent_zap_channel: $agent_zap_channel"); 
-
 $AGI->set_variable('agent_zap_channel', $agent_zap_channel);
-
 exit;
-
-
-
 sub agi_output
 	{
 	($Lsec,$Lmin,$Lhour,$Lmday,$Lmon,$Lyear,$Lwday,$Lyday,$Lisdst) = localtime(time);
@@ -158,16 +148,13 @@ sub agi_output
 	if ($Lmin < 10) {$Lmin = "0$Lmin";}
 	if ($Lsec < 10) {$Lsec = "0$Lsec";}
 	$LOGtime = "$Lhour:$Lmin:$Lsec";
-
 	if ($AGILOG >=2)
 		{
-		### open the log file for writing ###
 		open(Lout, ">>$AGILOGfile")
 				|| die "Can't open $AGILOGfile: $!\n";
 		print Lout "$LOGtime|$LOGtime|$script|$agi_string\n";
 		close(Lout);
 		}
-		### send to STDERR writing ###
 	if ( ($AGILOG == '1') || ($AGILOG == '3') )
 		{print STDERR "$LOGtime|$LOGtime|$script|$agi_string\n";}
 	$agi_string='';

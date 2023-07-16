@@ -1,58 +1,36 @@
 #!/usr/bin/perl
-#
-# agi-DID_route.agi version 2.14
-# 
-# runs when a call comes into an inbound context on a trunk. This script will 
-# send the calls to various places depending on the settings for each DID.
-#
-# You need to put a line similar to this below in your extensions.conf file in
-# the context for where incoming calls go from your trunks (for example, the
-# trunkinbound context which is present in the default dialplan):
-#
-#[trunkinbound]
-# ;inbound DID catch-all:
-#exten => _X.,1,AGI(agi-DID_route.agi)
-#
-# Copyright (C) 2023  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
-#
-# changes:
-# 81007-0324 - First Build
-# 90115-0645 - Activated AGENT call routing
-# 90117-0756 - Added vicidial_did_log logging to database
-# 90214-0217 - Added 'default' did option, to send all non-matching calls to, enforced did_active setting
-# 90507-1145 - Added CALLMENU option
-# 90825-2252 - Changed PHONE to route using dialplan number
-# 91122-0743 - Added QueueMetrics logging as DID INFO entries
-# 100116-0631 - Logging bug fixes
-# 100123-1423 - Added record call DID option
-# 100805-0943 - Added Filter Phone Group alternate routing feature and CID number cleanup
-# 110822-1210 - Added did_agent_log optional logging
-# 120314-1112 - Fixed small filter bug
-# 120430-2214 - Converted call to Monitor app to be asterisk 1.8 compatible
-# 130108-1810 - Changes for Asterisk 1.8 compatibility
-# 130925-1819 - Added variable filter to prevent DID SQL injection attack
-# 130926-1549 - Added new queue_log IVR entries for QM
-# 140126-1138 - Added VMAIL_NO_INST options
-# 140404-0738 - Added DNC filter options and URL filter DID redirect option
-# 140622-0240 - Added no-agent in-group redirect and pre-filter phone group redirect features
-# 140811-2151 - Added ability to filter by DNC areacodes if filter_inbound_number set to a DNC option
-# 141110-1417 - Fixed issue with multiple filtering options enabled
-# 150112-1426 - Added no-agent last_update_time check to match in-group queries
-# 150708-2252 - Added max_queue_ingroup_ DID options
-# 150806-1316 - Added Filter URL logging to url log, and added variables for uniqueid, channel and server_ip
-# 160106-0719 - Added filter option for GROUP_AREACODE
-# 161102-1035 - Fixed QM partition problem
-# 170322-1708 - Added filter phone group entry BLANK for a blank CIDnumber
-# 170923-1355 - Added system filter feature, before any other actions
-# 190216-0814 - Fix for user-group, in-group and campaign settings matching issues
-# 200623-2258 - Added Answer Signal options
-# 201112-0834 - Fix for AGENT routing, check for availability, issue #1211
-# 210315-1132 - Fix for multiple filter_clean_cid_number actions, added 'T' filter action, Issue #1247
-# 220507-0811 - Added pre_filter_recent_call function
-# 230124-1228 - Added logging of VICIrecGatewayID channel variable, and vicidial_did_gateway_log table
-#
-
-
+#/* ========================================
+# * ███╗   ███╗██████╗ ██╗ █████╗ ██╗
+# * ████╗ ████║██╔══██╗██║██╔══██╗██║
+# * ██╔████╔██║██║  ██║██║███████║██║
+# * ██║╚██╔╝██║██║  ██║██║██╔══██║██║
+# * ██║ ╚═╝ ██║██████╔╝██║██║  ██║███████╗
+# * ╚═╝     ╚═╝╚═════╝ ╚═╝╚═╝  ╚═╝╚══════╝
+# * ========================================
+# * mDial - Omni-Channel Contact Centre Suite.
+# * Initially Written by Martin McCarthy.
+# * Contributions welcome.
+# * Active: 2020 - 2023.
+# *
+# * This software is licensed under AGPLv2.
+# * You can find more information here;
+# * https://www.gnu.org/licenses/agpl-3.0.en.html
+# * A copy of the license is also shipped with this build.
+# *
+# * Important note: this software is provided to you free of charge.
+# * If you paid for this software, you were ripped off.
+# *
+# * This project is a fork of the awesome FOSS project, ViCiDial.
+# * ViCiDial is copyrighted by Matt Florell and the ViCiDial Group
+# * under the AGPLv2 license.
+# *
+# * You can find out more about ViCiDial;
+# * Web: https://www.vicidial.com/
+# * Email: Matt Florell <vicidial@gmail.com>
+# * IRC: Libera.Chat - ##vicidial
+# *
+# * Bug reports, feature requests and patches welcome!
+# * ======================================== */
 $script = 'agi-DID_route.agi';
 $dtmf_silent_prefix = '7';
 $at='@';
@@ -60,7 +38,6 @@ $S='*';
 $US='_';
 $route_type='DID';
 $DBX=0;		# set to 1 for extra debugging output
-
 ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
 $year = ($year + 1900);
 $mon++;
@@ -69,10 +46,8 @@ if ($mday < 10) {$mday = "0$mday";}
 if ($hour < 10) {$hour = "0$hour";}
 if ($min < 10) {$min = "0$min";}
 if ($sec < 10) {$sec = "0$sec";}
-
 $hm = "$hour$min";
 $hm = ($hm + 0);
-
 $now_date_epoch = time();
 $now_date = "$year-$mon-$mday $hour:$min:$sec";
 $CLInow_date = "$year-$mon-$mday\\ $hour:$min:$sec";
@@ -81,10 +56,7 @@ $CIDdate = "$mon$mday$hour$min$sec";
 $tsSQLdate = "$year$mon$mday$hour$min$sec";
 $SQLdate = "$year-$mon-$mday $hour:$min:$sec";
 $SQLdateBEGIN = $SQLdate;
-
-# default path to astguiclient configuration file:
 $PATHconf =		'/etc/astguiclient.conf';
-
 open(conf, "$PATHconf") || die "can't open $PATHconf: $!\n";
 @conf = <conf>;
 close(conf);
@@ -119,20 +91,15 @@ foreach(@conf)
 		{$VARDB_port = $line;   $VARDB_port =~ s/.*=//gi;}
 	$i++;
 	}
-
 if (!$VARDB_port) {$VARDB_port='3306';}
 if (!$AGILOGfile) {$AGILOGfile = "$PATHlogs/agiout.$year-$mon-$mday";}
 if (!$DIDLOGfile) {$DIDLOGfile = "$PATHlogs/didin.$year-$mon-$mday";}
-
 use DBI;
 use Time::HiRes ('gettimeofday','usleep','sleep');  # necessary to have perl sleep command of less than one second
 use Asterisk::AGI;
 $AGI = new Asterisk::AGI;
-
 $dbhA = DBI->connect("DBI:mysql:$VARDB_database:$VARDB_server:$VARDB_port", "$VARDB_user", "$VARDB_pass")
     or die "Couldn't connect to database: " . DBI->errstr;
-
-### Grab Server values from the database
 $stmtA = "SELECT agi_output,local_gmt,asterisk_version FROM servers where server_ip = '$VARserver_ip';";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -149,9 +116,6 @@ if ($sthArows > 0)
 	if ($DBagi_output =~ /BOTH/)	{$AGILOG = '3';}
 	}
 $sthA->finish();
-
-#############################################
-##### START SYSTEM SETTINGS LOOKUP      #####
 $stmtA = "SELECT enable_queuemetrics_logging,queuemetrics_server_ip,queuemetrics_dbname,queuemetrics_login,queuemetrics_pass,queuemetrics_log_id,queuemetrics_eq_prepend,did_agent_log,alt_log_server_ip,alt_log_dbname,alt_log_login,alt_log_pass,tables_use_alt_log_db,did_system_filter,inbound_answer_config FROM system_settings;";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -176,10 +140,6 @@ if ($sthArows > 0)
 	$SSinbound_answer_config =		$aryA[14];
 	}
 $sthA->finish();
-##### END SYSTEM SETTINGS LOOKUP      #####
-###########################################
-
-
 $|=1;
 while(<STDIN>) 
 	{
@@ -192,7 +152,6 @@ while(<STDIN>)
 			$AGI{$1} = $2;
 			}
 		}
-
 	if (/^agi_uniqueid\:\s+(.*)$/)		{$unique_id = $1; $uniqueid = $unique_id;}
 	if (/^agi_channel\:\s+(.*)$/)		{$channel = $1;}
 	if (/^agi_extension\:\s+(.*)$/)		{$extension = $1;}
@@ -200,38 +159,29 @@ while(<STDIN>)
 	if (/^agi_callerid\:\s+(.*)$/)		{$callerid = $1;}
 	if (/^agi_calleridname\:\s+(.*)$/)	{$calleridname = $1;}
 	}
-
-
 if ( ($callerid =~ /\".*\"/) && ( (!$calleridname) or ($calleridname =~ /unknown/) ) )
 	{
 	$calleridname = $callerid;
 	$calleridname =~ s/\<\d\d\d\d\d\d\d\d\d\d\>//gi;
 	$calleridname =~ s/\"|\" //gi;
 	}
-
 $callerid =~ s/\D|\'//gi;
 $calleridname =~ s/unknown|\'//gi;
 if ( (!$callerid) or ($callerid =~ /unknown/) )
 	{$callerid = $calleridname;}
-
 $callerid =~ s/\'|\"|\\\\|\\\|\\|\\;|\\\;|\;|;//gi;
 $calleridname =~ s/\'|\"|\\\\|\\\|\\|\\;|\\\;|\;|;//gi;
 $extension =~ s/\'|\"|\\\\|\\\|\\|\\;|\\\;|\;|;//gi;
-
 $VICIrecGatewayID = $AGI->get_variable('VICIrecGatewayID');
 $VICIrecGatewayID =~ s/[^0-9a-zA-Z]//gi;
 if (length($VICIrecGatewayID) > 19) 
 	{
 	if ($AGILOG) {$agi_string = "--    VICIrecGatewayID set on this call: |$VICIrecGatewayID|";   &agi_output;}
-
-	### Log the call to vicidial_did_gateway_log
 	$stmtA = "INSERT INTO vicidial_did_gateway_log SET uniqueid='$uniqueid',channel='$channel',server_ip='$VARserver_ip',caller_id_number='$callerid',caller_id_name='$calleridname',extension='$extension',call_date='$SQLdate',VICIrecGatewayID='$VICIrecGatewayID';";
 		if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 	$affected_rowsG = $dbhA->do($stmtA);
 	if ($AGILOG) {$agi_string = "--    VICIrecGatewayID LOG INSERT: |$affected_rowsG|$stmtA|";   &agi_output;}
 	}
-
-### BEGIN did_system_filter filter process ###
 if ($SSdid_system_filter > 0) 
 	{
 	if ($AGILOG) {$agi_string = "--    DID SYSTEM FILTER ENABLED: |$SSdid_system_filter|";   &agi_output;}
@@ -297,13 +247,11 @@ if ($SSdid_system_filter > 0)
 		if ($AGILOG) {$agi_string = "--    DID SYSTEM FILTER DOES NOT EXIST: |$sthArows|";   &agi_output;}
 		}
 	$sthA->finish();
-
 	if ($sthArows > 0)
 		{
 		if ($filter_inbound_number =~ /GROUP|URL|DNC_INTERNAL|DNC_CAMPAIGN/)
 			{
 			$original_callerid = $callerid;
-			### BEGIN temp clean caller id number ###
 			if (length($filter_clean_cid_number) > 1)
 				{
 				$original_callerid = $callerid;
@@ -335,8 +283,6 @@ if ($SSdid_system_filter > 0)
 						{$filter_number_altered++;}
 					}
 				}
-			### END temp clean caller id number ###
-
 			if ($AGILOG) {$agi_string = "SYSTEM filtering active: |$extension|$filter_inbound_number|$filter_phone_group_id|$filter_url|$filter_action|$filter_clean_cid_number|";   &agi_output;}
 			if ($filter_inbound_number =~ /GROUP/)
 				{
@@ -352,7 +298,6 @@ if ($SSdid_system_filter > 0)
 					$filter_match_found =	$aryA[0];
 					}
 				$sthA->finish();
-
 				if ( ($filter_match_found < 1) && ($filter_inbound_number =~ /AREACODE/) ) 
 					{
 					$alt_areacode = substr($callerid, 0, 3);
@@ -404,7 +349,6 @@ if ($SSdid_system_filter > 0)
 				}
 			else
 				{
-				### first, find curl binary
 				$curlbin = '';
 				if ( -e ('/bin/curl')) {$curlbin = '/bin/curl';}
 				else 
@@ -429,8 +373,6 @@ if ($SSdid_system_filter > 0)
 					$filter_url =~ s/--A--server_ip--B--/$VARserver_ip/gi;
 					$filter_url =~ s/&/\\&/gi;
 					$filter_url =~ s/ /+/gi;
-
-					### insert a new url log entry
 					$SQL_log = "$filter_url";
 					$SQL_log =~ s/;|\||\\//gi;
 					$stmtA = "INSERT INTO vicidial_url_log SET uniqueid='$uniqueid',url_date=NOW(),url_type='DID_FILTER',url='$SQL_log',url_response='';";
@@ -446,12 +388,9 @@ if ($SSdid_system_filter > 0)
 						}
 					$sthA->finish();
 					my $secW = time();
-
 					@curl_output = `$curlbin $filter_url`;
-
 					my $secY = time();
 					my $response_sec = ($secY - $secW);
-
 					$k=0;
 					$full_output='';
 					foreach (@curl_output)
@@ -470,11 +409,9 @@ if ($SSdid_system_filter > 0)
 							if ($AGILOG) {$agi_string = "SYSTEM Filter URL DID Redirect found: |$filter_match_found|$filter_url_did_redirect|$did_route|";   &agi_output;}
 							}
 						}
-					### update url log entry
 					$full_output_raw =~ s/;|\||\\//gi;
 					$stmtA = "UPDATE vicidial_url_log SET url_response='$full_output_raw|$full_output',response_sec='$response_sec' where url_log_id='$url_id';";
 					$affected_rows = $dbhA->do($stmtA);
-
 					if ($AGILOG) {$agi_string = "SYSTEM URL filter search response: |$filter_match_found|$full_output|$filter_url|$affected_rows|";   &agi_output;}
 					}
 				}
@@ -492,44 +429,32 @@ if ($SSdid_system_filter > 0)
 				$user_route_settings_ingroup =	$filter_user_route_settings_ingroup;
 				$menu_id =						$filter_menu_id;
 				$route_type =					'FILTER';
-
 				if ($AGILOG) {$agi_string = "SYSTEM Filter match found: |$filter_match_found|$filter_inbound_number|$filter_action|$did_route|";   &agi_output;}
-
 				if ($filter_number_altered > 0)
 					{
 					$newcallerid = "\"$calleridname <$callerid>\"";
 					$AGI->set_callerid($newcallerid);
 					if ($AGILOG) {$agi_string = "filter clean callerid, setting new CID: |$callerid|$calleridname|$newcallerid|$filter_clean_cid_number|   Old: |$original_callerid|";   &agi_output;}
 					}
-
-				### Log the call to vicidial_did_log
 				$stmtA = "INSERT INTO vicidial_did_log SET uniqueid='$uniqueid',channel='$channel',server_ip='$VARserver_ip',caller_id_number='$callerid',caller_id_name='$calleridname',extension='$extension',call_date='$SQLdate',did_id='$did_id',did_route='F_$did_route';";
 					if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 				$affected_rowsL = $dbhA->do($stmtA);
 				if ($AGILOG) {$agi_string = "--    SYSTEM FILTER DID LOG : |$affected_rowsL|$stmtA|";   &agi_output;}
-
-				### Log the call to call_log
 				$stmtA = "INSERT INTO call_log SET uniqueid='$unique_id', channel='$channel', channel_group='DID_INBOUND', server_ip='$VARserver_ip', type='$type', extension='$extension', number_dialed='$extension', caller_code='$callerid', start_time='$SQLdate', start_epoch='$now_date_epoch';";
 				$affected_rowsC = $dbhA->do($stmtA);
 				if ($AGILOG) {$agi_string = "--    SYSTEM FILTER CALL LOG : |$affected_rowsC|$stmtA|";   &agi_output;}
-
 				if ($AGILOG) {$did_string = "$SQLdate|$uniqueid|$channel|$extension|$callerid|$calleridname|$did_id|$did_route|";   &did_output;}
-
 				if ($did_agent_log =~ /Y/)
 					{
 					if ($did_route !~ /IN_GROUP/) 
 						{$group_id='';}
 					$stmtA = "INSERT INTO vicidial_did_agent_log SET uniqueid='$uniqueid',server_ip='$VARserver_ip',caller_id_number='$callerid',caller_id_name='$calleridname',extension='$extension',call_date='$SQLdate',did_id='$did_id',did_route='$did_route',user='VDCL',group_id='$group_id',did_description='$did_description';";
-
 					if ( ($tables_use_alt_log_db =~ /did_agent_log/i) && (length($alt_log_server_ip)>4) && (length($alt_log_dbname)>0) )
 						{
 						$dbhD = DBI->connect("DBI:mysql:$alt_log_dbname:$alt_log_server_ip:3306", "$alt_log_login", "$alt_log_pass")
 						 or die "Couldn't connect to database: " . DBI->errstr;
-
 						if ($AGILOG) {$agi_string = "CONNECTED TO ALT-LOG DATABASE:  $alt_log_server_ip|$alt_log_dbname|$uniqueid";   &agi_output;}
-
 						$affected_rowsAL = $dbhD->do($stmtA);
-
 						$dbhD->disconnect();
 						}
 					else
@@ -538,8 +463,6 @@ if ($SSdid_system_filter > 0)
 						}
 					if ($AGILOG) {$agi_string = "SYSTEM FILTER --    DID AGENT LOG : |$affected_rowsAL|$stmtA|";   &agi_output;}
 					}
-
-				### Route call to a VICIDIAL-defined phone
 				if ($did_route =~ /PHONE/)
 					{
 					$stmtA = "SELECT dialplan_number,voicemail_id,protocol,ext_context FROM phones where server_ip='$did_server_ip' and extension='$phone';";
@@ -555,8 +478,6 @@ if ($SSdid_system_filter > 0)
 						$ext_context =		$aryA[3];
 						}
 					$sthA->finish();
-
-					### format the remote server dialstring to get the call to the overflow agent meetme room
 					if( $did_server_ip =~ m/(\S+)\.(\S+)\.(\S+)\.(\S+)/ )
 						{
 						$a = leading_zero($1); 
@@ -565,15 +486,11 @@ if ($SSdid_system_filter > 0)
 						$d = leading_zero($4);
 						$ServerString = "$a$S$b$S$c$S$d$S";
 						}
-
 					$did_extension = "$ServerString$dialplan_number";
 					$did_route = 'EXTEN';
 					}
-
-				### Route call to a voicemail box on the system
 				if ($did_route =~ /VOICEMAIL|VMAIL_NO_INST/)
 					{
-					### format the remote server dialstring to get the call to the overflow agent meetme room
 					if( $did_server_ip =~ m/(\S+)\.(\S+)\.(\S+)\.(\S+)/ )
 						{
 						$a = leading_zero($1); 
@@ -587,41 +504,30 @@ if ($SSdid_system_filter > 0)
 					$did_extension = "$ServerString$voicemail_dump_exten$voicemail_ext";
 					$did_route = 'EXTEN';
 					}
-
 				$did_ig_prefix='99909';
 				if ( ($SSinbound_answer_config > 0) && ($inbound_route_answer =~ /N/i) )
 					{$did_ig_prefix='99809';}
-
-				### Route call to a VICIDIAL Inbound Group
 				if ($did_route =~ /IN_GROUP/)
 					{
 					$did_extension = "$did_ig_prefix$S$did_id$S$S$S$route_type";
 					$exten_context = $ext_context;
 					$did_route = 'EXTEN';
 					}
-
-				### Route call to a logged-in VICIDIAL agent
 				if ($did_route =~ /AGENT/)
 					{
 					$did_extension = "$did_ig_prefix$S$did_id$S$S$S$route_type";
 					$exten_context = $ext_context;
 					$did_route = 'EXTEN';
 					}
-
-				### QueueMetrics logging if enabled
 				if ( ($did_route =~ /EXTEN|CALLMENU/) && ($enable_queuemetrics_logging > 0) )
 					{
 					$dbhB = DBI->connect("DBI:mysql:$queuemetrics_dbname:$queuemetrics_server_ip:3306", "$queuemetrics_login", "$queuemetrics_pass")
 					 or die "Couldn't connect to database: " . DBI->errstr;
-
 					if ($DBX) {print "CONNECTED TO QueueMetrics DATABASE:  $queuemetrics_server_ip|$queuemetrics_dbname\n";}
-
 					$stmtB = "INSERT INTO queue_log SET `partition`='P01',time_id='$now_date_epoch',call_id='$uniqueid',queue='NONE',agent='NONE',verb='INFO',data1='DID',data2='$extension',serverid='$queuemetrics_log_id';";
 					$Baffected_rows = $dbhB->do($stmtB);
 					$dbhB->disconnect();
 					}
-
-				### Route call to an extension on the system
 				if ($did_route =~ /EXTEN/)
 					{
 					$XFERexten = "$did_extension";
@@ -635,11 +541,8 @@ if ($SSdid_system_filter > 0)
 					print "SET PRIORITY 1\n";
 						$result = <STDIN>;
 						checkresult($result);
-					
 					exit;
 					}
-
-				### Route call to a DID in the trunkinbound context on the system
 				if ($did_route =~ /DID/)
 					{
 					if ($AGILOG) {$agi_string = "SYSTEM FILTER exiting the DID app, transferring call to $filter_match_found @ trunkinbound";   &agi_output;}
@@ -652,25 +555,19 @@ if ($SSdid_system_filter > 0)
 					print "SET PRIORITY 1\n";
 						$result = <STDIN>;
 						checkresult($result);
-					
 					exit;
 					}
-
-				### Route call to a call menu on the system
 				if ($did_route =~ /CALLMENU/)
 					{
 					if ($enable_queuemetrics_logging > 0)
 						{
 						$dbhB = DBI->connect("DBI:mysql:$queuemetrics_dbname:$queuemetrics_server_ip:3306", "$queuemetrics_login", "$queuemetrics_pass")
 						 or die "Couldn't connect to database: " . DBI->errstr;
-
 						if ($DBX) {print "CONNECTED TO QM DATABASE:  $queuemetrics_server_ip|$queuemetrics_dbname\n";}
-
 						$stmtB = "INSERT INTO queue_log SET `partition`='P01',time_id='$now_date_epoch',call_id='$uniqueid',queue='NONE',agent='NONE',verb='INFO',data1='IVRSTART',data2='$callerid',data3='$extension',serverid='$queuemetrics_log_id';";
 						$Baffected_rows = $dbhB->do($stmtB);
 						$dbhB->disconnect();
 						}
-
 					$XFERcontext = "$menu_id";
 					if ($AGILOG) {$agi_string = "SYSTEM FILTER exiting the DID app, transferring call to CALLMENU $XFERcontext";   &agi_output;}
 					print "SET CONTEXT $XFERcontext\n";
@@ -682,7 +579,6 @@ if ($SSdid_system_filter > 0)
 					print "SET PRIORITY 1\n";
 						$result = <STDIN>;
 						checkresult($result);
-					
 					exit;
 					}
 				}
@@ -690,11 +586,6 @@ if ($SSdid_system_filter > 0)
 			}
 		}
 	}
-### END did_system_filter filter process ###
-
-
-
-### Grab DID values from the database
 $DIDs_in_system=0;
 $stmtA = "SELECT did_id,did_pattern,did_description,did_active,did_route,extension,exten_context,voicemail_ext,phone,server_ip,user,user_unavailable_action,user_route_settings_ingroup,menu_id,record_call,filter_inbound_number,filter_phone_group_id,filter_url,filter_action,filter_extension,filter_exten_context,filter_voicemail_ext,filter_phone,filter_server_ip,filter_user,filter_user_unavailable_action,filter_user_route_settings_ingroup,filter_group_id,filter_call_handle_method,filter_agent_search_method,filter_list_id,filter_campaign_id,filter_phone_code,filter_menu_id,filter_clean_cid_number,group_id,filter_dnc_campaign,filter_url_did_redirect,no_agent_ingroup_redirect,no_agent_ingroup_id,no_agent_ingroup_extension,pre_filter_phone_group_id,pre_filter_extension,max_queue_ingroup_calls,max_queue_ingroup_id,max_queue_ingroup_extension,inbound_route_answer,pre_filter_recent_call,pre_filter_recent_extension FROM vicidial_inbound_dids where did_pattern = '$extension' and did_active='Y';";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
@@ -752,14 +643,11 @@ if ($sthArows > 0)
 	$inbound_route_answer =			$aryA[46];
 	$pre_filter_recent_call =		$aryA[47];
 	$pre_filter_recent_extension =	$aryA[48];
-
 	$DIDs_in_system++;
 	}
 $sthA->finish();
-
 if ($sthArows < 1)
 	{
-	### Grab DID values from the database for a default DID pattern if there is one
 	$stmtA = "SELECT did_id,did_pattern,did_description,did_active,did_route,extension,exten_context,voicemail_ext,phone,server_ip,user,user_unavailable_action,user_route_settings_ingroup,menu_id,record_call,filter_inbound_number,filter_phone_group_id,filter_url,filter_action,filter_extension,filter_exten_context,filter_voicemail_ext,filter_phone,filter_server_ip,filter_user,filter_user_unavailable_action,filter_user_route_settings_ingroup,filter_group_id,filter_call_handle_method,filter_agent_search_method,filter_list_id,filter_campaign_id,filter_phone_code,filter_menu_id,filter_clean_cid_number,group_id,filter_dnc_campaign,filter_url_did_redirect,no_agent_ingroup_redirect,no_agent_ingroup_id,no_agent_ingroup_extension,pre_filter_phone_group_id,pre_filter_extension,max_queue_ingroup_calls,max_queue_ingroup_id,max_queue_ingroup_extension,inbound_route_answer,pre_filter_recent_call,pre_filter_recent_extension FROM vicidial_inbound_dids where did_pattern = 'default' and did_active='Y';";
 	$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 	$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -819,35 +707,25 @@ if ($sthArows < 1)
 		}
 	$sthA->finish();
 	}
-
-### Log the call to vicidial_did_log
 $stmtA = "INSERT INTO vicidial_did_log SET uniqueid='$uniqueid',channel='$channel',server_ip='$VARserver_ip',caller_id_number='$callerid',caller_id_name='$calleridname',extension='$extension',call_date='$SQLdate',did_id='$did_id',did_route='$did_route';";
 	if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 $affected_rowsL = $dbhA->do($stmtA);
 if ($AGILOG) {$agi_string = "--    DID LOG : |$affected_rowsL|$stmtA|";   &agi_output;}
-
-### Log the call to call_log
 $stmtA = "INSERT INTO call_log SET uniqueid='$unique_id', channel='$channel', channel_group='DID_INBOUND', server_ip='$VARserver_ip', type='$type', extension='$extension', number_dialed='$extension', caller_code='$callerid', start_time='$SQLdate', start_epoch='$now_date_epoch';";
 $affected_rowsC = $dbhA->do($stmtA);
 if ($AGILOG) {$agi_string = "--    CALL LOG : |$affected_rowsC|$stmtA|";   &agi_output;}
-
 if ($AGILOG) {$did_string = "$SQLdate|$uniqueid|$channel|$extension|$callerid|$calleridname|$did_id|$did_route|";   &did_output;}
-
 if ($did_agent_log =~ /Y/)
 	{
 	if ($did_route !~ /IN_GROUP/) 
 		{$group_id='';}
 	$stmtA = "INSERT INTO vicidial_did_agent_log SET uniqueid='$uniqueid',server_ip='$VARserver_ip',caller_id_number='$callerid',caller_id_name='$calleridname',extension='$extension',call_date='$SQLdate',did_id='$did_id',did_route='$did_route',user='VDCL',group_id='$group_id',did_description='$did_description';";
-
 	if ( ($tables_use_alt_log_db =~ /did_agent_log/i) && (length($alt_log_server_ip)>4) && (length($alt_log_dbname)>0) )
 		{
 		$dbhD = DBI->connect("DBI:mysql:$alt_log_dbname:$alt_log_server_ip:3306", "$alt_log_login", "$alt_log_pass")
 		 or die "Couldn't connect to database: " . DBI->errstr;
-
 		if ($AGILOG) {$agi_string = "CONNECTED TO ALT-LOG DATABASE:  $alt_log_server_ip|$alt_log_dbname|$uniqueid";   &agi_output;}
-
 		$affected_rowsAL = $dbhD->do($stmtA);
-
 		$dbhD->disconnect();
 		}
 	else
@@ -856,21 +734,15 @@ if ($did_agent_log =~ /Y/)
 		}
 	if ($AGILOG) {$agi_string = "--    DID AGENT LOG : |$affected_rowsAL|$stmtA|";   &agi_output;}
 	}
-
 if ($DIDs_in_system < 1)
 	{
-	### if nothing found, exit script
 	if ($AGILOG) {$did_string = "NO default DID DEFINED! EXITING...   $SQLdate|$uniqueid|$channel|$extension|$callerid|$calleridname|";   &did_output;}
 	exit;
 	}
-
-### if set to record this call, start recording ###
 if ($record_call =~ /Y/)
 	{
 	$insert_recording_id='';
 	$filename = "$tsSQLdate$US$extension$US$callerid";
-	### code to record call goes here ###
-
 	%ast_ver_str = parse_asterisk_version($asterisk_version);
 	if (( $ast_ver_str{major} = 1 ) && ($ast_ver_str{minor} < 6))
 		{
@@ -880,8 +752,6 @@ if ($record_call =~ /Y/)
 		{
 		$AGI->exec("Monitor","wav,/var/spool/asterisk/monitor/MIX/$filename"); 
 		}
-
-	### insert record into recording_log table ###
 	$stmtA = "INSERT INTO recording_log (channel,server_ip,extension,start_time,start_epoch,length_in_sec,filename,lead_id,user,location,vicidial_id) values('$channel','$VARserver_ip','$callerid','$SQLdate','$now_date_epoch','0','$filename','0','$extension','$filename','$unique_id');";
 	$affected_rowsR = $dbhA->do($stmtA);
 	if ($affected_rowsR > 0)
@@ -897,11 +767,8 @@ if ($record_call =~ /Y/)
 			}
 		$sthA->finish();
 		}
-
 	if ($AGILOG) {$did_string = "--    RECORDING LOG : |$affected_rowsR|$insert_recording_id|$stmtA|";   &did_output;}
 	}
-
-### Grab Server values from the database
 $cbc=0;
 $stmtA = "SELECT voicemail_dump_exten,ext_context,answer_transfer_agent,local_gmt,asterisk_version,max_vicidial_trunks,voicemail_dump_exten_no_inst FROM servers where server_ip = '$VARserver_ip';";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
@@ -910,7 +777,6 @@ $sthArows=$sthA->rows;
 while ($sthArows > $cbc)
 	{
 	@aryA = $sthA->fetchrow_array;
-	
 	$DBvoicemail_dump_exten	=		$aryA[0];
 	$DBext_context		=			$aryA[1];
 	$DBanswer_transfer_agent	=	$aryA[2];
@@ -927,9 +793,6 @@ while ($sthArows > $cbc)
 	$cbc++;
 	}
 $sthA->finish();
-
-
-### BEGIN clean caller id number ###
 if (length($filter_clean_cid_number) > 1)
 	{
 	$original_callerid = $callerid;
@@ -967,16 +830,11 @@ if (length($filter_clean_cid_number) > 1)
 		if ($AGILOG) {$agi_string = "filter clean callerid, setting new CID: |$callerid|$calleridname|$newcallerid|$filter_clean_cid_number|   Old: |$original_callerid|";   &agi_output;}
 		}
 	}
-### END clean caller id number ###
-
-
-##### BEGIN pre-filtering process #####
 $pre_filter_match_found=0;
 $filter_match_found=0;
 if ( (length($pre_filter_phone_group_id)>0) && (length($pre_filter_extension)>0) )
 	{
 	if ($AGILOG) {$agi_string = "pre-filtering active: |$extension|$pre_filter_phone_group_id|$pre_filter_extension|$filter_clean_cid_number|$callerid";   &agi_output;}
-
 	$temp_cid_test = $callerid;
 	if (length($callerid)<1) {$temp_cid_test = 'BLANK';}
 	$stmtA = "SELECT count(*) FROM vicidial_filter_phone_numbers where filter_phone_group_id='$pre_filter_phone_group_id' and phone_number='$temp_cid_test';";
@@ -996,20 +854,13 @@ if ( (length($pre_filter_phone_group_id)>0) && (length($pre_filter_extension)>0)
 		$filter_match_found =			$pre_filter_extension;
 		$exten_context =				'trunkinbound';
 		$route_type =					'PREFILTER';
-
 		if ($AGILOG) {$agi_string = "PRE-Filter match found: |$pre_filter_match_found|$pre_filter_phone_group_id|$pre_filter_extension|$did_route|";   &agi_output;}
-
-		### Update the call in vicidial_did_log
 		$stmtA = "UPDATE vicidial_did_log SET did_route='PF_$did_route' where uniqueid='$uniqueid' and channel='$channel' and server_ip='$VARserver_ip' and caller_id_number='$callerid' and call_date='$SQLdate';";
 			if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 		$affected_rowsL = $dbhA->do($stmtA);
 		if ($AGILOG) {$agi_string = "--    DID UPDATE LOG : |$affected_rowsL|$stmtA|";   &agi_output;}
 		}
 	}
-##### END pre-filtering process #####
-
-
-##### BEGIN pre-filter recent call process #####
 $pre_filter_recent_outbound_found=0;
 $pre_filter_recent_inbound_found=0;
 $outbound_searchSQL='';
@@ -1017,11 +868,8 @@ $inbound_searchSQL='';
 if ( (length($pre_filter_recent_call)>0) && (length($pre_filter_recent_extension)>0) )
 	{
 	if ($AGILOG) {$agi_string = "pre-filter recent call active: |$extension|$pre_filter_recent_call|$pre_filter_recent_extension|$filter_clean_cid_number|$callerid";   &agi_output;}
-
 	$temp_cid_test = $callerid;
 	if (length($callerid)<1) {$temp_cid_test = 'BLANK';}
-
-	### BEGIN gather settings container details for pre-filter recent call
 	$CQcontainer_entry='';
 	$stmtA = "SELECT container_entry FROM vicidial_settings_containers where container_id='$pre_filter_recent_call';";
 	$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
@@ -1047,14 +895,12 @@ if ( (length($pre_filter_recent_call)>0) && (length($pre_filter_recent_extension
 			if ($DBX > 0) {print STDERR "RC DEBUG 0: $sea|$RCfilter_settings[$sea]|\n";}
 			if ($RCfilter_settings[$sea] =~ /^outbound_recent_call_check_type => /)
 				{
-				# outbound_recent_call_check_type => lead-x-y-days-range  (or 'log-x-y-days-range')
 				$RCfilter_settings[$sea] =~ s/^outbound_recent_call_check_type => //gi;
 				$outbound_recent_call_check_type = $RCfilter_settings[$sea];
 				if ($DBX > 0) {print STDERR "RC DEBUG 2:    outbound_recent_call_check_type FOUND: |$outbound_recent_call_check_type|   $sea|$RCfilter_settings[$sea]|\n";}
 				}
 			if ($RCfilter_settings[$sea] =~ /^outbound_recent_call_days => /)
 				{
-				# outbound_recent_call_days => 0-21
 				$RCfilter_settings[$sea] =~ s/^outbound_recent_call_days => //gi;
 				$outbound_recent_call_days = $RCfilter_settings[$sea];
 				$outbound_recent_call_days =~ s/[^-0-9]//gi;
@@ -1062,29 +908,24 @@ if ( (length($pre_filter_recent_call)>0) && (length($pre_filter_recent_extension
 				}
 			if ($RCfilter_settings[$sea] =~ /^outbound_recent_call_campaigns => /)
 				{
-				# outbound_recent_call_campaigns => --ALL--  (or pipe-delimited list of campaign IDs: "TESTCAMP|TEST2|TEST3")
 				$RCfilter_settings[$sea] =~ s/^outbound_recent_call_campaigns => //gi;
 				$outbound_recent_call_campaigns = $RCfilter_settings[$sea];
 				if ($DBX > 0) {print STDERR "RC DEBUG 3:    outbound_recent_call_campaigns FOUND: |$outbound_recent_call_campaigns|   $sea|$RCfilter_settings[$sea]|\n";}
 				}
 			if ($RCfilter_settings[$sea] =~ /^outbound_recent_call_statuses => /)
 				{
-				# outbound_recent_call_statuses => --ALL--  (or pipe-delimited list of statuses: "DNC|NI|LIT")
 				$RCfilter_settings[$sea] =~ s/^outbound_recent_call_statuses => //gi;
 				$outbound_recent_call_statuses = $RCfilter_settings[$sea];
 				if ($DBX > 0) {print STDERR "RC DEBUG 4:    outbound_recent_call_statuses FOUND: |$outbound_recent_call_statuses|   $sea|$RCfilter_settings[$sea]|\n";}
 				}
-
 			if ($RCfilter_settings[$sea] =~ /^inbound_recent_call_check_type => /)
 				{
-				# inbound_recent_call_check_type => lead-x-y-days-range  (or 'log-x-y-days-range')
 				$RCfilter_settings[$sea] =~ s/^inbound_recent_call_check_type => //gi;
 				$inbound_recent_call_check_type = $RCfilter_settings[$sea];
 				if ($DBX > 0) {print STDERR "RC DEBUG 5:    inbound_recent_call_check_type FOUND: |$inbound_recent_call_check_type|   $sea|$RCfilter_settings[$sea]|\n";}
 				}
 			if ($RCfilter_settings[$sea] =~ /^inbound_recent_call_days => /)
 				{
-				# inbound_recent_call_days => 21-999
 				$RCfilter_settings[$sea] =~ s/^inbound_recent_call_days => //gi;
 				$inbound_recent_call_days = $RCfilter_settings[$sea];
 				$inbound_recent_call_days =~ s/[^-0-9]//gi;
@@ -1092,23 +933,18 @@ if ( (length($pre_filter_recent_call)>0) && (length($pre_filter_recent_extension
 				}
 			if ($RCfilter_settings[$sea] =~ /^inbound_recent_call_groups => /)
 				{
-				# inbound_recent_call_groups => --ALL--  (or pipe-delimited list of inbound group IDs: "TEST_IN|TEST_IN2|TEST_IN3")
-				#	NOTE: if using a 'lead' check type, this field should be a list of campaign IDs to check within the campaign lists
 				$RCfilter_settings[$sea] =~ s/^inbound_recent_call_groups => //gi;
 				$inbound_recent_call_groups = $RCfilter_settings[$sea];
 				if ($DBX > 0) {print STDERR "RC DEBUG 7:    inbound_recent_call_groups FOUND: |$inbound_recent_call_groups|   $sea|$RCfilter_settings[$sea]|\n";}
 				}
 			if ($RCfilter_settings[$sea] =~ /^inbound_recent_call_statuses => /)
 				{
-				# inbound_recent_call_statuses => --ALL--  (or pipe-delimited list of statuses: "DNC|NI|LIT")
 				$RCfilter_settings[$sea] =~ s/^inbound_recent_call_statuses => //gi;
 				$inbound_recent_call_statuses = $RCfilter_settings[$sea];
 				if ($DBX > 0) {print STDERR "RC DEBUG 8:    inbound_recent_call_statuses FOUND: |$inbound_recent_call_statuses|   $sea|$RCfilter_settings[$sea]|\n";}
 				}
 			$sea++;
 			}
-		
-		# OUTBOUND validate and build SQL segments based on settings above
 		$outbound_search_table = 'vicidial_log';
 		$outbound_search_date = 'call_date';
 		if ( ($outbound_recent_call_check_type =~ /x-y-days-range/i) && ($outbound_recent_call_check_type =~ /lead|log/i) && (length($outbound_recent_call_campaigns) > 1) && (length($outbound_recent_call_statuses) > 0) )
@@ -1120,7 +956,6 @@ if ( (length($pre_filter_recent_call)>0) && (length($pre_filter_recent_extension
 					$outbound_search_table = 'vicidial_list';
 					$outbound_search_date = 'last_local_call_time';
 					}
-
 				@outbound_recent_call_days_ARY = split(/-/,$outbound_recent_call_days);
 				$temp_days_start = $outbound_recent_call_days_ARY[0];
 				$temp_days_end = $outbound_recent_call_days_ARY[1];
@@ -1130,14 +965,12 @@ if ( (length($pre_filter_recent_call)>0) && (length($pre_filter_recent_extension
 					{
 					$outbound_searchSQL = "and ($outbound_search_date <= CONCAT(DATE_ADD(CURDATE(), INTERVAL -$temp_days_start DAY),' 23:59:59')) and ($outbound_search_date >= CONCAT(DATE_ADD(CURDATE(), INTERVAL -$temp_days_end DAY),' 00:00:00'))";
 					}
-
 				if ($outbound_recent_call_campaigns !~ /--ALL--/) 
 					{
 					$outbound_recent_call_campaigns =~ s/\|/','/gi;
 					if ($outbound_recent_call_check_type =~ /lead/i) 
 						{
 						$temp_lists='';
-						# gather all lists within the defined campaigns
 						$cl=0;
 						$stmtA = "SELECT list_id FROM vicidial_lists where campaign_id IN('$outbound_recent_call_campaigns');";
 						$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
@@ -1160,7 +993,6 @@ if ( (length($pre_filter_recent_call)>0) && (length($pre_filter_recent_extension
 						$outbound_searchSQL .= " and campaign_id IN('$outbound_recent_call_campaigns')";
 						}
 					}
-
 				if ($outbound_recent_call_statuses !~ /--ALL--/) 
 					{
 					$outbound_recent_call_statuses =~ s/\|/','/gi;
@@ -1168,8 +1000,6 @@ if ( (length($pre_filter_recent_call)>0) && (length($pre_filter_recent_extension
 					}
 				}
 			}
-
-		# INBOUND validate and build SQL segments based on settings above
 		$inbound_search_table = 'vicidial_closer_log';
 		$inbound_search_date = 'call_date';
 		if ( ($inbound_recent_call_check_type =~ /x-y-days-range/i) && ($inbound_recent_call_check_type =~ /lead|log/i) && (length($inbound_recent_call_groups) > 1) && (length($inbound_recent_call_statuses) > 0) )
@@ -1181,7 +1011,6 @@ if ( (length($pre_filter_recent_call)>0) && (length($pre_filter_recent_extension
 					$inbound_search_table = 'vicidial_list';
 					$inbound_search_date = 'last_local_call_time';
 					}
-
 				@inbound_recent_call_days_ARY = split(/-/,$inbound_recent_call_days);
 				$temp_days_start = $inbound_recent_call_days_ARY[0];
 				$temp_days_end = $inbound_recent_call_days_ARY[1];
@@ -1191,14 +1020,12 @@ if ( (length($pre_filter_recent_call)>0) && (length($pre_filter_recent_extension
 					{
 					$inbound_searchSQL = "and ($inbound_search_date <= CONCAT(DATE_ADD(CURDATE(), INTERVAL -$temp_days_start DAY),' 23:59:59')) and ($inbound_search_date >= CONCAT(DATE_ADD(CURDATE(), INTERVAL -$temp_days_end DAY),' 00:00:00'))";
 					}
-
 				if ($inbound_recent_call_groups !~ /--ALL--/) 
 					{
 					$inbound_recent_call_groups =~ s/\|/','/gi;
 					if ($inbound_recent_call_check_type =~ /lead/i) 
 						{
 						$temp_lists='';
-						# gather all lists within the defined campaigns
 						$cl=0;
 						$stmtA = "SELECT list_id FROM vicidial_lists where campaign_id IN('$inbound_recent_call_groups');";
 						$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
@@ -1221,7 +1048,6 @@ if ( (length($pre_filter_recent_call)>0) && (length($pre_filter_recent_extension
 						$inbound_searchSQL .= " and campaign_id IN('$inbound_recent_call_groups')";
 						}
 					}
-
 				if ($inbound_recent_call_statuses !~ /--ALL--/) 
 					{
 					$inbound_recent_call_statuses =~ s/\|/','/gi;
@@ -1229,12 +1055,8 @@ if ( (length($pre_filter_recent_call)>0) && (length($pre_filter_recent_extension
 					}
 				}
 			}
-
 		}
 	$sthA->finish();
-	### END gather settings container details for pre-filter recent call
-
-	# check for outbound call match
 	if (length($outbound_searchSQL) > 10) 
 		{
 		$stmtA = "SELECT count(*) FROM $outbound_search_table where phone_number='$temp_cid_test' $outbound_searchSQL;";
@@ -1248,8 +1070,6 @@ if ( (length($pre_filter_recent_call)>0) && (length($pre_filter_recent_extension
 			}
 		if ($AGILOG) {$agi_string = "--    DID RECENT OUTBOUND CALL SEARCH : |$pre_filter_recent_outbound_found|$stmtA|";   &agi_output;}
 		}
-
-	# check for inbound call match
 	if (length($inbound_searchSQL) > 10) 
 		{
 		$stmtA = "SELECT count(*) FROM $inbound_search_table where phone_number='$temp_cid_test' $inbound_searchSQL;";
@@ -1263,7 +1083,6 @@ if ( (length($pre_filter_recent_call)>0) && (length($pre_filter_recent_extension
 			}
 		if ($AGILOG) {$agi_string = "--    DID RECENT INBOUND CALL SEARCH : |$pre_filter_recent_inbound_found|$stmtA|";   &agi_output;}
 		}
-
 	$sthA->finish();
 	if ( ($pre_filter_recent_inbound_found > 0) || ($pre_filter_recent_outbound_found) )
 		{
@@ -1272,10 +1091,7 @@ if ( (length($pre_filter_recent_call)>0) && (length($pre_filter_recent_extension
 		$filter_match_found =			$pre_filter_recent_extension;
 		$exten_context =				'trunkinbound';
 		$route_type =					'PRERECENT';
-
 		if ($AGILOG) {$agi_string = "PRE-Filter Recent Call match found: |$pre_filter_recent_outbound_found|$pre_filter_recent_inbound_found|$pre_filter_recent_call|$pre_filter_recent_extension|$did_route|";   &agi_output;}
-
-		### Update the call in vicidial_did_log
 		$stmtA = "UPDATE vicidial_did_log SET did_route='PFR_$did_route' where uniqueid='$uniqueid' and channel='$channel' and server_ip='$VARserver_ip' and caller_id_number='$callerid' and call_date='$SQLdate';";
 			if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 		$affected_rowsL = $dbhA->do($stmtA);
@@ -1286,10 +1102,6 @@ if ( (length($pre_filter_recent_call)>0) && (length($pre_filter_recent_extension
 		if ($AGILOG) {$agi_string = "--    DID NO RECENT CALL FOUND : |$outbound_searchSQL|$inbound_searchSQL|";   &agi_output;}
 		}
 	}
-##### END pre-filter recent call process #####
-
-
-##### BEGIN filtering process #####
 if ( ($filter_inbound_number =~ /GROUP|URL|DNC_INTERNAL|DNC_CAMPAIGN/) && ($pre_filter_match_found < 1) )
 	{
 	if ($AGILOG) {$agi_string = "filtering active: |$extension|$filter_inbound_number|$filter_phone_group_id|$filter_url|$filter_action|$filter_clean_cid_number|";   &agi_output;}
@@ -1307,7 +1119,6 @@ if ( ($filter_inbound_number =~ /GROUP|URL|DNC_INTERNAL|DNC_CAMPAIGN/) && ($pre_
 			$filter_match_found =	$aryA[0];
 			}
 		$sthA->finish();
-
 		if ( ($filter_match_found < 1) && ($filter_inbound_number =~ /AREACODE/) ) 
 			{
 			$alt_areacode = substr($callerid, 0, 3);
@@ -1359,7 +1170,6 @@ if ( ($filter_inbound_number =~ /GROUP|URL|DNC_INTERNAL|DNC_CAMPAIGN/) && ($pre_
 		}
 	else
 		{
-		### first, find curl binary
 		$curlbin = '';
 		if ( -e ('/bin/curl')) {$curlbin = '/bin/curl';}
 		else 
@@ -1384,8 +1194,6 @@ if ( ($filter_inbound_number =~ /GROUP|URL|DNC_INTERNAL|DNC_CAMPAIGN/) && ($pre_
 			$filter_url =~ s/--A--server_ip--B--/$VARserver_ip/gi;
 			$filter_url =~ s/&/\\&/gi;
 			$filter_url =~ s/ /+/gi;
-
-			### insert a new url log entry
 			$SQL_log = "$filter_url";
 			$SQL_log =~ s/;|\||\\//gi;
 			$stmtA = "INSERT INTO vicidial_url_log SET uniqueid='$uniqueid',url_date=NOW(),url_type='DID_FILTER',url='$SQL_log',url_response='';";
@@ -1401,12 +1209,9 @@ if ( ($filter_inbound_number =~ /GROUP|URL|DNC_INTERNAL|DNC_CAMPAIGN/) && ($pre_
 				}
 			$sthA->finish();
 			my $secW = time();
-
 			@curl_output = `$curlbin $filter_url`;
-
 			my $secY = time();
 			my $response_sec = ($secY - $secW);
-
 			$k=0;
 			$full_output='';
 			foreach (@curl_output)
@@ -1425,11 +1230,9 @@ if ( ($filter_inbound_number =~ /GROUP|URL|DNC_INTERNAL|DNC_CAMPAIGN/) && ($pre_
 					if ($AGILOG) {$agi_string = "Filter URL DID Redirect found: |$filter_match_found|$filter_url_did_redirect|$did_route|";   &agi_output;}
 					}
 				}
-			### update url log entry
 			$full_output_raw =~ s/;|\||\\//gi;
 			$stmtA = "UPDATE vicidial_url_log SET url_response='$full_output_raw|$full_output',response_sec='$response_sec' where url_log_id='$url_id';";
 			$affected_rows = $dbhA->do($stmtA);
-
 			if ($AGILOG) {$agi_string = "URL filter search response: |$filter_match_found|$full_output|$filter_url|$affected_rows|";   &agi_output;}
 			}
 		}
@@ -1447,25 +1250,17 @@ if ( ($filter_inbound_number =~ /GROUP|URL|DNC_INTERNAL|DNC_CAMPAIGN/) && ($pre_
 		$user_route_settings_ingroup =	$filter_user_route_settings_ingroup;
 		$menu_id =						$filter_menu_id;
 		$route_type =					'FILTER';
-
 		if ($AGILOG) {$agi_string = "Filter match found: |$filter_match_found|$filter_inbound_number|$filter_action|$did_route|";   &agi_output;}
-
-		### Update the call in vicidial_did_log
 		$stmtA = "UPDATE vicidial_did_log SET did_route='F_$did_route' where uniqueid='$uniqueid' and channel='$channel' and server_ip='$VARserver_ip' and caller_id_number='$callerid' and call_date='$SQLdate';";
 			if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 		$affected_rowsL = $dbhA->do($stmtA);
 		if ($AGILOG) {$agi_string = "--    DID UPDATE LOG : |$affected_rowsL|$stmtA|";   &agi_output;}
 		}
 	}
-##### END filtering process #####
-
-
-##### BEGIN no-agent redirect process #####
 $no_agent_redirect_bypass=1;
 if ( ($no_agent_ingroup_redirect =~ /Y|NO_PAUSED|READY_ONLY/) && ($pre_filter_match_found < 1) && ($filter_match_found < 1) )
 	{
 	if ($AGILOG) {$agi_string = "no-agent active: |$extension|$no_agent_ingroup_redirect|$no_agent_ingroup_id|$no_agent_ingroup_extension|$filter_clean_cid_number|";   &agi_output;}
-
 	$queue_date_epoch = time();
 	$BDtarget = ($queue_date_epoch - 5);
 	($Bsec,$Bmin,$Bhour,$Bmday,$Bmon,$Byear,$Bwday,$Byday,$Bisdst) = localtime($BDtarget);
@@ -1477,7 +1272,6 @@ if ( ($no_agent_ingroup_redirect =~ /Y|NO_PAUSED|READY_ONLY/) && ($pre_filter_ma
 	if ($Bmin < 10) {$Bmin = "0$Bmin";}
 	if ($Bsec < 10) {$Bsec = "0$Bsec";}
 	$BDtsSQLdate = "$Byear$Bmon$Bmday$Bhour$Bmin$Bsec";
-
 	$NPsql='';
 	if ($no_agent_ingroup_redirect =~ /NO_PAUSED/) 
 		{$NPsql = "and status NOT IN('PAUSED')";}
@@ -1494,17 +1288,13 @@ if ( ($no_agent_ingroup_redirect =~ /Y|NO_PAUSED|READY_ONLY/) && ($pre_filter_ma
 		$no_agent_redirect_bypass =	$aryA[0];
 		}
 	$sthA->finish();
-
 	if ($no_agent_redirect_bypass < 1)
 		{
 		$did_route =					'EXTEN';
 		$did_extension =				$no_agent_ingroup_extension;
 		$exten_context =				'default';
 		$route_type =					'NOAGENT';
-
 		if ($AGILOG) {$agi_string = "No-Agent Redirect: |$no_agent_redirect_bypass|$no_agent_ingroup_redirect|$did_extension|$no_agent_ingroup_id|$stmtA|";   &agi_output;}
-
-		### Update the call in vicidial_did_log
 		$stmtA = "UPDATE vicidial_did_log SET did_route='NA_$did_route' where uniqueid='$uniqueid' and channel='$channel' and server_ip='$VARserver_ip' and caller_id_number='$callerid' and call_date='$SQLdate';";
 			if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 		$affected_rowsL = $dbhA->do($stmtA);
@@ -1515,15 +1305,10 @@ if ( ($no_agent_ingroup_redirect =~ /Y|NO_PAUSED|READY_ONLY/) && ($pre_filter_ma
 		if ($AGILOG) {$agi_string = "No-Agent Debug: |$no_agent_redirect_bypass|$no_agent_ingroup_redirect|$did_extension|$no_agent_ingroup_id|$stmtA|";   &agi_output;}
 		}
 	}
-##### END no-agent redirect process #####
-
-
-##### BEGIN max queue ingroup calls redirect process #####
 $max_queue_redirect_bypass=1;
 if ( ( ($max_queue_ingroup_calls > 0) || ($max_queue_ingroup_calls < 0) ) && ($no_agent_redirect_bypass > 0) && ($pre_filter_match_found < 1) && ($filter_match_found < 1) )
 	{
 	if ($AGILOG) {$agi_string = "max queue active: |$extension|$max_queue_ingroup_calls|$max_queue_ingroup_id|$max_queue_ingroup_extension|";   &agi_output;}
-
 	$queue_date_epoch = time();
 	$BDtarget = ($queue_date_epoch - 60);
 	($Bsec,$Bmin,$Bhour,$Bmday,$Bmon,$Byear,$Bwday,$Byday,$Bisdst) = localtime($BDtarget);
@@ -1535,7 +1320,6 @@ if ( ( ($max_queue_ingroup_calls > 0) || ($max_queue_ingroup_calls < 0) ) && ($n
 	if ($Bmin < 10) {$Bmin = "0$Bmin";}
 	if ($Bsec < 10) {$Bsec = "0$Bsec";}
 	$BDtsSQLdate = "$Byear$Bmon$Bmday$Bhour$Bmin$Bsec";
-
 	$stmtA = "SELECT count(*) FROM vicidial_auto_calls where campaign_id='$max_queue_ingroup_id' and status IN('LIVE','IVR') and last_update_time > '$BDtsSQLdate';";
 	$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 	$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -1546,17 +1330,13 @@ if ( ( ($max_queue_ingroup_calls > 0) || ($max_queue_ingroup_calls < 0) ) && ($n
 		$max_queue_redirect_bypass =	$aryA[0];
 		}
 	$sthA->finish();
-
 	if ($max_queue_redirect_bypass >= $max_queue_ingroup_calls)
 		{
 		$did_route =					'EXTEN';
 		$did_extension =				$max_queue_ingroup_extension;
 		$exten_context =				'default';
 		$route_type =					'MAXQUE';
-
 		if ($AGILOG) {$agi_string = "Max Queue Redirect: |$max_queue_redirect_bypass|$max_queue_ingroup_calls|$did_extension|$max_queue_ingroup_id|$stmtA|";   &agi_output;}
-
-		### Update the call in vicidial_did_log
 		$stmtA = "UPDATE vicidial_did_log SET did_route='MQ_$did_route' where uniqueid='$uniqueid' and channel='$channel' and server_ip='$VARserver_ip' and caller_id_number='$callerid' and call_date='$SQLdate';";
 			if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 		$affected_rowsL = $dbhA->do($stmtA);
@@ -1567,14 +1347,9 @@ if ( ( ($max_queue_ingroup_calls > 0) || ($max_queue_ingroup_calls < 0) ) && ($n
 		if ($AGILOG) {$agi_string = "Max Queue Debug: |$max_queue_redirect_bypass|$max_queue_ingroup_calls|$did_extension|$max_queue_ingroup_id|$stmtA|";   &agi_output;}
 		}
 	}
-##### END max queue ingroup calls redirect process #####
-
-
-### Route AGENT call to a logged-in VICIDIAL agent
 if ($did_route =~ /AGENT/)
 	{
 	if ($AGILOG) {$agi_string = "  did_route AGENT: |$user|$extension|$user_unavailable_action|";   &agi_output;}
-
 	$agent_live=0;
 	$queue_date_epoch = time();
 	$BDtarget = ($queue_date_epoch - 5);
@@ -1587,8 +1362,6 @@ if ($did_route =~ /AGENT/)
 	if ($Bmin < 10) {$Bmin = "0$Bmin";}
 	if ($Bsec < 10) {$Bsec = "0$Bsec";}
 	$BDtsSQLdate = "$Byear$Bmon$Bmday$Bhour$Bmin$Bsec";
-
-	# check for agent being logged-in  (removed ' and status NOT IN('PAUSED')')
 	$stmtA = "SELECT count(*) FROM vicidial_live_agents where user='$user' and last_update_time > '$BDtsSQLdate';";
 	$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 	$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -1607,7 +1380,6 @@ if ($did_route =~ /AGENT/)
 		$did_extension =	"$did_ig_prefix$S$did_id$S$S$S$route_type";
 		$exten_context =	$ext_context;
 		$did_route =		'EXTEN';
-
 		if ($AGILOG) {$agi_string = "AGENT available, Routing call: $agent_live|$user"; &agi_output;}
 		}
 	else
@@ -1615,19 +1387,13 @@ if ($did_route =~ /AGENT/)
 		$did_route =		$user_unavailable_action;
 		$exten_context =	'default';
 		$route_type =		'NOAGENT';
-
 		if ($AGILOG) {$agi_string = "AGENT unavailable Redirect: |$user|$user_unavailable_action|$user_route_settings_ingroup|$did_extension|$stmtA|";   &agi_output;}
-
-		### Update the call in vicidial_did_log
 		$stmtA = "UPDATE vicidial_did_log SET did_route='NA_$did_route' where uniqueid='$uniqueid' and channel='$channel' and server_ip='$VARserver_ip' and caller_id_number='$callerid' and call_date='$SQLdate';";
 		if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 		$affected_rowsL = $dbhA->do($stmtA);
 		if ($AGILOG) {$agi_string = "--    DID UPDATE LOG : |$affected_rowsL|$stmtA|";   &agi_output;}
 		}
 	}
-
-
-### Route call to a VICIDIAL-defined phone
 if ($did_route =~ /PHONE/)
 	{
 	$stmtA = "SELECT dialplan_number,voicemail_id,protocol,ext_context FROM phones where server_ip='$did_server_ip' and extension='$phone';";
@@ -1643,8 +1409,6 @@ if ($did_route =~ /PHONE/)
 		$ext_context =		$aryA[3];
 		}
 	$sthA->finish();
-
-	### format the remote server dialstring to get the call to the overflow agent meetme room
 	if( $did_server_ip =~ m/(\S+)\.(\S+)\.(\S+)\.(\S+)/ )
 		{
 		$a = leading_zero($1); 
@@ -1653,16 +1417,11 @@ if ($did_route =~ /PHONE/)
 		$d = leading_zero($4);
 		$ServerString = "$a$S$b$S$c$S$d$S";
 		}
-
 	$did_extension = "$ServerString$dialplan_number";
 	$did_route = 'EXTEN';
 	}
-
-
-### Route call to a voicemail box on the system
 if ($did_route =~ /VOICEMAIL|VMAIL_NO_INST/)
 	{
-	### format the remote server dialstring to get the call to the overflow agent meetme room
 	if( $did_server_ip =~ m/(\S+)\.(\S+)\.(\S+)\.(\S+)/ )
 		{
 		$a = leading_zero($1); 
@@ -1676,35 +1435,24 @@ if ($did_route =~ /VOICEMAIL|VMAIL_NO_INST/)
 	$did_extension = "$ServerString$voicemail_dump_exten$voicemail_ext";
 	$did_route = 'EXTEN';
 	}
-
 $did_ig_prefix='99909';
 if ( ($SSinbound_answer_config > 0) && ($inbound_route_answer =~ /N/i) )
 	{$did_ig_prefix='99809';}
-
-### Route call to a VICIDIAL Inbound Group
 if ($did_route =~ /IN_GROUP/)
 	{
 	$did_extension = "$did_ig_prefix$S$did_id$S$S$S$route_type";
 	$exten_context = $ext_context;
 	$did_route = 'EXTEN';
 	}
-
-
-### QueueMetrics logging if enabled
 if ( ($did_route =~ /EXTEN|CALLMENU/) && ($enable_queuemetrics_logging > 0) )
 	{
 	$dbhB = DBI->connect("DBI:mysql:$queuemetrics_dbname:$queuemetrics_server_ip:3306", "$queuemetrics_login", "$queuemetrics_pass")
 	 or die "Couldn't connect to database: " . DBI->errstr;
-
 	if ($DBX) {print "CONNECTED TO QueueMetrics DATABASE:  $queuemetrics_server_ip|$queuemetrics_dbname\n";}
-
 	$stmtB = "INSERT INTO queue_log SET `partition`='P01',time_id='$now_date_epoch',call_id='$uniqueid',queue='NONE',agent='NONE',verb='INFO',data1='DID',data2='$extension',serverid='$queuemetrics_log_id';";
 	$Baffected_rows = $dbhB->do($stmtB);
 	$dbhB->disconnect();
 	}
-
-
-### Route call to an extension on the system
 if ($did_route =~ /EXTEN/)
 	{
 	$XFERexten = "$did_extension";
@@ -1718,12 +1466,8 @@ if ($did_route =~ /EXTEN/)
 	print "SET PRIORITY 1\n";
 		$result = <STDIN>;
 		checkresult($result);
-	
 	exit;
 	}
-
-
-### Route call to a DID in the trunkinbound context on the system
 if ($did_route =~ /DID/)
 	{
 	if ($AGILOG) {$agi_string = "exiting the DID app, transferring call to $filter_match_found @ trunkinbound";   &agi_output;}
@@ -1736,26 +1480,19 @@ if ($did_route =~ /DID/)
 	print "SET PRIORITY 1\n";
 		$result = <STDIN>;
 		checkresult($result);
-	
 	exit;
 	}
-
-
-### Route call to a call menu on the system
 if ($did_route =~ /CALLMENU/)
 	{
 	if ($enable_queuemetrics_logging > 0)
 		{
 		$dbhB = DBI->connect("DBI:mysql:$queuemetrics_dbname:$queuemetrics_server_ip:3306", "$queuemetrics_login", "$queuemetrics_pass")
 		 or die "Couldn't connect to database: " . DBI->errstr;
-
 		if ($DBX) {print "CONNECTED TO QM DATABASE:  $queuemetrics_server_ip|$queuemetrics_dbname\n";}
-
 		$stmtB = "INSERT INTO queue_log SET `partition`='P01',time_id='$now_date_epoch',call_id='$uniqueid',queue='NONE',agent='NONE',verb='INFO',data1='IVRSTART',data2='$callerid',data3='$extension',serverid='$queuemetrics_log_id';";
 		$Baffected_rows = $dbhB->do($stmtB);
 		$dbhB->disconnect();
 		}
-
 	$XFERcontext = "$menu_id";
 	if ($AGILOG) {$agi_string = "exiting the DID app, transferring call to CALLMENU $XFERcontext";   &agi_output;}
 	print "SET CONTEXT $XFERcontext\n";
@@ -1767,17 +1504,8 @@ if ($did_route =~ /CALLMENU/)
 	print "SET PRIORITY 1\n";
 		$result = <STDIN>;
 		checkresult($result);
-	
 	exit;
 	}
-
-
-
-
-
-
-######### SUBROUTINES #################
-
 sub checkresult 
 	{
 	$pass=0;   $fail=0;
@@ -1790,22 +1518,18 @@ sub checkresult
 		$res =~ /result=(-?\d+)/;
 		if (!length($1)) 
 			{
-		#	print STDERR "FAIL ($res)\n";
 			$fail++;
 			} 
 		else 
 			{
-		#	print STDERR "PASS ($1)\n";
 			$pass++;
 			}
 		} 
 	else 
 		{
-	#	print STDERR "FAIL (unexpected result '$res')\n";
 		$fail++;
 		}
 	}
-
 sub leading_zero($) 
 	{
     $_ = $_[0];
@@ -1813,28 +1537,23 @@ sub leading_zero($)
     s/^(\d\d)$/0$1/;
     return $_;
 	} # End of the leading_zero() routine.
-
 sub agi_output
 	{
 	if ($AGILOG >=2)
 		{
-		### open the log file for writing ###
 		open(Lout, ">>$AGILOGfile")
 				|| die "Can't open $AGILOGfile: $!\n";
 		print Lout "$now_date|$script|$agi_string\n";
 		close(Lout);
 		}
-		### send to STDERR writing ###
 	if ( ($AGILOG == '1') || ($AGILOG == '3') )
 		{print STDERR "$now_date|$script|$agi_string\n";}
 	$agi_string='';
 	}
-
 sub did_output
 	{
 	if ($AGILOG >=2)
 		{
-		### open the log file for writing ###
 		open(Dout, ">>$DIDLOGfile")
 				|| die "Can't open $DIDLOGfile: $!\n";
 		print Dout "$did_string\n";
@@ -1842,24 +1561,13 @@ sub did_output
 		}
 	$did_string='';
 	}
-
-# subroutine to parse the asterisk version
-# and return a hash with the various part
 sub parse_asterisk_version
 	{
-	# grab the arguments
 	my $ast_ver_str = $_[0];
-
-	# get everything after the - and put it in $ast_ver_postfix
 	my @hyphen_parts = split( /-/ , $ast_ver_str );
-
 	my $ast_ver_postfix = $hyphen_parts[1];
-
-	# now split everything before the - up by the .
 	my @dot_parts = split( /\./ , $hyphen_parts[0] );
-
 	my %ast_ver_hash;
-
 	if ( $dot_parts[0] <= 1 )
 		{
 			%ast_ver_hash = (
@@ -1870,8 +1578,6 @@ sub parse_asterisk_version
 				"postfix" => $ast_ver_postfix
 			);
 		}
-
-	# digium dropped the 1 from asterisk 10 but we still need it
 	if ( $dot_parts[0] > 1 )
 		{
 			%ast_ver_hash = (
@@ -1882,6 +1588,5 @@ sub parse_asterisk_version
 				"postfix" => $ast_ver_postfix
 			);
 		}
-
 	return ( %ast_ver_hash );
 	}

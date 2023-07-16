@@ -1,26 +1,50 @@
+#!/usr/bin/perl
+#/* ========================================
+# * ███╗   ███╗██████╗ ██╗ █████╗ ██╗
+# * ████╗ ████║██╔══██╗██║██╔══██╗██║
+# * ██╔████╔██║██║  ██║██║███████║██║
+# * ██║╚██╔╝██║██║  ██║██║██╔══██║██║
+# * ██║ ╚═╝ ██║██████╔╝██║██║  ██║███████╗
+# * ╚═╝     ╚═╝╚═════╝ ╚═╝╚═╝  ╚═╝╚══════╝
+# * ========================================
+# * mDial - Omni-Channel Contact Centre Suite.
+# * Initially Written by Martin McCarthy.
+# * Contributions welcome.
+# * Active: 2020 - 2023.
+# *
+# * This software is licensed under AGPLv2.
+# * You can find more information here;
+# * https://www.gnu.org/licenses/agpl-3.0.en.html
+# * A copy of the license is also shipped with this build.
+# *
+# * Important note: this software is provided to you free of charge.
+# * If you paid for this software, you were ripped off.
+# *
+# * This project is a fork of the awesome FOSS project, ViCiDial.
+# * ViCiDial is copyrighted by Matt Florell and the ViCiDial Group
+# * under the AGPLv2 license.
+# *
+# * You can find out more about ViCiDial;
+# * Web: https://www.vicidial.com/
+# * Email: Matt Florell <vicidial@gmail.com>
+# * IRC: Libera.Chat - ##vicidial
+# *
+# * Bug reports, feature requests and patches welcome!
+# * ======================================== */
 <?php
-
 /*
-
 class.Diff.php
-
 A class containing a diff implementation
-
 Created by Stephen Morley - http://stephenmorley.org/ - and released under the
 terms of the CC0 1.0 Universal legal code:
-
 http://creativecommons.org/publicdomain/zero/1.0/legalcode
-
 */
-
 // A class containing functions for computing diffs and formatting the output.
 class Diff{
-
   // define the constants
   const UNMODIFIED = 0;
   const DELETED    = 1;
   const INSERTED   = 2;
-
   /* Returns the diff for two strings. The return value is an array, each of
    * whose values is an array containing two values: a line (or character, if
    * $compareCharacters is true), and one of the constants DIFF::UNMODIFIED (the
@@ -35,7 +59,6 @@ class Diff{
    */
   public static function compare(
       $string1, $string2, $compareCharacters = false){
-
     // initialise the sequences and comparison start and end positions
     $start = 0;
     if ($compareCharacters){
@@ -49,27 +72,22 @@ class Diff{
       $end1 = count($sequence1) - 1;
       $end2 = count($sequence2) - 1;
     }
-
     // skip any common prefix
     while ($start <= $end1 && $start <= $end2
         && $sequence1[$start] == $sequence2[$start]){
       $start ++;
     }
-
     // skip any common suffix
     while ($end1 >= $start && $end2 >= $start
         && $sequence1[$end1] == $sequence2[$end2]){
       $end1 --;
       $end2 --;
     }
-
     // compute the table of longest common subsequence lengths
     $table = self::computeTable($sequence1, $sequence2, $start, $end1, $end2);
-
     // generate the partial diff
     $partialDiff =
         self::generatePartialDiff($table, $sequence1, $sequence2, $start);
-
     // generate the full diff
     $diff = array();
     for ($index = 0; $index < $start; $index ++){
@@ -81,12 +99,9 @@ class Diff{
         $index ++){
       $diff[] = array($sequence1[$index], self::UNMODIFIED);
     }
-
     // return the diff
     return $diff;
-
   }
-
   /* Returns the diff for two files. The parameters are:
    *
    * $file1             - the path to the first file
@@ -96,15 +111,12 @@ class Diff{
    */
   public static function compareFiles(
       $file1, $file2, $compareCharacters = false){
-
     // return the diff of the files
     return self::compare(
         file_get_contents($file1),
         file_get_contents($file2),
         $compareCharacters);
-
   }
-
   /* Returns the table of longest common subsequence lengths for the specified
    * sequences. The parameters are:
    *
@@ -116,23 +128,17 @@ class Diff{
    */
   private static function computeTable(
       $sequence1, $sequence2, $start, $end1, $end2){
-
     // determine the lengths to be compared
     $length1 = $end1 - $start + 1;
     $length2 = $end2 - $start + 1;
-
     // initialise the table
     $table = array(array_fill(0, $length2 + 1, 0));
-
     // loop over the rows
     for ($index1 = 1; $index1 <= $length1; $index1 ++){
-
       // create the new row
       $table[$index1] = array(0);
-
       // loop over the columns
       for ($index2 = 1; $index2 <= $length2; $index2 ++){
-
         // store the longest common subsequence length
         if ($sequence1[$index1 + $start - 1]
             == $sequence2[$index2 + $start - 1]){
@@ -141,15 +147,11 @@ class Diff{
           $table[$index1][$index2] =
               max($table[$index1 - 1][$index2], $table[$index1][$index2 - 1]);
         }
-
       }
     }
-
     // return the table
     return $table;
-
   }
-
   /* Returns the partial diff for the specificed sequences, in reverse order.
    * The parameters are:
    *
@@ -160,49 +162,35 @@ class Diff{
    */
   private static function generatePartialDiff(
       $table, $sequence1, $sequence2, $start){
-
     //  initialise the diff
     $diff = array();
-
     // initialise the indices
     $index1 = count($table) - 1;
     $index2 = count($table[0]) - 1;
-
     // loop until there are no items remaining in either sequence
     while ($index1 > 0 || $index2 > 0){
-
       // check what has happened to the items at these indices
       if ($index1 > 0 && $index2 > 0
           && $sequence1[$index1 + $start - 1]
               == $sequence2[$index2 + $start - 1]){
-
         // update the diff and the indices
         $diff[] = array($sequence1[$index1 + $start - 1], self::UNMODIFIED);
         $index1 --;
         $index2 --;
-
       }elseif ($index2 > 0
           && $table[$index1][$index2] == $table[$index1][$index2 - 1]){
-
         // update the diff and the indices
         $diff[] = array($sequence2[$index2 + $start - 1], self::INSERTED);
         $index2 --;
-
       }else{
-
         // update the diff and the indices
         $diff[] = array($sequence1[$index1 + $start - 1], self::DELETED);
         $index1 --;
-
       }
-
     }
-
     // return the diff
     return $diff;
-
   }
-
   /* Returns a diff as a string, where unmodified lines are prefixed by '  ',
    * deletions are prefixed by '- ', and insertions are prefixed by '+ '. The
    * parameters are:
@@ -212,30 +200,22 @@ class Diff{
    *              to "\n"
    */
   public static function toString($diff, $separator = "\n"){
-
     // initialise the string
     $string = '';
-
     // loop over the lines in the diff
     foreach ($diff as $line){
-
       // extend the string with the line
       switch ($line[1]){
         case self::UNMODIFIED : $string .= '  ' . $line[0];break;
         case self::DELETED    : $string .= '- ' . $line[0];break;
         case self::INSERTED   : $string .= '+ ' . $line[0];break;
       }
-
       // extend the string with the separator
       $string .= $separator;
-
     }
-
     // return the string
     return $string;
-
   }
-
   /* Returns a diff as an HTML string, where unmodified lines are contained
    * within 'span' elements, deletions are contained within 'del' elements, and
    * insertions are contained within 'ins' elements. The parameters are:
@@ -245,13 +225,10 @@ class Diff{
    *              to '<br>'
    */
   public static function toHTML($diff, $separator = '<br>'){
-
     // initialise the HTML
     $html = '';
-
     // loop over the lines in the diff
     foreach ($diff as $line){
-
       // extend the HTML with the line
       switch ($line[1]){
         case self::UNMODIFIED : $element = 'span'; break;
@@ -262,17 +239,12 @@ class Diff{
           '<' . $element . '>'
           . htmlspecialchars($line[0])
           . '</' . $element . '>';
-
       // extend the HTML with the separator
       $html .= $separator;
-
     }
-
     // return the HTML
     return $html;
-
   }
-
   /* Returns a diff as an HTML table. The parameters are:
    *
    * $diff        - the diff array
@@ -282,17 +254,13 @@ class Diff{
    *                defaults to '<br>'
    */
   public static function toTable($diff, $indentation = '', $separator = ''){
-
     // initialise the HTML
     $html = $indentation . "<table class=\"diff\">\n";
-
     // loop over the lines in the diff
     $index = 0;
     while ($index < count($diff)){
-
       // determine the line type
       switch ($diff[$index][1]){
-
         // display the content on the left and right
         case self::UNMODIFIED:
           $leftCell =
@@ -300,7 +268,6 @@ class Diff{
                   $diff, $indentation, $separator, $index, self::UNMODIFIED);
           $rightCell = $leftCell;
           break;
-
         // display the deleted on the left and inserted content on the right
         case self::DELETED:
           $leftCell =
@@ -310,7 +277,6 @@ class Diff{
               self::getCellContent(
                   $diff, $indentation, $separator, $index, self::INSERTED);
           break;
-
         // display the inserted content on the right
         case self::INSERTED:
           $leftCell = '';
@@ -318,9 +284,7 @@ class Diff{
               self::getCellContent(
                   $diff, $indentation, $separator, $index, self::INSERTED);
           break;
-
       }
-
       // extend the HTML with the new row
       $html .=
           $indentation
@@ -343,14 +307,10 @@ class Diff{
           . "</td>\n"
           . $indentation
           . "  </tr>\n";
-
     }
-
     // return the HTML
     return $html . $indentation . "</table>\n";
-
   }
-
   /* Returns the content of the cell, for use in the toTable function. The
    * parameters are:
    *
@@ -362,10 +322,8 @@ class Diff{
    */
   private static function getCellContent(
       $diff, $indentation, $separator, &$index, $type){
-
     // initialise the HTML
     $html = '';
-
     // loop over the matching lines, adding them to the HTML
     while ($index < count($diff) && $diff[$index][1] == $type){
       $html .=
@@ -375,12 +333,8 @@ class Diff{
           . $separator;
       $index ++;
     }
-
     // return the HTML
     return $html;
-
   }
-
 }
-
 ?>

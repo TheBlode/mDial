@@ -1,154 +1,154 @@
 #!/usr/bin/perl
-#
-# res.pl - script to gather resolution and set to consistent resolution
-#
-# CHANGES:
-# 20100518-1326 - first build
-#
-
+#/* ========================================
+# * ███╗   ███╗██████╗ ██╗ █████╗ ██╗
+# * ████╗ ████║██╔══██╗██║██╔══██╗██║
+# * ██╔████╔██║██║  ██║██║███████║██║
+# * ██║╚██╔╝██║██║  ██║██║██╔══██║██║
+# * ██║ ╚═╝ ██║██████╔╝██║██║  ██║███████╗
+# * ╚═╝     ╚═╝╚═════╝ ╚═╝╚═╝  ╚═╝╚══════╝
+# * ========================================
+# * mDial - Omni-Channel Contact Centre Suite.
+# * Initially Written by Martin McCarthy.
+# * Contributions welcome.
+# * Active: 2020 - 2023.
+# *
+# * This software is licensed under AGPLv2.
+# * You can find more information here;
+# * https://www.gnu.org/licenses/agpl-3.0.en.html
+# * A copy of the license is also shipped with this build.
+# *
+# * Important note: this software is provided to you free of charge.
+# * If you paid for this software, you were ripped off.
+# *
+# * This project is a fork of the awesome FOSS project, ViCiDial.
+# * ViCiDial is copyrighted by Matt Florell and the ViCiDial Group
+# * under the AGPLv2 license.
+# *
+# * You can find out more about ViCiDial;
+# * Web: https://www.vicidial.com/
+# * Email: Matt Florell <vicidial@gmail.com>
+# * IRC: Libera.Chat - ##vicidial
+# *
+# * Bug reports, feature requests and patches welcome!
+# * ======================================== */
 $build = '20100518-1326';
-
-
-### begin parsing run-time options ###
 if (length($ARGV[0])>1)
-	{
-	$i=0;
-	while ($#ARGV >= $i)
-		{
-		$args = "$args $ARGV[$i]";
-		$i++;
-		}
-
-	if ($args =~ /--help/i)
-		{
-		print "res.pl - forces resoution change\n";
-		print "allowed run time options:\n";
-		print "  [-t] = test, don't change anything\n";
-		print "  [-debug] = lots of debug output\n";
-		print "  [-debugX] = even more debug output\n";
-		print "  [-change-only] = do not add new resolution mode\n";
-		print "  [-800x600] = find 800 by 600 resolution monitor specifics and set resolutions to it\n";
-		print "  [-1024x768] = find 1024 by 768 resolution monitor specifics and set resolutions to it\n";
-		print "  [-help] = this help message\n";
-		print "\n";
-		exit;
-		}
-	else
-		{
-		if ($args =~ /-change-only/i)
-			{
-			$change_only = 1;
-			}
-		if ($args =~ /-debug/i)
-			{$DB=1;}
-		if ($args =~ /--debugX/i)
-			{
-			$DB=1;
-			$DBX=1;
-			print "\n----- SUPER-DUPER DEBUGGING -----\nBUILD: $build\n";
-			}
-		if ($args =~ /-1024x768/i)
-			{
-			$cvt_options = '1024 768';
-			$xrandr_options = '1024x768';
-			}
-		if ( ($args =~ /-800x600/i) || (length($cvt_options) < 1) )
-			{
-			$cvt_options = '800 600';
-			$xrandr_options = '800x600';
-			}
-		if ($args =~ /-t/i)
-			{
-			$TEST=1;
-			$T=1;
-			}
-		}
-	}
+    {
+    $i=0;
+    while ($#ARGV >= $i)
+        {
+        $args = "$args $ARGV[$i]";
+        $i++;
+        }
+    if ($args =~ /--help/i)
+        {
+        print "res.pl - forces resoution change\n";
+        print "allowed run time options:\n";
+        print "  [-t] = test, don't change anything\n";
+        print "  [-debug] = lots of debug output\n";
+        print "  [-debugX] = even more debug output\n";
+        print "  [-change-only] = do not add new resolution mode\n";
+        print "  [-800x600] = find 800 by 600 resolution monitor specifics and set resolutions to it\n";
+        print "  [-1024x768] = find 1024 by 768 resolution monitor specifics and set resolutions to it\n";
+        print "  [-help] = this help message\n";
+        print "\n";
+        exit;
+        }
+    else
+        {
+        if ($args =~ /-change-only/i)
+            {
+            $change_only = 1;
+            }
+        if ($args =~ /-debug/i)
+            {$DB=1;}
+        if ($args =~ /--debugX/i)
+            {
+            $DB=1;
+            $DBX=1;
+            print "\n----- SUPER-DUPER DEBUGGING -----\nBUILD: $build\n";
+            }
+        if ($args =~ /-1024x768/i)
+            {
+            $cvt_options = '1024 768';
+            $xrandr_options = '1024x768';
+            }
+        if ( ($args =~ /-800x600/i) || (length($cvt_options) < 1) )
+            {
+            $cvt_options = '800 600';
+            $xrandr_options = '800x600';
+            }
+        if ($args =~ /-t/i)
+            {
+            $TEST=1;
+            $T=1;
+            }
+        }
+    }
 else
-	{
-	$cvt_options = '800 600';
-	$xrandr_options = '800x600';
-	}
-### end parsing run-time options ###
-
-
-### find cvt binary    "cvt 800 600"
+    {
+    $cvt_options = '800 600';
+    $xrandr_options = '800x600';
+    }
 $cvtbin = '';
 if ( -e ('/bin/cvt')) {$cvtbin = '/bin/cvt';}
 else 
-	{
-	if ( -e ('/usr/bin/cvt')) {$cvtbin = '/usr/bin/cvt';}
-	else 
-		{
-		if ( -e ('/usr/local/bin/cvt')) {$cvtbin = '/usr/local/bin/cvt';}
-		else
-			{
-			print "Can't find cvt binary! Exiting...\n";
-			exit;
-			}
-		}
-	}
-
-### find xrandr binary
+    {
+    if ( -e ('/usr/bin/cvt')) {$cvtbin = '/usr/bin/cvt';}
+    else 
+        {
+        if ( -e ('/usr/local/bin/cvt')) {$cvtbin = '/usr/local/bin/cvt';}
+        else
+            {
+            print "Can't find cvt binary! Exiting...\n";
+            exit;
+            }
+        }
+    }
 $xrandrbin = '';
 if ( -e ('/bin/xrandr')) {$xrandrbin = '/bin/xrandr';}
 else 
-	{
-	if ( -e ('/usr/bin/xrandr')) {$xrandrbin = '/usr/bin/xrandr';}
-	else 
-		{
-		if ( -e ('/usr/local/bin/xrandr')) {$xrandrbin = '/usr/local/bin/xrandr';}
-		else
-			{
-			print "Can't find xrandr binary! Exiting...\n";
-			exit;
-			}
-		}
-	}
-
+    {
+    if ( -e ('/usr/bin/xrandr')) {$xrandrbin = '/usr/bin/xrandr';}
+    else 
+        {
+        if ( -e ('/usr/local/bin/xrandr')) {$xrandrbin = '/usr/local/bin/xrandr';}
+        else
+            {
+            print "Can't find xrandr binary! Exiting...\n";
+            exit;
+            }
+        }
+    }
 if ($change_only < 1)
-	{
-	if ($DBX > 0) {print "CVT COMMAND: |$cvtbin $cvt_options|\n";}
-
-	@cvtOUTPUT = `$cvtbin $cvt_options`;
-	## 800x600 59.86 Hz (CVT 0.48M3) hsync: 37.35 kHz; pclk: 38.25 MHz
-	#Modeline "800x600_60.00"   38.25  800 832 912 1024  600 603 607 624 -hsync +vsync
-
-	$Modeline_found=0;
-	$ct=0;
-	while( ($Modeline_found < 1) && ($ct < 10) )
-		{
-		if ($cvtOUTPUT[$ct] =~ /Modeline/)
-			{
-			$Modeline_found++;
-			chomp($cvtOUTPUT[$ct]);
-			$modline = $cvtOUTPUT[$ct];
-			$modline =~ s/Modeline //gi;
-			if ($DBX > 0) {print "MODLINE: $ct|$modline|\n";}
-			}
-		$ct++;
-		}
-
-	if ($DBX > 0) {print "XRANDR COMMAND: |$xrandrbin --newmode $modline|\n";}
-
-	@xrandrOUTPUT = `$xrandrbin --newmode $modline`;
-
-
-	$ct=0;
-	foreach(@xrandrOUTPUT)
-		{
-		$modline = chomp($xrandrOUTPUT[$ct]);
-		if ($DBX > 0) {print "XRANDR OUTPUT: $ct|$xrandrOUTPUT[$ct]|\n";}
-		$ct++;
-		}
-	}
-
+    {
+    if ($DBX > 0) {print "CVT COMMAND: |$cvtbin $cvt_options|\n";}
+    @cvtOUTPUT = `$cvtbin $cvt_options`;
+    $Modeline_found=0;
+    $ct=0;
+    while( ($Modeline_found < 1) && ($ct < 10) )
+        {
+        if ($cvtOUTPUT[$ct] =~ /Modeline/)
+            {
+            $Modeline_found++;
+            chomp($cvtOUTPUT[$ct]);
+            $modline = $cvtOUTPUT[$ct];
+            $modline =~ s/Modeline //gi;
+            if ($DBX > 0) {print "MODLINE: $ct|$modline|\n";}
+            }
+        $ct++;
+        }
+    if ($DBX > 0) {print "XRANDR COMMAND: |$xrandrbin --newmode $modline|\n";}
+    @xrandrOUTPUT = `$xrandrbin --newmode $modline`;
+    $ct=0;
+    foreach(@xrandrOUTPUT)
+        {
+        $modline = chomp($xrandrOUTPUT[$ct]);
+        if ($DBX > 0) {print "XRANDR OUTPUT: $ct|$xrandrOUTPUT[$ct]|\n";}
+        $ct++;
+        }
+    }
 if ($DBX > 0) {print "CHANGING RESOLUTION: |$xrandrbin --size $xrandr_options|\n";}
-
 @xrandr_sizeOUTPUT = `$xrandrbin --size $xrandr_options`;
-
-
 if ($DBX > 0) {print "DONE, EXITING...\n";}
-
-
 exit;

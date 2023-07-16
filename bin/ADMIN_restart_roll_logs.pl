@@ -1,22 +1,36 @@
 #!/usr/bin/perl
-#
-# ADMIN_restart_roll_logs.pl    version 2.14
-#
-# script to roll the Asterisk logs on machine restart
-#
-# have this run on the astersik server 
-#
-# Copyright (C) 2017  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
-#
-# CHANGES:
-# 90311-0921 - Added /var/log/asterisk/screenlog log rolling
-# 90508-0535 - Changes root screenlog to /var/log/astguiclient
-# 130108-1715 - Changes for new log rolling script compatibility
-# 141124-2309 - Fixed Fhour variable bug
-# 151110-2005 - Added rolling of Asterisk cdr.db
-# 171010-2258 - Added rolling of proccess screenlogs
-#
-
+#/* ========================================
+# * ███╗   ███╗██████╗ ██╗ █████╗ ██╗
+# * ████╗ ████║██╔══██╗██║██╔══██╗██║
+# * ██╔████╔██║██║  ██║██║███████║██║
+# * ██║╚██╔╝██║██║  ██║██║██╔══██║██║
+# * ██║ ╚═╝ ██║██████╔╝██║██║  ██║███████╗
+# * ╚═╝     ╚═╝╚═════╝ ╚═╝╚═╝  ╚═╝╚══════╝
+# * ========================================
+# * mDial - Omni-Channel Contact Centre Suite.
+# * Initially Written by Martin McCarthy.
+# * Contributions welcome.
+# * Active: 2020 - 2023.
+# *
+# * This software is licensed under AGPLv2.
+# * You can find more information here;
+# * https://www.gnu.org/licenses/agpl-3.0.en.html
+# * A copy of the license is also shipped with this build.
+# *
+# * Important note: this software is provided to you free of charge.
+# * If you paid for this software, you were ripped off.
+# *
+# * This project is a fork of the awesome FOSS project, ViCiDial.
+# * ViCiDial is copyrighted by Matt Florell and the ViCiDial Group
+# * under the AGPLv2 license.
+# *
+# * You can find out more about ViCiDial;
+# * Web: https://www.vicidial.com/
+# * Email: Matt Florell <vicidial@gmail.com>
+# * IRC: Libera.Chat - ##vicidial
+# *
+# * Bug reports, feature requests and patches welcome!
+# * ======================================== */
 ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
 $year = ($year + 1900);
 $mon++;
@@ -25,55 +39,45 @@ if ($mday < 10) {$mday = "0$mday";}
 if ($hour < 10) {$hour = "0$hour";}
 if ($min < 10) {$min = "0$min";}
 if ($sec < 10) {$sec = "0$sec";}
-
 $now_date_epoch = time();
 $now_date = "$year-$mon-$mday---$hour$min$sec";
-
-
 print "rolling Asterisk messages log...\n";
 if ( -e '/var/log/asterisk/messages' )
-	{
-	`mv -f /var/log/asterisk/messages /var/log/asterisk/messages.$now_date`;
-	}
-
+    {
+    `mv -f /var/log/asterisk/messages /var/log/asterisk/messages.$now_date`;
+    }
 print "rolling Asterisk event log...\n";
 if ( -e '/var/log/asterisk/event_log' )
-	{
-	`mv -f /var/log/asterisk/event_log /var/log/asterisk/event_log.$now_date`;
-	}
-
+    {
+    `mv -f /var/log/asterisk/event_log /var/log/asterisk/event_log.$now_date`;
+    }
 print "rolling Asterisk cdr.db...\n";
 if ( -e '/var/log/asterisk/cdr.db' )
-	{
-	`mv -f /var/log/asterisk/cdr.db /var/log/asterisk/cdr.db.$now_date`;
-	}
-
+    {
+    `mv -f /var/log/asterisk/cdr.db /var/log/asterisk/cdr.db.$now_date`;
+    }
 print "rolling Asterisk cdr logs...\n";
 if ( -e '/var/log/asterisk/cdr-csv/Master.csv' )
-	{
-	`mv -f /var/log/asterisk/cdr-csv/Master.csv /var/log/asterisk/cdr-csv/Master.csv.$now_date`;
-	}
+    {
+    `mv -f /var/log/asterisk/cdr-csv/Master.csv /var/log/asterisk/cdr-csv/Master.csv.$now_date`;
+    }
 if ( -e '/var/log/asterisk/cdr-custom/Master.csv' )
-	{
-	`mv -f /var/log/asterisk/cdr-custom/Master.csv /var/log/asterisk/cdr-custom/Master.csv.$now_date`;
-	}
-
+    {
+    `mv -f /var/log/asterisk/cdr-custom/Master.csv /var/log/asterisk/cdr-custom/Master.csv.$now_date`;
+    }
 print "rolling Asterisk screen log...\n";
 if ( -e '/var/log/astguiclient/screenlog.0' )
-	{
-	`mv -f /var/log/astguiclient/screenlog.0 /var/log/astguiclient/screenlog.0.$now_date`;
-	}
-
+    {
+    `mv -f /var/log/astguiclient/screenlog.0 /var/log/astguiclient/screenlog.0.$now_date`;
+    }
 if ( -e '/root/screenlog.0' )
-	{
-	`mv -f /root/screenlog.0 /var/log/astguiclient/screenlog.0.root.$now_date`;
-	}
-
+    {
+    `mv -f /root/screenlog.0 /var/log/astguiclient/screenlog.0.root.$now_date`;
+    }
 if ( -e '/var/log/asterisk/screenlog.0' )
-	{
-	`mv -f /var/log/asterisk/screenlog.0 /var/log/asterisk/screenlog.0.asterisk.$now_date`;
-	}
-
+    {
+    `mv -f /var/log/asterisk/screenlog.0 /var/log/asterisk/screenlog.0.asterisk.$now_date`;
+    }
 print "rolling Vicidial screen logs...\n";
 if ( -e '/var/log/astguiclient/ASTVDauto-screenlog.0' )
         {
@@ -115,7 +119,5 @@ if ( -e '/var/log/astguiclient/ASTadpat-screenlog.0' )
         {
         `mv -f /var/log/astguiclient/ASTVDadapt-screenlog.0 /var/log/astguiclient/ASTVDadapt-screenlog.0.$now_date`;
         }
-
 print "FINISHED... EXITING\n";
-
 exit;

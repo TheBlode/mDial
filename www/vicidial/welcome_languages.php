@@ -1,16 +1,39 @@
+#!/usr/bin/perl
+#/* ========================================
+# * ███╗   ███╗██████╗ ██╗ █████╗ ██╗
+# * ████╗ ████║██╔══██╗██║██╔══██╗██║
+# * ██╔████╔██║██║  ██║██║███████║██║
+# * ██║╚██╔╝██║██║  ██║██║██╔══██║██║
+# * ██║ ╚═╝ ██║██████╔╝██║██║  ██║███████╗
+# * ╚═╝     ╚═╝╚═════╝ ╚═╝╚═╝  ╚═╝╚══════╝
+# * ========================================
+# * mDial - Omni-Channel Contact Centre Suite.
+# * Initially Written by Martin McCarthy.
+# * Contributions welcome.
+# * Active: 2020 - 2023.
+# *
+# * This software is licensed under AGPLv2.
+# * You can find more information here;
+# * https://www.gnu.org/licenses/agpl-3.0.en.html
+# * A copy of the license is also shipped with this build.
+# *
+# * Important note: this software is provided to you free of charge.
+# * If you paid for this software, you were ripped off.
+# *
+# * This project is a fork of the awesome FOSS project, ViCiDial.
+# * ViCiDial is copyrighted by Matt Florell and the ViCiDial Group
+# * under the AGPLv2 license.
+# *
+# * You can find out more about ViCiDial;
+# * Web: https://www.vicidial.com/
+# * Email: Matt Florell <vicidial@gmail.com>
+# * IRC: Libera.Chat - ##vicidial
+# *
+# * Bug reports, feature requests and patches welcome!
+# * ======================================== */
 <?php
-# welcome_languages.php - VICIDIAL welcome Languages page
-# 
-# 
-# Copyright (C) 2014  Matt Florell <vicidial@gmail.com>    LICENSE: GPLv2
-#
-# CHANGELOG:
-# 141007-2142 - Finalized adding QXZ translation to all admin files
-
 header ("Content-type: text/html; charset=utf-8");
-
 require("functions.php");
-
 echo "<title>"._QXZ("ViciDial Welcome")."</title>\n";
 echo "</head>\n";
 echo "<BODY BGCOLOR=WHITE MARGINHEIGHT=0 MARGINWIDTH=0>\n";
@@ -21,7 +44,6 @@ echo "<TD ALIGN=LEFT VALIGN=MIDDLE WIDTH=300> Willkommen! Benvenuto! Υποδο�
 echo "</TR>\n";
 echo "<TR><TD ALIGN=LEFT COLSPAN=3><font size=1> &nbsp; </TD></TR>\n";
 echo "<TR><TD ALIGN=CENTER COLSPAN=2 VALIGN=TOP>\n";
-
 echo "<TABLE WIDTH=300 CELLPADDING=2 CELLSPACING=0 BGCOLOR=\"#CCCCCC\">";
 echo "<TR><TD ALIGN=LEFT>";
 echo "<font size=3><b> &nbsp; <a href=\"../agc/vicidial.php\"><IMG SRC=\"../agc/images/en.gif\" border=0> "._QXZ("English Agent Login")."</a>";
@@ -71,9 +93,7 @@ echo "</TD></TR>\n";
 echo "<TR><TD ALIGN=LEFT >";
 echo "<font size=3><b> &nbsp; <a href=\"../agc_jp/vicidial.php\"><IMG SRC=\"../agc/images/jp.gif\" border=0> "._QXZ("Japanese Agent Login")."</a>";
 echo "</TD></TR></TABLE>\n";
-
 echo "</TD><TD VALIGN=TOP>\n";
-
 echo "<TABLE WIDTH=300 CELLPADDING=2 CELLSPACING=0 BGCOLOR=\"#CCCCCC\">";
 echo "<TR><TD ALIGN=LEFT >";
 echo "<font size=3><b> &nbsp; <a href=\"../vicidial/admin.php\"><IMG SRC=\"../agc/images/en.gif\" border=0> "._QXZ("English Administration")."</a>";
@@ -101,5 +121,4 @@ echo "</TABLE>\n";
 echo "</FORM>\n\n";
 echo "</body>\n\n";
 echo "</html>\n\n";
-
 ?>

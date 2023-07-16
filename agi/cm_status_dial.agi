@@ -1,31 +1,37 @@
 #!/usr/bin/perl
-#
-# cm_status_dial.agi   version 2.14
-# 
-# Used as a Call Menu AGI option route to alter status of a lead before dialing.
-# The lead is only updated if the call is tagged with a lead_id before this script.
-#
-# You need to put lines similar to those below in your extensions.conf file or 
-# a Custom Dialplan entry:
-# ; Below are the parameters needed for the script to be run properly
-# ; 1. the status to change the lead to
-# ; 2. the phone number or extension to dial
-# ; 3. the context to dial in
-# ;
-# ;inbound calls check calltime:
-#cm_status_dial.agi,XFER-----917275551212-----default
-#
-# Copyright (C) 2017  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
-#
-# changes:
-# 120909-2301 - First Build
-# 120924-0637 - Added log updating
-# 130108-1820 - Changes for Asterisk 1.8 compatibility
-# 170527-2243 - Fix for rare inbound logging issue #1017
-#
-
+#/* ========================================
+# * ███╗   ███╗██████╗ ██╗ █████╗ ██╗
+# * ████╗ ████║██╔══██╗██║██╔══██╗██║
+# * ██╔████╔██║██║  ██║██║███████║██║
+# * ██║╚██╔╝██║██║  ██║██║██╔══██║██║
+# * ██║ ╚═╝ ██║██████╔╝██║██║  ██║███████╗
+# * ╚═╝     ╚═╝╚═════╝ ╚═╝╚═╝  ╚═╝╚══════╝
+# * ========================================
+# * mDial - Omni-Channel Contact Centre Suite.
+# * Initially Written by Martin McCarthy.
+# * Contributions welcome.
+# * Active: 2020 - 2023.
+# *
+# * This software is licensed under AGPLv2.
+# * You can find more information here;
+# * https://www.gnu.org/licenses/agpl-3.0.en.html
+# * A copy of the license is also shipped with this build.
+# *
+# * Important note: this software is provided to you free of charge.
+# * If you paid for this software, you were ripped off.
+# *
+# * This project is a fork of the awesome FOSS project, ViCiDial.
+# * ViCiDial is copyrighted by Matt Florell and the ViCiDial Group
+# * under the AGPLv2 license.
+# *
+# * You can find out more about ViCiDial;
+# * Web: https://www.vicidial.com/
+# * Email: Matt Florell <vicidial@gmail.com>
+# * IRC: Libera.Chat - ##vicidial
+# *
+# * Bug reports, feature requests and patches welcome!
+# * ======================================== */
 $script = 'cm_status_dial.agi';
-
 ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
 $year = ($year + 1900);
 $mon++;
@@ -34,13 +40,9 @@ if ($mday < 10) {$mday = "0$mday";}
 if ($hour < 10) {$hour = "0$hour";}
 if ($min < 10) {$min = "0$min";}
 if ($sec < 10) {$sec = "0$sec";}
-
 $now_date_epoch = time();
 $now_date = "$year-$mon-$mday $hour:$min:$sec";
-
-# default path to astguiclient configuration file:
 $PATHconf =		'/etc/astguiclient.conf';
-
 open(conf, "$PATHconf") || die "can't open $PATHconf: $!\n";
 @conf = <conf>;
 close(conf);
@@ -75,19 +77,14 @@ foreach(@conf)
 		{$VARDB_port = $line;   $VARDB_port =~ s/.*=//gi;}
 	$i++;
 	}
-
 if (!$VARDB_port) {$VARDB_port='3306';}
 if (!$AGILOGfile) {$AGILOGfile = "$PATHlogs/agiout.$year-$mon-$mday";}
-
 use DBI;
 use Time::HiRes ('gettimeofday','usleep','sleep');  # necessary to have perl sleep command of less than one second
 use Asterisk::AGI;
 $AGI = new Asterisk::AGI;
-
 $dbhA = DBI->connect("DBI:mysql:$VARDB_database:$VARDB_server:$VARDB_port", "$VARDB_user", "$VARDB_pass")
     or die "Couldn't connect to database: " . DBI->errstr;
-
-### Grab Server values from the database
 $stmtA = "SELECT agi_output FROM servers where server_ip = '$VARserver_ip';";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -102,9 +99,6 @@ if ($sthArows > 0)
 	if ($DBagi_output =~ /BOTH/)	{$AGILOG = '3';}
 	}
 $sthA->finish();
-
-#############################################
-##### START QUEUEMETRICS LOGGING LOOKUP #####
 $stmtA = "SELECT enable_queuemetrics_logging,queuemetrics_server_ip,queuemetrics_dbname,queuemetrics_login,queuemetrics_pass,queuemetrics_log_id,queuemetrics_eq_prepend FROM system_settings;";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -121,11 +115,6 @@ if ($sthArows > 0)
 	$queuemetrics_eq_prepend =		$aryA[6];
 	}
 $sthA->finish();
-##### END QUEUEMETRICS LOGGING LOOKUP #####
-###########################################
-
-
-### begin parsing run-time options ###
 if (length($ARGV[0])>1)
 	{
 	if ($AGILOG) {$agi_string = "Perl Environment Dump:";   &agi_output;}
@@ -136,15 +125,11 @@ if (length($ARGV[0])>1)
 		if ($AGILOG) {$agi_string = "$i|$ARGV[$i]";   &agi_output;}
 		$i++;
 		}
-	
-	### list of command-line array arguments:
 	@ARGV_vars = split(/-----/, $ARGV[0]);
-
 	$new_status = 		$ARGV_vars[0];
 	$dial_extension =	$ARGV_vars[1];
 	$dial_context =		$ARGV_vars[2];
 	}
-
 $|=1;
 while(<STDIN>) 
 	{
@@ -157,7 +142,6 @@ while(<STDIN>)
 			$AGI{$1} = $2;
 			}
 		}
-
 	if (/^agi_context\:\s+(.*)$/)		{$context = $1;}
 	if (/^agi_priority\:\s+(.*)$/)		{$priority = $1;}
 	if (/^agi_uniqueid\:\s+(.*)$/)		{$unique_id = $1; $uniqueid = $unique_id;}
@@ -167,7 +151,6 @@ while(<STDIN>)
 	if (/^agi_callerid\:\s+(.*)$/)		{$callerid = $1;}
 	if (/^agi_calleridname\:\s+(.*)$/)	{$calleridname = $1;}
 	}
-
 $outboundIVR=0;
 $fieldUPDATE=0;
 if ($calleridname =~ /^V\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d/)
@@ -175,7 +158,6 @@ if ($calleridname =~ /^V\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d/)
 	$phone_number = $callerid;
 	$callerid = $calleridname;
 	$outboundIVR=1;
-
 	$stmtA = "SELECT campaign_id,lead_id FROM vicidial_auto_calls where callerid='$callerid';";
 	$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 	$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -204,54 +186,38 @@ else
 		$calleridname =~ s/\<\d\d\d\d\d\d\d\d\d\d\>//gi;
 		$calleridname =~ s/\"|\" //gi;
 		}
-
 	$callerid =~ s/\D|\'//gi;
 	$calleridname =~ s/unknown|\'//gi;
 	if ( (!$callerid) or ($callerid =~ /unknown/) )
 		{$callerid = $calleridname;}
-
-
 	if (length($callerid)>0) {$phone_number = $callerid;}
 	   else {$phone_number = '';}
 	if (length($calleridname)>0) {$VLcomments = $calleridname;}
 	   else {$VLcomments = '';}
    }
-
 if (length($callerid)<8) {$callerid = $parked_by;}
 if (length($pin)>0) {$callerid = $pin;}
-
-
 foreach $i (sort keys %AGI) 
 	{
 	if ($AGILOG) {$agi_string = " -- $i = $AGI{$i}";   &agi_output;}
 	}
-
 if ($AGILOG) {$agi_string = "AGI Variables: |$unique_id|$channel|$extension|$type|$callerid|";   &agi_output;}
-
-
 if (length($pin) < 1) {$pin=$inbound_number;}
-
 $fronter = $pin;
-
 if ($AGILOG) {$agi_string = "+++++ STATUS DIAL LOG STARTED : |$channel_group|$callerid-$pin|$now_date";   &agi_output;}
-
 $VDADphone='';
 $VDADphone_code='';
-
 if ($channel =~ /Local/i)
 	{
 	if ($AGILOG) {$agi_string = "+++++ STATUS DIAL START LOCAL CHANNEL: EXITING- $priority";   &agi_output;}
 	exit;
 	}
-
-### insert an IVR record to the vicidial_auto_calls table
 if ($outboundIVR > 0)
 	{
 	$stmtA = "UPDATE vicidial_list SET status='$new_status' where lead_id='$lead_id';";
 		if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 	$affected_rowsL = $dbhA->do($stmtA);
 	if ($AGILOG) {$agi_string = "--    VL update: |$affected_rowsL|$new_status|$dtmf|$lead_id|$context|";   &agi_output;}
-
 	$stmtA = "UPDATE vicidial_log SET status='$new_status' where lead_id='$lead_id' order by call_date desc limit 1;";
 		if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 	$affected_rowsL = $dbhA->do($stmtA);
@@ -265,15 +231,12 @@ else
 			if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 		$affected_rowsL = $dbhA->do($stmtA);
 		if ($AGILOG) {$agi_string = "--    VL update: |$affected_rowsL|$new_status|$dtmf|$lead_id|$context|";   &agi_output;}
-
 		$stmtA = "UPDATE vicidial_closer_log SET status='$new_status' where lead_id='$lead_id' order by closecallid desc limit 1;";
 			if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 		$affected_rowsL = $dbhA->do($stmtA);
 		if ($AGILOG) {$agi_string = "--    VCLOG update: |$affected_rowsL|$new_status|$dtmf|$lead_id|$context|";   &agi_output;}
 		}
 	}
-
-### QueueMetrics logging if enabled
 if ($enable_queuemetrics_logging > 0)
 	{
 	$dbhB = DBI->connect("DBI:mysql:$queuemetrics_dbname:$queuemetrics_server_ip:3306", "$queuemetrics_login", "$queuemetrics_pass")
@@ -282,17 +245,11 @@ if ($enable_queuemetrics_logging > 0)
 		if ($AGILOG) {$agi_string = "|$stmtB|";   &agi_output;}
 	$Baffected_rows = $dbhB->do($stmtB);
 	$dbhB->disconnect();
-
 	if ($DBX) {print "QueueMetrics UPDATE:  $queuemetrics_server_ip|$queuemetrics_dbname|$calleridname|$new_status\n";}
 	}
-
-
 $sthA->finish();
 $dbhA->disconnect();
-
-
 if ($AGILOG) {$agi_string = "      Status Dial, transferring call   |$dial_extension|$dial_context|$lead_id|$calleridname|";   &agi_output;}
-
 print "SET CONTEXT $dial_context\n";
 	$result = <STDIN>;
 	checkresult($result);
@@ -302,30 +259,20 @@ print "SET EXTENSION $dial_extension\n";
 print "SET PRIORITY 1\n";
 	$result = <STDIN>;
 	checkresult($result);
-
-
 exit;
-
-
-
-
-
 sub agi_output
 	{
 	if ($AGILOG >=2)
 		{
-		### open the log file for writing ###
 		open(Lout, ">>$AGILOGfile")
 				|| die "Can't open $AGILOGfile: $!\n";
 		print Lout "$now_date|$script|$agi_string\n";
 		close(Lout);
 		}
-		### send to STDERR writing ###
 	if ( ($AGILOG == '1') || ($AGILOG == '3') )
 		{print STDERR "$now_date|$script|$agi_string\n";}
 	$agi_string='';
 	}
-
 sub checkresult 
 	{
 	my ($res) = @_;
@@ -337,18 +284,15 @@ sub checkresult
 		$res =~ /result=(-?\d+)/;
 		if (!length($1)) 
 			{
-		#	print STDERR "FAIL ($res)\n";
 			$fail++;
 			} 
 		else 
 			{
-		#	print STDERR "PASS ($1)\n";
 			$pass++;
 			}
 		}
 	else 
 		{
-	#	print STDERR "FAIL (unexpected result '$res')\n";
 		$fail++;
 		}
 	}

@@ -1,44 +1,46 @@
+#!/usr/bin/perl
+#/* ========================================
+# * ███╗   ███╗██████╗ ██╗ █████╗ ██╗
+# * ████╗ ████║██╔══██╗██║██╔══██╗██║
+# * ██╔████╔██║██║  ██║██║███████║██║
+# * ██║╚██╔╝██║██║  ██║██║██╔══██║██║
+# * ██║ ╚═╝ ██║██████╔╝██║██║  ██║███████╗
+# * ╚═╝     ╚═╝╚═════╝ ╚═╝╚═╝  ╚═╝╚══════╝
+# * ========================================
+# * mDial - Omni-Channel Contact Centre Suite.
+# * Initially Written by Martin McCarthy.
+# * Contributions welcome.
+# * Active: 2020 - 2023.
+# *
+# * This software is licensed under AGPLv2.
+# * You can find more information here;
+# * https://www.gnu.org/licenses/agpl-3.0.en.html
+# * A copy of the license is also shipped with this build.
+# *
+# * Important note: this software is provided to you free of charge.
+# * If you paid for this software, you were ripped off.
+# *
+# * This project is a fork of the awesome FOSS project, ViCiDial.
+# * ViCiDial is copyrighted by Matt Florell and the ViCiDial Group
+# * under the AGPLv2 license.
+# *
+# * You can find out more about ViCiDial;
+# * Web: https://www.vicidial.com/
+# * Email: Matt Florell <vicidial@gmail.com>
+# * IRC: Libera.Chat - ##vicidial
+# *
+# * Bug reports, feature requests and patches welcome!
+# * ======================================== */
 <?php
-# crm_settings.php - settings for crm_example.php and front.php to use
-# 
-# Copyright (C) 2015  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
-#
-#
-# CHANGELOG
-# 151229-1556 - First Build 
-#
-
-# The full URL to the Vicidial Agent Screen, (usually something like "http://server/agc/vicidial.php")
 $agent_screen_url = '';
-
-# The full URL to the Vicidial Agent API, (usually something like "http://server/agc/api.php")
 $api_url = '';
-
-# The user and pass of a level 8 user that has API and modify lead permissions
 $api_user = '';
 $api_pass = '';
-
-
-# The name of the CRM IFRAME that will be used for the CRM portion(default is 'crmagent')
 $frame_id = 'crmagent';
-
-# The URL of the CRM welcome page (Don't forget to also set the Start Call URL in your campaign!)
 $crm_url = './crm_example.php?stage=welcome';
-
-
-# The URL of the front page (the page that loads the CRM and Vicidial IFRAMEs)
 $front_url = './front.php';
-
-
-##### interface size parameters #####
-
-# vicidial screen width and height
 $agent_screen_width = 1000;
 $agent_screen_height = 550;
-
-# vicidial screen width and height
 $crm_screen_width = 1100;
 $crm_screen_height = 600;
-
-
 ?>

@@ -1,40 +1,39 @@
 #!/usr/bin/perl
-#
-# invalid_speak.agi version 2.0.5
-# 
-# runs during an invalid extension and speaks the extension sent to it while printing to STDERR
-# 
-# You need to put lines similar to those below in your extensions.conf file:
-# 
-# ;inbound errors with speaking of extension:
-#exten => _XXXX,1,AGI(invalid_speak.agi,${EXTEN})
-#exten => _XXXX,2,Playback(invalid)
-#exten => _XXXX,3,Hangup
-#
-#exten => _*XXXXXXXXXX*XXXX,1,AGI(invalid_speak.agi,${EXTEN})
-#exten => _*XXXXXXXXXX*XXXX,2,Playback(invalid)
-#exten => _*XXXXXXXXXX*XXXX,3,Hangup
-#
-#exten => _*XXXXXXXXXX*XXXX*,1,AGI(invalid_speak.agi,${EXTEN})
-#exten => _*XXXXXXXXXX*XXXX*,2,Playback(invalid)
-#exten => _*XXXXXXXXXX*XXXX*,3,Hangup
-#
-#exten => _**XXXX,1,AGI(invalid_speak.agi,${EXTEN})
-#exten => _**XXXX,2,Playback(invalid)
-#exten => _**XXXX,3,Hangup
-#
-#exten => _**XXXX*,1,AGI(invalid_speak.agi,${EXTEN})
-#exten => _**XXXX*,2,Playback(invalid)
-#exten => _**XXXX*,3,Hangup
-#
-#
-# Copyright (C) 2008  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
-#
-
+#/* ========================================
+# * ███╗   ███╗██████╗ ██╗ █████╗ ██╗
+# * ████╗ ████║██╔══██╗██║██╔══██╗██║
+# * ██╔████╔██║██║  ██║██║███████║██║
+# * ██║╚██╔╝██║██║  ██║██║██╔══██║██║
+# * ██║ ╚═╝ ██║██████╔╝██║██║  ██║███████╗
+# * ╚═╝     ╚═╝╚═════╝ ╚═╝╚═╝  ╚═╝╚══════╝
+# * ========================================
+# * mDial - Omni-Channel Contact Centre Suite.
+# * Initially Written by Martin McCarthy.
+# * Contributions welcome.
+# * Active: 2020 - 2023.
+# *
+# * This software is licensed under AGPLv2.
+# * You can find more information here;
+# * https://www.gnu.org/licenses/agpl-3.0.en.html
+# * A copy of the license is also shipped with this build.
+# *
+# * Important note: this software is provided to you free of charge.
+# * If you paid for this software, you were ripped off.
+# *
+# * This project is a fork of the awesome FOSS project, ViCiDial.
+# * ViCiDial is copyrighted by Matt Florell and the ViCiDial Group
+# * under the AGPLv2 license.
+# *
+# * You can find out more about ViCiDial;
+# * Web: https://www.vicidial.com/
+# * Email: Matt Florell <vicidial@gmail.com>
+# * IRC: Libera.Chat - ##vicidial
+# *
+# * Bug reports, feature requests and patches welcome!
+# * ======================================== */
 $V = 0;		# set to 1 for verbose mode
 $CLIOUT = 1;	# set to 1 for printing 1 line to STDERR
 $SPEAK = 1;	# set to 1 for saying invalid digits
-
 ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
 $year = ($year + 1900);
 $mon++;
@@ -43,12 +42,8 @@ if ($mday < 10) {$mday = "0$mday";}
 if ($hour < 10) {$hour = "0$hour";}
 if ($min < 10) {$min = "0$min";}
 if ($sec < 10) {$sec = "0$sec";}
-
 $now_date_epoch = time();
 $now_date = "$year-$mon-$mday $hour:$min:$sec";
-
-
-### begin parsing run-time options ###
 if (length($ARGV[0])>1)
 {
 if ($V) {print STDERR "Perl Environment Dump:\n";}
@@ -59,7 +54,6 @@ if ($V) {print STDERR "Perl Environment Dump:\n";}
 	if ($V) {print STDERR "$i|$ARGV[$i]|\n";}
 	$i++;
 	}
-
 	if ($args =~ /--help/i)
 	{
 	print "allowed run time options:\n  [-q] = quiet\n  [-t] = test\n  [-debug] = verbose debug messages\n\n";
@@ -94,10 +88,8 @@ else
 {
 if ($V) {print "no command line options set\n";}
 }
-
 use Asterisk::AGI;
 $AGI = new Asterisk::AGI;
-
 $|=1;
 while(<STDIN>) {
 	chomp;
@@ -109,31 +101,24 @@ while(<STDIN>) {
 			$AGI{$1} = $2;
 		}
 	}
-
 	if (/^agi_uniqueid\:\s+(.*)$/)		{$unique_id = $1;}
 	if (/^agi_channel\:\s+(.*)$/)		{$channel = $1;}
 	if (/^agi_extension\:\s+(.*)$/)		{$extension = $1;}
 	if (/^agi_type\:\s+(.*)$/)		{$type = $1;}
 	if (/^agi_callerid\:\s+(.*)$/)		{$callerid = $1;}
 }
-
 	if ($V)
 	{
-
 		if ($V) {print STDERR "AGI Environment Dump:\n";}
 		foreach $i (sort keys %AGI) {
 			if ($V) {print STDERR " -- $i = $AGI{$i}\n";}
 		}
 	}
-
 if ($CLIOUT) {print STDERR "****** INVALID EXTENSION: |$unique_id|$channel|$extension|$type|$callerid|\n";}
-
 if ($SPEAK) 
 	{
 	$AGI->stream_file('beep');
 	sleep(1);
 	$AGI->say_digits("$extension");
 	}
-
-
 exit;

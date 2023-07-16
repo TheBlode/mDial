@@ -1,31 +1,39 @@
 #!/usr/bin/perl
-#
-# phone_alt_CID.agi
-# 
-# Changes the CID number on calls that pass through it to the Alternate defined
-# in the 'phones' record for the phone that placed the call
-#
-# You need to have lines similar to those below in your Custom Dialplan:
-#
-#;use alternate CID, if defined:
-#exten => _91NXXNXXXXXX,1,AGI(phone_alt_CID.agi,${EXTEN})
-#exten => _91NXXNXXXXXX,n,Goto(default,${EXTEN},1)
-#
-# The easiest way to set this up for a phone is to create a new Call Menu and
-# then put the above Custom Dialplan into it, then set the Phone's 
-# 'phone context' to the call menu ID that you just created.
-#
-# Copyright (C) 2016  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
-#
-# changes:
-# 160527-1415 - First build
-#
-
+#/* ========================================
+# * ███╗   ███╗██████╗ ██╗ █████╗ ██╗
+# * ████╗ ████║██╔══██╗██║██╔══██╗██║
+# * ██╔████╔██║██║  ██║██║███████║██║
+# * ██║╚██╔╝██║██║  ██║██║██╔══██║██║
+# * ██║ ╚═╝ ██║██████╔╝██║██║  ██║███████╗
+# * ╚═╝     ╚═╝╚═════╝ ╚═╝╚═╝  ╚═╝╚══════╝
+# * ========================================
+# * mDial - Omni-Channel Contact Centre Suite.
+# * Initially Written by Martin McCarthy.
+# * Contributions welcome.
+# * Active: 2020 - 2023.
+# *
+# * This software is licensed under AGPLv2.
+# * You can find more information here;
+# * https://www.gnu.org/licenses/agpl-3.0.en.html
+# * A copy of the license is also shipped with this build.
+# *
+# * Important note: this software is provided to you free of charge.
+# * If you paid for this software, you were ripped off.
+# *
+# * This project is a fork of the awesome FOSS project, ViCiDial.
+# * ViCiDial is copyrighted by Matt Florell and the ViCiDial Group
+# * under the AGPLv2 license.
+# *
+# * You can find out more about ViCiDial;
+# * Web: https://www.vicidial.com/
+# * Email: Matt Florell <vicidial@gmail.com>
+# * IRC: Libera.Chat - ##vicidial
+# *
+# * Bug reports, feature requests and patches welcome!
+# * ======================================== */
 $script = 'phone_alt_CID.agi';
-
 $AGILOG=1;
 $FD=0; # force debug for testing
-
 ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
 $year = ($year + 1900);
 $mon++;
@@ -34,14 +42,10 @@ if ($mday < 10) {$mday = "0$mday";}
 if ($hour < 10) {$hour = "0$hour";}
 if ($min < 10) {$min = "0$min";}
 if ($sec < 10) {$sec = "0$sec";}
-
 $now_date_epoch = time();
 $now_date = "$year-$mon-$mday $hour:$min:$sec";
-
 use Asterisk::AGI;
 $AGI = new Asterisk::AGI;
-
-### begin parsing run-time options ###
 if (length($ARGV[0])>1)
 	{
 	if ($AGILOG) {$agi_string = "Perl Environment Dump:";   &agi_output;}
@@ -53,11 +57,7 @@ if (length($ARGV[0])>1)
 		$i++;
 		}
 	}
-
-
-# default path to astguiclient configuration file:
 $PATHconf =		'/etc/astguiclient.conf';
-
 open(conf, "$PATHconf") || die "can't open $PATHconf: $!\n";
 @conf = <conf>;
 close(conf);
@@ -92,11 +92,8 @@ foreach(@conf)
 		{$VARDB_port = $line;   $VARDB_port =~ s/.*=//gi;}
 	$i++;
 	}
-
 if (!$VARDB_port) {$VARDB_port='3306';}
 if (!$AGILOGfile) {$AGILOGfile = "$PATHlogs/phonealt.$year-$mon-$mday";}
-
-
 $|=1;
 while(<STDIN>) 
 	{
@@ -109,7 +106,6 @@ while(<STDIN>)
 			$AGI{$1} = $2;
 			}
 		}
-
 	if (/^agi_uniqueid\:\s+(.*)$/)		{$unique_id = $1; $uniqueid = $unique_id;}
 	if (/^agi_channel\:\s+(.*)$/)		{$channel = $1;}
 	if (/^agi_extension\:\s+(.*)$/)		{$extension = $1;}
@@ -118,42 +114,33 @@ while(<STDIN>)
 	if (/^agi_calleridname\:\s+(.*)$/)	{$calleridname = $1;}
 	if (/^agi_accountcode\:\s+(.*)$/)	{$accountcode = $1;}
 	}
-
 if ( ($callerid =~ /\".*\"/) && ( (!$calleridname) or ($calleridname =~ /unknown/) ) )
 	{
 	$calleridname = $callerid;
 	$calleridname =~ s/\<\d\d\d\d\d\d\d\d\d\d\>//gi;
 	$calleridname =~ s/\"|\" //gi;
 	}
-
 	$callerid =~ s/\D//gi;
 	$calleridname =~ s/unknown//gi;
 if ( (!$callerid) or ($callerid =~ /unknown/) )
 	{$callerid = $calleridname;}
-
 if (length($callerid)>0) {$phone_number = $callerid;}
    else {$phone_number = '';}
 if (length($calleridname)>0) {$VLcomments = $calleridname;}
    else {$VLcomments = '';}
-
 foreach $i (sort keys %AGI) 
 	{
 	if ($AGILOG) {$agi_string = " -- $i = $AGI{$i}";   &agi_output;}
 	}
-
 if ( (length($callerid)>20) && ($callerid =~ /\"\S\S\S\S\S\S\S\S\S\S\S\S\S\S\S\S\S\S/) )
 	{
 	$calleridname =~ s/^\"//gi;
 	$calleridname =~ s/\".*$//gi;
 	}
-
 use DBI;
 use Time::HiRes ('gettimeofday','usleep','sleep');  # necessary to have perl sleep command of less than one second
-
 $dbhA = DBI->connect("DBI:mysql:$VARDB_database:$VARDB_server:$VARDB_port", "$VARDB_user", "$VARDB_pass")
     or die "Couldn't connect to database: " . DBI->errstr;
-
-### Grab Server values from the database
 $stmtA = "SELECT agi_output,local_gmt FROM servers where server_ip = '$VARserver_ip';";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -171,20 +158,10 @@ while ($sthArows > $rec_count)
 	$rec_count++;
 	}
 $sthA->finish();
-
-
-
-
 $phone_extension = $channel;
 $phone_extension =~ s/^SIP\/|^IAX\/|^IAX2\///gi;
 $phone_extension =~ s/-.*//gi;
 if ($AGILOG) {$agi_string = "Phone Account: ($phone_extension)";   &agi_output;}
-
-
-
-
-
-### Grab Server values from the database
 $stmtA = "SELECT outbound_cid,outbound_alt_cid,fullname FROM phones where extension = '$phone_extension' and server_ip='$VARserver_ip';";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -196,17 +173,13 @@ if ($sthArows > 0)
 	$outbound_cid =		$aryA[0];
 	$outbound_alt_cid = $aryA[1];
 	$fullname =			$aryA[2];
-	
 	if (length($outbound_alt_cid) > 1) 
 		{
-		### set the callerid to the ACQS value(calleridname)
 		$newcallerid = "\"$fullname <$outbound_alt_cid>\"";
 		$AGI->set_callerid($newcallerid);
-
 		print STDERR "Setting Alternate CID \"$newcallerid\"\n";
 		checkresult($result);
 		if ($AGILOG) {$agi_string = "callerID changed: $newcallerid";   &agi_output;}
-
 		if ($FD > 0) {print STDERR "callerID changed:     newcallerid\n";}
 		}
 	else
@@ -219,13 +192,7 @@ else
 	{
 	if ($AGILOG) {$agi_string = "ERROR: phone entry not found:   |$phone_extension|$VARserver_ip|$channel|";   &agi_output;}
 	}
-
-
 exit;
-
-
-
-
 sub checkresult {
 	my ($res) = @_;
 	my $retval;
@@ -234,31 +201,23 @@ sub checkresult {
 	if ($res =~ /^200/) {
 		$res =~ /result=(-?\d+)/;
 		if (!length($1)) {
-		#	print STDERR "FAIL ($res)\n";
 			$fail++;
 		} else {
-		#	print STDERR "PASS ($1)\n";
 			$pass++;
 		}
 	} else {
-	#	print STDERR "FAIL (unexpected result '$res')\n";
 		$fail++;
 	}
 }
-
-
-
 sub agi_output
 {
 if ($AGILOG >=2)
 	{
-	### open the log file for writing ###
 	open(Lout, ">>$AGILOGfile")
 			|| die "Can't open $AGILOGfile: $!\n";
 	print Lout "$now_date|$script|$agi_string\n";
 	close(Lout);
 	}
-	### send to STDERR writing ###
 if ( ($AGILOG == '1') || ($AGILOG == '3') )
 	{print STDERR "$now_date|$script|$agi_string\n";}
 $agi_string='';

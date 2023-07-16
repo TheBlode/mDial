@@ -1,46 +1,38 @@
 #!/usr/bin/perl
-#
-# cm_VID_SPECIAL.agi version 2.14
-# 
-# runs when a call comes from a Call Menu VIDPROMPTSPECIAL... INGROUP option.
-# This script will send calls to various In-Groups or Call Menu options based
-# on settings in a Settings Container and results of a lead search.
-# 
-#
-# You need to put lines similar to those below in your extensions.conf file:
-# ; Below are the parameters needed for the script to be run properly
-# ; 1. the method of call handling for the script:
-# ; 	- VIDPROMPTSPECIALLOOKUP - 	Prompt Vendor Lead Code to User with IVR to find record in whole system
-# ; 	- VIDPROMPTSPECIALLOOKUPRL -	Restrict lookup to one list
-# ; 	- VIDPROMPTSPECIALLOOKUPRC -	Restrict lookup to one campaign's lists
-# ; 2. the method of searching for an available agent:
-# ; 	- LO - Load Balance Overflow only (priority to home server)
-# ; 	- LB - <default> Load Balance total system
-# ; 	- SO - Home server only
-# ; 3. the list_id to insert the new lead under if it is new (and CID/ANI available)
-# ; 4. the phone dialing code to insert with the new lead if new (and CID/ANI available)
-# ; 5. the campaign_id to search within lists if CIDLOOKUPRC
-# ; 6. VID enter prompt filename to play if method is set to a VID* option
-# ; 7. VID you-have-entered filename to play if method is set to a VID* option
-# ; 8. VID confirm prompt filename to play if method is set to a VID* option
-# ; 9. VID digit length validation to use if method is set to a VID* option, set to empty or X to disable
-# ; 10. Settings Container to use for settings for this script, must be CM_VIDPROMPT_SPECIAL container type
-#
-# ;inbound VICIDIAL calls:
-#exten => 1234,1,Answer                  ; Answer the line
-#exten => 1234,2,AGI(cm_VID_SPECIAL.agi,VIDPROMPTSPECIALLOOKUP---LB---999---1---TESTCAMP---x---y---z---X---VID_special_test)
-#exten => 1234,3,Hangup
-#
-#
-# Copyright (C) 2023  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
-#
-# changes:
-# 230613-2255 - First Build
-#
-
+#/* ========================================
+# * ███╗   ███╗██████╗ ██╗ █████╗ ██╗
+# * ████╗ ████║██╔══██╗██║██╔══██╗██║
+# * ██╔████╔██║██║  ██║██║███████║██║
+# * ██║╚██╔╝██║██║  ██║██║██╔══██║██║
+# * ██║ ╚═╝ ██║██████╔╝██║██║  ██║███████╗
+# * ╚═╝     ╚═╝╚═════╝ ╚═╝╚═╝  ╚═╝╚══════╝
+# * ========================================
+# * mDial - Omni-Channel Contact Centre Suite.
+# * Initially Written by Martin McCarthy.
+# * Contributions welcome.
+# * Active: 2020 - 2023.
+# *
+# * This software is licensed under AGPLv2.
+# * You can find more information here;
+# * https://www.gnu.org/licenses/agpl-3.0.en.html
+# * A copy of the license is also shipped with this build.
+# *
+# * Important note: this software is provided to you free of charge.
+# * If you paid for this software, you were ripped off.
+# *
+# * This project is a fork of the awesome FOSS project, ViCiDial.
+# * ViCiDial is copyrighted by Matt Florell and the ViCiDial Group
+# * under the AGPLv2 license.
+# *
+# * You can find out more about ViCiDial;
+# * Web: https://www.vicidial.com/
+# * Email: Matt Florell <vicidial@gmail.com>
+# * IRC: Libera.Chat - ##vicidial
+# *
+# * Bug reports, feature requests and patches welcome!
+# * ======================================== */
 $script = 'cm_VID_SPECIAL.agi';
 $dtmf_silent_prefix = '7';
-
 $DROP_TIME = 720;	### default number of seconds to wait until you drop a waiting call
 $start_moh=1;
 $wait_prompt_runs=0;
@@ -55,8 +47,6 @@ $entry_list_id=0;
 $areacode_filter_run=0;
 $no_agent_no_queue_checked=0;
 $MT[0]='';
-
-
 $now_date_epoch = time();
 ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
 $year = ($year + 1900);
@@ -66,10 +56,8 @@ if ($mday < 10) {$mday = "0$mday";}
 if ($hour < 10) {$hour = "0$hour";}
 if ($min < 10) {$min = "0$min";}
 if ($sec < 10) {$sec = "0$sec";}
-
 $hm = "$hour$min";
 $hm = ($hm + 0);
-
 $epochFOURhoursAGO = ($now_date_epoch - 14400);
 ($Ssec,$Smin,$Shour,$Smday,$Smon,$Syear,$Swday,$Syday,$Sisdst) = localtime($epochFOURhoursAGO);
 $Smon++;	$Syear = ($Syear + 1900);
@@ -79,7 +67,6 @@ if ($Shour < 10) {$Shour = "0$Shour";}
 if ($Smin < 10) {$Smin = "0$Smin";}
 if ($Ssec < 10) {$Ssec = "0$Ssec";}
 $timeFOURhoursAGO = "$Syear-$Smon-$Smday $Shour:$Smin:$Ssec";
-
 $epochTWENTYFOURhoursAGO = ($now_date_epoch - 86400);
 ($Ssec,$Smin,$Shour,$Smday,$Smon,$Syear,$Swday,$Syday,$Sisdst) = localtime($epochTWENTYFOURhoursAGO);
 $Smon++;	$Syear = ($Syear + 1900);
@@ -89,7 +76,6 @@ if ($Shour < 10) {$Shour = "0$Shour";}
 if ($Smin < 10) {$Smin = "0$Smin";}
 if ($Ssec < 10) {$Ssec = "0$Ssec";}
 $timeTWENTYFOURhoursAGO = "$Syear-$Smon-$Smday $Shour:$Smin:$Ssec";
-
 $start_epoch = $now_date_epoch;
 $now_date = "$year-$mon-$mday $hour:$min:$sec";
 $CLInow_date = "$year-$mon-$mday\\ $hour:$min:$sec";
@@ -101,7 +87,6 @@ $SQLdate = "$year-$mon-$mday $hour:$min:$sec";
 $SQLdateBEGIN = $SQLdate;
 $ORIGINAL_call_time = $SQLdate;
 	while (length($CIDdate) > 9) {$CIDdate =~ s/^.//gi;} # 0902235959 changed to 902235959
-
 if ($wday == '0') {$now_weekday = 'SUNDAY';}
 if ($wday == '1') {$now_weekday = 'MONDAY';}
 if ($wday == '2') {$now_weekday = 'TUESDAY';}
@@ -109,7 +94,6 @@ if ($wday == '3') {$now_weekday = 'WEDNESDAY';}
 if ($wday == '4') {$now_weekday = 'THURSDAY';}
 if ($wday == '5') {$now_weekday = 'FRIDAY';}
 if ($wday == '6') {$now_weekday = 'SATURDAY';}
-
 $BDtarget = ($now_date_epoch - 7);
 ($Bsec,$Bmin,$Bhour,$Bmday,$Bmon,$Byear,$Bwday,$Byday,$Bisdst) = localtime($BDtarget);
 $Byear = ($Byear + 1900);
@@ -120,10 +104,7 @@ if ($Bhour < 10) {$Bhour = "0$Bhour";}
 if ($Bmin < 10) {$Bmin = "0$Bmin";}
 if ($Bsec < 10) {$Bsec = "0$Bsec";}
 	$BDtsSQLdate = "$Byear$Bmon$Bmday$Bhour$Bmin$Bsec";
-
-# default path to astguiclient configuration file:
 $PATHconf =		'/etc/astguiclient.conf';
-
 open(conf, "$PATHconf") || die "can't open $PATHconf: $!\n";
 @conf = <conf>;
 close(conf);
@@ -158,22 +139,17 @@ foreach(@conf)
 		{$VARDB_port = $line;   $VARDB_port =~ s/.*=//gi;}
 	$i++;
 	}
-
 if (!$VARDB_port) {$VARDB_port='3306';}
 if (!$AGILOGfile) {$AGILOGfile = "$PATHlogs/agiout.$year-$mon-$mday";}
 if (!$PRSLOGfile) {$PRSLOGfile = "$PATHlogs/prsout.$year-$mon-$mday";}
 if (!$PRSTESTfile) {$PRSTESTfile = "$PATHlogs/prstest.$year-$mon-$mday";}
 if (!$ERRLOGfile) {$ERRLOGfile = "$PATHlogs/MySQLerror.$year-$mon-$mday";}
-
 use DBI;
 use Time::HiRes ('gettimeofday','usleep','sleep');  # necessary to have perl sleep command of less than one second
 use Asterisk::AGI;
 $AGI = new Asterisk::AGI;
-
 $dbhA = DBI->connect("DBI:mysql:$VARDB_database:$VARDB_server:$VARDB_port", "$VARDB_user", "$VARDB_pass")
     or die "Couldn't connect to database: " . DBI->errstr;
-
-### Grab Server values from the database
 $stmtA = "SELECT agi_output,local_gmt FROM servers where server_ip = '$VARserver_ip';";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -193,9 +169,6 @@ while ($sthArows > $rec_count)
 	$rec_count++;
 	}
 $sthA->finish();
-
-#############################################
-##### START SYSTEM SETTINGS LOOKUP      #####
 $stmtA = "SELECT enable_queuemetrics_logging,queuemetrics_server_ip,queuemetrics_dbname,queuemetrics_login,queuemetrics_pass,queuemetrics_log_id,queuemetrics_eq_prepend,queuemetrics_pe_phone_append,did_agent_log,alt_log_server_ip,alt_log_dbname,alt_log_login,alt_log_pass,tables_use_alt_log_db,did_ra_extensions_enabled,queuemetrics_socket,queuemetrics_socket_url,enable_did_entry_list_id,enable_drop_lists,inbound_answer_config,agent_search_method,abandon_check_queue,inbound_credits FROM system_settings;";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -229,10 +202,6 @@ if ($sthArows > 0)
 	$SSinbound_credits =			$aryA[22];
 	}
 $sthA->finish();
-##### END SYSTEM SETTINGS LOOKUP      #####
-###########################################
-
-### begin parsing run-time options ###
 if (length($ARGV[0])>1)
 	{
 	if ($AGILOG) {$agi_string = "Perl Environment Dump:";   &agi_output;}
@@ -243,10 +212,7 @@ if (length($ARGV[0])>1)
 		if ($AGILOG) {$agi_string = "$i|$ARGV[$i]";   &agi_output;}
 		$i++;
 		}
-	
-	### list of command-line array arguments:
 	@ARGV_vars = split(/---/, $ARGV[0]);
-
 	$call_handle_method = 		$ARGV_vars[0];
 	$search_method =			$ARGV_vars[1];
 	$list_id = 					$ARGV_vars[2];
@@ -258,7 +224,6 @@ if (length($ARGV[0])>1)
 	$vid_validate_digits =		$ARGV_vars[8];
 	$vid_special_container =	$ARGV_vars[9];
 	}
-
 $|=1;
 while(<STDIN>) 
 	{
@@ -271,7 +236,6 @@ while(<STDIN>)
 			$AGI{$1} = $2;
 			}
 		}
-
 	if (/^agi_uniqueid\:\s+(.*)$/)		{$unique_id = $1; $uniqueid = $unique_id;}
 	if (/^agi_channel\:\s+(.*)$/)		{$channel = $1;}
 	if (/^agi_extension\:\s+(.*)$/)		{$extension = $1;}
@@ -283,17 +247,14 @@ while(<STDIN>)
 $callerid =~ s/\'|\\\\|\\\|\\|\\;|\\\;|\;|;//gi;
 $calleridname =~ s/\'|\\\\|\\\|\\|\\;|\\\;|\;|;//gi;
 $extension =~ s/\'|\"|\\\\|\\\|\\|\\;|\\\;|\;|;//gi;
-
 if ($calleridname =~ /^V\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d|^Y\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d/)
 	{$callerid = $calleridname;}
-
 if ( ($callerid =~ /\".*\"/) && ( (!$calleridname) or ($calleridname =~ /unknown/) ) )
 	{
 	$calleridname = $callerid;
 	$calleridname =~ s/\<\d\d\d\d\d\d\d\d\d\d\>//gi;
 	$calleridname =~ s/\"|\" //gi;
 	}
-
 if ($callerid !~ /^V\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d|^Y\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d/)
 	{
 	$callerid =~ s/\D|\'//gi;
@@ -304,14 +265,12 @@ if ($callerid !~ /^V\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d|^Y\d\d\d\d\d\d\d\d\d\
 $prev_callerid = $callerid;
 if ($calleridname =~ /^J\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d/)
 	{$prev_callerid = $calleridname;}
-
 if ( ($phone_code =~ /^1$/) && ($callerid =~ /^1/) && (length($callerid) > 10) )
 	{
 	$callerid =~ s/^1//gi;
 	if ($AGILOG) {$agi_string = "North America CID Check: $phone_code|$callerid|";   &agi_output;}
 	}
 $originalCID = $callerid;	
-
 if ( ($call_handle_method =~ /^CID/) || ($call_handle_method =~ /^VID/) )
 	{
 	if (length($callerid)>0) {$phone_number = $callerid;}
@@ -319,33 +278,22 @@ if ( ($call_handle_method =~ /^CID/) || ($call_handle_method =~ /^VID/) )
 	if (length($calleridname)>0) {$VLcomments = $calleridname;}
 	   else {$VLcomments = '';}
 	}
-
 if (length($callerid)<10) {$callerid = $parked_by;}
 if (length($pin)>0) {$callerid = $pin;}
-
 foreach $i (sort keys %AGI) 
 	{
 	if ($AGILOG) {$agi_string = " -- $i = $AGI{$i}";   &agi_output;}
 	}
-
 if ($AGILOG) {$agi_string = "AGI Variables: |$unique_id|$channel|$extension|$type|$callerid|";   &agi_output;}
-
-
 if (length($pin) < 1) {$pin=$inbound_number;}
-
 $fronter = $pin;
-
 if ($AGILOG) {$agi_string = "+++++ VID PROMPT SPECIAL STARTED : |$channel_group|$callerid-$pin|$now_date";   &agi_output;}
-
 $VDADphone='';
 $VDADphone_code='';
 $VCcallerid = $channel_group;
 $VD_campaign_id = $channel_group;
 if (length($VCcallerid)<2)
 	{$VCcallerid = 'ViciDial Inbound';}
-	
-
-### Grab Server values from the database
 $cbc=0;
 $stmtA = "SELECT voicemail_dump_exten,ext_context,answer_transfer_agent,local_gmt,asterisk_version,max_vicidial_trunks,voicemail_dump_exten_no_inst,routing_prefix FROM servers where server_ip = '$VARserver_ip';";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
@@ -369,28 +317,13 @@ while ($sthArows > $cbc)
 	if ($DBSERVER_GMT)				{$SERVER_GMT = $DBSERVER_GMT;}
 	if ($asterisk_version)			{$AST_ver = $asterisk_version;}
 	if ($DBmax_vicidial_trunks)		{$max_vicidial_trunks = $DBmax_vicidial_trunks;}
-
 	$LOCAL_GMT_OFF = $SERVER_GMT;
 	$LOCAL_GMT_OFF_STD = $SERVER_GMT;
-
 	if ($isdst) {$LOCAL_GMT_OFF++;}
 	if ($DB) {print "SEED TIME  $now_date_epoch      :   $year-$mon-$mday $hour:$min:$sec  LOCAL GMT OFFSET NOW: $LOCAL_GMT_OFF\n";}
-
 	$cbc++;
 	}
 $sthA->finish();
-
-
-### Gather contents of VID-SPECIAL settings container, send back to main prompt if invalid
-# example settings container:
-#
-# list_ingroup => 102,TEST_IN2
-# list_ingroup => 103,TEST_IN3
-# list_ingroup => 104,TEST_IN4
-# default_ingroup => TEST_IN5
-# not_found_action => new_lead
-# new_lead_ingroup => TEST_IN
-#
 $not_found_action='s';
 $new_lead_ingroup='';
 $default_ingroup='';
@@ -455,22 +388,15 @@ if ($container_lines < 2)
 		$result = <STDIN>;
 		checkresult($result);
 	}
-
-
 if ( (length($new_lead_ingroup) < 1) && (length($default_ingroup) > 0) )
 	{$new_lead_ingroup = $default_ingroup;}
-
-
 $LOGuser='VDCL';
-
 $AGI->stream_file('sip-silence');
 $AGI->stream_file('sip-silence');
-
 if ($call_handle_method =~ /^VIDPROMPT/)
 	{
 	$vendor_lead_code = $AGI->get_variable('vendor_lead_code');
 	if ( ($AGILOG) && (length($vendor_lead_code)>0) ) {$agi_string = "vendor id AGI variable:    |$vendor_lead_code|";   &agi_output;}
-
 	if (length($vendor_lead_code)>2)
 		{
 		$vendor_id = $vendor_lead_code;
@@ -480,7 +406,6 @@ if ($call_handle_method =~ /^VIDPROMPT/)
 		&enter_id_number;
 		}
 	}
-
 if ($call_handle_method =~ /LOOKUP/)
 	{
 	$listSQL = '';
@@ -490,7 +415,6 @@ if ($call_handle_method =~ /LOOKUP/)
 		{
 		if ($call_handle_method =~ /LOOKUPRC/)
 			{
-			### Grab all lists associated with Scampaign_id
 			$cbc=0;
 			$SlistsSQL='';
 			$stmtA = "SELECT list_id FROM vicidial_lists where campaign_id='$Scampaign_id' limit 1000;";
@@ -506,12 +430,10 @@ if ($call_handle_method =~ /LOOKUP/)
 				}
 			$sthA->finish();
 			chop($SlistsSQL);
-
 			if (length($SlistsSQL)>3)
 				{$listSQL = "and list_id IN($SlistsSQL)";}
 			}
 		}
-
 	$stmtA= "SELECT lead_id,called_count,list_id,phone_number from vicidial_list where vendor_lead_code='$vendor_id' $listSQL order by last_local_call_time desc limit 1;";
 	if ($AGILOG) {$agi_string = "VDAD vicidial_list search |$vendor_id|$stmtA|";   &agi_output;}
 	$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
@@ -526,10 +448,7 @@ if ($call_handle_method =~ /LOOKUP/)
 		$list_id =			$aryA[2];
 		$phone_number =		$aryA[3];
 		$sthA->finish();
-
 		if ($AGILOG) {$agi_string = "VID-SPECIAL vicidial_list found |$insert_lead_id|$called_count|$list_id|$vendor_id|$stmtA|";   &agi_output;}
-		# lead found, now check for match in container for list_id
-
 		$i=0;
 		while ($i < $container_lines) 
 			{
@@ -568,8 +487,6 @@ if ($call_handle_method =~ /LOOKUP/)
 				exit;
 				}
 			}
-		# change CIDname to found lead_id
-
 		$PADlead_id = sprintf("%010s", $insert_lead_id);	while (length($PADlead_id) > 10) {chop($PADlead_id);}
 		$VIDqueryCID = "Y$CIDdate$PADlead_id";
 		$newcallerid = "\"$VIDqueryCID <$phone_number>\"";
@@ -577,8 +494,6 @@ if ($call_handle_method =~ /LOOKUP/)
 		print STDERR "Setting CID \"$newcallerid\"\n";
 		checkresult($result);
 		if ($AGILOG) {$agi_string = "VID-SPECIAL callerID changed: \"$VIDqueryCID\" \<$phone_number\>";   &agi_output;}
-
-		# send call to special extension with lead_id defined and handle_method set to CLOSER
 		$AGI->exec("EXEC Set(_ingroupvar=$match_ingroup)");
 		$AGI->exec("EXEC Set(_igsearchmethod=$search_method)");
 		$AGI->exec("EXEC Set(_iglistid=$list_id)");
@@ -601,7 +516,6 @@ if ($call_handle_method =~ /LOOKUP/)
 		{
 		if ( ($not_found_action =~ /new_lead/) && (length($new_lead_ingroup) > 0) )
 			{
-			# send call to special extension for new lead creation
 			$AGI->exec("EXEC Set(_ingroupvar=$new_lead_ingroup)");
 			$AGI->exec("EXEC Set(_igsearchmethod=$search_method)");
 			$AGI->exec("EXEC Set(_iglistid=$list_id)");
@@ -637,21 +551,10 @@ if ($call_handle_method =~ /LOOKUP/)
 			}
 		}
 	}
-
 $dbhA->disconnect();
-
 exit;
-
-
-
-
-### BEGIN VIDPROMPT gather of ID section ###
 sub enter_id_number
 	{
-	# DEFAULT PROMPTS USED:
-	# please_enter_id_number - "Please enter your ID Number followed by the # key
-	# id_number - "Your ID number is"
-	# confirm_id_number - "Press 1 if it is correct. Press 2 to repeat entry"
 	$vid_validate_length=1;
 	$vendor_id='';
 	if (length($vid_enter_filename) < 1)	{$vid_enter_filename = 'please_enter_id_number';}
@@ -659,19 +562,14 @@ sub enter_id_number
 	if (length($vid_confirm_filename) < 1)	{$vid_confirm_filename = 'confirm_id_number';}
 	if (length($vid_validate_digits) < 1)	{$vid_validate_digits = 'X';   $vid_validate_length=0;}
 	if ($vid_validate_digits =~ /X/) {$vid_validate_digits=99;   $vid_validate_length=0;}
-
 	if ($AGILOG) {$agi_string = "$call_handle_method method: |$vid_enter_filename|$vid_id_number_filename|$vid_confirm_filename|$vid_validate_digits|$vid_validate_length|";   &agi_output;}
-
 	$confirmation=0;
 	$confirmation_chances=0;
 	while ( ($confirmation_chances < 3) && ($confirmation < 1) )
 		{
 		$entry_chances=0;
 		$Lvendor_id=0;
-
 	if ($AGILOG) {$agi_string = "DEBUG------------------( ($entry_chances < 3) && ( ( ($Lvendor_id < 1) && ($vid_validate_length < 1) ) || ( ($Lvendor_id != $vid_validate_digits) && ($vid_validate_length > 0) ) ) )";   &agi_output;}
-
-
 		while ( ($entry_chances < 3) && ( ( ($Lvendor_id < 1) && ($vid_validate_length < 1) ) || ( ($Lvendor_id != $vid_validate_digits) && ($vid_validate_length > 0) ) ) ) 
 			{
 			$entry_chances++;
@@ -679,12 +577,9 @@ sub enter_id_number
 			$id_number='';
 			$interrupt_digit='';
 			$interrupt_digit = $AGI->stream_file("$vid_enter_filename",'0123456789');   
-
 			if ($AGILOG) {$agi_string = "interrupt_digit |$interrupt_digit|";   &agi_output;}
 			if ($interrupt_digit > 0)
 				{
-			#	if ($interrupt_digit == 35) {$interrupt_digit='#';}
-			#	if ($interrupt_digit == 42) {$interrupt_digit='*';}
 				if ($interrupt_digit == 48) {$interrupt_digit=0;}
 				if ($interrupt_digit == 49) {$interrupt_digit=1;}
 				if ($interrupt_digit == 50) {$interrupt_digit=2;}
@@ -695,10 +590,8 @@ sub enter_id_number
 				if ($interrupt_digit == 55) {$interrupt_digit=7;}
 				if ($interrupt_digit == 56) {$interrupt_digit=8;}
 				if ($interrupt_digit == 57) {$interrupt_digit=9;}
-				
 				$id_number=$interrupt_digit;
 				}
-
 			$digit_loop_counter=0;
 			while ($digits_being_entered > 0)
 				{
@@ -718,23 +611,17 @@ sub enter_id_number
 					{
 					$digits_being_entered=0;
 					}
-				
 				$digit_loop_counter++;
 				}
-
 			$id_number =~ s/\D//gi;
 			$vendor_id = $id_number;
 			$Lvendor_id = length($vendor_id);
 			}
-
 		$AGI->stream_file("$vid_id_number_filename");
 		$AGI->say_digits("$vendor_id");
-
-		### if vendor_id has been set, ask to confirm it
 		if (length($vendor_id) > 0)
 			{
 			$interrupt_digit = $AGI->stream_file("$vid_confirm_filename",'12');   
-
 			if ($AGILOG) {$agi_string = "interrupt_digit |$interrupt_digit|";   &agi_output;}
 			$digits_being_entered=1;
 			$ANSWER_confirm='';
@@ -744,7 +631,6 @@ sub enter_id_number
 				if ($interrupt_digit == 50) {$interrupt_digit=2;}
 				$ANSWER_confirm=$interrupt_digit;
 				}
-
 			if (length($ANSWER_confirm) < 1)
 				{
 				$digit_loop_counter=0;
@@ -761,13 +647,10 @@ sub enter_id_number
 						{
 						$digits_being_entered=0;
 						}
-					
 					$digit_loop_counter++;
 					}
 				}
-
 			$ANSWER_confirm =~ s/\D//gi;
-
 			if ($ANSWER_confirm > 1)
 				{$vendor_id='';}
 			if ( ($ANSWER_confirm > 0) && ($ANSWER_confirm < 2) )
@@ -780,9 +663,6 @@ sub enter_id_number
 		$confirmation_chances++;
 		}
 	}
-### END VIDPROMPT gather of ID section ###
-
-
 sub checkresult 
 	{
 	my ($res) = @_;
@@ -794,23 +674,18 @@ sub checkresult
 		$res =~ /result=(-?\d+)/;
 		if (!length($1)) 
 			{
-		#	print STDERR "FAIL ($res)\n";
 			$fail++;
 			}
 		else 
 			{
-		#	print STDERR "PASS ($1)\n";
 			$pass++;
 			}
 		}
 	else 
 		{
-		#	print STDERR "FAIL (unexpected result '$res')\n";
 			$fail++;
 		}
 	}
-
-
 sub leading_zero($) 
 	{
 	$_ = $_[0];
@@ -818,8 +693,6 @@ sub leading_zero($)
 	s/^(\d\d)$/0$1/;
 	return $_;
 	} # End of the leading_zero() routine.
-
-
 sub agi_output
 	{
 	($Lsec,$Lmin,$Lhour,$Lmday,$Lmon,$Lyear,$Lwday,$Lyday,$Lisdst) = localtime(time);
@@ -827,22 +700,17 @@ sub agi_output
 	if ($Lmin < 10) {$Lmin = "0$Lmin";}
 	if ($Lsec < 10) {$Lsec = "0$Lsec";}
 	$LOGtime = "$Lhour:$Lmin:$Lsec";
-
 	if ($AGILOG >=2)
 		{
-		### open the log file for writing ###
 		open(Lout, ">>$AGILOGfile")
 				|| die "Can't open $AGILOGfile: $!\n";
 		print Lout "$now_date|$LOGtime|$script|$agi_string\n";
 		close(Lout);
 		}
-		### send to STDERR writing ###
 	if ( ($AGILOG == '1') || ($AGILOG == '3') )
 		{print STDERR "$now_date|$LOGtime|$script|$agi_string\n";}
 	$agi_string='';
 	}
-
-
 sub mysql_error_logging
 	{
 	($Lsec,$Lmin,$Lhour,$Lmday,$Lmon,$Lyear,$Lwday,$Lyday,$Lisdst) = localtime(time);
@@ -850,7 +718,6 @@ sub mysql_error_logging
 	if ($Lmin < 10) {$Lmin = "0$Lmin";}
 	if ($Lsec < 10) {$Lsec = "0$Lsec";}
 	$LOGtime = "$Lhour:$Lmin:$Lsec";
-
 	$errno='';
 	$error='';
 	if ( ($mel > 0) || ($one_mysql_log > 0) )
@@ -859,7 +726,6 @@ sub mysql_error_logging
 		if ( ($errno > 0) || ($mel > 1) || ($one_mysql_log > 0) )
 			{
 			$error = $dbhP->errstr();
-			### open the log file for writing ###
 			open(Eout, ">>$ERRLOGfile")
 					|| die "Can't open $ERRLOGfile: $!\n";
 			print Eout "$now_date|$LOGtime|$script|$mysql_count|$MEL_aff_rows|$errno|$error|$stmtA|$callerid|$insert_lead_id|\n";
@@ -868,24 +734,13 @@ sub mysql_error_logging
 		}
 	$one_mysql_log=0;
 	}
-
-# subroutine to parse the asterisk version
-# and return a hash with the various part
 sub parse_asterisk_version
 	{
-	# grab the arguments
 	my $ast_ver_str = $_[0];
-
-	# get everything after the - and put it in $ast_ver_postfix
 	my @hyphen_parts = split( /-/ , $ast_ver_str );
-
 	my $ast_ver_postfix = $hyphen_parts[1];
-
-	# now split everything before the - up by the .
 	my @dot_parts = split( /\./ , $hyphen_parts[0] );
-
 	my %ast_ver_hash;
-
 	if ( $dot_parts[0] <= 1 )
 		{
 			%ast_ver_hash = (
@@ -896,8 +751,6 @@ sub parse_asterisk_version
 				"postfix" => $ast_ver_postfix
 			);
 		}
-
-	# digium dropped the 1 from asterisk 10 but we still need it
 	if ( $dot_parts[0] > 1 )
 		{
 			%ast_ver_hash = (
@@ -908,6 +761,5 @@ sub parse_asterisk_version
 				"postfix" => $ast_ver_postfix
 			);
 		}
-
 	return ( %ast_ver_hash );
 	}

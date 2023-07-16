@@ -1,50 +1,61 @@
+#!/usr/bin/perl
+#/* ========================================
+# * ███╗   ███╗██████╗ ██╗ █████╗ ██╗
+# * ████╗ ████║██╔══██╗██║██╔══██╗██║
+# * ██╔████╔██║██║  ██║██║███████║██║
+# * ██║╚██╔╝██║██║  ██║██║██╔══██║██║
+# * ██║ ╚═╝ ██║██████╔╝██║██║  ██║███████╗
+# * ╚═╝     ╚═╝╚═════╝ ╚═╝╚═╝  ╚═╝╚══════╝
+# * ========================================
+# * mDial - Omni-Channel Contact Centre Suite.
+# * Initially Written by Martin McCarthy.
+# * Contributions welcome.
+# * Active: 2020 - 2023.
+# *
+# * This software is licensed under AGPLv2.
+# * You can find more information here;
+# * https://www.gnu.org/licenses/agpl-3.0.en.html
+# * A copy of the license is also shipped with this build.
+# *
+# * Important note: this software is provided to you free of charge.
+# * If you paid for this software, you were ripped off.
+# *
+# * This project is a fork of the awesome FOSS project, ViCiDial.
+# * ViCiDial is copyrighted by Matt Florell and the ViCiDial Group
+# * under the AGPLv2 license.
+# *
+# * You can find out more about ViCiDial;
+# * Web: https://www.vicidial.com/
+# * Email: Matt Florell <vicidial@gmail.com>
+# * IRC: Libera.Chat - ##vicidial
+# *
+# * Bug reports, feature requests and patches welcome!
+# * ======================================== */
 <?php
-# welcome.php - VICIDIAL welcome page
-# 
-# Copyright (C) 2022  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
-#
-# CHANGELOG:
-# 141007-2140 - Finalized adding QXZ translation to all admin files
-# 161106-1920 - Changed to use newer design and dynamic links
-# 220228-1109 - Added allow_web_debug system setting
-#
-
 header ("Content-type: text/html; charset=utf-8");
-
 require_once("dbconnect_mysqli.php");
 require("functions.php");
-
-# if options file exists, use the override values for the above variables
-#   see the options-example.php file for more information
 if (file_exists('options.php'))
-	{
-	require_once('options.php');
-	}
-
-#############################################
-##### START SYSTEM_SETTINGS LOOKUP #####
+    {
+    require_once('options.php');
+    }
 $stmt = "SELECT use_non_latin,enable_languages,language_method,default_language,agent_screen_colors,admin_web_directory,agent_script,allow_web_debug FROM system_settings;";
 $rslt=mysql_to_mysqli($stmt, $link);
-	if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01001',$VD_login,$server_ip,$session_name,$one_mysql_log);}
-#if ($DB) {echo "$stmt\n";}
+    if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01001',$VD_login,$server_ip,$session_name,$one_mysql_log);}
 $qm_conf_ct = mysqli_num_rows($rslt);
 if ($qm_conf_ct > 0)
-	{
-	$row=mysqli_fetch_row($rslt);
-	$non_latin =				$row[0];
-	$SSenable_languages =		$row[1];
-	$SSlanguage_method =		$row[2];
-	$default_language =			$row[3];
-	$agent_screen_colors =		$row[4];
-	$admin_web_directory =		$row[5];
-	$SSagent_script =			$row[6];
-	$SSallow_web_debug =		$row[7];
-	}
+    {
+    $row=mysqli_fetch_row($rslt);
+    $non_latin =                $row[0];
+    $SSenable_languages =        $row[1];
+    $SSlanguage_method =        $row[2];
+    $default_language =            $row[3];
+    $agent_screen_colors =        $row[4];
+    $admin_web_directory =        $row[5];
+    $SSagent_script =            $row[6];
+    $SSallow_web_debug =        $row[7];
+    }
 if ($SSallow_web_debug < 1) {$DB=0;}
-##### END SETTINGS LOOKUP #####
-###########################################
-
-##### BEGIN Define colors and logo #####
 $SSmenu_background='015B91';
 $SSframe_background='D9E6FE';
 $SSstd_row1_background='9BB9FB';
@@ -55,56 +66,52 @@ $SSstd_row5_background='A3C3D6';
 $SSalt_row1_background='BDFFBD';
 $SSalt_row2_background='99FF99';
 $SSalt_row3_background='CCFFCC';
-
 if ($agent_screen_colors != 'default')
-	{
-	$stmt = "SELECT menu_background,frame_background,std_row1_background,std_row2_background,std_row3_background,std_row4_background,std_row5_background,alt_row1_background,alt_row2_background,alt_row3_background,web_logo FROM vicidial_screen_colors where colors_id='$agent_screen_colors';";
-	$rslt=mysql_to_mysqli($stmt, $link);
-		if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01XXX',$VD_login,$server_ip,$session_name,$one_mysql_log);}
-	if ($DB) {echo "$stmt\n";}
-	$qm_conf_ct = mysqli_num_rows($rslt);
-	if ($qm_conf_ct > 0)
-		{
-		$row=mysqli_fetch_row($rslt);
-		$SSmenu_background =		$row[0];
-		$SSframe_background =		$row[1];
-		$SSstd_row1_background =	$row[2];
-		$SSstd_row2_background =	$row[3];
-		$SSstd_row3_background =	$row[4];
-		$SSstd_row4_background =	$row[5];
-		$SSstd_row5_background =	$row[6];
-		$SSalt_row1_background =	$row[7];
-		$SSalt_row2_background =	$row[8];
-		$SSalt_row3_background =	$row[9];
-		$SSweb_logo =				$row[10];
-		}
-	}
-$Mhead_color =	$SSstd_row5_background;
+    {
+    $stmt = "SELECT menu_background,frame_background,std_row1_background,std_row2_background,std_row3_background,std_row4_background,std_row5_background,alt_row1_background,alt_row2_background,alt_row3_background,web_logo FROM vicidial_screen_colors where colors_id='$agent_screen_colors';";
+    $rslt=mysql_to_mysqli($stmt, $link);
+        if ($mel > 0) {mysql_error_logging($NOW_TIME,$link,$mel,$stmt,'01XXX',$VD_login,$server_ip,$session_name,$one_mysql_log);}
+    if ($DB) {echo "$stmt\n";}
+    $qm_conf_ct = mysqli_num_rows($rslt);
+    if ($qm_conf_ct > 0)
+        {
+        $row=mysqli_fetch_row($rslt);
+        $SSmenu_background =        $row[0];
+        $SSframe_background =        $row[1];
+        $SSstd_row1_background =    $row[2];
+        $SSstd_row2_background =    $row[3];
+        $SSstd_row3_background =    $row[4];
+        $SSstd_row4_background =    $row[5];
+        $SSstd_row5_background =    $row[6];
+        $SSalt_row1_background =    $row[7];
+        $SSalt_row2_background =    $row[8];
+        $SSalt_row3_background =    $row[9];
+        $SSweb_logo =                $row[10];
+        }
+    }
+$Mhead_color =    $SSstd_row5_background;
 $Mmain_bgcolor = $SSmenu_background;
-$Mhead_color =	$SSstd_row5_background;
-
+$Mhead_color =    $SSstd_row5_background;
 $selected_logo = "./images/vicidial_admin_web_logo.png";
 $logo_new=0;
 $logo_old=0;
 if (file_exists('../$admin_web_directory/images/vicidial_admin_web_logo.png')) {$logo_new++;}
 if (file_exists('vicidial_admin_web_logo.gif')) {$logo_old++;}
 if ($SSweb_logo=='default_new')
-	{
-	$selected_logo = "./images/vicidial_admin_web_logo.png";
-	}
+    {
+    $selected_logo = "./images/vicidial_admin_web_logo.png";
+    }
 if ( ($SSweb_logo=='default_old') and ($logo_old > 0) )
-	{
-	$selected_logo = "../$admin_web_directory/vicidial_admin_web_logo.gif";
-	}
+    {
+    $selected_logo = "../$admin_web_directory/vicidial_admin_web_logo.gif";
+    }
 if ( ($SSweb_logo!='default_new') and ($SSweb_logo!='default_old') )
-	{
-	if (file_exists("../$admin_web_directory/images/vicidial_admin_web_logo$SSweb_logo")) 
-		{
-		$selected_logo = "../$admin_web_directory/images/vicidial_admin_web_logo$SSweb_logo";
-		}
-	}
-##### END Define colors and logo #####
-
+    {
+    if (file_exists("../$admin_web_directory/images/vicidial_admin_web_logo$SSweb_logo")) 
+        {
+        $selected_logo = "../$admin_web_directory/images/vicidial_admin_web_logo$SSweb_logo";
+        }
+    }
 echo"<HTML><HEAD>\n";
 echo"<TITLE>"._QXZ("Welcome Screen")."</TITLE>\n";
 echo"<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=utf-8\">\n";
@@ -119,16 +126,14 @@ echo "<td align=\"left\" valign=\"bottom\" bgcolor=\"#$SSmenu_background\" width
 echo "<td align=\"center\" valign=\"middle\" bgcolor=\"#$SSmenu_background\"> <font class=\"sh_text_white\">"._QXZ("Welcome")."</font> </td>";
 echo "</tr>\n";
 echo "<tr><td align=\"left\" colspan=\"2\"><font size=\"1\"> &nbsp; </font></td></tr>\n";
-
 echo "<TR><TD ALIGN=CENTER COLSPAN=2><font size=1> &nbsp; </TD></TR>\n";
 echo "<TR><TD ALIGN=CENTER COLSPAN=2><font class=\"skb_text\"> <a href=\"../agc/$SSagent_script\">"._QXZ("Agent Login")."</a> </TD></TR>\n";
 echo "<TR><TD ALIGN=CENTER COLSPAN=2><font size=1> &nbsp; </TD></TR>\n";
 if ($hide_timeclock_link < 1)
-	{echo "<TR><TD ALIGN=CENTER COLSPAN=2><font class=\"skb_text\"> <a href=\"../agc/timeclock.php?referrer=welcome\"> "._QXZ("Timeclock")."</a> </TD></TR>\n";}
+    {echo "<TR><TD ALIGN=CENTER COLSPAN=2><font class=\"skb_text\"> <a href=\"../agc/timeclock.php?referrer=welcome\"> "._QXZ("Timeclock")."</a> </TD></TR>\n";}
 echo "<TR><TD ALIGN=CENTER COLSPAN=2><font size=1> &nbsp; </TD></TR>\n";
 echo "<TR><TD ALIGN=CENTER COLSPAN=2><font class=\"skb_text\"> <a href=\"../$admin_web_directory/admin.php\">"._QXZ("Administration")."</a> </TD></TR>\n";
 echo "<TR><TD ALIGN=CENTER COLSPAN=2><font size=1> &nbsp; </TD></TR>\n";
-
 echo "</table></center>\n";
 echo "</form>\n\n";
 echo "</BODY>\n\n";

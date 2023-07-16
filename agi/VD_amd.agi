@@ -1,79 +1,42 @@
 #!/usr/bin/perl
-#
-# VD_amd.agi version 2.14
-#
-# runs after a call goes through AMD in extensions.conf to send the call on to
-# it's proper destination, or when agent sends to VM message
-#
-# You need to put lines similar to those below in your extensions.conf file:
-# 
-# ; VICIDIAL_auto_dialer transfer script AMD with Load Balanced:
-# exten => 8369,1,AGI(call_log.agi,${EXTEN})
-# exten => 8369,2,(AMD),AMD
-# exten => 8369,3,AGI(VD_amd.agi,${EXTEN}-----NO)
-# exten => 8369,4,AGI(agi-VDAD_LB_transfer.agi,${EXTEN})
-# exten => 8369,5,AGI(agi-VDAD_LB_transfer.agi,${EXTEN})
-# exten => 8369,6,AGI(agi-VDAD_LB_transfer.agi,${EXTEN})
-# exten => 8369,7,Hangup
-# 
-# exten => 8320,1,AGI(VD_amd.agi,${EXTEN}-----YES)
-# exten => 8320,2,Hangup
-# exten => _8320*.,1,AGI(VD_amd.agi,${EXTEN}-----YES)
-# exten => _8320*.,2,Hangup
-#
-# Copyright (C) 2023  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
-#
-# changes:
-# 60206-1434 - first build
-# 60207-1205 - added database records entries/modifications
-# 60207-1507 - added ability to send AMs to campaign-defined message to leave
-# 60731-1407 - changed to use DBI-DBD::mysql
-#            - changed to use /etc/astguiclient.conf for configs
-# 60815-1310 - added output options check from database
-# 71118-0252 - compatibility with Asterisk 1.4, added AA and AM statuses
-# 90916-1317 - Changed to audio file playback and TTS playback
-# 90924-1533 - Added answering machine message list_id override option
-# 100205-1025 - Fixed CPD send to message
-# 100327-0819 - Fixed issue with Manual dial treansfers
-# 100430-1606 - Added list_id update to vicidial_log updates
-# 100823-0850 - Changed vac to UPDATE for Auto-alt-dial to function properly
-# 100903-0041 - Changed lead_id max length to 10 digits
-# 101111-1552 - Fixed minor bug in TTS filtering
-# 110324-2334 - Logging changes made
-# 110812-1515 - Added static tts file parsing and replacement
-# 110926-1902 - Added extended logging and additional waitforsilence options
-# 120430-2214 - Converted call to Monitor app to be asterisk 1.8 compatible
-# 130108-1808 - Changes for Asterisk 1.8 compatibility
-# 130210-1113 - Added options for CALLMENU|INGROUP cpd_amd_actions
-# 140312-2110 - Added CALLID as recording filename variable
-# 141211-1634 - Added cpd_unknown_action campaign option
-# 150223-1443 - Added DYN filename prefix for non-TTS dynamic files to be used for am message
-# 151109-1708 - Added new campaign feature allowing for different messages based on answering machine message wildcards
-# 170426-1711 - Fixed double-logging issue
-# 180529-1707 - Fix for missing called_count value in vicidial_log insertions
-# 180919-1831 - Fix for logging issue
-# 180924-1557 - Added called_count as AMM wildcard
-# 190216-0813 - Fix for user-group, in-group and campaign allowed/permissions matching issues
-# 190320-2331 - Added more logging options
-# 190720-1007 - Added Call Quota logging
-# 191017-1051 - Added option for multiple prompts in DYN messages
-# 191029-1243 - Added code for agent-selected message override
-# 200102-0823 - Added vmm_daily_limit campaign setting
-# 200205-1839 - Fix for list override message
-# 200311-0041 - Added amd_agent_route_options feature
-# 200424-1839 - Added STC(settings-container) and LTT(lead temp table) message playback options
-# 220411-0833 - Added FHG(file-http-get) message playback option to download file from website
-# 230412-1023 - Added Code to dispo NOAUDIODATA as ADAIR (Dead Air Auto) with Settings Container option, Issue #1459
-#
-
+#/* ========================================
+# * ███╗   ███╗██████╗ ██╗ █████╗ ██╗
+# * ████╗ ████║██╔══██╗██║██╔══██╗██║
+# * ██╔████╔██║██║  ██║██║███████║██║
+# * ██║╚██╔╝██║██║  ██║██║██╔══██║██║
+# * ██║ ╚═╝ ██║██████╔╝██║██║  ██║███████╗
+# * ╚═╝     ╚═╝╚═════╝ ╚═╝╚═╝  ╚═╝╚══════╝
+# * ========================================
+# * mDial - Omni-Channel Contact Centre Suite.
+# * Initially Written by Martin McCarthy.
+# * Contributions welcome.
+# * Active: 2020 - 2023.
+# *
+# * This software is licensed under AGPLv2.
+# * You can find more information here;
+# * https://www.gnu.org/licenses/agpl-3.0.en.html
+# * A copy of the license is also shipped with this build.
+# *
+# * Important note: this software is provided to you free of charge.
+# * If you paid for this software, you were ripped off.
+# *
+# * This project is a fork of the awesome FOSS project, ViCiDial.
+# * ViCiDial is copyrighted by Matt Florell and the ViCiDial Group
+# * under the AGPLv2 license.
+# *
+# * You can find out more about ViCiDial;
+# * Web: https://www.vicidial.com/
+# * Email: Matt Florell <vicidial@gmail.com>
+# * IRC: Libera.Chat - ##vicidial
+# *
+# * Bug reports, feature requests and patches welcome!
+# * ======================================== */
 $script = 'VD_amd.agi';
 $build = '230412-1023';
-
 $A = 1;		# set to 1 for AMD output messages mode
 $AMD_LOG = 3;	# set to 1 for logfile and 2 forDB log, 3 for both
 $wav='.wav';
 $US='_';
-
 ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
 $year = ($year + 1900);
 $mon++;
@@ -82,15 +45,11 @@ if ($mday < 10) {$mday = "0$mday";}
 if ($hour < 10) {$hour = "0$hour";}
 if ($min < 10) {$min = "0$min";}
 if ($sec < 10) {$sec = "0$sec";}
-
 $now_date_epoch = time();
 $now_date = "$year-$mon-$mday $hour:$min:$sec";
 $file_day = "$year$mon$mday";
 $SQL_day = "$year-$mon-$mday";
-
-# default path to astguiclient configuration file:
 $PATHconf =		'/etc/astguiclient.conf';
-
 open(conf, "$PATHconf") || die "can't open $PATHconf: $!\n";
 @conf = <conf>;
 close(conf);
@@ -125,22 +84,15 @@ foreach(@conf)
 		{$VARDB_port = $line;   $VARDB_port =~ s/.*=//gi;}
 	$i++;
 	}
-
 if (!$VARDB_port)	{$VARDB_port='3306';}
 if (!$AGILOGfile)	{$AGILOGfile = "$PATHlogs/agiout.$year-$mon-$mday";}
 if (!$CEPLOGfile)	{$CEPLOGfile = "$PATHlogs/Cepstral.$year-$mon-$mday";}
-
 use DBI;
 use Time::Local;
 use Asterisk::AGI;
 $AGI = new Asterisk::AGI;
-
-  
 $dbhA = DBI->connect("DBI:mysql:$VARDB_database:$VARDB_server:$VARDB_port", "$VARDB_user", "$VARDB_pass")
     or die "Couldn't connect to database: " . DBI->errstr;
-
-#############################################
-##### Gather system_settings #####
 $stmtA = "SELECT sip_event_logging,call_quota_lead_ranking FROM system_settings;";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -152,9 +104,6 @@ if ($sthArows > 0)
 	$SScall_quota_lead_ranking =	$aryA[1];
 	}
 $sthA->finish();
-###########################################
-
-### Grab Server values from the database
 $stmtA = "SELECT agi_output,asterisk_version,ext_context FROM servers where server_ip = '$VARserver_ip';";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -172,8 +121,6 @@ if ($sthArows > 0)
 	if ($DBagi_output =~ /BOTH/)	{$AGILOG = '3';}
 	}
 $sthA->finish();
-
-### begin parsing run-time options ###
 if (length($ARGV[0])>1)
 	{
 	if ($AGILOG) 
@@ -185,14 +132,10 @@ if (length($ARGV[0])>1)
 		if ($AGILOG) {$agi_string = "$i|$ARGV[$i]";   &agi_output;}
 		$i++;
 		}
-	
-	### list of command-line array arguments:
 	@ARGV_vars = split(/-----/, $ARGV[0]);
 	$CLI_exten =		$ARGV_vars[0];
 	$force_playback = 	$ARGV_vars[1];
 	}
-
-
 $|=1;
 while(<STDIN>) 
 	{
@@ -205,7 +148,6 @@ while(<STDIN>)
 			$AGI{$1} = $2;
 			}
 		}
-
 	if (/^agi_uniqueid\:\s+(.*)$/)		{$unique_id = $1; $uniqueid = $unique_id;}
 	if (/^agi_priority\:\s+(.*)$/)		{$priority = $1;}
 	if (/^agi_channel\:\s+(.*)$/)		{$channel = $1;}
@@ -214,8 +156,6 @@ while(<STDIN>)
 	if (/^agi_callerid\:\s+(.*)$/)		{$callerid = $1;   $calleridnum = $callerid;}
 	if (/^agi_calleridname\:\s+(.*)$/)	{$calleridname = $1;}
 	}
-
-# extension variables if set: 8320*TESTCAMP*1*9998888112*194239
 if ($extension =~ /\*/)
 	{
 	@EXT_vars = split(/\*/, $extension);
@@ -225,42 +165,26 @@ if ($extension =~ /\*/)
 	$CLIphone_number =		$EXT_vars[3];
 	$CLIlead_id =			$EXT_vars[4];
 	}
-
 if ( (length($callerid)>20) && ($callerid =~ /\"\S\S\S\S\S\S\S\S\S\S\S\S\S\S\S\S\S\S/) )
 	{
 	$callerid =~ s/^\"//gi;
 	$callerid =~ s/\".*$//gi;
-#	### set the callerid to the ACQS value(calleridname)
-#	print "SET CALLERID $callerid\n";
-#	checkresult($result);
-#	print STDERR "callerID changed: $callerid\n";
 	}
 if ( (
 (length($calleridname)>5) && ( (!$callerid) or ($callerid =~ /unknown|private|00000000/i) or ($callerid =~ /5551212/) )
 ) or ( (length($calleridname)>17) && ($calleridname =~ /\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d/) ) )
 	{
 	$callerid = $calleridname;
-#	### set the callerid to the ACQS value(calleridname)
-#	print "SET CALLERID $callerid\n";
-#	checkresult($result);
-#	print STDERR "callerID changed: $callerid\n";
 	}
-
-
 if ($AGILOG) {$agi_string = "AGI Environment Dump:";   &agi_output;}
-
 foreach $i (sort keys %AGI) 
 	{
 	if ($AGILOG) {$agi_string = " -- $i = $AGI{$i}";   &agi_output;}
 	}
-
 if ($AGILOG) {$agi_string = "AGI Variables: |$unique_id|$channel|$extension|$type|$callerid|";   &agi_output;}
-
-
 $VDADcampaign='';
 $VDADphone='';
 $VDADphone_code='';
-
 $callerid =~ s/\"//gi;
 $callerid =~ s/ .*//gi;
 $CIDlead_id = $callerid;
@@ -268,18 +192,13 @@ $CIDlead_id = substr($CIDlead_id, 10, 10);
 $CIDlead_id = ($CIDlead_id + 0);
 if ( ($CLIlead_id > 0) && ($CIDlead_id < 1) ) {$CIDlead_id = $CLIlead_id;}
 $VD_lead_id = $CIDlead_id;
-
 if ($AGILOG) {$agi_string = "+++++ VD amd START : |$CIDlead_id|$now_date|$AST_ver|$priority|$calleridname|";   &agi_output;}
-
-
 if ( ($channel =~ /Local/i) && ($AST_ver !~ /^1\.0\.8|^1\.0\.9/) )
 	{
 	if ($AGILOG) {$agi_string = "+++++ VDAD START LOCAL CHANNEL: EXITING- $priority";   &agi_output;}
 	if ($priority > 2) {sleep(1);}
 	exit;
 	}
-
-
 $AMDSTATUS = $AGI->get_variable(AMDSTATUS);
 $AMDCAUSE =	$AGI->get_variable(AMDCAUSE);
 $AMDSTATS =	$AGI->get_variable(AMDSTATS);
@@ -288,19 +207,10 @@ $AMDRESPONSE =~ s/-.*//gi;
 $run_time = $AMDSTATS;
 $run_time =~ s/-.*//gi;
 if (length($run_time) < 1) {$run_time=0;}
-
 if ($A)
 	{
 	if ($AGILOG) {$agi_string = "AAAAA AMD results: |$AMDSTATUS|$AMDCAUSE|$AMDSTATS|";   &agi_output;}
 	}
-
-# Asterisk 1.2.X
-# AAAAA AMD results: |AMD_PERSON|AMD_HUMAN-300-300|
-# AAAAA AMD results: |AMD_MACHINE|AMD_LONGGREETING-1500-1500|
-# Asterisk 1.4.X:
-# AAAAA AMD results: |HUMAN|HUMAN-1000-1000|0000000000| 
-# AAAAA AMD results: |MACHINE|MAXWORDS-4-4|0000000000| 
-
 if ( ($AMD_LOG == 1) || ($AMD_LOG == 3) )
 	{
 	open(Lout, ">>$PATHlogs/AMD_log".$file_day.".txt")
@@ -315,9 +225,6 @@ if ( ($AMD_LOG == 2) || ($AMD_LOG == 3) )
 		if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 	$affected_rows = $dbhA->do($stmtA);
 	}
-
-
-########## FIND vicidial_auto_calls record ##########
 $stmtA = "SELECT campaign_id,phone_code,phone_number,uniqueid,server_ip,status FROM vicidial_auto_calls where callerid='$callerid' order by auto_call_id desc limit 1;";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -340,7 +247,6 @@ if ( (length($CLIphone_code) > 1) && (length($VD_phone_code) < 1) )
 	{$VD_phone_code = $CLIphone_code;}
 if ( (length($CLIphone_number) > 1) && (length($VD_phone_number) < 1) )
 	{$VD_phone_number = $CLIphone_number;}
-
 $amd_agent_route_options='';
 $AMDcontainer_entry='';
 $AMD_agent_send=0;
@@ -356,7 +262,6 @@ if ($sthArows > 0)
 	$amd_agent_route_options =	$aryA[0];
 	$sthA->finish();
 	}
-
 if ($amd_agent_route_options =~ /ENABLED/i) 
 	{
 	$stmtA = "SELECT container_entry FROM vicidial_settings_containers where container_id='AMD_AGENT_OPT_$VD_campaign_id' limit 1;";
@@ -394,10 +299,6 @@ if ($amd_agent_route_options =~ /ENABLED/i)
 			}
 		}
 	}
-
-
-##################################################################################
-########## AMD says it's a person so exit and go on to transfer scripts ##########
 if ( ( ($AMDSTATUS =~ /PERSON|HUMAN|NOTSURE|HANGUP/) && ($force_playback !~ /YES/) && (length($AMDcontainer_entry) < 4) ) || ( ($AMD_agent_send > 0) && (length($AMDcontainer_entry) > 3) ) )
 	{
 	if ($A) 
@@ -406,19 +307,12 @@ if ( ( ($AMDSTATUS =~ /PERSON|HUMAN|NOTSURE|HANGUP/) && ($force_playback !~ /YES
 		}
 	exit;
 	}
-
 else
 	{
-	################################################################################
-	########## AMD says it's a machine so modify statuses and hangup call ##########
-	########## or play back a message on AMs  ##########
-
 	$AGI->stream_file('sip-silence');
 	$AGI->stream_file('sip-silence');
-
 	if ($sthArowsVAC < 1)
 		{
-		########## FIND vicidial_log_extended record if no vicidial_auto_calls record found ##########
 		$stmtA = "SELECT uniqueid,server_ip FROM vicidial_log_extended where caller_code='$callerid' order by call_date desc limit 1;";
 		$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 		$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -439,17 +333,13 @@ else
 		$EVD_uniqueid =~ s/\.\d+$//gi;
 		$VD_uniqueidSQL = " or (uniqueid LIKE \"$EVD_uniqueid%\")";
 		}
-
 	if ($AMDSTATUS !~ /CPD/)
 		{
-		########## UPDATE vicidial_list ##########
 		$stmtA = "UPDATE vicidial_list set status='AA' where lead_id = '$VD_lead_id';";
 			if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 			$affected_rows = $dbhA->do($stmtA);
 		if ($AGILOG) {$agi_string = "--    VDAD vicidial_list update: |$affected_rows|$VD_lead_id";   &agi_output;}
 		}
-
-	### find list_id for this lead
 	$stmtA = "SELECT list_id,called_count from vicidial_list where lead_id = '$VD_lead_id';";
 	$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 	$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -461,13 +351,9 @@ else
 		$VD_called_count =	$aryA[1];
 		}
 	$sthA->finish();
-
-	########## UPDATE vicidial_auto_calls entry ##########
 	$stmtA = "UPDATE vicidial_auto_calls set status='XFER' where callerid='$callerid' order by auto_call_id desc limit 1;";
 		$affected_rows = $dbhA->do($stmtA);
 	if ($AGILOG) {$agi_string = "--    VDAC record updated: |$affected_rows|   |$VD_lead_id|$uniqueid|$callerid|$VD_status|$VD_server_ip";   &agi_output;}
-
-	########## FIND AND UPDATE vicidial_log ##########
 	$Euniqueid=$uniqueid;
 	$Euniqueid =~ s/\.\d+$//gi;
 	$stmtA = "SELECT start_epoch,uniqueid,called_count FROM vicidial_log where lead_id='$VD_lead_id' and ( (uniqueid LIKE \"$Euniqueid%\") $VD_uniqueidSQL ) order by call_date desc limit 10;";
@@ -487,7 +373,6 @@ else
 		$epc_countCUSTDATA++;
 		}
 	$sthA->finish();
-
 	if ($epc_countCUSTDATA > 1)
 		{
 		$stmtA = "DELETE from vicidial_log where uniqueid='$first_uniqueid' and lead_id='$VD_lead_id' limit 1;";
@@ -495,7 +380,6 @@ else
 		$affected_rows = $dbhA->do($stmtA);
 		if ($AGILOG) {$agi_string = "--    VDAD vicidial_log duplicate delete: |$affected_rows|$uniqueid|$first_uniqueid|$VD_lead_id|$DB_called_count|";   &agi_output;}
 		}
-
 	if (!$epc_countCUSTDATA)
 		{
 		if ($AGILOG) {$agi_string = "no VDL record found: $uniqueid $calleridname $VD_lead_id $uniqueid";   &agi_output;}
@@ -512,9 +396,7 @@ else
 		$affected_rows = $dbhA->do($stmtA);
 		if ($AGILOG) {$agi_string = "--    VDAD vicidial_log update: |$affected_rows|$uniqueid|$DB_called_count|$VD_called_count|";   &agi_output;}
 		}
-
 	$selected_campaign='';
-	### Grab vmail forward message values from the database
 	$stmtA = "SELECT am_message_exten,amd_send_to_vmx,waitforsilence_options,survey_recording,campaign_rec_filename,cpd_amd_action,amd_inbound_group,amd_callmenu,cpd_unknown_action,campaign_id,am_message_wildcards,call_quota_lead_ranking,vmm_daily_limit FROM vicidial_campaigns where campaign_id = '$VD_campaign_id' limit 1;";
 		if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 	$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
@@ -541,7 +423,6 @@ else
 	else
 		{
 		$sthA->finish();
-		### Grab vmail forward message values from the database
 		$SQL_group_id=$VD_campaign_id;   $SQL_group_id =~ s/_/\\_/gi;
 		$stmtA = "SELECT am_message_exten,amd_send_to_vmx,waitforsilence_options,survey_recording,campaign_rec_filename,cpd_amd_action,amd_inbound_group,amd_callmenu,cpd_unknown_action,campaign_id,am_message_wildcards,vmm_daily_limit FROM vicidial_campaigns where closer_campaigns LIKE \"% $SQL_group_id %\" order by active,campaign_id limit 1;";
 			if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
@@ -570,13 +451,11 @@ else
 		else
 			{$sthA->finish();}
 		}
-
 	if ( ($SScall_quota_lead_ranking > 0) && ($VD_call_quota_lead_ranking !~ /^DISABLED$/i) )
 		{
 		$temp_status = 'AA';
 		&call_quota_logging;
 		}
-
 	$vmm_daily_count=0;
 	$vmm_daily_played=0;
 	if ($vmm_daily_limit > 0)
@@ -594,8 +473,6 @@ else
 			}
 		if ($AGILOG) {$agi_string = "VVMM counts: $vmm_daily_count|$vmm_daily_played|$VD_lead_id|$SQL_day|";   &agi_output;}
 		}
-
-	### if not a CPD message, log to the extended log
 	if ($AMDSTATUS !~ /CPD/)
 		{
 		$VLEcount=0;
@@ -610,7 +487,6 @@ else
 			$sthA->finish();
 			}
 		if ($AGILOG) {$agi_string = "$VLEcount|$stmtA|";   &agi_output;}
-
 		if ($VLEcount < 1)
 			{
 			$stmtA = "INSERT INTO vicidial_log_extended set uniqueid='$uniqueid',server_ip='$VARserver_ip',call_date='$now_date',lead_id = '$VD_lead_id',caller_code='$callerid',custom_call_id='';";
@@ -619,7 +495,6 @@ else
 			if ($AGILOG) {$agi_string = "--  VDAD vicidial_log_extended insert: |$affected_rows|\n|$stmtA|";   &agi_output;}
 			}
 		}
-
 	if ($survey_recording =~ /Y_WITH_AMD/)
 		{
 		$RLcount=0;
@@ -639,7 +514,6 @@ else
 			}
 		if ($RLcount < 1)
 			{
-			# get date/time
 			($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
 			$year = ($year + 1900);
 			$Tyear = ($year - 2000);
@@ -649,12 +523,10 @@ else
 			if ($hour < 10) {$hour = "0$hour";}
 			if ($min < 10)	{$min = "0$min";}
 			if ($sec < 10)	{$sec = "0$sec";}
-
 			$now_date_epoch = time();
 			$now_date = "$year-$mon-$mday $hour:$min:$sec";
 			$recdate = "$year$mon$mday-$hour$min$sec";
 			$tinydate = "$Tyear$mon$mday$hour$min$sec";
-
 			if ($campaign_rec_filename =~ /VENDORLEADCODE/) 
 				{
 				$stmtA = "SELECT vendor_lead_code FROM vicidial_list where lead_id='$VD_lead_id';";
@@ -669,7 +541,6 @@ else
 					}
 				$sthA->finish();
 				}
-
 			$campaign_rec_filename =~ s/CAMPAIGN/$VD_campaign_id/gi;
 			$campaign_rec_filename =~ s/INGROUP/$VD_campaign_id/gi;
 			$campaign_rec_filename =~ s/CUSTPHONE/$VD_phone_number/gi;
@@ -682,7 +553,6 @@ else
 			$campaign_rec_filename =~ s/CALLID/$callerid/gi;
 			$campaign_rec_filename =~ s/\"|\'//gi;
 			$campaign_rec_filename =~ s/ //gi;
-
 			%ast_ver_str = parse_asterisk_version($asterisk_version);
 			if (( $ast_ver_str{major} = 1 ) && ($ast_ver_str{minor} < 6))
 				{
@@ -692,19 +562,14 @@ else
 				{
 				$AGI->exec("Monitor","wav,/var/spool/asterisk/monitor/MIX/$campaign_rec_filename"); 
 				}
-
-			### insert record into recording_log table ###
 			$stmtA = "INSERT INTO recording_log (channel,server_ip,extension,start_time,start_epoch,length_in_sec,filename,lead_id,user,location,vicidial_id) values('$channel','$VARserver_ip','$VD_phone_number','$now_date','$now_date_epoch','0','$campaign_rec_filename','$VD_lead_id','VDAD','$campaign_rec_filename','$uniqueid');";
 			$SRaffected_rows = $dbhA->do($stmtA);
 			if ($AGILOG) {$agi_string = "--    AMD RECORDING STARTED : |$SRaffected_rows|$campaign_rec_filename|$stmtA|";   &agi_output;}
 			}
 		}
-
-	### check for list_id override
 	if (length($VD_list_id) > 0)
 		{
 		$am_message_exten_override='';
-		### gather list_id overrides
 		$stmtA = "SELECT am_message_exten_override FROM vicidial_lists where list_id='$VD_list_id';";
 		$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 		$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -719,8 +584,6 @@ else
 			}
 		$sthA->finish();
 		}
-
-	### Check for agent-selected message override
 	$stmtA = "SELECT vm_message,user FROM vicidial_agent_vmm_overrides where caller_code='$callerid' order by call_date desc limit 1;";
 	$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 	$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -734,61 +597,45 @@ else
 			{$DB_am_message_exten = $am_message_exten_override;}
 		}
 	$sthA->finish();
-
 	if ($AGILOG) {$agi_string = "--    AMD campaign values: |$VD_campaign_id|$DB_am_message_exten|$DB_amd_send_to_vmx|$vmm_daily_limit|";   &agi_output;}
-
-	### if campaign daily limit is set and the number of logged times today has been reached, then hangup call
 	if ( ($vmm_daily_limit > 0) && ($vmm_daily_count >= $vmm_daily_limit) ) 
 		{
 		if ($AGILOG) {$agi_string = "--    AMD VMM Limit Reached, exiting: ($vmm_daily_count >= $vmm_daily_limit)   $callerid ($vmm_daily_played)";   &agi_output;}
 		$dbhA->disconnect();
-
 		$AGI->hangup($channel);
-
 		exit;
 		}
-
 	if ( ($AMDRESPONSE =~ /^NOAUDIODATA/) && ($NOAUDIODATA_hangup_enabled > 0) )
 		{
-		### No audio, let's update lead, log and hangup. 
 		$stmtA = "UPDATE vicidial_log set status='ADAIR' where uniqueid='$uniqueid' and lead_id='$VD_lead_id' order by call_date desc limit 1;";
 		    if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 		$affected_rows = $dbhA->do($stmtA);
 		if ($AGILOG) {$agi_string = "--    VDAD vicidial_log ADAIR update: |$affected_rows|$uniqueid|";   &agi_output;}
-		
 		$stmtA = "UPDATE vicidial_list set status='ADAIR' where lead_id='$VD_lead_id';";
 		    if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 		$affected_rows = $dbhA->do($stmtA);
 		if ($AGILOG) {$agi_string = "--    VDAD vicidial_list ADAIR update: |$affected_rows|$uniqueid|";   &agi_output;}
-		
 		$dbhA->disconnect();
-		
 		$AGI->hangup($channel);
-		
 		exit;		
 		}
-
 	if ( ( ($DB_amd_send_to_vmx =~ /Y/) || ($force_playback =~ /YES/) ) && (length($DB_am_message_exten) > 0) )
 		{
 		$msg_status='AM';
 		if ($AMDCAUSE =~ /^Unknown|\?\?\?/i)
 			{$msg_status='UNKAM';}
-
 		$stmtA = "UPDATE vicidial_log set status='$msg_status' where uniqueid='$uniqueid' and lead_id='$VD_lead_id' order by call_date desc limit 1;";
 			if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 		$affected_rows = $dbhA->do($stmtA);
 		if ($AGILOG) {$agi_string = "--    VDAD vicidial_log AM update: |$affected_rows|$uniqueid|";   &agi_output;}
-
 		$stmtA = "UPDATE vicidial_list set status='$msg_status' where lead_id='$VD_lead_id';";
 			if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 		$affected_rows = $dbhA->do($stmtA);
 		if ($AGILOG) {$agi_string = "--    VDAD vicidial_list AM update: |$affected_rows|$uniqueid|";   &agi_output;}
-
 		$stmtA = "INSERT IGNORE INTO vicidial_vmm_counts set vmm_count='1', lead_id='$VD_lead_id', call_date='$SQL_day' ON DUPLICATE KEY UPDATE vmm_count=(vmm_count + 1);";
 			if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 		$affected_rows = $dbhA->do($stmtA);
 		if ($AGILOG) {$agi_string = "--    VVMM vicidial_vmm_counts update: |$affected_rows|$VD_lead_id|$SQL_day|";   &agi_output;}
-
 		if ( ($SScall_quota_lead_ranking > 0) && ($VD_call_quota_lead_ranking !~ /^DISABLED$/i) )
 			{
 			$stmtA = "UPDATE vicidial_lead_call_quota_counts set status='$msg_status' where lead_id='$VD_lead_id';";
@@ -796,15 +643,12 @@ else
 			$affected_rows = $dbhA->do($stmtA);
 			if ($AGILOG) {$agi_string = "--    VDAD vicidial_lead_call_quota_counts AM update: |$affected_rows|$uniqueid|";   &agi_output;}
 			}
-
-		##### BEGIN Check if prompt uses TTS, STC, LTT,DYN or FHG. If so, create TTS and set the filename to the generated prompt #####
 		if ($DB_am_message_exten =~ /^TTS|^STC|^LTT|^DYN|^FHG/)
 			{
 			$useTTS=0;
 			$useSTC=0;
 			$useLTT=0;
 			$useFHG=0;
-			# Cepstral Text-To-Speech, vicidial_tts_prompts
 			if ($DB_am_message_exten =~ /^TTS/) 
 				{
 				$useTTS++;
@@ -812,7 +656,6 @@ else
 				$TTS_filename =~s/^TTS//gi;
 				$TTS_filename =~s/\|.*//gi;
 				}
-			# Settings Container entry, vicidial_settings_containers
 			elsif ($DB_am_message_exten =~ /^STC/) 
 				{
 				$useSTC++;
@@ -820,7 +663,6 @@ else
 				$TTS_filename =~s/^STC//gi;
 				$TTS_filename =~s/\|.*//gi;
 				}
-			# Lead Temp Table entry, vicidial_lead_messages
 			elsif ($DB_am_message_exten =~ /^LTT/) 
 				{
 				$useLTT++;
@@ -828,7 +670,6 @@ else
 				$TTS_filename =~s/^LTT//gi;
 				$TTS_filename =~s/\|.*//gi;
 				}
-			# File-HTTP-get entry
 			elsif ($DB_am_message_exten =~ /^FHGhttp/) 
 				{
 				$useFHG++;
@@ -839,16 +680,13 @@ else
 				$TTS_filename =~ s/https\/\//https:\/\//gi;
 				$TTS_text = $TTS_filename;
 				}
-			# dynamic filename lookup
 			else
 				{
 				$TTS_filename = $DB_am_message_exten;
 				$TTS_filename =~s/^DYN//gi;
 				$TTS_text = $TTS_filename;
 				}
-
 			if ($AGILOG) {$agi_string = "--    TTS : |$useTTS|$useSTC|$useLTT|$useFHG|$TTS_filename|";   &agi_output;}
-
 			$stmtA = "SELECT lead_id,entry_date,modify_date,status,user,vendor_lead_code,source_id,list_id,phone_number,title,first_name,middle_initial,last_name,address1,address2,address3,city,state,province,postal_code,country_code,gender,date_of_birth,alt_phone,email,security_phrase,comments,called_count,last_local_call_time,rank,owner FROM vicidial_list where lead_id='$VD_lead_id';";
 			$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 			$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -889,7 +727,6 @@ else
 				$TTS_owner =			$aryA[30];
 				}
 			$sthA->finish();
-
 			if ($useTTS > 0) 
 				{
 				$TTS_voice = 'Allison-8kHz';
@@ -935,7 +772,6 @@ else
 					$TTS_call_date =	$aryA[1];
 					}
 				$sthA->finish();
-
 				if ($sthArows > 0)
 					{
 					$stmtA = "UPDATE vicidial_lead_messages SET played=(played+1) where lead_id='$VD_lead_id' and call_date='$TTS_call_date' limit 1;";
@@ -946,16 +782,11 @@ else
 				else
 					{
 					if ($AGILOG) {$agi_string = "ERROR: VLM no vicidial_lead_messages record found: |$useLTT|$TTS_filename|$VD_lead_id|$callerid|";   &agi_output;}
-
 					$dbhA->disconnect();
-
 					$AGI->hangup($channel);
-
 					exit;
 					}
 				}
-
-			### BEGIN replace variables with record values ###
 			$TTS_text =~ s/--A--lead_id--B--/$TTS_lead_id/gi;
 			$TTS_text =~ s/--A--entry_date--B--/$TTS_entry_date/gi;
 			$TTS_text =~ s/--A--modify_date--B--/$TTS_modify_date/gi;
@@ -990,15 +821,9 @@ else
 			$TTS_text =~ s/--A--campaign_id--B--/$VD_campaign_id/gi;
 			$TTS_text =~ s/--A--ingroup--B--/$VD_campaign_id/gi;
 			$TTS_text =~ s/--A--group--B--/$VD_campaign_id/gi;
-			### END replace variables with record values ###
-
-			### BEGIN download FHG web file for playback ###
 			if ($useFHG > 0) 
 				{
-				# Request URL as '$TTS_text'
 				$parse_url = $TTS_text;
-
-				### insert a new url log entry
 				$SQL_log = "$parse_url";
 				$SQL_log =~ s/;|\||\\//gi;
 				$stmtA = "INSERT INTO vicidial_url_log SET uniqueid='$uniqueid',url_date=NOW(),url_type='amd_fhg',url='$SQL_log',url_response='';";
@@ -1013,20 +838,13 @@ else
 					$url_id = $aryA[0];
 					}
 				$sthA->finish();
-
 				$url = $parse_url;
 				$url =~ s/'/\\'/gi;
 				$url =~ s/"/\\"/gi;
-
 				$temp_OUTPUT_file = $PATHsounds . "/tts/FHG$US$TTS_lead_id$US$now_date_epoch";
 				$temp_OUTPUT_fileWAV = $temp_OUTPUT_file . ".wav";
-
 				my $secW = time();
-
-				# disconnect from the database to free up the DB connection
 				$dbhA->disconnect();
-
-				### find wget binary
 				$wgetbin = '';
 				if ( -e ('/bin/wget')) {$wgetbin = '/bin/wget';}
 				else
@@ -1042,21 +860,13 @@ else
 							}
 						}
 					}
-
-				# request the web URL
 				`$wgetbin --no-check-certificate --output-document=$temp_OUTPUT_fileWAV --output-file=/tmp/ASUBtmpF$US$url_id$US$now_date_epoch $url `;
-
-				# reconnect to the database to log response and response time
 				$dbhA = DBI->connect("DBI:mysql:$VARDB_database:$VARDB_server:$VARDB_port", "$VARDB_user", "$VARDB_pass")
 				 or die "Couldn't connect to database: " . DBI->errstr;
-
 				if ($DB) {print "$function|$wgetbin --no-check-certificate --output-document=$temp_OUTPUT_file --output-file=/tmp/ASUBtmpF$US$url_id$US$now_date_epoch $url|";}
-
 				my $secY = time();
 				my $response_sec = ($secY - $secW);
-
 				$FILEsizeFHG = (-s "$temp_OUTPUT_fileWAV");
-
 				open(Wfile, "/tmp/ASUBtmpF$US$url_id$US$now_date_epoch") || die "can't open /tmp/ASUBtmpF$US$url_id$US$now_date_epoch: $!\n";
 				@Wfile = <Wfile>;
 				close(Wfile);
@@ -1072,24 +882,15 @@ else
 					}
 				if (length($Wfileline_cat)<1) 
 					{$Wfileline_cat='<HEADER EMPTY>';}
-
-
-				### update url log entry
 				$stmtA = "UPDATE vicidial_url_log SET url_response='$FILEsizeFHG|$temp_OUTPUT_fileWAV|$Wfileline_cat',response_sec='$response_sec' where url_log_id='$url_id';";
 				$affected_rows = $dbhA->do($stmtA);
 				if ($DB) {print "$affected_rows|$stmtA\n";}
-
 				$TTS_text = $temp_OUTPUT_file;
-
 				if ($AGILOG) {$agi_string = "FHG: File downloaded($FILEsizeFHG bytes, $response_sec seconds) |$TTS_text|";   &agi_output;}
-
 				sleep(1);
 				}
-			### END download FHG web file for playback ###
-
 			if ($useTTS > 0) 
 				{
-				### BEGIN check for --C-- and --D-- tags for static file replacement
 				if ( ($TTS_text =~ /--C--/) || ($TTS_text =~ /--D--/) )
 					{
 					$Cdash='--C--';
@@ -1140,9 +941,6 @@ else
 					$TTS_text =~ s/--C--|--D--//gi;
 					print STDERR "\nStatic Replacements Found: $sc|$sr\n";
 					}
-				### END check for --C-- and --D-- tags for static file replacement
-
-				### filter input for CLI-safe characters
 				$TTS_text =~ s/[^,\.\<\>\'\/\=\_\-\: 0-9a-zA-Z]//gi;
 				$TTS_textRAW =	$TTS_text;
 				$TTS_text =~ s/ /\\ /gi;
@@ -1152,14 +950,9 @@ else
 				$TTS_text =~ s/\>/\\>/gi;
 				$TTS_text =~ s/\//\\\//gi;
 				$TTS_text =~ s/\'/\\'/gi;
-				#	$voice = 'Allison-8kHz';	# override the voice to Allison-8k
 				print STDERR "\nGenerating: $TTS_text - $TTS_voice\n";
-
-				### send command to generate cepstral TTS audio file
 				`$PATHagi/cepstral_generate.pl --debug --voice=$TTS_voice --dialog=$TTS_text >> $CEPLOGfile `;
-
 				use Digest::MD5 qw(md5_hex);
-
 				$enc = md5_hex("$TTS_textRAW-$TTS_voice");	# the hash
 				$enc_ftl = substr($enc, 0, 2);	# first letter of hash
 				$TTS_filename_path = $PATHsounds . "/tts/" . $enc_ftl . "/tts-" . $enc;
@@ -1167,14 +960,8 @@ else
 			else
 				{$TTS_filename_path = $TTS_text;}
 			print STDERR "\nfilename: $TTS_filename_path\n";
-
 			$DB_am_message_exten = $TTS_filename_path;
 			}
-		##### END Check if prompt uses TTS, if so, create TTS and set the filename to the generated prompt #####
-
-
-
-		### BEGIN am message wildcards ###
 		if ($am_message_wildcards =~ /Y/)
 			{
 			$stmtA = "SELECT count(*) FROM vicidial_amm_multi where campaign_id='$selected_campaign' and active='Y';";
@@ -1224,7 +1011,6 @@ else
 					$AMM_owner =			$aryA[30];
 					}
 				$sthA->finish();
-
 				$stmtA = "SELECT amm_field,amm_rank,amm_wildcard,amm_filename FROM vicidial_amm_multi where campaign_id='$selected_campaign' and active='Y' order by amm_rank,amm_field;";
 				$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 				$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -1238,7 +1024,6 @@ else
 					$amm_rank =		$aryA[1];
 					$amm_wildcard =	$aryA[2];
 					$amm_filename =	$aryA[3];
-
 					if ( (length($amm_wildcard)>0) && (length($amm_wildcard)>0) && (length($amm_filename)>0) ) 
 						{
 						if ($amm_field =~ /vendor_lead_code/) 
@@ -1441,7 +1226,6 @@ else
 								if ($AGILOG) {$agi_string = "AMM called_count Match Found: |$amm_field|$amm_rank|$amm_wildcard($AMM_owner)|$amm_filename|";   &agi_output;}
 								}
 							}
-
 						if (length($amm_filename_match) > 0)
 							{$DB_am_message_exten = $amm_filename_match;}
 						else
@@ -1458,10 +1242,6 @@ else
 				$sthA->finish();
 				}
 			}
-		### END am message wildcards ###
-
-
-		### run waitforsilence if enabled
 		if ($AMDCAUSE !~ /^Unknown|\?\?\?/i)
 			{
 			if ( (length($waitforsilence_options) > 0) && ($waitforsilence_options !~ /NONE|X/i) )
@@ -1481,8 +1261,6 @@ else
 				sleep($waitforsilence_seconds);
 				}
 			}
-
-		### if call menu or in-group method
 		if ( ($AMDCAUSE =~ /^Unknown|\?\?\?/i) && ($cpd_unknown_action =~ /CALLMENU|INGROUP/) ) 
 			{
 			$DROPexten='';
@@ -1503,12 +1281,10 @@ else
 					if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 				$affected_rows = $dbhA->do($stmtA);
 				if ($AGILOG) {$agi_string = "--    VDAD vicidial_log UNKXFR update: |$affected_rows|$uniqueid|";   &agi_output;}
-
 				$stmtA = "UPDATE vicidial_list set status='UNKXFR' where lead_id='$VD_lead_id';";
 					if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 				$affected_rows = $dbhA->do($stmtA);
 				if ($AGILOG) {$agi_string = "--    VDAD vicidial_list UNKXFR update: |$affected_rows|$uniqueid|";   &agi_output;}
-
 				if ( ($SScall_quota_lead_ranking > 0) && ($VD_call_quota_lead_ranking !~ /^DISABLED$/i) )
 					{
 					$stmtA = "UPDATE vicidial_lead_call_quota_counts set status='UNKXFR' where lead_id='$VD_lead_id';";
@@ -1516,12 +1292,10 @@ else
 					$affected_rows = $dbhA->do($stmtA);
 					if ($AGILOG) {$agi_string = "--    VDAD vicidial_lead_call_quota_counts UNKXFR update: |$affected_rows|$uniqueid|";   &agi_output;}
 					}
-
 				$AGI->stream_file('sip-silence');
 				$AGI->stream_file('sip-silence');
 				$AGI->stream_file('sip-silence');
 				$AGI->stream_file('sip-silence');
-
 				if ($AGILOG) {$agi_string = "exiting the VD_AMD app CPD Unknown, transferring call to $DROPexten:$ext_context";   &agi_output;}
 				print "SET CONTEXT $ext_context\n";
 					$result = <STDIN>;
@@ -1532,11 +1306,9 @@ else
 				print "SET PRIORITY 1\n";
 					$result = <STDIN>;
 					checkresult($result);
-
 				exit;
 				}
 			}
-
 		if ( ($AMDCAUSE !~ /^Unknown|\?\?\?/i) && ($cpd_amd_action =~ /CALLMENU|INGROUP/) )
 			{
 			$DROPexten='';
@@ -1557,12 +1329,10 @@ else
 					if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 				$affected_rows = $dbhA->do($stmtA);
 				if ($AGILOG) {$agi_string = "--    VDAD vicidial_log AMDXFR update: |$affected_rows|$uniqueid|";   &agi_output;}
-
 				$stmtA = "UPDATE vicidial_list set status='AMDXFR' where lead_id='$VD_lead_id';";
 					if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 				$affected_rows = $dbhA->do($stmtA);
 				if ($AGILOG) {$agi_string = "--    VDAD vicidial_list AMDXFR update: |$affected_rows|$uniqueid|";   &agi_output;}
-
 				if ( ($SScall_quota_lead_ranking > 0) && ($VD_call_quota_lead_ranking !~ /^DISABLED$/i) )
 					{
 					$stmtA = "UPDATE vicidial_lead_call_quota_counts set status='AMDXFR' where lead_id='$VD_lead_id';";
@@ -1570,12 +1340,10 @@ else
 					$affected_rows = $dbhA->do($stmtA);
 					if ($AGILOG) {$agi_string = "--    VDAD vicidial_lead_call_quota_counts AMDXFR update: |$affected_rows|$uniqueid|";   &agi_output;}
 					}
-
 				$AGI->stream_file('sip-silence');
 				$AGI->stream_file('sip-silence');
 				$AGI->stream_file('sip-silence');
 				$AGI->stream_file('sip-silence');
-
 				if ($AGILOG) {$agi_string = "exiting the VD_AMD app, transferring call to $DROPexten:$ext_context";   &agi_output;}
 				print "SET CONTEXT $ext_context\n";
 					$result = <STDIN>;
@@ -1586,13 +1354,9 @@ else
 				print "SET PRIORITY 1\n";
 					$result = <STDIN>;
 					checkresult($result);
-
 				exit;
 				}
 			}
-
-
-		### play messages
 		if ($DB_am_message_exten =~ /\|/)
 			{
 			@DB_am_message_exten_array = split(/\|/,$DB_am_message_exten);
@@ -1608,7 +1372,6 @@ else
 			}
 		else
 			{$AGI->stream_file("$DB_am_message_exten");}
-
 		$last_status='AL';
 		if ($AMDCAUSE =~ /^Unknown|\?\?\?/i)
 			{$last_status='UNKAL';}
@@ -1616,17 +1379,14 @@ else
 			if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 		$affected_rows = $dbhA->do($stmtA);
 		if ($AGILOG) {$agi_string = "--    VDAD vicidial_log AL update: |$affected_rows|$uniqueid|";   &agi_output;}
-
 		$stmtA = "UPDATE vicidial_list set status='$last_status' where lead_id='$VD_lead_id';";
 			if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 		$affected_rows = $dbhA->do($stmtA);
 		if ($AGILOG) {$agi_string = "--    VDAD vicidial_list AL update: |$affected_rows|$uniqueid|";   &agi_output;}
-
 		$stmtA = "UPDATE vicidial_vmm_counts set vmm_played=(vmm_played + 1) where lead_id='$VD_lead_id' and call_date='$SQL_day';";
 			if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 		$affected_rows = $dbhA->do($stmtA);
 		if ($AGILOG) {$agi_string = "--    VVMM vicidial_vmm_counts update: |$affected_rows|$VD_lead_id|$SQL_day|";   &agi_output;}
-
 		if ( ($SScall_quota_lead_ranking > 0) && ($VD_call_quota_lead_ranking !~ /^DISABLED$/i) )
 			{
 			$stmtA = "UPDATE vicidial_lead_call_quota_counts set status='$last_status' where lead_id='$VD_lead_id';";
@@ -1634,7 +1394,6 @@ else
 			$affected_rows = $dbhA->do($stmtA);
 			if ($AGILOG) {$agi_string = "--    VDAD vicidial_lead_call_quota_counts AL update: |$affected_rows|$uniqueid|";   &agi_output;}
 			}
-
 		if ($useLTT > 0) 
 			{
 			$stmtA = "UPDATE vicidial_lead_messages SET played=(played+1) where lead_id='$VD_lead_id' and call_date='$TTS_call_date' limit 1;";
@@ -1642,34 +1401,18 @@ else
 			$affected_rows = $dbhA->do($stmtA);
 			if ($AGILOG) {$agi_string = "--    VLM vicidial_lead_messages POST-CALL update: |$affected_rows|$stmtA|";   &agi_output;}
 			}
-
 		if ($useFHG > 0) 
 			{
-			# add 2 seconds of silence before hanging up for FHG messages
 			sleep(2);
 			}
 		}
-
-
 	$dbhA->disconnect();
-
 	$AGI->hangup($channel);
-
 	exit;
 	}
-
-
-
-
-
 exit;
-
-
-
-##### BEGIN Call Quota Lead Ranking logging #####
 sub call_quota_logging
 	{
-	# Gather settings container for Call Quota Lead Ranking
 	$CQcontainer_entry='';
 	$stmtA = "SELECT container_entry FROM vicidial_settings_containers where container_id='$VD_call_quota_lead_ranking';";
 	$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
@@ -1682,8 +1425,6 @@ sub call_quota_logging
 		$CQcontainer_entry =~ s/\\//gi;
 		}
 	$sthA->finish();
-
-	# Define variables for Call Quota settings
 	$session_one='';
 	$session_two='';
 	$session_three='';
@@ -1692,7 +1433,6 @@ sub call_quota_logging
 	$session_six='';
 	$settings_session_score=0;
 	$zero_rank_after_call=0;
-
 	if (length($CQcontainer_entry) > 5) 
 		{
 		@container_lines = split(/\n/,$CQcontainer_entry);
@@ -1702,7 +1442,6 @@ sub call_quota_logging
 			$container_lines[$c] =~ s/;.*|\r|\t| //gi;
 			if (length($container_lines[$c]) > 5)
 				{
-				# define core settings
 				if ($container_lines[$c] =~ /^zero_rank_after_call/i)
 					{
 					$container_lines[$c] =~ s/zero_rank_after_call=>//gi;
@@ -1711,7 +1450,6 @@ sub call_quota_logging
 						$zero_rank_after_call = $container_lines[$c];
 						}
 					}
-				# define sessions
 				if ($container_lines[$c] =~ /^session_one/i)
 					{
 					$session_one_valid=0; $session_one_start=''; $session_one_end='';
@@ -1836,7 +1574,6 @@ sub call_quota_logging
 				if ( ($zero_rank_after_call > 0) && ($VLrank > 0) ) {$tempVLrank=0;}
 				}
 			$sthA->finish();
-
 			$secX = time();
 			$CQtarget = ($secX - 14400);	# look back 4 hours
 			($CQsec,$CQmin,$CQhour,$CQmday,$CQmon,$CQyear,$CQwday,$CQyday,$CQisdst) = localtime($CQtarget);
@@ -1848,7 +1585,6 @@ sub call_quota_logging
 			if ($CQmin < 10) {$CQmin = "0$CQmin";}
 			if ($CQsec < 10) {$CQsec = "0$CQsec";}
 			$CQSQLdate = "$CQyear-$CQmon-$CQmday $CQhour:$CQmin:$CQsec";
-
 			$VDL_call_datetime='';
 			$stmtA = "SELECT call_date from vicidial_dial_log where lead_id='$CIDlead_id' and call_date > \"$CQSQLdate\" and caller_code LIKE \"%$CIDlead_id\" order by call_date desc limit 1;";
 				if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
@@ -1862,7 +1598,6 @@ sub call_quota_logging
 				@VDLcall_datetimeARY = split(/ /,$VDLcall_datetime);
 				@VDLcall_timeARY = split(/:/,$VDLcall_datetimeARY[1]);
 				$VDLcall_hourmin = "$VDLcall_timeARY[0]$VDLcall_timeARY[1]";
-
 				if ( ($session_one_start <= $VDLcall_hourmin) and ($session_one_end > $VDLcall_hourmin) ) 
 					{
 					$call_in_session=1; 
@@ -1899,15 +1634,12 @@ sub call_quota_logging
 					$session_newSQL=",session_six_calls='1',session_six_today_calls='1'"; 
 					$session_updateSQL=",session_six_calls=(session_six_calls + 1),session_six_today_calls=(session_six_today_calls + 1)";
 					}
-
 				if ($AGILOG) {$agi_string = "CQ-Debug 2: $VDLcall_datetime|$VDLcall_hourmin|$timeclock_end_of_day|$session_one_start|$session_one_end|$call_in_session|";   &agi_output;}
-
 				if ($call_in_session > 0)
 					{
 					if (length($timeclock_end_of_day) < 1) {$timeclock_end_of_day='0000';}
 					$timeclock_end_of_day_hour = (substr($timeclock_end_of_day, 0, 2) + 0);
 					$timeclock_end_of_day_min = (substr($timeclock_end_of_day, 2, 2) + 0);
-
 					$today_start_epoch = timelocal('0',$timeclock_end_of_day_min,$timeclock_end_of_day_hour,$mday,($mon-1),$year);
 					if ($timeclock_end_of_day > $VDLcall_hourmin)
 						{$today_start_epoch = ($today_start_epoch - 86400);}
@@ -1917,8 +1649,6 @@ sub call_quota_logging
 					$day_five_start_epoch = ($today_start_epoch - (86400 * 4));
 					$day_six_start_epoch = ($today_start_epoch - (86400 * 5));
 					$day_seven_start_epoch = ($today_start_epoch - (86400 * 6));
-
-					# Gather the details on existing vicidial_lead_call_quota_counts for this lead, if there is one
 					$stmtA = "SELECT first_call_date,UNIX_TIMESTAMP(first_call_date),last_call_date from vicidial_lead_call_quota_counts where lead_id='$CIDlead_id' and list_id='$VLlist_id';";
 						if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 					$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
@@ -1930,7 +1660,6 @@ sub call_quota_logging
 						$VLCQCfirst_call_datetime =		$aryA[0];
 						$VLCQCfirst_call_epoch =		$aryA[1];
 						$VLCQClast_call_date =			$aryA[2];
-
 						if ($VDLcall_datetime ne $VLCQClast_call_date) 
 							{
 							if ($VLCQCfirst_call_epoch >= $today_start_epoch) 
@@ -1947,12 +1676,10 @@ sub call_quota_logging
 								{$day_updateSQL=',day_six_calls=(day_six_calls+1)';}
 							if ( ($VLCQCfirst_call_epoch >= $day_seven_start_epoch) and ($VLCQCfirst_call_epoch < $day_six_start_epoch) )
 								{$day_updateSQL=',day_seven_calls=(day_seven_calls+1)';}
-							# Update in the vicidial_lead_call_quota_counts table for this lead
 							$stmtA="UPDATE vicidial_lead_call_quota_counts SET last_call_date='$VDLcall_datetime',status='$temp_status',called_count='$VLcalled_count',rank='$tempVLrank',modify_date=NOW() $session_updateSQL $day_updateSQL where lead_id='$CIDlead_id' and list_id='$VLlist_id' and modify_date < NOW();";
 							}
 						else
 							{
-							# Update in the vicidial_lead_call_quota_counts table for this lead
 							$stmtA="UPDATE vicidial_lead_call_quota_counts SET status='$temp_status',called_count='$VLcalled_count',rank='$tempVLrank',modify_date=NOW() where lead_id='$CIDlead_id' and list_id='$VLlist_id';";
 							}
 						$VLCQCaffected_rows_update = $dbhA->do($stmtA);
@@ -1960,15 +1687,12 @@ sub call_quota_logging
 						}
 					else
 						{
-						# Insert new record into vicidial_lead_call_quota_counts table for this lead
 						$stmtA="INSERT INTO vicidial_lead_call_quota_counts SET lead_id='$CIDlead_id',list_id='$VLlist_id',first_call_date='$VDLcall_datetime',last_call_date='$VDLcall_datetime',status='$temp_status',called_count='$VLcalled_count',day_one_calls='1',rank='$tempVLrank',modify_date=NOW() $session_newSQL;";
 						$VLCQCaffected_rows_update = $dbhA->do($stmtA);
 						if ($AGILOG) {$agi_string = "--    VLCQC record inserted: |$VLCQCaffected_rows_update|   |$stmtA|";   &agi_output;}
 						}
-
 					if ( ($zero_rank_after_call > 0) && ($VLrank > 0) )
 						{
-						# Update this lead to rank=0
 						$stmtA="UPDATE vicidial_list SET rank='0' where lead_id='$CIDlead_id';";
 						$VLCQCaffected_rows_zero_rank = $dbhA->do($stmtA);
 						if ($AGILOG) {$agi_string = "--    VLCQC lead rank zero: |$VLCQCaffected_rows_zero_rank|   |$stmtA|";   &agi_output;}
@@ -1979,9 +1703,6 @@ sub call_quota_logging
 			}
 		}
 	}
-##### END Call Quota Lead Ranking logging #####
-
-
 sub checkresult 
 	{
 	my ($res) = @_;
@@ -1993,56 +1714,38 @@ sub checkresult
 		$res =~ /result=(-?\d+)/;
 		if (!length($1)) 
 			{
-		#	print STDERR "FAIL ($res)\n";
 			$fail++;
 			} 
 		else 
 			{
-		#	print STDERR "PASS ($1)\n";
 			$pass++;
 			}
 		}
 	else
 		{
-	#	print STDERR "FAIL (unexpected result '$res')\n";
 		$fail++;
 		}
 	}
-
-
 sub agi_output
 	{
 	if ($AGILOG >=2)
 		{
-		### open the log file for writing ###
 		open(Lout, ">>$AGILOGfile")
 				|| die "Can't open $AGILOGfile: $!\n";
 		print Lout "$now_date|$script|$agi_string\n";
 		close(Lout);
 		}
-		### send to STDERR writing ###
 	if ( ($AGILOG == '1') || ($AGILOG == '3') )
 		{print STDERR "$now_date|$script|$agi_string\n";}
 	$agi_string='';
 	}
-
-# subroutine to parse the asterisk version
-# and return a hash with the various part
 sub parse_asterisk_version
 	{
-	# grab the arguments
 	my $ast_ver_str = $_[0];
-
-	# get everything after the - and put it in $ast_ver_postfix
 	my @hyphen_parts = split( /-/ , $ast_ver_str );
-
 	my $ast_ver_postfix = $hyphen_parts[1];
-
-	# now split everything before the - up by the .
 	my @dot_parts = split( /\./ , $hyphen_parts[0] );
-
 	my %ast_ver_hash;
-
 	if ( $dot_parts[0] <= 1 )
 		{
 			%ast_ver_hash = (
@@ -2053,8 +1756,6 @@ sub parse_asterisk_version
 				"postfix" => $ast_ver_postfix
 			);
 		}
-
-	# digium dropped the 1 from asterisk 10 but we still need it
 	if ( $dot_parts[0] > 1 )
 		{
 			%ast_ver_hash = (
@@ -2065,6 +1766,5 @@ sub parse_asterisk_version
 				"postfix" => $ast_ver_postfix
 			);
 		}
-
 	return ( %ast_ver_hash );
 	}

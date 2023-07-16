@@ -1,51 +1,40 @@
 #!/usr/bin/perl
-#
-# agi-record_prompts.agi      version 2.12
-#
-# for recording prompts to GSM file over the phone
-# Saves recordings with 8-digit filenames to be played when exten is dialed
-#
-#	; prompts for recording AGI script, ID is 4321
-#   ; first variable is format (gsm/wav)
-#	; second variable is timeout in milliseconds (default is 360000 [6 minutes])
-#	exten => 8167,1,Answer
-#	exten => 8167,2,AGI(agi-record_prompts.agi,wav-----360000)
-#	exten => 8167,3,Hangup
-#	exten => 8168,1,Answer
-#	exten => 8168,2,AGI(agi-record_prompts.agi,gsm-----360000)
-#	exten => 8168,3,Hangup
-#
-#	; playback of recorded prompts
-#	exten => _851XXXXX,1,Answer
-#	exten => _851XXXXX,2,Playback(${EXTEN})
-#	exten => _851XXXXX,3,Hangup
-#
-#	GSM Sound Files used:
-#	- ld_welcome_pin_number
-#	- ld_invalid_pin_number
-#	- vm-rec-generic
-#	- auth-thankyou
-#	- vm-review
-#	- vm-msgsaved
-#	- vm-goodbye
-#
-# Copyright (C) 2016  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
-#
-# CHANGELOG
-# 71226-1303 - Added option to change format GSM/WAV and timeout through flags
-# 90519-1019 - Changed formatting to conform to other scripts
-# 130108-1815 - Changes for Asterisk 1.8 compatibility
-# 161029-2239 - Changed to database storage for prompt count
-#
-
+#/* ========================================
+# * ███╗   ███╗██████╗ ██╗ █████╗ ██╗
+# * ████╗ ████║██╔══██╗██║██╔══██╗██║
+# * ██╔████╔██║██║  ██║██║███████║██║
+# * ██║╚██╔╝██║██║  ██║██║██╔══██║██║
+# * ██║ ╚═╝ ██║██████╔╝██║██║  ██║███████╗
+# * ╚═╝     ╚═╝╚═════╝ ╚═╝╚═╝  ╚═╝╚══════╝
+# * ========================================
+# * mDial - Omni-Channel Contact Centre Suite.
+# * Initially Written by Martin McCarthy.
+# * Contributions welcome.
+# * Active: 2020 - 2023.
+# *
+# * This software is licensed under AGPLv2.
+# * You can find more information here;
+# * https://www.gnu.org/licenses/agpl-3.0.en.html
+# * A copy of the license is also shipped with this build.
+# *
+# * Important note: this software is provided to you free of charge.
+# * If you paid for this software, you were ripped off.
+# *
+# * This project is a fork of the awesome FOSS project, ViCiDial.
+# * ViCiDial is copyrighted by Matt Florell and the ViCiDial Group
+# * under the AGPLv2 license.
+# *
+# * You can find out more about ViCiDial;
+# * Web: https://www.vicidial.com/
+# * Email: Matt Florell <vicidial@gmail.com>
+# * IRC: Libera.Chat - ##vicidial
+# *
+# * Bug reports, feature requests and patches welcome!
+# * ======================================== */
 $script = 'agi-record_prompts.agi';
 &get_time_now;
 $US='_';
-
-
-# default path to astguiclient configuration file:
 $PATHconf =		'/etc/astguiclient.conf';
-
 open(conf, "$PATHconf") || die "can't open $PATHconf: $!\n";
 @conf = <conf>;
 close(conf);
@@ -80,18 +69,13 @@ foreach(@conf)
 		{$VARDB_port = $line;   $VARDB_port =~ s/.*=//gi;}
 	$i++;
 	}
-
 if (!$VARDB_port) {$VARDB_port='3306';}
 if (!$AGILOGfile) {$AGILOGfile = "$PATHlogs/agiout.$year-$mon-$mday";}
-
 use DBI;
 use Asterisk::AGI;
 $AGI = new Asterisk::AGI;
-
 $dbhA = DBI->connect("DBI:mysql:$VARDB_database:$VARDB_server:$VARDB_port", "$VARDB_user", "$VARDB_pass")
     or die "Couldn't connect to database: " . DBI->errstr;
-
-### Grab Server values from the database
 $stmtA = "SELECT agi_output FROM servers where server_ip = '$VARserver_ip';";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -108,9 +92,6 @@ while ($sthArows > $rec_count)
 	$rec_count++;
 	}
 $sthA->finish();
-
-
-### begin parsing run-time options ###
 if (length($ARGV[0])>1)
 	{
 	$i=0;
@@ -119,14 +100,10 @@ if (length($ARGV[0])>1)
 		$args = "$args $ARGV[$i]";
 		$i++;
 		}
-	
-	### list of command-line array arguments:
 	@ARGV_vars = split(/-----/, $ARGV[0]);
-
 	$format = 	$ARGV_vars[0];
 	$timeout = 	$ARGV_vars[1];
 	}
-
 $|=1;
 while(<STDIN>) 
 	{
@@ -141,17 +118,13 @@ while(<STDIN>)
 		}
 	if (/^agi_uniqueid\:\s+(.*)$/)		{$unique_id = $1;}
 	}
-
 if ($format =~ /WAV/i) {$format = 'wav';}
 else {$format = 'gsm';}
-
 if ($timeout < 1) {$timeout = 360000;} # default is 6 minutes
-
 $unique_id_out = $unique_id;
 @NEW_ID = split(/\./, $unique_id_out);
 $NEW_ID_DIF = '.0';
 $unique_id_out = "$NEW_ID[0]$NEW_ID_DIF$NEW_ID[1]";
-
 $pin='';
 $stop_loop=0;
 $quit_program=0;
@@ -160,8 +133,6 @@ $REC_id = 85100000;
 $REC_next = 0;
 $rec_prompt_count=1;
 $rec_prompt_count_next=0;
-
-### Gather current rec_prompt_count from system_settings ###
 $stmtA= "SELECT rec_prompt_count from system_settings;";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -174,20 +145,17 @@ if ($sthArows > 0)
 	$rec_prompt_count_next = ($rec_prompt_count + 1);
 	}
 $sthA->finish();
-
 if (-e "/prompt_count.txt")
 	{
 	open(test, "/prompt_count.txt") || die "can't open /prompt_count.txt: $!\n";
 	@test = <test>;
 	close(test);
-
 	$test[0] = ($test[0] + 0);
 	if ($rec_prompt_count > $test[0]) 
 		{$test[0] = $rec_prompt_count;}
 	if ($rec_prompt_count < $test[0]) 
 		{
 		$rec_prompt_count = $test[0];
-		### update the rec_prompt_count in system_settings
 		$stmtA = "UPDATE system_settings SET rec_prompt_count='$rec_prompt_count';";
 		$affected_rows = $dbhA->do($stmtA);
 			if ($AGILOG) {$agi_string = "$affected_rows|$stmtA|";   &agi_output;}
@@ -202,49 +170,28 @@ else
 	close(test);
 	$REC_id = ($REC_id + $rec_prompt_count);
 	}
-
 $session_recording = "$REC_id";
 print STDERR "Recording ID: $REC_id\n";
-
 &welcome_1;
-
-
-
 print STDERR "DONE Exiting...\n";
 exit;
-
-
-
-##### SUBROUTINES ########################################################
-##### steps ########################################################
-
 sub welcome_1
 	{
-	##### Play welcome message and capture PIN ########################################################
 	while ( (length($pin) ne 4) && (!$stop_loop) )	
 		{
 		&enter_pin_number;
 		&log_transfer;
-
-
 		$loop_counter++;
 		if ($loop_counter > 3) {$stop_loop++;   $quit_program++;}
 		print STDERR "\nPIN|$pin|\n";
 		}
-
-	##### Check PIN account in database ########################################################
 	$rec_count=0;
 		&lookup_account;
 	if (!$rec_count)
 		{
-		# please enter the pin number followed by the pound key
-
 		$AGI->stream_file('ld_invalid_pin_number');   
-
 		$quit_program++;
 		}
-
-	##### quit program if error ########################################################
 	if ($quit_program)
 		{
 		print STDERR "\nexiting the ping app\n";
@@ -259,34 +206,24 @@ sub welcome_1
 			checkresult($result);
 		exit;
 		}
-
-	### update the rec_prompt_count in system_settings
 	$stmtA = "UPDATE system_settings SET rec_prompt_count='$REC_next';";
 	$affected_rows = $dbhA->do($stmtA);
 		if ($AGILOG) {$agi_string = "$affected_rows|$stmtA|";   &agi_output;}
-
 	open(test, ">/prompt_count.txt") || die "can't open /prompt_count.txt: $!\n";
 	print test "$REC_next";
 	close(test);
-
 	&record_prompts;
 	}
-
-
 sub record_prompts
 	{
 	$AGI->stream_file('beep');
 	print STDERR "\nrecord_prompts AGI welcome\n";
 	$AGI->stream_file('vm-rec-generic');
 	$AGI->stream_file('beep');
-
 	$digit='';
 	$interrupt_digit='';
-
 	$interrupt_digit = $AGI->record_file("$session_recording", "$format", '123456789*#', "$timeout", 1);
-
 	print STDERR "interrupt_digit |$interrupt_digit|\n";
-
 	$digits_being_entered=1;
 	$digit_loop_counter=0;
 	$totalDTMF='';
@@ -304,28 +241,19 @@ sub record_prompts
 		if ($interrupt_digit == 55) {$interrupt_digit=7;}
 		if ($interrupt_digit == 56) {$interrupt_digit=8;}
 		if ($interrupt_digit == 57) {$interrupt_digit=9;}
-		
 		$totalDTMF=$interrupt_digit;
 		$digit_loop_counter++;
 		}
-
 	$AGI->stream_file('beep');
-
 	if (length($totalDTMF) > 0) {print STDERR "digit |$digit|     TotalDTMF |$totalDTMF|\n";}
-
 	&verify_recording;
 	}
-
-
 sub verify_recording
 	{
 	$digit='';
 	$interrupt_digit='';
-
 	$interrupt_digit = $AGI->stream_file('vm-review','123456789');
-
 	print STDERR "interrupt_digit |$interrupt_digit|\n";
-
 	$digits_being_entered=1;
 	$digit_loop_counter=0;
 	$totalDTMF='';
@@ -343,12 +271,9 @@ sub verify_recording
 		if ($interrupt_digit == 55) {$interrupt_digit=7;}
 		if ($interrupt_digit == 56) {$interrupt_digit=8;}
 		if ($interrupt_digit == 57) {$interrupt_digit=9;}
-		
 		$totalDTMF=$interrupt_digit;
 		$digit_loop_counter++;
 		}
-
-
 	while ($digit_loop_counter < 1)
 		{
 		$digit = chr($AGI->wait_for_digit('2000000'));  # wait 0.2 seconds for input or until the pound key is pressed
@@ -356,20 +281,16 @@ sub verify_recording
 			{
 			$totalDTMF = "$totalDTMF$digit";
 			print STDERR "digit |$digit|     TotalDTMF |$totalDTMF|\n";
-	#		$AGI->say_digits("$digit");
 			undef $digit;
 			}
 		else
 			{
 			$digit_loop_counter=1;
 			}
-		
 		$digit_loop_counter++;
 		}
-
 	$totalDTMF =~ s/\D//gi;
 	$pin = $totalDTMF;
-
 	if (length($pin)< 1)
 		{
 		&verify_recording;
@@ -397,19 +318,9 @@ sub verify_recording
 			}
 		}
 	}
-
-
-
-
-
-##### SUBROUTINES PROCESSES ########################################################
-
 sub log_transfer
 	{
-	# nothing
 	}
-
-
 sub lookup_account
 	{
 	if ($pin eq '4321')
@@ -417,8 +328,6 @@ sub lookup_account
 		$rec_count++;
 		} 
 	}
-
-
 sub get_time_now	#get the current date and time and epoch for logging call lengths and datetimes
 	{
 	($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
@@ -429,29 +338,17 @@ sub get_time_now	#get the current date and time and epoch for logging call lengt
 	if ($hour < 10) {$hour = "0$hour";}
 	if ($min < 10) {$min = "0$min";}
 	if ($sec < 10) {$sec = "0$sec";}
-
 	$now_date_epoch = time();
 	$now_date = "$year-$mon-$mday $hour:$min:$sec";
 	}
-
-
-
-
-
 sub enter_pin_number
 	{
-	# please enter the pin number followed by the pound key
-
 	$AGI->stream_file('sip-silence');
 	$AGI->stream_file('sip-silence');
 	$AGI->stream_file('sip-silence');
-
 	$interrupt_digit='';
-
 	$interrupt_digit = $AGI->stream_file('ld_welcome_pin_number','123456789');   
-
 	print STDERR "interrupt_digit |$interrupt_digit|\n";
-
 	$digits_being_entered=1;
 	$totalDTMF='';
 	if ($interrupt_digit > 0)
@@ -466,10 +363,8 @@ sub enter_pin_number
 		if ($interrupt_digit == 55) {$interrupt_digit=7;}
 		if ($interrupt_digit == 56) {$interrupt_digit=8;}
 		if ($interrupt_digit == 57) {$interrupt_digit=9;}
-		
 		$totalDTMF=$interrupt_digit;
 		}
-
 	$digit_loop_counter=0;
 	while ( ($digits_being_entered) && ($digit_loop_counter < 20) )
 		{
@@ -478,23 +373,18 @@ sub enter_pin_number
 			{
 			$totalDTMF = "$totalDTMF$digit";
 			print STDERR "digit |$digit|     TotalDTMF |$totalDTMF|\n";
-	#		$AGI->say_digits("$digit");
 			undef $digit;
 			}
 		else
 			{
 			$digits_being_entered=0;
 			}
-		
 		$digit_loop_counter++;
 		}
-
 	$totalDTMF =~ s/\D//gi;
 	$pin = $totalDTMF;
 	if ($totalDTMF) {print STDERR "digit |$digit|     TotalDTMF |$totalDTMF|\n";}
 	}
-
-
 sub checkresult 
 	{
 	my ($res) = @_;
@@ -521,18 +411,15 @@ sub checkresult
 		$fail++;
 		}
 	}
-
 sub agi_output
 {
 if ($AGILOG >=2)
 	{
-	### open the log file for writing ###
 	open(Lout, ">>$AGILOGfile")
 			|| die "Can't open $AGILOGfile: $!\n";
 	print Lout "$now_date|$script|$agi_string\n";
 	close(Lout);
 	}
-	### send to STDERR writing ###
 if ( ($AGILOG == '1') || ($AGILOG == '3') )
 	{print STDERR "$now_date|$script|$agi_string\n";}
 $agi_string='';

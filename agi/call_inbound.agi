@@ -1,33 +1,37 @@
 #!/usr/bin/perl
-#
-# call_inbound.agi      version 2.6
-# 
-# runs at the beginning and ending of every inbound call received
-# 
-# You need to put lines similar to those below in your extensions.conf file:
-# 
-# parameters for call_inbound.agi (7 fields separated by five dashes "-----"):
-# 1. the extension of the phone to ring as defined in the asterisk.phones table
-# 2. the phone number that was called, for the live_inbound/_log entry
-# 3. a text description of the number that was called in
-# 4-7. optional fields, they are also passed as fields in the GUI to web browser
-#
-# ;inbound calls:
-#exten => _*NXXNXXXXXX*3429,3,AGI(call_inbound.agi,spa2000-----8005553429-----Inbound 800-----x-----y-----z-----w)
-# 
-# 
-#
-# Copyright (C) 2013  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
-#
-# changes:
-# 60731-1435 - changed to use DBI-DBD::mysql
-#            - changed to use /etc/astguiclient.conf for configs
-# 60817-1102 - added output options check from database
-# 130108-1838 - Changes for Asterisk 1.8 compatibility
-#
-
+#/* ========================================
+# * ███╗   ███╗██████╗ ██╗ █████╗ ██╗
+# * ████╗ ████║██╔══██╗██║██╔══██╗██║
+# * ██╔████╔██║██║  ██║██║███████║██║
+# * ██║╚██╔╝██║██║  ██║██║██╔══██║██║
+# * ██║ ╚═╝ ██║██████╔╝██║██║  ██║███████╗
+# * ╚═╝     ╚═╝╚═════╝ ╚═╝╚═╝  ╚═╝╚══════╝
+# * ========================================
+# * mDial - Omni-Channel Contact Centre Suite.
+# * Initially Written by Martin McCarthy.
+# * Contributions welcome.
+# * Active: 2020 - 2023.
+# *
+# * This software is licensed under AGPLv2.
+# * You can find more information here;
+# * https://www.gnu.org/licenses/agpl-3.0.en.html
+# * A copy of the license is also shipped with this build.
+# *
+# * Important note: this software is provided to you free of charge.
+# * If you paid for this software, you were ripped off.
+# *
+# * This project is a fork of the awesome FOSS project, ViCiDial.
+# * ViCiDial is copyrighted by Matt Florell and the ViCiDial Group
+# * under the AGPLv2 license.
+# *
+# * You can find out more about ViCiDial;
+# * Web: https://www.vicidial.com/
+# * Email: Matt Florell <vicidial@gmail.com>
+# * IRC: Libera.Chat - ##vicidial
+# *
+# * Bug reports, feature requests and patches welcome!
+# * ======================================== */
 $script = 'call_inbound.agi';
-
 $US='_';
 ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
 $year = ($year + 1900);
@@ -38,14 +42,10 @@ if ($mday < 10) {$mday = "0$mday";}
 if ($hour < 10) {$hour = "0$hour";}
 if ($min < 10) {$min = "0$min";}
 if ($sec < 10) {$sec = "0$sec";}
-
 $now_date_epoch = time();
 $now_date = "$year-$mon-$mday $hour:$min:$sec";
 $filedate = "$US$Y$mon$mday$hour$min$sec$US";
-
-# default path to astguiclient configuration file:
 $PATHconf =		'/etc/astguiclient.conf';
-
 open(conf, "$PATHconf") || die "can't open $PATHconf: $!\n";
 @conf = <conf>;
 close(conf);
@@ -80,16 +80,11 @@ foreach(@conf)
 		{$VARDB_port = $line;   $VARDB_port =~ s/.*=//gi;}
 	$i++;
 	}
-
 if (!$VARDB_port) {$VARDB_port='3306';}
 if (!$AGILOGfile) {$AGILOGfile = "$PATHlogs/agiout.$year-$mon-$mday";}
-
 use DBI;
-
 $dbhA = DBI->connect("DBI:mysql:$VARDB_database:$VARDB_server:$VARDB_port", "$VARDB_user", "$VARDB_pass")
     or die "Couldn't connect to database: " . DBI->errstr;
-
-### Grab Server values from the database
 $stmtA = "SELECT agi_output FROM servers where server_ip = '$VARserver_ip';";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -106,9 +101,6 @@ while ($sthArows > $rec_count)
 	 $rec_count++;
 	}
 $sthA->finish();
-
-
-### begin parsing run-time options ###
 if (length($ARGV[0])>1)
 {
 	if ($AGILOG) {$agi_string = "Perl Environment Dump:";   &agi_output;}
@@ -119,10 +111,7 @@ if (length($ARGV[0])>1)
 	if ($AGILOG) {$agi_string = "$i|$ARGV[$i]";   &agi_output;}
 	$i++;
 	}
-	
-	### list of command-line array arguments:
 	@ARGV_vars = split(/-----/, $ARGV[0]);
-
 	$phone_ext = $ARGV_vars[0];
 	$inbound_number = $ARGV_vars[1];
 	$comment_a = $ARGV_vars[2];
@@ -130,8 +119,6 @@ if (length($ARGV[0])>1)
 	$comment_c = $ARGV_vars[4];
 	$comment_d = $ARGV_vars[5];
 	$comment_e = $ARGV_vars[6];
-
-
 	if ($args =~ /--help/i)
 	{
 	print "allowed run time options:\n  [-q] = quiet\n  [-t] = test\n  [-debug] = verbose debug messages\n\n";
@@ -162,7 +149,6 @@ if (length($ARGV[0])>1)
 		}
 	}
 }
-
 $|=1;
 while(<STDIN>) {
 	chomp;
@@ -174,7 +160,6 @@ while(<STDIN>) {
 			$AGI{$1} = $2;
 		}
 	}
-
 	if (/^agi_uniqueid\:\s+(.*)$/)		{$unique_id = $1;}
 	if (/^agi_channel\:\s+(.*)$/)		{$channel = $1;}
 	if (/^agi_extension\:\s+(.*)$/)		{$extension = $1;}
@@ -184,8 +169,6 @@ while(<STDIN>) {
         if ( $calleridname =~ /\"/)  {$calleridname =~ s/\"//gi;}
          if ( (length($calleridname)>5) && ( (!$callerid) or ($callerid =~ /unknown|private|00000000/i) or ($callerid =~ /5551212/) ) )
             {$callerid = $calleridname;}
-
-	### allow for ANI being sent with the DNIS "*3125551212*9999*"
 	if ($extension =~ /^\*\d\d\d\d\d\d\d\d\d\d\*/)
 		{
 		$callerid = $extension;
@@ -194,68 +177,40 @@ while(<STDIN>) {
 		$callerid =~ s/^\*//gi;
 		$extension =~ s/^\*\d\d\d\d\d\d\d\d\d\d\*//gi;
 		$extension =~ s/\*$//gi;
-
-		### set the callerid if sent with DNIS
 		print "SET CALLERID $callerid\n";
 		$result = <STDIN>;
 		checkresult($result);
 		}
 }
-
 if ($AGILOG) {$agi_string = "AGI Environment Dump:";   &agi_output;}
-
 foreach $i (sort keys %AGI) 
 {
 	if ($AGILOG) {$agi_string = " -- $i = $AGI{$i}";   &agi_output;}
 }
-
 if ($AGILOG) {$agi_string = "AGI Variables: |$unique_id|$channel|$extension|$type|$callerid|";   &agi_output;}
-
-
         $callerid = "\"$calleridname\" <$callerid>";
-
 if ($extension =~ /h/i) {$stage = 'END';}
 else {$stage = 'START';}
-
-### call start stage
 if ($stage =~ /START/)
 	{
-
 	if ($AGILOG) {$agi_string = "+++++ CALL INBOUND START : |$now_date|";   &agi_output;}
-
-#	if ($channel =~ /^SIP/) {$channel =~ s/-.*//gi;}
-#	if ($channel =~ /^Zap\//) {$channel =~ s/-\d$//gi;}
-
 	$stmtA = "INSERT INTO live_inbound (uniqueid,channel,server_ip,caller_id,extension,phone_ext,start_time,inbound_number,comment_a,comment_b,comment_c,comment_d,comment_e) values('$unique_id','$channel','$VARserver_ip','$callerid','$extension','$phone_ext','$now_date','$inbound_number','$comment_a','$comment_b','$comment_c','$comment_d','$comment_e')";
 		if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 	$affected_rows = $dbhA->do($stmtA);
-
 	$stmtA = "INSERT INTO live_inbound_log (uniqueid,channel,server_ip,caller_id,extension,phone_ext,start_time,inbound_number,comment_a,comment_b,comment_c,comment_d,comment_e) values('$unique_id','$channel','$VARserver_ip','$callerid','$extension','$phone_ext','$now_date','$inbound_number','$comment_a','$comment_b','$comment_c','$comment_d','$comment_e')";
 		if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 	$affected_rows = $dbhA->do($stmtA);
-
 	$dbhA->disconnect();
 	}
-
-
-### call end stage
 else		 
 	{
 	if ($AGILOG) {$agi_string = "CALL INBOUND HUNG UP; deleting live_inbound record for $unique_id";   &agi_output;}
-
 	$stmtA = "DELETE from live_inbound where uniqueid='$unique_id' and server_ip='$VARserver_ip'";
 	$affected_rows = $dbhA->do($stmtA);
-
 	$dbhA->disconnect();
-
 	if ($AGILOG) {$agi_string = "+++++ CALL INBOUND HUNGUP: |$unique_id|$affected_rows|";   &agi_output;}
 	}
-
 exit;
-
-
-
-
 sub checkresult {
 	my ($res) = @_;
 	my $retval;
@@ -275,19 +230,15 @@ sub checkresult {
 		$fail++;
 	}
 }
-
-
 sub agi_output
 {
 if ($AGILOG >=2)
 	{
-	### open the log file for writing ###
 	open(Lout, ">>$AGILOGfile")
 			|| die "Can't open $AGILOGfile: $!\n";
 	print Lout "$now_date|$script|$agi_string\n";
 	close(Lout);
 	}
-	### send to STDERR writing ###
 if ( ($AGILOG == '1') || ($AGILOG == '3') )
 	{print STDERR "$now_date|$script|$agi_string\n";}
 $agi_string='';

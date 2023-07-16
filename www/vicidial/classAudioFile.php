@@ -1,5 +1,37 @@
+#!/usr/bin/perl
+#/* ========================================
+# * ███╗   ███╗██████╗ ██╗ █████╗ ██╗
+# * ████╗ ████║██╔══██╗██║██╔══██╗██║
+# * ██╔████╔██║██║  ██║██║███████║██║
+# * ██║╚██╔╝██║██║  ██║██║██╔══██║██║
+# * ██║ ╚═╝ ██║██████╔╝██║██║  ██║███████╗
+# * ╚═╝     ╚═╝╚═════╝ ╚═╝╚═╝  ╚═╝╚══════╝
+# * ========================================
+# * mDial - Omni-Channel Contact Centre Suite.
+# * Initially Written by Martin McCarthy.
+# * Contributions welcome.
+# * Active: 2020 - 2023.
+# *
+# * This software is licensed under AGPLv2.
+# * You can find more information here;
+# * https://www.gnu.org/licenses/agpl-3.0.en.html
+# * A copy of the license is also shipped with this build.
+# *
+# * Important note: this software is provided to you free of charge.
+# * If you paid for this software, you were ripped off.
+# *
+# * This project is a fork of the awesome FOSS project, ViCiDial.
+# * ViCiDial is copyrighted by Matt Florell and the ViCiDial Group
+# * under the AGPLv2 license.
+# *
+# * You can find out more about ViCiDial;
+# * Web: https://www.vicidial.com/
+# * Email: Matt Florell <vicidial@gmail.com>
+# * IRC: Libera.Chat - ##vicidial
+# *
+# * Bug reports, feature requests and patches welcome!
+# * ======================================== */
  <?php
-
 // ************************************************************************
 // Class AudioFile
 // Version: 0.5.1
@@ -28,27 +60,22 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 //
 // ************************************************************************
-
 /* changes by Chris Snyder <csnyder@chxo.com>
     2003-08-01 -- rough draft
-   
     Expanded ID3V2 support:
     - function getId3v2 ($fp) -- reads all id3v2 data into $this->id3v2 and positions filepointer at end of header
     - function get32bitSynchsafe($fp) -- reads next four bytes from $fp as a Synchsafe integer
     - added id3v2 to printSampleInfo
-   
     Added Ogg Vorbis support:
     - function ogginfo($fp) -- similar to mp3info()
     - function findVorbis($fp) -- seeks to start of Vorbis headers in Ogg Bitstream
     - function findOggPage($fp) -- seeks to start of next logical page of Ogg Bitstream
     - added ogginfo to printSampleInfo
-
     Miscellaneous Bugfixes:
     - line 143: added rtrim to $info["mpeg_id3v1_tag"] values to suppress padding bytes
     - line 283: if duration is unknown because mp3 is vbr, check if there's an id3v2 TLEN frame
     - line 418: revised visualization data-collection loop to only read bytes needed for visual_data -- script was timing out on wavs larger than 10MB
 */
-
 class AudioFile
 {
     var $wave_id;
@@ -61,7 +88,6 @@ class AudioFile
     var $wave_size;
     var $wave_filename;
     var $wave_length;
-   
     var $id3_tag;
     var $id3_title;
     var $id3_artist;
@@ -69,9 +95,7 @@ class AudioFile
     var $id3_year;
     var $id3_comment;
     var $id3_genre;
-
     var $id3v2info;
-   
     var $visual_graph_color; // HTML-Style: "#rrggbb"
     var $visual_background_color;
     var $visual_grid_color;
@@ -82,12 +106,10 @@ class AudioFile
     var $visual_height; // height in pixel
     var $visual_graph_mode; // 0|1
     var $visual_fileformat; // "jpeg","png", everything & else default = "png"
-
     // ************************************************************************
     // mp3info extracts the attributes of mp3-files
     // (code contributed by reto gassmann (gassi@gassi.cx)
     // ************************************************************************
-   
     function mp3info()
     {
         $byte = array();
@@ -119,9 +141,7 @@ class AudioFile
         $copyright = array("Audio is not copyrighted","Audio is copyrighted ");
         $original = array("Copy of original media","Original media");
         $emphasis = array("none","50/15 ms",false,"CCIT J.17 ");
-   
     //id3-stuff
-   
     $genre = array
                     ("Blues","Classic Rock","Country","Dance","Disco","Funk","Grunge","Hip-Hop","Jazz","Metal","New Age","Oldies","Other","Pop","R&B",
                     "Rap","Reggae","Rock","Techno","Industrial","Alternative","Ska","Death Metal","Pranks","Soundtrack","Euro-Techno","Ambient","Trip-Hop",
@@ -135,7 +155,6 @@ class AudioFile
                     "Tango","Samba","Folklore","Ballad","Power Ballad","Rhytmic Soul","Freestyle","Duet","Punk Rock","Drum Solo","Acapella","Euro-House",
                     "Dance Hall","Goa","Drum & Bass","Club-House","Hardcore","Terror","Indie","BritPop","Negerpunk","Polsk Punk","Beat","Christian Gangsta Rap",
                     "Heavy Metal","Black Metal","Crossover","Contemporary Christian","Christian Rock","Merengue","Salsa","Trash Metal","Anime","Jpop","Synthpop");
-   
     //id3v2 check----------------------------
         $footer = 0;
         $header = 0;
@@ -146,15 +165,12 @@ class AudioFile
         {
             // id3v2 tag is present
             $this->getId3v2($fp);
-           
             // getId3v2 will position pointer at end of header
             $header= ftell($fp);
-
         } else {
             fseek ($fp,0);
             $this->id3v2 = false;
         }
-
         for ($x=0;$x<4;$x++)
         {
             $byte[$x] = ord(fread($fp,1));
@@ -162,9 +178,7 @@ class AudioFile
         fseek ($fp, -128 ,SEEK_END);
         $TAG = fread($fp,128);
         fclose($fp);
-
     //id tag?-------------------------------
-
         if(substr($TAG,0,3) == "TAG")
         {
             $v1tag = 128;
@@ -182,80 +196,56 @@ class AudioFile
         } else {
             $info["mpeg_id3v1_tag"] = false;
         }
-   
     //version-------------------------------
-   
         $tmp = $byte[1] & 24;
         $tmp = $tmp >> 3;
         $info_i["mpeg_version"] = $tmp;
         $byte_v = $version_bitrate[$tmp];
         $byte_vs = $version_sampling[$tmp];
         $info["mpeg_version"] = $version[$tmp];
-   
     //layer---------------------------------
-   
         $tmp = $byte[1] & 6;
         $tmp = $tmp >> 1;
         $info_i["mpeg_layer"] = $tmp;
         $byte_l = $layer_bitrate[$tmp];
         $byte_len = $layer_lengt[$tmp];
         $info["mpeg_layer"] = $layer[$tmp];
-   
     //bitrate-------------------------------
-   
         $tmp = $byte[2] & 240;
         $tmp = $tmp >> 4;
         $info_i["mpeg_bitrate"] = $tmp;
         $info["mpeg_bitrate"] = $byterate[$byte_v][$byte_l][$tmp];
-   
     //samplingrate--------------------------
-   
         $tmp = $byte[2] & 12;
         $tmp = $tmp >> 2;
         $info["mpeg_sampling_rate"] = $samplingrate[$byte_vs][$tmp];
-   
     //protection----------------------------
-   
         $tmp = $byte[1] & 1;
         $info["mpeg_protection"] = $protection[$tmp];
-       
     //paddingbit----------------------------
-   
         $tmp = $byte[2] & 2;
         $tmp = $tmp >> 1;
         $byte_pad = $tmp;
         $info["mpeg_padding_bit"] = $tmp;
-   
     //privatebit----------------------------
-   
         $tmp = $byte[2] & 1;
         $byte_prv = $tmp;
-   
     //channel_mode--------------------------
-   
         $tmp = $byte[3] & 192;
         $tmp = $tmp >> 6;
         $info["mpeg_channel_mode"] = $cannel_mode[$tmp];
-   
     //copyright-----------------------------
-   
         $tmp = $byte[3] & 8;
         $tmp = $tmp >> 3;
         $info["mpeg_copyright"] = $copyright[$tmp];
-   
     //original------------------------------
-   
         $tmp = $byte[3] & 4;
         $tmp = $tmp >> 2;
         $info["mpeg_original"] = $original[$tmp];
-       
     //emphasis------------------------------
-   
         $tmp = $byte[3] & 3;
         $info["mpeg_emphasis"] = $emphasis[$tmp];
-   
     //framelenght---------------------------
-   
         if($info["mpeg_bitrate"] == 'free' or $info["mpeg_bitrate"] == 'bad' or
           !$info["mpeg_bitrate"] or !$info["mpeg_sampling_rate"])
         {
@@ -270,12 +260,9 @@ class AudioFile
                 $info["mpeg_framelength"] = 144 * $rate_tmp / $info["mpeg_sampling_rate"] + $byte_pad;
             }
         }
-       
     //duration------------------------------
-   
         $tmp = filesize($this->wave_filename);
         $tmp = $tmp - $header - 4 - $v1tag;
-       
         $tmp2 = 0;
         $info["mpeg_frames"]="";
         $info["mpeg_playtime"]="";
@@ -295,9 +282,7 @@ class AudioFile
             }
             $info["mpeg_playtime"] = $tmp2;
         }
-   
         // transfer the extracted data into classAudioFile-structure
-
         $this->wave_id = "MPEG";
         $this->wave_type = $info["mpeg_version"];
         $this->wave_compression = $info["mpeg_layer"];
@@ -307,15 +292,12 @@ class AudioFile
         $this->wave_bits = "n/a";
         $this->wave_size = filesize($this->wave_filename);
         $this->wave_length = $info["mpeg_playtime"];
-       
         // pick up length from id3v2 tag if necessary and available
         if ($this->wave_length<1 && is_array($this->id3v2->TLEN) )
         {
             $this->wave_length= ( $this->id3v2->TLEN['value'] / 1000 );
         }
-       
         $this->id3_tag = $info["mpeg_id3v1_tag"];
-       
         if ($this->id3_tag)
         {
             $this->id3_title = $info["mpeg_id3v1_tag"]["title"];
@@ -326,13 +308,11 @@ class AudioFile
             $this->id3_genre = $info["mpeg_id3v1_tag"]["genre"];
         }
     }
-
     // ************************************************************************
     // longCalc calculates the decimal value of 4 bytes
     // mode = 0 ... b1 is the byte with least value
     // mode = 1 ... b1 is the byte with most value
     // ************************************************************************
-
     function longCalc ($b1,$b2,$b3,$b4,$mode)
     {
         $b1 = hexdec(bin2hex($b1));
@@ -346,13 +326,11 @@ class AudioFile
             return ($b4 + ($b3*256) + ($b2 * 65536) + ($b1 * 16777216));
         }
     }
-
     // ************************************************************************
     // shortCalc calculates the decimal value of 2 bytes
     // mode = 0 ... b1 is the byte with least value
     // mode = 1 ... b1 is the byte with most value
     // ************************************************************************
-
     function shortCalc ($b1,$b2,$mode)
     {
         $b1 = hexdec(bin2hex($b1));
@@ -364,12 +342,10 @@ class AudioFile
             return ($b2 + ($b1*256));
         }
     }
-   
     // ************************************************************************
     // getCompression delivers a string which identifies the compression-mode
     // of the AudioFile-Object
     // ************************************************************************
-   
     function getCompression ($id)
     {
         if ($this->wave_id!= "MPEG" && $this->wave_id!="OGG")
@@ -394,14 +370,12 @@ class AudioFile
             return ($id);
         }
     }
-   
     // ************************************************************************
     // getVisualization creates a graphical visualization of the audio-sample
     // (works ONLY * for uncompressed waves!
     // * files with 1 or 2 channels
     // * 8/16/24/32 bit sample-resolution )
     // ************************************************************************
-   
     function getVisualization ($output)
     {
         $width=$this->visual_width;
@@ -410,16 +384,12 @@ class AudioFile
         if ($this->wave_filename<>"" && $this->wave_id == "RIFF" && $this->wave_type == "WAVE" && ($this->wave_channels>=1 && $this->wave_channels<=2) && $this->wave_bits%8==0)
         {
             $file = fopen ($this->wave_filename,"r");
-           
             // read the first 12 bytes (RIFF- & WAVE-chunk)
-           
             for ($i=0;$i<12;$i++)
             {
                 $null = fgetc ($file);
             }
-           
             // Read the next chunk-id, supposed to be "fmt "
-           
             $chunk_id_3 = fgetc($file) . fgetc($file) . fgetc($file) . fgetc($file);
             if ($chunk_id_3 == "fmt ")
             {
@@ -428,7 +398,6 @@ class AudioFile
                 {
                     $null = fgetc($file);
                 }
-               
                 // Read the next chunk-id, supposed to be "data"
                 $chunk_id_4 = "";
                 while ($chunk_id_4 <> "data" && !feof($file))
@@ -453,7 +422,6 @@ class AudioFile
                     $visual_frames = ceil($frames / $width);
                     $frame_index = 1;
                     $data_index = 1;
-
                     // revised code -- computing bytes per pixel allows quick processing of large (>10MB) wavs by fseek()ing past unused data
                     $bytes_per_pixel= floor($chunk_size_4/$width);
                     $currentindex= 0;
@@ -508,16 +476,12 @@ class AudioFile
                             ImageLine ($im,$i*50,0,$i*50,(256*$this->wave_channels),$cBlue);
                         }
                     }
-                   
                     // this for-loop draws a graph for every channel
-                   
                     for ($j=0;$j<sizeof($visualData);$j++)
                     {
                         $last_x = 1;
                         $last_y = $height_channel / 2;
-
                         // this for-loop draws the graphs itself
-
                         for ($i=1;$i<sizeof($visualData[$j]);$i++)
                         {
                             $faktor = 128 / ($height_channel / 2);
@@ -532,7 +496,6 @@ class AudioFile
                             $last_y = $val;
                         }
                     }
-                   
                     // change this to generate JPG or direct output to browser
                     if (strtolower($this->visual_fileformat) == "jpeg")
                     {
@@ -545,18 +508,14 @@ class AudioFile
             fclose ($file);
         } else {
             // AudioSample - AudioFile-Object not initialized!
-
         }
     }
-   
     // ************************************************************************
     // getSampleInfo extracts the attributes of the AudioFile-Object
     // ************************************************************************
-
     function getSampleInfo ()
     {
         $valid = true;
-
         if (strstr(strtoupper($this->wave_filename),"MP3"))
         {
             $this->mp3info ();
@@ -564,7 +523,6 @@ class AudioFile
         {
             $this->ogginfo ();
         } else {
-       
             $this->wave_size = filesize ($this->wave_filename);
             if ($this->wave_size > 16)
             {
@@ -577,7 +535,6 @@ class AudioFile
                 if (substr($chunk_id,0,2)=="PK")
                 {
                     // it's a ZIP-file
-                   
                     $this->wave_id = "ZIP";
                     $this->wave_type = "ZIP";
                     $this->valid = true;
@@ -585,7 +542,6 @@ class AudioFile
                     if ($this->wave_id == "RIFF" && $this->wave_type == "WAVE")
                     {
                         // it's a Wave-File
-                       
                         $chunk_id = fgetc($file) . fgetc($file) . fgetc($file) . fgetc($file);
                         $chunk_size = $this->longCalc (fgetc($file) , fgetc($file) , fgetc($file) , fgetc($file),0);
                         if ($chunk_id == "fmt ")
@@ -630,7 +586,6 @@ class AudioFile
                                 {
                                     $this->wave_length = (($chunk_size / $this->wave_channels) / ($this->wave_bits/8)) / $this->wave_framerate;
                                 }
-               
                             }
                         } else {
                             $valid = false;
@@ -639,7 +594,6 @@ class AudioFile
                         if ($this->wave_id == "FORM" && $this->wave_type == "AIFF")
                         {
                             // we have a AIFF file here
-                           
                             $chunk_id = fgetc($file) . fgetc($file) . fgetc($file) . fgetc($file);
                             $chunk_size = $this->longCalc (fgetc($file) , fgetc($file) , fgetc($file) , fgetc($file),0);
                             if ($chunk_id == "COMM")
@@ -650,14 +604,12 @@ class AudioFile
                                 $this->wave_bits = $this->shortCalc (fgetc ($file), fgetc ($file),1);
                                 $null = fgetc ($file) . fgetc ($file);
                                 $this->wave_framerate = $this->shortCalc (fgetc ($file), fgetc ($file),1);
-                               
                                 $read = 16;
                             } else {
                                 $valid = false;
                             }
                         } else {
                             // probably crap
-                           
                             $valid = false;
                         }
                     }
@@ -669,11 +621,9 @@ class AudioFile
             return ($valid);
         }
     }
-
     // ************************************************************************
     // printSampleInfo prints the attributes of the AudioFile-Object
     // ************************************************************************
-   
     function printSampleInfo()
     {
         print "<table width=100% border=1>";
@@ -687,7 +637,6 @@ class AudioFile
         print "<tr><td align=right>byterate</td> <td>&nbsp;$this->wave_byterate</td></tr>";
         print "<tr><td align=right>bits</td> <td>&nbsp;$this->wave_bits</td></tr>";
         print "<tr><td align=right>length</td> <td>&nbsp;".number_format ($this->wave_length,"2")." sec.<br>&nbsp;".date("i:s", mktime(0,0,round($this->wave_length)))."</td></tr>";
-
         // ID3V1
         if ($this->id3_tag)
         {
@@ -706,7 +655,6 @@ class AudioFile
         {
             print "<tr><td align=right>id3v1-tags</td><td>Not found</td></tr>";
         }
-
         // ID3V2
         if ($this->id3v2)
         {
@@ -729,7 +677,6 @@ class AudioFile
         {
             print "<tr><td align=right>id3v2 tags</td><td>Not found</td></tr>";
         }
-       
         // VORBIS
         if ($this->wave_id=="OGG")
         {
@@ -748,14 +695,11 @@ class AudioFile
         {
             print "<tr><td align=right>ogg vorbis info</td><td>Not found</td></tr>";
         }
-
         print "</table>";
     }
-
     // ************************************************************************
     // loadFile initializes the AudioFile-Object
     // ************************************************************************
-       
     function loadFile ($loadFilename)
     {
         $this->wave_filename = $loadFilename;
@@ -771,8 +715,6 @@ class AudioFile
         $this->visual_graph_mode = 1;
         $this->visual_fileformat = "png";
     }
-   
-   
     // ************************************************************************
     // getId3v2 loads id3v2 frames into $this->id3v2-><frameid>
     // - any frame flags are saved in an array called <frameid>_flags
@@ -782,17 +724,14 @@ class AudioFile
     // For common frame id codes see http://www.id3.org/id3v2.4.0-frames.txt
     // For more info on format see http://www.id3.org/id3v2.4.0-structure.txt
     // ************************************************************************
-
     function getId3v2 (&$fp)
     {
         // ID3v2 version 4 support -- see http://www.id3.org/id3v2.4.0-structure.txt
         $footer = 0;
-
         // id3v2 version
         $tmp = ord(fread($fp,1));
         $tmp2 = ord(fread($fp,1));
         $this->id3v2->version = "ID3v2.".$tmp.".".$tmp2;
-
         // flags
         $tmp = ord(fread($fp,1));
         if($tmp & 128) $this->id3v2->unsynch = "1";
@@ -803,20 +742,16 @@ class AudioFile
             $this->id3v2->footer = "1";
             $footer = 10;
         }
-       
         // tag size
         $tagsize = $this->get32bitSynchsafe($fp) + $footer;
-       
         // extended header
         if ($this->id3v2->extended==1)
         {
             // get extended header size
             $extended_header_size = $this->get32bitSynchsafe($fp) ;
-           
             // load (but ignore) extended header
             $this->id3v2->extended_header= fread($fp, $extended_header_size);
         }
-       
         // get the tag contents
         while ( ftell($fp) < ($tagsize+10) )
         {
@@ -826,34 +761,27 @@ class AudioFile
             $framesize= $this->get32bitSynchsafe($fp);
             $frameflags0= ord(fread($fp,1));
             $frameflags1= ord(fread($fp,1));
-
             // frame status flags
             $frameidflags= $frameid."_flags";
             if ($frameflags0 & 128) $this->id3v2->{$frameidflags}['tag_alter_discard'] = 1;
             if ($frameflags0 & 64) $this->id3v2->{$frameidflags}['file_alter_discard'] = 1;
             if ($frameflags0 & 32) $this->id3v2->{$frameidflags}['readonly'] = 1;
-
             // frame format flags
             if ($frameflags1 & 128) $this->id3v2->{$frameidflags}['group'] = 1;
             if ($frameflags1 & 16) $this->id3v2->{$frameidflags}['compressed'] = 1;
             if ($frameflags1 & 8) $this->id3v2->{$frameidflags}['encrypted'] = 1;
             if ($frameflags1 & 4) $this->id3v2->{$frameidflags}['unsyrchronised'] = 1;
             if ($frameflags1 & 2) $this->id3v2->{$frameidflags}['data_length_indicator'] = 1;
-
             // get frame contents
             $this->id3v2->{$frameid} = trim(fread($fp, $framesize));
         }
-
         // position $fp at end of id3v2header
         fseek($fp, ($tagsize + 10), SEEK_SET);
         return 1;
     }
-
-   
     // ************************************************************************
     // get32bitSynchsafe returns a converted integer from an ID3v2 tag
     // ************************************************************************
-
     function get32bitSynchsafe(&$fp)
     {
         /* Synchsafe integers are
@@ -868,8 +796,6 @@ class AudioFile
         $converted = ($tmp * 2097152) + ($tmp2 * 16384) + ($tmp3 * 128) + $tmp4;
         return $converted;
     }
-   
-
     // ************************************************************************
     // ogginfo gets format, duration, and metadata from Ogg Vorbis files
     // - metadata (comment header) information is saved in
@@ -882,11 +808,9 @@ class AudioFile
     // For more info on Ogg bitstream containers, see http://www.xiph.org/ogg/vorbis/doc/framing.html
     // For more info on Vorbis, see http://www.xiph.org/ogg/vorbis/doc/Vorbis_I_spec.html
     // ************************************************************************
-   
     function ogginfo ()
     {
         $fp = fopen($this->wave_filename,"r");
-       
         // Ogg stream?
         $capture_pattern= fread($fp,4);
         if ($capture_pattern!="OggS")
@@ -896,12 +820,10 @@ class AudioFile
             return 0;
         }
         rewind($fp);
-       
         // find the next page, then
         $this->findVorbis($fp);
         $packet_type= ord(fread($fp,1));
         $preamble= fread($fp,6);
-
         if ($packet_type==1)
         {
             /* IDENTIFICATION HEADER
@@ -918,12 +840,10 @@ class AudioFile
             $identification= unpack('L1vorbis_version/C1audio_channels/L1audio_sample_rate/L1bitrate_maximum/L1bitrate_nominal/L1bitrate_minimum', fread($fp,21));
             //print "<pre>".print_r($identification,1)."</pre>";
         }
-       
         // find the next header, then
         $this->findVorbis($fp);
         $packet_type= ord(fread($fp,1));
         $preamble= fread($fp,6);
-
         if ($packet_type==3)
         {
             /* COMMENT HEADER
@@ -935,7 +855,6 @@ class AudioFile
                 6) this iteration's user comment = read a UTF-8 vector as [length] octets
                 }
                 7) [framing_bit] = read a single bit as boolean
-               
                 Note that there may be more than one instance of any field
             */
             $vendor= unpack('L1vendor_length', fread($fp,4));
@@ -946,10 +865,8 @@ class AudioFile
                 $length= unpack('L1length', fread($fp,4));
                 $temp= fread($fp, $length['length']);
                 $array= explode("=",$temp,2);
-               
                 // field names are case-insensitive
                 $array[0]= strtoupper( $array[0] );
-
                  /*
                  EXPLANATION OF THE FOLLOWING LOGIC
                  If there is only one artist field, it will be at $this->vorbis_comment->ARTIST, handled by the final else below
@@ -957,7 +874,6 @@ class AudioFile
                      This is done by the if statement.
                  Any additional artist fields will be pushed onto the end of the $this->vorbis_comment->ARTIST array by the elseif
                  */
-                
                 if ($this->vorbis_comment->{$array[0]}!="" && !is_array( $this->vorbis_comment->{$array[0]}) )
                 {
                     // second instance, convert to array
@@ -977,18 +893,15 @@ class AudioFile
             }
             //print "<pre>".print_r($this->vorbis_comment,1)."</pre>";
         }
-       
         // find length (number of samples, ay?) -- last page will have total samples info, see below
         $filesize= filesize($this->wave_filename);
         if ($filesize > 12288) $nearend= -12288;
         else $nearend= (0 - $filesize);
         fseek($fp, $nearend, SEEK_END);
-
         // look for page of type 4 or higher (0x04 == end-of-stream)
         while($type < 4 && !feof($fp)) {
             $type= $this->findOggPage($fp);
             }
-
         // found the end of stream page...
         // the next 8 bytes are the absolute granule position:
         /*
@@ -1016,9 +929,7 @@ class AudioFile
         $sec= $seconds - ($min * 60);
         $duration= "$min:$sec";
         //print "$samples samples / $seconds seconds ($duration)";
-
         fclose($fp);
-       
         // transfer the extracted data into classAudioFile-structure
         $this->wave_id = "OGG";
         $this->wave_type = "Ogg Bitstream";
@@ -1031,11 +942,9 @@ class AudioFile
         $this->wave_length = $seconds;
         return 1;
     }
-
     // ************************************************************************
     // findVorbis finds the start of the next Vorbis header in an Ogg bitstream
     // ************************************************************************
-
     function findVorbis(&$fp)
     {
         // find the next header, then
@@ -1047,15 +956,12 @@ class AudioFile
             //print ". ";
         }
         //print "Found header ".(ftell($fp)-7)."<br>";
-
         // back up the pointer by 7 to start of header
         fseek($fp, -7, SEEK_CUR);
     }
-   
     // ************************************************************************
     // findOggPage finds the next logical page in an Ogg bitstream, and returns the page type flag
     // ************************************************************************
-
     function findOggPage(&$fp)
     {
         // find the next header, then
@@ -1071,8 +977,5 @@ class AudioFile
         //print "Found page ".sprintf('%08b',$type)." ".(ftell($fp)-6)."<br>";
         return $type;
     }
-
 }
-
 ?>
-

@@ -1,30 +1,37 @@
 #!/usr/bin/perl
-#
-# cm_fpg.agi version 2.14
-# 
-# Designed to work with Cell Menus to allow the entry of a CID number into a 
-# Filter Phone Group. It is designed to work easily in the Call Menu framework, 
-# it plays no audio itself, and it has more options.
-#
-# Flag Options:
-# 1- Filter Phone Group ID to insert into
-# 2- call menu option to send the call to after executing (Default=B)
-# 3- (optional) number to enter instead of CIDnumber
-#
-# example of what to put in the AGI entry for a Call Menu AGI route(CID method):
-# cm_fpg.agi,TEST_FPG---B
-#
-# example of what to put in the Custom Dialplan Entry of a Call Menu (caller entry of number method):
-# exten => _XXXXXXXXXX,1,cm_fpg.agi,99test---C---${EXTEN}
-#
-# Copyright (C) 2017  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
-#
-# changes:
-# 170428-0921 - First draft
-#
-
+#/* ========================================
+# * ███╗   ███╗██████╗ ██╗ █████╗ ██╗
+# * ████╗ ████║██╔══██╗██║██╔══██╗██║
+# * ██╔████╔██║██║  ██║██║███████║██║
+# * ██║╚██╔╝██║██║  ██║██║██╔══██║██║
+# * ██║ ╚═╝ ██║██████╔╝██║██║  ██║███████╗
+# * ╚═╝     ╚═╝╚═════╝ ╚═╝╚═╝  ╚═╝╚══════╝
+# * ========================================
+# * mDial - Omni-Channel Contact Centre Suite.
+# * Initially Written by Martin McCarthy.
+# * Contributions welcome.
+# * Active: 2020 - 2023.
+# *
+# * This software is licensed under AGPLv2.
+# * You can find more information here;
+# * https://www.gnu.org/licenses/agpl-3.0.en.html
+# * A copy of the license is also shipped with this build.
+# *
+# * Important note: this software is provided to you free of charge.
+# * If you paid for this software, you were ripped off.
+# *
+# * This project is a fork of the awesome FOSS project, ViCiDial.
+# * ViCiDial is copyrighted by Matt Florell and the ViCiDial Group
+# * under the AGPLv2 license.
+# *
+# * You can find out more about ViCiDial;
+# * Web: https://www.vicidial.com/
+# * Email: Matt Florell <vicidial@gmail.com>
+# * IRC: Libera.Chat - ##vicidial
+# *
+# * Bug reports, feature requests and patches welcome!
+# * ======================================== */
 $script = 'cm_fpg.agi';
-
 ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
 $year = ($year + 1900);
 $mon++;
@@ -33,7 +40,6 @@ if ($mday < 10) {$mday = "0$mday";}
 if ($hour < 10) {$hour = "0$hour";}
 if ($min < 10) {$min = "0$min";}
 if ($sec < 10) {$sec = "0$sec";}
-
 $now_date_epoch = time();
 $now_date = "$year-$mon-$mday $hour:$min:$sec";
 $start_time=$now_date;
@@ -41,10 +47,7 @@ $CIDdate = "$mon$mday$hour$min$sec";
 $tsSQLdate = "$year$mon$mday$hour$min$sec";
 $SQLdate = "$year-$mon-$mday $hour:$min:$sec";
 $SQLdateBEGIN = $SQLdate;
-
-# default path to astguiclient configuration file:
 $PATHconf =		'/etc/astguiclient.conf';
-
 open(conf, "$PATHconf") || die "can't open $PATHconf: $!\n";
 @conf = <conf>;
 close(conf);
@@ -79,19 +82,14 @@ foreach(@conf)
 		{$VARDB_port = $line;   $VARDB_port =~ s/.*=//gi;}
 	$i++;
 	}
-
 if (!$VARDB_port) {$VARDB_port='3306';}
 if (!$AGILOGfile) {$AGILOGfile = "$PATHlogs/agiout.$year-$mon-$mday";}
 if (!$FPGLOGfile) {$FPGLOGfile = "$PATHlogs/fpgout.$year-$mon-$mday";}
-
 use DBI;
 use Asterisk::AGI;
 $AGI = new Asterisk::AGI;
-
 $dbhA = DBI->connect("DBI:mysql:$VARDB_database:$VARDB_server:$VARDB_port", "$VARDB_user", "$VARDB_pass")
     or die "Couldn't connect to database: " . DBI->errstr;
-
-### Grab Server values from the database
 $stmtA = "SELECT agi_output FROM servers where server_ip = '$VARserver_ip';";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -108,9 +106,6 @@ while ($sthArows > $rec_count)
 	$rec_count++;
 	}
 $sthA->finish();
-
-
-### begin parsing run-time options ###
 if (length($ARGV[0])>1)
 	{
 	if ($AGILOG) {$agi_string = "Perl Environment Dump:";   &agi_output;}
@@ -121,18 +116,13 @@ if (length($ARGV[0])>1)
 		if ($AGILOG) {$agi_string = "$i|$ARGV[$i]";   &agi_output;}
 		$i++;
 		}
-	
-	### list of command-line array arguments:
 	@ARGV_vars = split(/---/, $ARGV[0]);
-
 	$fpg_id = 			$ARGV_vars[0];
 	$next_step = 		$ARGV_vars[1];
 	$cid_override = 	$ARGV_vars[2];
 	}
-
 if (length($next_step) < 1)
 	{$next_step = 'B';}
-
 $|=1;
 while(<STDIN>) 
 	{
@@ -145,7 +135,6 @@ while(<STDIN>)
 			$AGI{$1} = $2;
 			}
 		}
-
 	if (/^agi_context\:\s+(.*)$/)		{$context = $1;}
 	if (/^agi_uniqueid\:\s+(.*)$/)		{$unique_id = $1; $uniqueid = $unique_id;}
 	if (/^agi_channel\:\s+(.*)$/)		{$channel = $1;}
@@ -156,19 +145,16 @@ while(<STDIN>)
 	$callerid =~ s/\'|\\\\|\\\|\\|\\;|\\\;|\;|;//gi;
 	$calleridname =~ s/\'|\\\\|\\\|\\|\\;|\\\;|\;|;//gi;
 	$extension =~ s/\'|\"|\\\\|\\\|\\|\\;|\\\;|\;|;//gi;
-
 	if ( ($callerid =~ /\".*\"/) && ( (!$calleridname) or ($calleridname =~ /unknown/) ) )
 		{
 		$calleridname = $callerid;
 		$calleridname =~ s/\<\d\d\d\d\d\d\d\d\d\d\>//gi;
 		$calleridname =~ s/\"|\" //gi;
 		}
-
 	$callerid =~ s/\D//gi;
 	$calleridname =~ s/unknown//gi;
 	if ( (!$callerid) or ($callerid =~ /unknown/) )
 		{$callerid = $calleridname;}
-
 	if (length($callerid)>0) {$phone_number = $callerid;}
 	   else {$phone_number = '';}
 	if (length($calleridname)>0) {$VLcomments = $calleridname;}
@@ -176,20 +162,14 @@ while(<STDIN>)
 	if (length($callerid)<10) {$callerid = $parked_by;}
 	if (length($pin)>0) {$callerid = $pin;}
 	}
-
 foreach $i (sort keys %AGI) 
 	{
 	if ($AGILOG) {$agi_string = " -- $i = $AGI{$i}";   &agi_output;}
 	}
-
 if ($AGILOG) {$agi_string = "AGI Variables: |$unique_id|$channel|$extension|$type|$callerid|";   &agi_output;}
-
 if (length($cid_override) > 4) 
 	{$phone_number = $cid_override;}
 $phone_number =~ s/\'|\"|\\\\|\\\|\\|\\;|\\\;|\;|;//gi;
-
-
-# if campaign is used and selected for search, find the lists in the campaign
 $stmtA = "SELECT filter_phone_group_name FROM vicidial_filter_phone_groups where filter_phone_group_id='$fpg_id' limit 1;";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -207,10 +187,8 @@ else
 	exit;
 	}
 $sthA->finish();
-	
 if (length($phone_number) > 4) 
 	{
-	### add the number to the vicidial_filter_phone_numbers table
 	$stmtA = "INSERT IGNORE INTO vicidial_filter_phone_numbers SET phone_number='$phone_number',filter_phone_group_id='$fpg_id';";
 	$affected_rows = $dbhA->do($stmtA);
 		if ($AGILOG) {$agi_string = "$affected_rows|$stmtA|";   &agi_output;}
@@ -223,7 +201,6 @@ else
 	exit;
 	}
 $dbhA->disconnect();
-
 if ($AGILOG) {$agi_string = "exiting the cm_fpg app, transferring call to $next_step:$context   |$phone_number|";   &agi_output;}
 print "SET CONTEXT $context\n";
 	$result = <STDIN>;
@@ -234,39 +211,28 @@ print "SET EXTENSION $next_step\n";
 print "SET PRIORITY 1\n";
 	$result = <STDIN>;
 	checkresult($result);
-
 exit;
-
-
-
 sub agi_output
 {
 if ($AGILOG >=2)
 	{
-	### open the log file for writing ###
 	open(Lout, ">>$AGILOGfile")
 			|| die "Can't open $AGILOGfile: $!\n";
 	print Lout "$now_date|$script|$agi_string\n";
 	close(Lout);
 	}
-	### send to STDERR writing ###
 if ( ($AGILOG == '1') || ($AGILOG == '3') )
 	{print STDERR "$now_date|$script|$agi_string\n";}
 $agi_string='';
 }
-
-
 sub fpg_output
 {
-### open the fpg log file for writing ###
 open(Lout, ">>$FPGLOGfile")
 		|| die "Can't open $FPGLOGfile: $!\n";
 print Lout "$now_date|$fpg_string\n";
 close(Lout);
 $fpg_string='';
 }
-
-
 sub checkresult 
 	{
 	my ($res) = @_;
@@ -278,18 +244,15 @@ sub checkresult
 		$res =~ /result=(-?\d+)/;
 		if (!length($1)) 
 			{
-		#	print STDERR "FAIL ($res)\n";
 			$fail++;
 			} 
 		else 
 			{
-		#	print STDERR "PASS ($1)\n";
 			$pass++;
 			}
 		} 
 	else 
 		{
-	#	print STDERR "FAIL (unexpected result '$res')\n";
 		$fail++;
 		}
 	}

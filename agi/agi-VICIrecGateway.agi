@@ -1,42 +1,36 @@
 #!/usr/bin/perl
-#
-# agi-VICIrecGateway.agi version 2.14
-# 
-# Designed to work on a stand-alone Asterisk server and record calls in stereo
-#
-# You need to put a line similar to this below in your extensions.conf file in
-# the context for where incoming calls go from your trunks (for example, the
-# trunkinbound context which is present in the default dialplan):
-#
-#[handler]
-#exten => addheader,1,Set(PJSIP_HEADER(add,X-VICIrecGatewayID)=${VICIrecGatewayID})
-#exten => addheader,n,Return()
-#
-#[stereo-rec-inbound] 
-#exten => _X.,1,Progress() 
-#exten => _X.,n,Noop(${CALLERID(num)}) 
-#exten => _X.,n,AGI(agi-VICIrecGateway.agi) 
-#exten => _X.,n,Noop(${CARRIER_FILENAME}) 
-#exten => _X.,n,Noop(${DIALER_FILENAME}) 
-#exten => _X.,n,MixMonitor(,r(${CARRIER_FILENAME})t(${DIALER_FILENAME})S) 
-#exten => _X.,n,Dial(PJSIP/${EXTEN}@pjdial147,,Tob(handler^addheader^1))
-#
-#[stereo-rec-outbound] 
-#exten => _X.,1,Progress() 
-#exten => _X.,n,Noop(${CALLERID(num)}) 
-#exten => _X.,n,AGI(agi-VICIrecGateway.agi) 
-#exten => _X.,n,Noop(${CARRIER_FILENAME}) 
-#exten => _X.,n,Noop(${DIALER_FILENAME}) 
-#exten => _X.,n,MixMonitor(,t(${CARRIER_FILENAME})r(${DIALER_FILENAME})S) 
-#exten => _X.,n,Dial(PJSIP/${EXTEN}@pjsgw1,,To)  
-#
-# Copyright (C) 2023  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
-#
-# changes:
-# 230125-2212 - First Build
-#
-
-
+#/* ========================================
+# * ███╗   ███╗██████╗ ██╗ █████╗ ██╗
+# * ████╗ ████║██╔══██╗██║██╔══██╗██║
+# * ██╔████╔██║██║  ██║██║███████║██║
+# * ██║╚██╔╝██║██║  ██║██║██╔══██║██║
+# * ██║ ╚═╝ ██║██████╔╝██║██║  ██║███████╗
+# * ╚═╝     ╚═╝╚═════╝ ╚═╝╚═╝  ╚═╝╚══════╝
+# * ========================================
+# * mDial - Omni-Channel Contact Centre Suite.
+# * Initially Written by Martin McCarthy.
+# * Contributions welcome.
+# * Active: 2020 - 2023.
+# *
+# * This software is licensed under AGPLv2.
+# * You can find more information here;
+# * https://www.gnu.org/licenses/agpl-3.0.en.html
+# * A copy of the license is also shipped with this build.
+# *
+# * Important note: this software is provided to you free of charge.
+# * If you paid for this software, you were ripped off.
+# *
+# * This project is a fork of the awesome FOSS project, ViCiDial.
+# * ViCiDial is copyrighted by Matt Florell and the ViCiDial Group
+# * under the AGPLv2 license.
+# *
+# * You can find out more about ViCiDial;
+# * Web: https://www.vicidial.com/
+# * Email: Matt Florell <vicidial@gmail.com>
+# * IRC: Libera.Chat - ##vicidial
+# *
+# * Bug reports, feature requests and patches welcome!
+# * ======================================== */
 $script = 'agi-VICIrecGateway.agi';
 $US='_';
 $dialer_id='';
@@ -44,7 +38,6 @@ $call_direction = 'INBOUND';
 $lead_id=0;
 $insert_gateway_id='';
 $DBX=0;		# set to 1 for extra debugging output
-
 ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
 $year = ($year + 1900);
 $mon++;
@@ -53,10 +46,8 @@ if ($mday < 10) {$mday = "0$mday";}
 if ($hour < 10) {$hour = "0$hour";}
 if ($min < 10) {$min = "0$min";}
 if ($sec < 10) {$sec = "0$sec";}
-
 $hm = "$hour$min";
 $hm = ($hm + 0);
-
 $now_date_epoch = time();
 $now_date = "$year-$mon-$mday $hour:$min:$sec";
 $CLInow_date = "$year-$mon-$mday\\ $hour:$min:$sec";
@@ -66,10 +57,7 @@ $tsSQLdate = "$year$mon$mday$hour$min$sec";
 $SQLdate = "$year-$mon-$mday $hour:$min:$sec";
 $SQLdateBEGIN = $SQLdate;
 	while (length($CIDdate) > 9) {$CIDdate =~ s/^.//gi;} # 0902235959 changed to 902235959
-
-# default path to astguiclient configuration file:
 $PATHconf =		'/etc/astguiclient.conf';
-
 open(conf, "$PATHconf") || die "can't open $PATHconf: $!\n";
 @conf = <conf>;
 close(conf);
@@ -104,20 +92,15 @@ foreach(@conf)
 		{$VARDB_port = $line;   $VARDB_port =~ s/.*=//gi;}
 	$i++;
 	}
-
 if (!$VARDB_port) {$VARDB_port='3306';}
 if (!$AGILOGfile) {$AGILOGfile = "$PATHlogs/agiout.$year-$mon-$mday";}
 if (!$DIDLOGfile) {$DIDLOGfile = "$PATHlogs/didin.$year-$mon-$mday";}
-
 use DBI;
 use Time::HiRes ('gettimeofday','usleep','sleep');  # necessary to have perl sleep command of less than one second
 use Asterisk::AGI;
 $AGI = new Asterisk::AGI;
-
 $dbhA = DBI->connect("DBI:mysql:$VARDB_database:$VARDB_server:$VARDB_port", "$VARDB_user", "$VARDB_pass")
     or die "Couldn't connect to database: " . DBI->errstr;
-
-### Grab Server values from the database
 $stmtA = "SELECT agi_output,local_gmt,asterisk_version FROM servers where server_ip = '$VARserver_ip';";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -134,9 +117,6 @@ if ($sthArows > 0)
 	if ($DBagi_output =~ /BOTH/)	{$AGILOG = '3';}
 	}
 $sthA->finish();
-
-#############################################
-##### START SYSTEM SETTINGS LOOKUP      #####
 $stmtA = "SELECT enable_queuemetrics_logging,queuemetrics_server_ip,queuemetrics_dbname,queuemetrics_login,queuemetrics_pass,queuemetrics_log_id,queuemetrics_eq_prepend,did_agent_log,alt_log_server_ip,alt_log_dbname,alt_log_login,alt_log_pass,tables_use_alt_log_db,did_system_filter,inbound_answer_config FROM system_settings;";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -161,10 +141,6 @@ if ($sthArows > 0)
 	$SSinbound_answer_config =		$aryA[14];
 	}
 $sthA->finish();
-##### END SYSTEM SETTINGS LOOKUP      #####
-###########################################
-
-
 $|=1;
 while(<STDIN>) 
 	{
@@ -177,7 +153,6 @@ while(<STDIN>)
 			$AGI{$1} = $2;
 			}
 		}
-
 	if (/^agi_uniqueid\:\s+(.*)$/)		{$unique_id = $1; $uniqueid = $unique_id;}
 	if (/^agi_channel\:\s+(.*)$/)		{$channel = $1;}
 	if (/^agi_extension\:\s+(.*)$/)		{$extension = $1;}
@@ -185,7 +160,6 @@ while(<STDIN>)
 	if (/^agi_callerid\:\s+(.*)$/)		{$callerid = $1;}
 	if (/^agi_calleridname\:\s+(.*)$/)	{$calleridname = $1;}
 	}
-
 if ($calleridname =~ /^V\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d|^Y\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d|^M\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d|^DC\d\d\d\d\d\dW\d\d\d\d\d\d\d\d\d\dW/)
 	{
 	$dialer_id = $calleridname;
@@ -201,29 +175,23 @@ if ($calleridname =~ /^V\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d\d|^Y\d\d\d\d\d\d\d\
 		$lead_id = ($lead_id + 0);
 		}
 	}
-
 if ( ($callerid =~ /\".*\"/) && ( (!$calleridname) or ($calleridname =~ /unknown/) ) )
 	{
 	$calleridname = $callerid;
 	$calleridname =~ s/\<\d\d\d\d\d\d\d\d\d\d\>//gi;
 	$calleridname =~ s/\"|\" //gi;
 	}
-
 $callerid =~ s/\D|\'//gi;
 $calleridname =~ s/unknown|\'//gi;
 if ( (!$callerid) or ($callerid =~ /unknown/) )
 	{$callerid = $calleridname;}
-
 $callerid =~ s/\'|\"|\\\\|\\\|\\|\\;|\\\;|\;|;//gi;
 $calleridname =~ s/\'|\"|\\\\|\\\|\\|\\;|\\\;|\;|;//gi;
 $extension =~ s/\'|\"|\\\\|\\\|\\|\\;|\\\;|\;|;//gi;
-
-### Log the call to gateway_recording_log
 $stmtA = "INSERT INTO gateway_recording_log SET call_direction='$call_direction',call_id='$dialer_id',lead_id='$lead_id',uniqueid='$uniqueid',server_ip='$VARserver_ip',caller_id_number='$callerid',caller_id_name='$calleridname',extension='$extension',start_time=NOW();";
 	if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 $affected_rowsG = $dbhA->do($stmtA);
 if ($AGILOG) {$agi_string = "--    gateway_recording_log LOG INSERT: |$affected_rowsG|$stmtA|";   &agi_output;}
-
 $stmtB = "SELECT LAST_INSERT_ID() LIMIT 1;";
 $sthA = $dbhA->prepare($stmtB) or die "preparing: ",$dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -235,44 +203,23 @@ if ($sthArows > 0)
 	if ($AGILOG) {$agi_string = "--    gateway_id: |$insert_gateway_id|";   &agi_output;}
 	}
 $sthA->finish();
-
 $PADgateway_id = sprintf("%010s", $insert_gateway_id);	while (length($PADgateway_id) > 10) {chop($PADgateway_id);}
 $gatewayCID = "G$CIDdate$PADgateway_id";
-
 $dialer_idSQL='';
 if (length($dialer_id) < 1) 
 	{
 	$dialer_id = $gatewayCID;
 	$dialer_idSQL = ",call_id='$gatewayCID'";
 	}
-
 $AGI->set_variable('_VICIrecGatewayID',"$gatewayCID");
 if ($AGILOG) {$agi_string = "--    setting gateway channel variable: |VICIrecGatewayID|$gatewayCID|";   &agi_output;}
-
-
 $record_call='Y';
-### if set to record this call, start recording ###
 if ($record_call =~ /Y/)
 	{
 	$insert_recording_id='';
 	$filename = "$tsSQLdate$US$extension$US$callerid";
-	### code to record call goes here ###
-
-	### set variables for audio files to be used by MixMonitor application
 	$AGI->set_variable('CARRIER_FILENAME', "STEREO/CARRIER_$dialer_id$US$tsSQLdate.wav");
 	$AGI->set_variable('DIALER_FILENAME', "STEREO/DIALER_$dialer_id$US$tsSQLdate.wav");
-
-#	%ast_ver_str = parse_asterisk_version($asterisk_version);
-#	if (( $ast_ver_str{major} = 1 ) && ($ast_ver_str{minor} < 6))
-#		{
-#		$AGI->exec("Monitor wav|/var/spool/asterisk/monitor/MIX/$filename");
-#		}
-#	else
-#		{
-#		$AGI->exec("Monitor","wav,/var/spool/asterisk/monitor/MIX/$filename"); 
-#		}
-
-	### insert record into recording_log table ###
 	$stmtA = "INSERT INTO recording_log (channel,server_ip,extension,start_time,start_epoch,length_in_sec,filename,lead_id,user,location,vicidial_id) values('$channel','$VARserver_ip','$dialer_id','$SQLdate','$now_date_epoch','0','$dialer_id$US$tsSQLdate','$lead_id','GATEWAY','$dialer_id$US$tsSQLdate','G$insert_gateway_id');";
 	$affected_rowsR = $dbhA->do($stmtA);
 	if ($affected_rowsR > 0)
@@ -288,22 +235,12 @@ if ($record_call =~ /Y/)
 			}
 		$sthA->finish();
 		}
-
 	if ($AGILOG) {$did_string = "--    RECORDING LOG : |$affected_rowsR|$insert_recording_id|$stmtA|";   &did_output;}
-
-	### update gateway_recording_log
 	$stmtA = "UPDATE gateway_recording_log SET recording_log_id='$insert_recording_id',filename='$dialer_id$US$tsSQLdate' $dialer_idSQL where gateway_recording_id='$insert_gateway_id';";
 		if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 	$affected_rowsG = $dbhA->do($stmtA);
 	if ($AGILOG) {$agi_string = "--    gateway_recording_log LOG UPDATE: |$affected_rowsG|$stmtA|";   &agi_output;}
 	}
-
-
-
-
-
-######### SUBROUTINES #################
-
 sub checkresult 
 	{
 	$pass=0;   $fail=0;
@@ -316,22 +253,18 @@ sub checkresult
 		$res =~ /result=(-?\d+)/;
 		if (!length($1)) 
 			{
-		#	print STDERR "FAIL ($res)\n";
 			$fail++;
 			} 
 		else 
 			{
-		#	print STDERR "PASS ($1)\n";
 			$pass++;
 			}
 		} 
 	else 
 		{
-	#	print STDERR "FAIL (unexpected result '$res')\n";
 		$fail++;
 		}
 	}
-
 sub leading_zero($) 
 	{
     $_ = $_[0];
@@ -339,28 +272,23 @@ sub leading_zero($)
     s/^(\d\d)$/0$1/;
     return $_;
 	} # End of the leading_zero() routine.
-
 sub agi_output
 	{
 	if ($AGILOG >=2)
 		{
-		### open the log file for writing ###
 		open(Lout, ">>$AGILOGfile")
 				|| die "Can't open $AGILOGfile: $!\n";
 		print Lout "$now_date|$script|$agi_string\n";
 		close(Lout);
 		}
-		### send to STDERR writing ###
 	if ( ($AGILOG == '1') || ($AGILOG == '3') )
 		{print STDERR "$now_date|$script|$agi_string\n";}
 	$agi_string='';
 	}
-
 sub did_output
 	{
 	if ($AGILOG >=2)
 		{
-		### open the log file for writing ###
 		open(Dout, ">>$DIDLOGfile")
 				|| die "Can't open $DIDLOGfile: $!\n";
 		print Dout "$did_string\n";
@@ -368,24 +296,13 @@ sub did_output
 		}
 	$did_string='';
 	}
-
-# subroutine to parse the asterisk version
-# and return a hash with the various part
 sub parse_asterisk_version
 	{
-	# grab the arguments
 	my $ast_ver_str = $_[0];
-
-	# get everything after the - and put it in $ast_ver_postfix
 	my @hyphen_parts = split( /-/ , $ast_ver_str );
-
 	my $ast_ver_postfix = $hyphen_parts[1];
-
-	# now split everything before the - up by the .
 	my @dot_parts = split( /\./ , $hyphen_parts[0] );
-
 	my %ast_ver_hash;
-
 	if ( $dot_parts[0] <= 1 )
 		{
 			%ast_ver_hash = (
@@ -396,8 +313,6 @@ sub parse_asterisk_version
 				"postfix" => $ast_ver_postfix
 			);
 		}
-
-	# digium dropped the 1 from asterisk 10 but we still need it
 	if ( $dot_parts[0] > 1 )
 		{
 			%ast_ver_hash = (
@@ -408,6 +323,5 @@ sub parse_asterisk_version
 				"postfix" => $ast_ver_postfix
 			);
 		}
-
 	return ( %ast_ver_hash );
 	}

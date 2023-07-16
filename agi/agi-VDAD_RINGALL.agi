@@ -1,31 +1,37 @@
 #!/usr/bin/perl
-#
-# agi-VDAD_RINGALL.agi version 2.8
-# 
-# NOTE: this script is used for on-hook agents to be connected to customer calls
-# when they answer their ringing phones
-#
-# In the default dialplan context, this is set to the following:
-# ; these are used for the ring_all function in VICIDIAL
-# exten => _8331*.,1,Playback(sip-silence)
-# exten => _8331*.,n,AGI(agi-VDAD_RINGALL.agi,${EXTEN})
-# exten => _8331*.,n,AGI(agi-VDAD_RINGALL.agi,${EXTEN})
-# exten => _8331*.,n,Hangup
-#
-# Copyright (C) 2014  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
-#
-# changes:
-# 110303-2325 - First build
-# 110324-2328 - Added recording of remote agent calls, per in-group and campaign recording settings
-# 110325-1411 - Added user recording override settings checking for remote agent recording
-# 121114-1935 - Added INGROUP recording option
-# 130108-1808 - Changes for Asterisk 1.8 compatibility
-# 140312-2112 - Added CALLID as recording filename variable
-# 140421-1448 - Added code to halt ringing of other channels in ring_all NAC method
-#
-
+#/* ========================================
+# * ███╗   ███╗██████╗ ██╗ █████╗ ██╗
+# * ████╗ ████║██╔══██╗██║██╔══██╗██║
+# * ██╔████╔██║██║  ██║██║███████║██║
+# * ██║╚██╔╝██║██║  ██║██║██╔══██║██║
+# * ██║ ╚═╝ ██║██████╔╝██║██║  ██║███████╗
+# * ╚═╝     ╚═╝╚═════╝ ╚═╝╚═╝  ╚═╝╚══════╝
+# * ========================================
+# * mDial - Omni-Channel Contact Centre Suite.
+# * Initially Written by Martin McCarthy.
+# * Contributions welcome.
+# * Active: 2020 - 2023.
+# *
+# * This software is licensed under AGPLv2.
+# * You can find more information here;
+# * https://www.gnu.org/licenses/agpl-3.0.en.html
+# * A copy of the license is also shipped with this build.
+# *
+# * Important note: this software is provided to you free of charge.
+# * If you paid for this software, you were ripped off.
+# *
+# * This project is a fork of the awesome FOSS project, ViCiDial.
+# * ViCiDial is copyrighted by Matt Florell and the ViCiDial Group
+# * under the AGPLv2 license.
+# *
+# * You can find out more about ViCiDial;
+# * Web: https://www.vicidial.com/
+# * Email: Matt Florell <vicidial@gmail.com>
+# * IRC: Libera.Chat - ##vicidial
+# *
+# * Bug reports, feature requests and patches welcome!
+# * ======================================== */
 $script = 'agi-VDAD_RINGALL.agi';
-
 ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
 $year = ($year + 1900);
 $mon++;
@@ -39,10 +45,7 @@ $now_date = "$year-$mon-$mday $hour:$min:$sec";
 $now_num = "$year$mon$mday$hour$min$sec";
 $CIDdate = "$mon$mday$hour$min$sec";
 $S='*';
-
-# default path to astguiclient configuration file:
 $PATHconf =		'/etc/astguiclient.conf';
-
 open(conf, "$PATHconf") || die "can't open $PATHconf: $!\n";
 @conf = <conf>;
 close(conf);
@@ -77,19 +80,13 @@ foreach(@conf)
 		{$VARDB_port = $line;   $VARDB_port =~ s/.*=//gi;}
 	$i++;
 	}
-
-
 if (!$VARDB_port) {$VARDB_port='3306';}
 if (!$AGILOGfile) {$AGILOGfile = "$PATHlogs/agiout.$year-$mon-$mday";}
-
 use DBI;
 use Asterisk::AGI;
 $AGI = new Asterisk::AGI;
-
 $dbhA = DBI->connect("DBI:mysql:$VARDB_database:$VARDB_server:$VARDB_port", "$VARDB_user", "$VARDB_pass")
     or die "Couldn't connect to database: " . DBI->errstr;
-
-### Grab Server values from the database
 $stmtA = "SELECT agi_output,ext_context,asterisk_version FROM servers where server_ip = '$VARserver_ip';";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -106,9 +103,6 @@ if ($sthArows > 0)
 	if ($DBagi_output =~ /BOTH/)	{$AGILOG = '3';}
 	}
 $sthA->finish();
-
-
-### begin parsing run-time options ###
 $|=1;
 while(<STDIN>) 
 	{
@@ -121,7 +115,6 @@ while(<STDIN>)
 			$AGI{$1} = $2;
 			}
 		}
-
 	if (/^agi_uniqueid\:\s+(.*)$/)		{$unique_id = $1;}
 	if (/^agi_channel\:\s+(.*)$/)		{$channel = $1;}
 	if (/^agi_extension\:\s+(.*)$/)		{$extension = $1;}
@@ -134,7 +127,6 @@ while(<STDIN>)
 	if ( ($callerid =~ / /) && (length($callerid) > 20) )
 		{$callerid =~ s/ .*//gi;}
 	$calleridname = $callerid;
-
 	if ($extension =~ /^8331\*\d/)
 		{
 		@EXTEN_vars = split(/\*/, $extension);
@@ -146,22 +138,13 @@ while(<STDIN>)
 		$channel_root =~ s/\,.*//gi;
 		}
 	}
-
-
 if ($AGILOG) {$agi_string = "AGI Environment Dump:";   &agi_output;}
-
 foreach $i (sort keys %AGI) 
 	{
 	if ($AGILOG) {$agi_string = " -- $i = $AGI{$i}";   &agi_output;}
 	}
-
-
 if ($AGILOG) {$agi_string = "AGI Variables: |$unique_id|$channel|$extension|$type|$callerid|$auto_call_id|";   &agi_output;}
-
 if ($AGILOG) {$agi_string = "RING-AGENT AGI STARTED";   &agi_output;}
-
-
-### Hangup if Local/ channel, since these are usually invalid or voicemail
 if ($channel =~ /^Local/)
 	{
 	$AGI->stream_file('sip-silence');
@@ -170,9 +153,6 @@ if ($channel =~ /^Local/)
 	if ($AGILOG) {$agi_string = "RING-ALL AGI Local Channel, exiting...";   &agi_output;}
 	exit;
 	}
-
-
-### Check that the call exists, if not then buzz and hangup ###
 $stmtA = "SELECT campaign_id,call_type,extension,phone_number,lead_id,callerid FROM vicidial_auto_calls where auto_call_id='$auto_call_id';";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -196,9 +176,6 @@ else
 	$AGI->hangup();
 	exit;
 	}
-
-
-### Check that the user exists in vicidial_live_agents, if not then buzz and hangup ###
 $stmtA = "SELECT conf_exten,extension,server_ip,ra_user,campaign_id from vicidial_live_agents WHERE user='$dial_user' and status IN('READY','CLOSER');";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -221,7 +198,6 @@ else
 	$AGI->hangup();
 	exit;
 	}
-
 $stmtA = "SELECT user,extension,conf_exten,server_ip FROM vicidial_live_agents where ring_callerid='$call_callerid';";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -253,11 +229,7 @@ while ($sthArows > $RINGct)
 	$RINGct++;
 	}
 $sthA->finish();
-
 if ($AGILOG) {$agi_string = "--    Ringing stats: |$call_callerid|$RINGct|$orAGENTct|$user_phone|";   &agi_output;}
-
-
-### Check that the call has not been grabbed already, if it has then buzz and hangup ###
 $stmtA = "SELECT count(*) FROM vicidial_auto_calls where auto_call_id='$auto_call_id' and agent_grab='';";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -267,12 +239,10 @@ if ($NAGcount > 0)
 	@aryA = $sthA->fetchrow_array;
 	$not_grabbed_count =	$aryA[0];
 	$sthA->finish();
-
 	if ($not_grabbed_count > 0)
 		{
 		if ($VLAextension =~ /^R\//)
 			{
-			### BEGIN If remote agent, then reserve a vicidial_conferences session on their server to send the calls to ###
 			$stmtA="SELECT count(*) FROM vicidial_conferences where server_ip='$VLAserver_ip' and ((extension='') or (extension is null)) and conf_exten != '$VLAconf_exten';";
 			$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 			$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -298,8 +268,6 @@ if ($NAGcount > 0)
 							$VLAconf_exten =	$aryA[0];
 							$sthA->finish();
 							if ($AGILOG) {$agi_string = "--    AVC Session Reserved: |$callerid|$auto_call_id|$dial_user|3WAY_$dial_user|$now_date|$VLAconf_exten|";   &agi_output;}
-
-							### get the recording settings for the campaign that this remote agent is logged into
 							if (length($VLAcampaign_id) > 0)
 								{
 								$stmtA = "SELECT campaign_recording,campaign_rec_filename FROM vicidial_campaigns where campaign_id='$VLAcampaign_id';";
@@ -314,8 +282,6 @@ if ($NAGcount > 0)
 									}
 								$sthA->finish();
 								}
-
-							### look for the recording settings for the start user of this remote agent
 							if (length($VLAra_user) > 0)
 								{
 								$stmtA = "SELECT vicidial_recording_override,vicidial_recording FROM vicidial_users where user='$VLAra_user';";
@@ -332,8 +298,6 @@ if ($NAGcount > 0)
 									}
 								$sthA->finish();
 								}
-
-							### if recording is enabled then start recording on this call before sending to a remote agent
 							if ($campaign_recording =~ /ALLCALLS|ALLFORCE/)
 								{
 								$stmtA = "SELECT vendor_lead_code FROM vicidial_list where lead_id='$VAC_lead_id';";
@@ -346,8 +310,6 @@ if ($NAGcount > 0)
 									$vendor_lead_code =	$aryA[0];
 									}
 								$sthA->finish();
-
-								# get date/time
 								($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
 								$year = ($year + 1900);
 								$Tyear = ($year - 2000);
@@ -357,12 +319,10 @@ if ($NAGcount > 0)
 								if ($hour < 10) {$hour = "0$hour";}
 								if ($min < 10)	{$min = "0$min";}
 								if ($sec < 10)	{$sec = "0$sec";}
-
 								$now_date_epoch = time();
 								$now_date = "$year-$mon-$mday $hour:$min:$sec";
 								$recdate = "$year$mon$mday-$hour$min$sec";
 								$tinydate = "$Tyear$mon$mday$hour$min$sec";
-
 								$campaign_rec_filename =~ s/CAMPAIGN/$VLAcampaign_id/gi;
 								$campaign_rec_filename =~ s/INGROUP/$VAC_campaign_id/gi;
 								$campaign_rec_filename =~ s/CUSTPHONE/$VAC_phone_number/gi;
@@ -374,7 +334,6 @@ if ($NAGcount > 0)
 								$campaign_rec_filename =~ s/LEADID/$VAC_lead_id/gi;
 								$campaign_rec_filename =~ s/CALLID/$VAC_call_id/gi;
 								$campaign_rec_filename =~ s/\"|\'//gi;
-
 								%ast_ver_str = parse_asterisk_version($asterisk_version);
 								if (( $ast_ver_str{major} = 1 ) && ($ast_ver_str{minor} < 6))
 									{
@@ -384,8 +343,6 @@ if ($NAGcount > 0)
 									{
 									$AGI->exec("Monitor","wav,/var/spool/asterisk/monitor/MIX/$campaign_rec_filename"); 
 									}
-
-								### insert record into recording_log table ###
 								$stmtA = "INSERT INTO recording_log (channel,server_ip,extension,start_time,start_epoch,length_in_sec,filename,lead_id,user,location,vicidial_id) values('$channel','$VARserver_ip','$VAC_phone_number','$now_date','$now_date_epoch','0','$campaign_rec_filename','$VAC_lead_id','$dial_user','$campaign_rec_filename','$uniqueid');";
 								$RLRAaffected_rows = $dbhA->do($stmtA);
 								if ($AGILOG) {$agi_string = "--    REMOTE RECORDING STARTED : |$RLRAaffected_rows|$campaign_rec_filename|$stmtA|";   &agi_output;}
@@ -422,18 +379,12 @@ if ($NAGcount > 0)
 				$AGI->hangup();
 				exit;
 				}
-			### END If remote agent, then reserve a vicidial_conferences session on their server to send the calls to ###
 			}
-
-
-		### Try to grab the call for this agent, if already grabbed then buzz and hangup ###
 		$stmtA = "UPDATE vicidial_auto_calls SET agent_grab='$dial_user',agent_grab_extension='$VLAconf_exten' where auto_call_id='$auto_call_id' and agent_grab='';";
 		$AGaffected_rows = $dbhA->do($stmtA);  
 		if ($AGaffected_rows > 0)
 			{
 			if ($AGILOG) {$agi_string = "--    VAC Call Grabbed: |$callerid|$auto_call_id|$dial_user|$AGaffected_rows|";   &agi_output;}
-
-			### Check if this was a RING_ALL method ###
 			$VIG_next_agent_call='';
 			$stmtA = "SELECT next_agent_call FROM vicidial_inbound_groups where group_id='$VAC_campaign_id';";
 			$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
@@ -448,7 +399,6 @@ if ($NAGcount > 0)
 				}
 			if ( ($VIG_next_agent_call =~ /ring_all/i) && ($orAGENTct > 0) )
 				{
-				### gather list of ringing channels
 				$stmtA = "SELECT channel,server_ip FROM live_sip_channels where extension='ring';";
 				$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 				$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -466,8 +416,6 @@ if ($NAGcount > 0)
 					$rec_count++;
 					}
 				$sthA->finish();
-
-				### go through other-agent ringing agent records looking for matches to hang up
 				if ($rec_count > 0) 
 					{
 					$orct=0;
@@ -524,20 +472,14 @@ if ($NAGcount > 0)
 								}
 							$sthA->finish();
 							}
-
-					#	if ($AGILOG) {$agi_string = "--    Check ORC: |$callerid|$orct|$exten_match|$orVLA_exten[$orct]|$orVLA_exten[$orct]|";   &agi_output;}
-
 						if (length($exten_match) > 2)
 							{
 							$lscct=0;
 							foreach(@LSC_channel)
 								{
-					#		if ($AGILOG) {$agi_string = "--    Check LSC: |$callerid|$orct|$lscct|$exten_match|$LSC_channel[$lscct]|$LSC_channelREG[$lscct]|$orVLA_exten[$orct]|$orVLA_exten[$orct]|";   &agi_output;}
 								if ($LSC_channelREG[$lscct] =~ /$exten_match/) 
 									{
 									if ($AGILOG) {$agi_string = "--    Chan to hangup: |$callerid|$exten_match|$LSC_channel[$lscct]|$LSC_server_ip[$lscct]|";   &agi_output;}
-
-									### send hangup command for channel
 									$VHqueryCID = "RGHANGUP$CIDdate$lscct";
 									$stmtA = "INSERT INTO vicidial_manager values('','','$now_date','NEW','N','$VARserver_ip','','Hangup','$VHqueryCID','Channel: $LSC_channel[$lscct]','','','','','','','','','')";
 									$AGaffected_rows = $dbhA->do($stmtA);  
@@ -550,8 +492,6 @@ if ($NAGcount > 0)
 						}
 					}
 				}
-
-			### send agent to their session ###
 			if($VLAserver_ip =~ m/(\S+)\.(\S+)\.(\S+)\.(\S+)/ )
 				{
 				$a = leading_zero($1);
@@ -561,14 +501,11 @@ if ($NAGcount > 0)
 				$VLA_DIALstr = "$a$S$b$S$c$S$d$S";
 				}
 			$VLA_DIALstr .= "7$VLAconf_exten";
-
 			$AGI->stream_file('sip-silence');
 			$AGI->stream_file('sip-silence');
 			$AGI->stream_file('sip-silence');
 			$AGI->stream_file('sip-silence');
-
 			if ($AGILOG) {$agi_string = "--    Ring-Agent Sending Call: |$callerid|$auto_call_id|$dial_user|$VLA_DIALstr|";   &agi_output;}
-
 			print "SET CONTEXT $ext_context\n";
 				$result = <STDIN>;
 				checkresult($result);
@@ -578,9 +515,7 @@ if ($NAGcount > 0)
 			print "SET PRIORITY 1\n";
 				$result = <STDIN>;
 				checkresult($result);
-			
 			$dbhA->disconnect();
-
 			exit;
 			}
 		else
@@ -606,55 +541,26 @@ else
 	$AGI->hangup();
 	exit;
 	}
-
-
-
-
-
-
-
-
-
-
-
-
 if ($AGILOG) {$agi_string = "--    sleeping: |$callerid|$auto_call_id|";   &agi_output;}
-
 sleep(10);
-
 exit;
-
-
 $dbhA->disconnect();
-
-
 $AGI->stream_file('sip-silence');
-
 if ($AGILOG) {$agi_string = "--    Exiting Ring-Agent AGI:  |$callerid|";   &agi_output;}
-
 exit;
-
-
-
-
-
 sub agi_output
 	{
 	if ($AGILOG >=2)
 		{
-		### open the log file for writing ###
 		open(Lout, ">>$AGILOGfile")
 				|| die "Can't open $AGILOGfile: $!\n";
 		print Lout "$now_date|$script|$agi_string\n";
 		close(Lout);
 		}
-		### send to STDERR writing ###
 	if ( ($AGILOG == '1') || ($AGILOG == '3') )
 		{print STDERR "$now_date|$script|$agi_string\n";}
 	$agi_string='';
 	}
-
-
 sub checkresult 
 	{
 	my ($res) = @_;
@@ -666,23 +572,18 @@ sub checkresult
 		$res =~ /result=(-?\d+)/;
 		if (!length($1)) 
 			{
-		#	print STDERR "FAIL ($res)\n";
 			$fail++;
 			}
 		else 
 			{
-		#	print STDERR "PASS ($1)\n";
 			$pass++;
 			}
 		}
 	else 
 		{
-		#	print STDERR "FAIL (unexpected result '$res')\n";
 			$fail++;
 		}
 	}
-
-
 sub leading_zero($) 
 	{
 	$_ = $_[0];
@@ -690,24 +591,13 @@ sub leading_zero($)
 	s/^(\d\d)$/0$1/;
 	return $_;
 	} # End of the leading_zero() routine.
-
-# subroutine to parse the asterisk version
-# and return a hash with the various part
 sub parse_asterisk_version
 	{
-	# grab the arguments
 	my $ast_ver_str = $_[0];
-
-	# get everything after the - and put it in $ast_ver_postfix
 	my @hyphen_parts = split( /-/ , $ast_ver_str );
-
 	my $ast_ver_postfix = $hyphen_parts[1];
-
-	# now split everything before the - up by the .
 	my @dot_parts = split( /\./ , $hyphen_parts[0] );
-
 	my %ast_ver_hash;
-
 	if ( $dot_parts[0] <= 1 )
 		{
 			%ast_ver_hash = (
@@ -718,8 +608,6 @@ sub parse_asterisk_version
 				"postfix" => $ast_ver_postfix
 			);
 		}
-
-	# digium dropped the 1 from asterisk 10 but we still need it
 	if ( $dot_parts[0] > 1 )
 		{
 			%ast_ver_hash = (
@@ -730,6 +618,5 @@ sub parse_asterisk_version
 				"postfix" => $ast_ver_postfix
 			);
 		}
-
 	return ( %ast_ver_hash );
 	}

@@ -1,31 +1,37 @@
 #!/usr/bin/perl
-#
-# park_CID.agi version 2.14
-# 
-# runs before the park extension to populate the parked_channels entry with the channel's callerid
-# 
-# You need to put lines similar to those below in your extensions.conf file:
-# 
-# ;outbound dialing:
-# exten => 8301,1,Answer
-# exten => 8301,2,AGI(park_CID.agi)
-# exten => 8301,3,Playback(park)
-# exten => 8301,4,Hangup 
-#
-# Copyright (C) 2018  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
-#
-# changes:
-# 60731-1423 - changed to use DBI-DBD::mysql
-#            - changed to use /etc/astguiclient.conf for configs
-# 60815-1256 - added output options check from database
-# 90909-0922 - Fixed calleridname issue
-# 101004-1012 - Changed park to Music On Hold, added option for park on AGI
-# 130108-1817 - Changes for Asterisk 1.8 compatibility
-# 180430-1842 - Added inbound_groups-park_ext option
-#
-
+#/* ========================================
+# * ███╗   ███╗██████╗ ██╗ █████╗ ██╗
+# * ████╗ ████║██╔══██╗██║██╔══██╗██║
+# * ██╔████╔██║██║  ██║██║███████║██║
+# * ██║╚██╔╝██║██║  ██║██║██╔══██║██║
+# * ██║ ╚═╝ ██║██████╔╝██║██║  ██║███████╗
+# * ╚═╝     ╚═╝╚═════╝ ╚═╝╚═╝  ╚═╝╚══════╝
+# * ========================================
+# * mDial - Omni-Channel Contact Centre Suite.
+# * Initially Written by Martin McCarthy.
+# * Contributions welcome.
+# * Active: 2020 - 2023.
+# *
+# * This software is licensed under AGPLv2.
+# * You can find more information here;
+# * https://www.gnu.org/licenses/agpl-3.0.en.html
+# * A copy of the license is also shipped with this build.
+# *
+# * Important note: this software is provided to you free of charge.
+# * If you paid for this software, you were ripped off.
+# *
+# * This project is a fork of the awesome FOSS project, ViCiDial.
+# * ViCiDial is copyrighted by Matt Florell and the ViCiDial Group
+# * under the AGPLv2 license.
+# *
+# * You can find out more about ViCiDial;
+# * Web: https://www.vicidial.com/
+# * Email: Matt Florell <vicidial@gmail.com>
+# * IRC: Libera.Chat - ##vicidial
+# *
+# * Bug reports, feature requests and patches welcome!
+# * ======================================== */
 $script = 'park_CID.agi';
-
 ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
 $year = ($year + 1900);
 $mon++;
@@ -36,10 +42,7 @@ if ($min < 10) {$min = "0$min";}
 if ($sec < 10) {$sec = "0$sec";}
 $now_date_epoch = time();
 $now_date = "$year-$mon-$mday $hour:$min:$sec";
-
-# default path to astguiclient configuration file:
 $PATHconf =		'/etc/astguiclient.conf';
-
 open(conf, "$PATHconf") || die "can't open $PATHconf: $!\n";
 @conf = <conf>;
 close(conf);
@@ -74,19 +77,13 @@ foreach(@conf)
 		{$VARDB_port = $line;   $VARDB_port =~ s/.*=//gi;}
 	$i++;
 	}
-
-
 if (!$VARDB_port) {$VARDB_port='3306';}
 if (!$AGILOGfile) {$AGILOGfile = "$PATHlogs/agiout.$year-$mon-$mday";}
-
 use DBI;
 use Asterisk::AGI;
 $AGI = new Asterisk::AGI;
-
 $dbhA = DBI->connect("DBI:mysql:$VARDB_database:$VARDB_server:$VARDB_port", "$VARDB_user", "$VARDB_pass")
     or die "Couldn't connect to database: " . DBI->errstr;
-
-### Grab Server values from the database
 $stmtA = "SELECT agi_output FROM servers where server_ip = '$VARserver_ip';";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -103,9 +100,6 @@ while ($sthArows > $rec_count)
 	$rec_count++;
 	}
 $sthA->finish();
-
-
-### begin parsing run-time options ###
 if (length($ARGV[0])>1)
 	{
 	if ($AGILOG) {$agi_string = "Perl Environment Dump:";   &agi_output;}
@@ -123,7 +117,6 @@ if (length($ARGV[0])>1)
 		$callerid =	$CID[2];
 		$calleridname =	$CID[3];
 		}
-
 	if ($args =~ /--help/i)
 		{
 		print "allowed run time options:\n  [-q] = quiet\n  [-t] = test\n  [-debug] = verbose debug messages\n\n";
@@ -154,8 +147,6 @@ if (length($ARGV[0])>1)
 			}
 		}
 	}
-
-
 $|=1;
 while(<STDIN>) 
 	{
@@ -168,7 +159,6 @@ while(<STDIN>)
 			$AGI{$1} = $2;
 			}
 		}
-
 	if (/^agi_uniqueid\:\s+(.*)$/)		{$unique_id = $1;}
 	if (/^agi_channel\:\s+(.*)$/)		{$channel = $1;}
 	if (/^agi_extension\:\s+(.*)$/)		{$extension = $1;}
@@ -182,8 +172,6 @@ while(<STDIN>)
 			{$callerid = $calleridname;}
 		if ( ($callerid =~ / /) && (length($callerid) > 20) )
 			{$callerid =~ s/ .*//gi;}
-
-		### allow for ANI being sent with the DNIS "*3125551212*9999*"
 		if ($extension =~ /^\*\d\d\d\d\d\d\d\d\d\d\*/)
 			{
 			$callerid = $extension;
@@ -195,25 +183,17 @@ while(<STDIN>)
 		$calleridname = $callerid;
 		}
 	}
-
 if ($AGILOG) {$agi_string = "AGI Environment Dump:";   &agi_output;}
-
 foreach $i (sort keys %AGI) 
 	{
 	if ($AGILOG) {$agi_string = " -- $i = $AGI{$i}";   &agi_output;}
 	}
-
-
 if ($AGILOG) {$agi_string = "AGI Variables: |$unique_id|$channel|$extension|$type|$callerid|";   &agi_output;}
-
 if ($AGILOG) {$agi_string = "CALL BEING PARKED";   &agi_output;}
-
-
 $stmtA = "UPDATE parked_channels set channel_group='$callerid' where server_ip='$VARserver_ip' and channel='$channel';";
 	if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 	$affected_rows = $dbhA->do($stmtA);
 if ($AGILOG) {$agi_string = "--    Park record updated: |$affected_rows|   |$callerid|$channel|$VARserver_ip";   &agi_output;}
-
 $VACcount=0;
 $VAC_campaign_id='';
 $VAC_call_type='';
@@ -224,7 +204,6 @@ $VLA_campaign_id='';
 $VCcount=0;
 $park_context='default';
 $MOHfiles=0;
-
 $stmtA = "SELECT campaign_id,call_type,extension FROM vicidial_auto_calls where callerid='$callerid';";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -237,7 +216,6 @@ if ($VACcount > 0)
 	$VAC_extension =	$aryA[2];
 	}
 $sthA->finish();
-
 if ($VACcount > 0)
 	{
 	$stmtA = "SELECT user,campaign_id FROM vicidial_live_agents where callerid='$callerid';";
@@ -264,7 +242,6 @@ if ($VACcount > 0)
 			$VC_ivr_park_call_agi =	$aryA[1];
 			}
 		$sthA->finish();
-
 		if ($calleridname =~ /^Y\d\d\d\d\d\d\d\d\d\d\d\d\d\d/i)
 			{
 			if ($AGILOG) {$agi_string = "--    In-Group MOH override check:   |$VAC_campaign_id|$VAC_call_type|$VLA_user|   |$callerid|";   &agi_output;}
@@ -278,7 +255,6 @@ if ($VACcount > 0)
 				$VICpark_context =			$aryA[0];
 				}
 			$sthA->finish();
-
 			if ($VICcount > 0)
 				{
 				$stmtA = "SELECT count(*) FROM vicidial_music_on_hold_files where moh_id='$VICpark_context';";
@@ -298,7 +274,6 @@ if ($VACcount > 0)
 					}
 				}
 			}
-
 		$stmtA = "SELECT count(*) FROM vicidial_music_on_hold_files where moh_id='$park_context';";
 		$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 		$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -312,64 +287,42 @@ if ($VACcount > 0)
 		if ($MOHfiles< 1)
 			{
 			if ($AGILOG) {$agi_string = "--    Context empty, switching to default: |$park_context|$MOHcount|$MOHfiles|   |$callerid|";   &agi_output;}
-
 			$park_context =	'default';
 			}
-
-		### call was parked to an IVR, launch the AGI script
 		if ( ($VCcount > 0) && ($VAC_extension =~ /PARK_IVR/) && (length($VC_ivr_park_call_agi)>2) )
 			{
 			if ($AGILOG) {$agi_string = "--    Starting AGI: |$VC_ivr_park_call_agi|   |$callerid|";   &agi_output;}
-
 			print "EXEC AGI $VC_ivr_park_call_agi\n";
 				checkresult($result);
-
 			if ($AGILOG) {$agi_string = "--    AGI Done:  |$callerid|";   &agi_output;}
 			}
 		}
 	}
-
-
 $dbhA->disconnect();
-
-
 $AGI->stream_file('sip-silence');
 $AGI->stream_file('sip-silence');
 $AGI->stream_file('sip-silence');
 $AGI->stream_file('sip-silence');
-
 if ($AGILOG) {$agi_string = "--    Starting MoH: |$park_context|   |$callerid|";   &agi_output;}
-
 print "SET MUSIC ON $park_context\n";
 	$result = <STDIN>;
 	checkresult($result);
-
 sleep(360);
-
 if ($AGILOG) {$agi_string = "--    MoH Done:  |$callerid|";   &agi_output;}
-
-
 exit;
-
-
-
 sub agi_output
 	{
 	if ($AGILOG >=2)
 		{
-		### open the log file for writing ###
 		open(Lout, ">>$AGILOGfile")
 				|| die "Can't open $AGILOGfile: $!\n";
 		print Lout "$now_date|$script|$agi_string\n";
 		close(Lout);
 		}
-		### send to STDERR writing ###
 	if ( ($AGILOG == '1') || ($AGILOG == '3') )
 		{print STDERR "$now_date|$script|$agi_string\n";}
 	$agi_string='';
 	}
-
-
 sub checkresult 
 	{
 	my ($res) = @_;
@@ -381,18 +334,15 @@ sub checkresult
 		$res =~ /result=(-?\d+)/;
 		if (!length($1)) 
 			{
-		#	print STDERR "FAIL ($res)\n";
 			$fail++;
 			}
 		else 
 			{
-		#	print STDERR "PASS ($1)\n";
 			$pass++;
 			}
 		}
 	else 
 		{
-		#	print STDERR "FAIL (unexpected result '$res')\n";
 			$fail++;
 		}
 	}

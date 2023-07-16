@@ -1,58 +1,40 @@
 #!/usr/bin/perl
-#
-# cm_lookup.agi version 2.6
-# 
-# for use with a Call Menu in the custom dialplan section.
-#
-# ; settings for this script:
-# ; 1. The vicidial_list field to do a lookup on ('vendor_lead_code' is default)
-# ; 2. Type of lookup to do: (default is SYSTEM)
-# ;     SYSTEM will search the entire system
-# ;     CAMPAIGNLISTS will search inside all of the active lists within the campaign
-# ;     CAMPLISTSALL will search inside all of the active and inactive lists within the campaign
-# ;     LIST will search only within the specified List ID
-# ; 3. If CAMPAIGN or LIST is used above, this is the campaign_id or list_id to be used
-# ; 4. TTS confirmation of name (1 for yes, 2 for no) put in TTS prompt ID
-# ; 5. Update the vicidial_list record phone number with the callerID of the caller:
-# ;     Y - update the record with the phone number
-# ;     N - Do nothing (default)
-# ; 6. Update lead's address3 field to the uniqueid of the call
-# ;     Y - update the record with the uniqueid
-# ;     N - Do nothing (default)
-# ; 7. Update the lead's record with the call's agent_user_id variable
-# ;     Y - update the lead record's 'user' field with the agent_user_id variable
-# ;     COMMENTS - update the lead record's 'comments' field with the agent_user_id variable
-# ;     N - Do nothing (default)
-# ; 8. Update the lead's record with the call's title variable
-# ;     Y - update the lead record's 'title' field with the call's title variable
-# ;     N - Do nothing (default)
-# 
-# Found entries will send the call to the 'A' option in the source call menu
-# Not-Found entries will send the call to the 'B' option in the source call menu
-#
-#; example with 8-digit vendor lead codes
-# exten => _XXXXXXXX,1,AGI(cm_lookup.agi,vendor_lead_code---CAMPLISTSALL---TESTCAMP---lastname_oneyestwono---N---N---Y---N)
-#
-#; example with 8-digit vendor lead codes
-# exten => _XXXXXXXX,1,AGI(cm_lookup.agi,vendor_lead_code---CAMPLISTSALL---TESTCAMP---lastname_oneyestwono---N---N---Y---N)
-#
-# Copyright (C) 2013  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
-#
-# changes:
-# 111004-1450 - First Build
-# 111212-1507 - Added update of vicidial_list phone_number with caller callerid number option
-# 120511-1508 - Added option for 'address3' uniqueid update and 'user' agent_user_id field update if AGENT-dial-in AGI is used beforoe this AGI
-# 120604-1311 - Added title call variable option
-# 120824-1221 - Added filtering for non-digits in extension, and example of variable-digit account number
-# 130108-1817 - Changes for Asterisk 1.8 compatibility
-#
-
+#/* ========================================
+# * ███╗   ███╗██████╗ ██╗ █████╗ ██╗
+# * ████╗ ████║██╔══██╗██║██╔══██╗██║
+# * ██╔████╔██║██║  ██║██║███████║██║
+# * ██║╚██╔╝██║██║  ██║██║██╔══██║██║
+# * ██║ ╚═╝ ██║██████╔╝██║██║  ██║███████╗
+# * ╚═╝     ╚═╝╚═════╝ ╚═╝╚═╝  ╚═╝╚══════╝
+# * ========================================
+# * mDial - Omni-Channel Contact Centre Suite.
+# * Initially Written by Martin McCarthy.
+# * Contributions welcome.
+# * Active: 2020 - 2023.
+# *
+# * This software is licensed under AGPLv2.
+# * You can find more information here;
+# * https://www.gnu.org/licenses/agpl-3.0.en.html
+# * A copy of the license is also shipped with this build.
+# *
+# * Important note: this software is provided to you free of charge.
+# * If you paid for this software, you were ripped off.
+# *
+# * This project is a fork of the awesome FOSS project, ViCiDial.
+# * ViCiDial is copyrighted by Matt Florell and the ViCiDial Group
+# * under the AGPLv2 license.
+# *
+# * You can find out more about ViCiDial;
+# * Web: https://www.vicidial.com/
+# * Email: Matt Florell <vicidial@gmail.com>
+# * IRC: Libera.Chat - ##vicidial
+# *
+# * Bug reports, feature requests and patches welcome!
+# * ======================================== */
 $script = 'cm_lookup.agi';
 $S='*';
 $US='_';
 $vicidial_list_fields = '|lead_id|vendor_lead_code|source_id|list_id|gmt_offset_now|called_since_last_reset|phone_code|phone_number|title|first_name|middle_initial|last_name|address1|address2|address3|city|state|province|postal_code|country_code|gender|date_of_birth|alt_phone|email|security_phrase|comments|called_count|last_local_call_time|rank|owner|status|entry_date|entry_list_id|modify_date|user|q01|q02|q03|q04|q05|q06|q07|q08|q09|q10|q11|q12|q13|q14|q15|q16|q17|q18|q19|q20|q21|q22|q23|q24|q25|q26|q27|q28|q29|q30|q31|q32|q33|q34|q35|q36|q37|q38|q39|q40|q41|q42|q43|q44|q45|q46|q47|q48|q49|q50|q51|q52|q53|q54|q55|q56|q57|q58|q59|q60|q61|q62|q63|q64|q65|q66|q67|q68|q69|q70|q71|q72|q73|q74|q75|q76|q77|q78|q79|q80|q81|q82|q83|q84|q85|q86|q87|q88|q89|q90|q91|q92|q93|q94|q95|q96|q97|q98|q99|';
-
-
 ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
 $year = ($year + 1900);
 $mon++;
@@ -61,7 +43,6 @@ if ($mday < 10) {$mday = "0$mday";}
 if ($hour < 10) {$hour = "0$hour";}
 if ($min < 10) {$min = "0$min";}
 if ($sec < 10) {$sec = "0$sec";}
-
 $now_date_epoch = time();
 $now_date = "$year-$mon-$mday $hour:$min:$sec";
 $CLInow_date = "$year-$mon-$mday\\ $hour:$min:$sec";
@@ -71,10 +52,7 @@ $tsSQLdate = "$year$mon$mday$hour$min$sec";
 $SQLdate = "$year-$mon-$mday $hour:$min:$sec";
 $SQLdateBEGIN = $SQLdate;
 	while (length($CIDdate) > 9) {$CIDdate =~ s/^.//gi;} # 0902235959 changed to 902235959
-
-# default path to astguiclient configuration file:
 $PATHconf =		'/etc/astguiclient.conf';
-
 open(conf, "$PATHconf") || die "can't open $PATHconf: $!\n";
 @conf = <conf>;
 close(conf);
@@ -109,20 +87,15 @@ foreach(@conf)
 		{$VARDB_port = $line;   $VARDB_port =~ s/.*=//gi;}
 	$i++;
 	}
-
 if (!$VARDB_port) {$VARDB_port='3306';}
 if (!$AGILOGfile) {$AGILOGfile = "$PATHlogs/agiout.$year-$mon-$mday";}
 if (!$CEPLOGfile)	{$CEPLOGfile = "$PATHlogs/Cepstral.$year-$mon-$mday";}
-
 use DBI;
 use Time::HiRes ('gettimeofday','usleep','sleep');  # necessary to have perl sleep command of less than one second
 use Asterisk::AGI;
 $AGI = new Asterisk::AGI;
-
 $dbhA = DBI->connect("DBI:mysql:$VARDB_database:$VARDB_server:$VARDB_port", "$VARDB_user", "$VARDB_pass")
     or die "Couldn't connect to database: " . DBI->errstr;
-
-### Grab Server values from the database
 $stmtA = "SELECT agi_output,local_gmt FROM servers where server_ip = '$VARserver_ip';";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -138,8 +111,6 @@ if ($sthArows > 0)
 	if ($DBagi_output =~ /BOTH/)	{$AGILOG = '3';}
 	}
 $sthA->finish();
-
-### BEGIN parsing run-time options ###
 if (length($ARGV[0])>1)
 	{
 	if ($AGILOG) {$agi_string = "Perl Environment Dump:";   &agi_output;}
@@ -150,10 +121,7 @@ if (length($ARGV[0])>1)
 		if ($AGILOG) {$agi_string = "$i|$ARGV[$i]";   &agi_output;}
 		$i++;
 		}
-	
-	### list of command-line array arguments:
 	@ARGV_vars = split(/---/, $ARGV[0]);
-
 	$field =				$ARGV_vars[0];
 	$search_method =		$ARGV_vars[1];
 	$search_id =			$ARGV_vars[2];
@@ -169,9 +137,6 @@ if (length($search_method) < 1)
 	{$search_method = 'SYSTEM';}
 if (length($search_id) < 1)
 	{$search_method = 'SYSTEM';}
-### END parsing run-time options ###
-
-
 $|=1;
 while(<STDIN>) 
 	{
@@ -193,26 +158,20 @@ while(<STDIN>)
 	if (/^agi_callerid\:\s+(.*)$/)		{$callerid = $1;}
 	if (/^agi_calleridname\:\s+(.*)$/)	{$calleridname = $1;}
 	}
-
 if ( ($callerid =~ /\".*\"/) && ( (!$calleridname) or ($calleridname =~ /unknown/) ) )
 	{
 	$calleridname = $callerid;
 	$calleridname =~ s/\<\d\d\d\d\d\d\d\d\d\d\>//gi;
 	$calleridname =~ s/\"|\" //gi;
 	}
-
 $callerid =~ s/\D|\'//gi;
 $calleridname =~ s/unknown|\'//gi;
 if ( (!$callerid) or ($callerid =~ /unknown/) )
 	{$callerid = $calleridname;}
-
-# remove non-digits from extension
 $extension =~ s/\D//gi;
-
 $agent_user_id = $AGI->get_variable('agent_user_id');
 $call_var_title = $AGI->get_variable('title');
 if ( ($AGILOG) && (length($agent_user_id)>0) ) {$agi_string = "user id AGI variables:    |$agent_user_id|$call_var_title|";   &agi_output;}
-
 $listSQL = '';
 if ($search_method =~ /LIST$/)
 	{$listSQL = "and list_id='$search_id'";}
@@ -221,7 +180,6 @@ if ($search_method =~ /CAMPAIGNLISTS$|CAMPLISTSALL$/)
 	$activeSQL='';
 	if ($search_method =~ /CAMPAIGNLISTS$/)
 		{$activeSQL = "where active='Y'";}
-	### Grab all active lists associated with campaign_id
 	$cbc=0;
 	$SlistsSQL='';
 	$stmtA = "SELECT list_id FROM vicidial_lists where campaign_id='$search_id' $activeSQL limit 1000;";
@@ -236,16 +194,12 @@ if ($search_method =~ /CAMPAIGNLISTS$|CAMPLISTSALL$/)
 		}
 	$sthA->finish();
 	chop($SlistsSQL);
-
 	if (length($SlistsSQL)>3)
 		{$listSQL = "and list_id IN($SlistsSQL)";}
 	}
-
 if ($AGILOG) {$agi_string = "searching for account by $field|$search_method|$search_id|$extension";   &agi_output;}
-
 $found_extension='B';
 $found_priority='1';
-
 $stmtA= "SELECT lead_id,phone_number,first_name,last_name from vicidial_list where $field='$extension' $listSQL order by last_local_call_time desc limit 1;";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -258,17 +212,12 @@ if ($sthArows > 0)
 	$first_name =		$aryA[2];
 	$last_name =		$aryA[3];
 	$sthA->finish();
-
 	$found_extension='A';
 	$found_priority='1';
 	$confirmation=1;
-
-	### BEGIN if TTS prompt is defined, generate it and wait for "1 for yes or 2 for no" response
-	### if no response or no match then continue on as if nothing played
 	if (length($tts_prompt)>1) 
 		{
 		if ($AGILOG) {$agi_string = "--    TTS : |$tts_prompt|";   &agi_output;}
-
 		$stmtA = "SELECT lead_id,entry_date,modify_date,status,user,vendor_lead_code,source_id,list_id,phone_number,title,first_name,middle_initial,last_name,address1,address2,address3,city,state,province,postal_code,country_code,gender,date_of_birth,alt_phone,email,security_phrase,comments,called_count,last_local_call_time,rank,owner FROM vicidial_list where lead_id='$lead_id';";
 		$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 		$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -309,7 +258,6 @@ if ($sthArows > 0)
 			$TTS_owner =			$aryA[30];
 			}
 		$sthA->finish();
-
 		$stmtA = "SELECT tts_text,tts_voice FROM vicidial_tts_prompts where tts_id='$tts_prompt';";
 		$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 		$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -319,7 +267,6 @@ if ($sthArows > 0)
 			@aryA = $sthA->fetchrow_array;
 			$TTS_voice =	$aryA[1];
 			$TTS_text =		$aryA[0];
-			### BEGIN replace variables with record values ###
 			$TTS_text =~ s/--A--lead_id--B--/$TTS_lead_id/gi;
 			$TTS_text =~ s/--A--entry_date--B--/$TTS_entry_date/gi;
 			$TTS_text =~ s/--A--modify_date--B--/$TTS_modify_date/gi;
@@ -351,9 +298,6 @@ if ($sthArows > 0)
 			$TTS_text =~ s/--A--last_local_call_time--B--/$TTS_last_local_call_time/gi;
 			$TTS_text =~ s/--A--rank--B--/$TTS_rank/gi;
 			$TTS_text =~ s/--A--owner--B--/$TTS_owner/gi;
-			### END replace variables with record values ###
-
-			### BEGIN check for --C-- and --D-- tags for static file replacement
 			if ( ($TTS_text =~ /--C--/) || ($TTS_text =~ /--D--/) )
 				{
 				$Cdash='--C--';
@@ -404,9 +348,6 @@ if ($sthArows > 0)
 				$TTS_text =~ s/--C--|--D--//gi;
 				print STDERR "\nStatic Replacements Found: $sc|$sr\n";
 				}
-			### END check for --C-- and --D-- tags for static file replacement
-
-			### filter input for CLI-safe characters
 			$TTS_text =~ s/[^,\.\<\>\'\/\=\_\-\: 0-9a-zA-Z]//gi;
 			$TTS_textRAW =	$TTS_text;
 			$TTS_text =~ s/ /\\ /gi;
@@ -417,19 +358,13 @@ if ($sthArows > 0)
 			$TTS_text =~ s/\//\\\//gi;
 			$TTS_text =~ s/\n|\r/ /gi;
 			$TTS_text =~ s/\'/\\'/gi;
-			#	$voice = 'Allison-8kHz';	# override the voice to Allison-8k
 			print STDERR "\nGenerating: $TTS_text - $TTS_voice\n";
-
-			### send command to generate cepstral TTS audio file
 			`$PATHagi/cepstral_generate.pl --debug --voice=$TTS_voice --dialog=$TTS_text >> $CEPLOGfile `;
-
 			use Digest::MD5 qw(md5_hex);
-
 			$enc = md5_hex("$TTS_textRAW-$TTS_voice");	# the hash
 			$enc_ftl = substr($enc, 0, 2);	# first letter of hash
 			$TTS_filename_path = $PATHsounds . "/tts/" . $enc_ftl . "/tts-" . $enc;
 			print STDERR "\nfilename: $TTS_filename_path\n";
-
 			$confirm_entry_prompt = $TTS_filename_path;
 			$confirmation=0;
 			$confirmation_chances=0;
@@ -437,9 +372,7 @@ if ($sthArows > 0)
 			while ( ($confirmation_chances < 2) && ($confirmation < 1) )
 				{
 				$confirmation_chances++;
-
 				&confirm_entry;
-
 				if ($ANSWER_confirm > 1)
 					{
 					$found_extension='B';
@@ -455,16 +388,11 @@ if ($sthArows > 0)
 			}
 		$sthA->finish();
 		}
-	### END if TTS prompt is defined, generate it and wait for "1 for yes or 2 for no" response
-
-	# YmddhhmmssLLLLLLLLLL CID format
 	$PADlead_id = sprintf("%010s", $lead_id);	while (length($PADlead_id) > 10) {chop($PADlead_id);}
 	$YqueryCID = "Y$CIDdate$PADlead_id";
 	$Ynewcallerid = "\"$YqueryCID <$callerid>\"";
 	if ($AGILOG) {$agi_string = "account found: $lead_id|$phone_number|$first_name|$last_name|$Ynewcallerid";   &agi_output;}
-
 	$AGI->set_callerid($Ynewcallerid);
-
 	if ($confirmation > 0)
 		{
 		$phone_update_SQL='';
@@ -491,7 +419,6 @@ if ($sthArows > 0)
 			if ($agent_id_update =~ /Y/i)
 				{$user_update_SQL = ",user='$agent_user_id'";}
 			}
-
 		$stmtA = "UPDATE vicidial_list SET modify_date=NOW() $phone_update_SQL $user_update_SQL $uniqueid_address3_SQL $title_update_SQL where lead_id='$lead_id';";
 		$affected_rows = $dbhA->do($stmtA);
 		if ($AGILOG) {$agi_string = "--  CMLOOKUP vl record updated: |$affected_rows| $lead_id|$callerid|$phone_number|$first_name|$last_name|$agent_user_id|$call_var_title|$uniqueid|";   &agi_output;}
@@ -505,13 +432,9 @@ else
 	$INVCOUNT_set =	$AGI->set_variable('INVCOUNT', "$INVCOUNT");
 	if ($AGILOG) {$agi_string = "account not found: $INVCOUNT";   &agi_output;}
 	}
-
-
-
 $AGI->stream_file('sip-silence');
 $AGI->stream_file('sip-silence');
 $AGI->stream_file('sip-silence');
-
 if ($AGILOG) {$agi_string = "exiting the cm_lookup.agi app, transferring call to $found_extension @ $context + $found_priority";   &agi_output;}
 print "SET CONTEXT $context\n";
 	$result = <STDIN>;
@@ -522,14 +445,7 @@ print "SET EXTENSION $found_extension\n";
 print "SET PRIORITY $found_priority\n";
 	$result = <STDIN>;
 	checkresult($result);
-
 exit;
-
-
-
-
-
-######### SUBROUTINES #################
 sub checkresult 
 	{
 	$pass=0;   $fail=0;
@@ -542,46 +458,35 @@ sub checkresult
 		$res =~ /result=(-?\d+)/;
 		if (!length($1)) 
 			{
-		#	print STDERR "FAIL ($res)\n";
 			$fail++;
 			} 
 		else 
 			{
-		#	print STDERR "PASS ($1)\n";
 			$pass++;
 			}
 		} 
 	else 
 		{
-	#	print STDERR "FAIL (unexpected result '$res')\n";
 		$fail++;
 		}
 	}
-
-
 sub agi_output
 	{
 	if ($AGILOG >=2)
 		{
-		### open the log file for writing ###
 		open(Lout, ">>$AGILOGfile")
 				|| die "Can't open $AGILOGfile: $!\n";
 		print Lout "$now_date|$script|$agi_string\n";
 		close(Lout);
 		}
-		### send to STDERR writing ###
 	if ( ($AGILOG == '1') || ($AGILOG == '3') )
 		{print STDERR "$now_date|$script|$agi_string\n";}
 	$agi_string='';
 	}
-
-
-##### BEGIN confirm entry, 1 or 2 ######################################
 sub confirm_entry
 	{
 	$interrupt_digit='';
 	$audio_file = "$confirm_entry_prompt";
-
 	if ($language =~ /es/) 
 		{
 		$file_extension_gsm='.gsm';
@@ -594,17 +499,12 @@ sub confirm_entry
 		}
 	else 
 		{$audio_suffix='';}
-
 	$interrupt_digit = $AGI->stream_file("$audio_file$audio_suffix",'12');   
-
 	print STDERR "interrupt_digit |$interrupt_digit|\n";
-
 	$digits_being_entered=1;
 	$ANSWER_confirm='';
 	if ($interrupt_digit > 0)
 		{
-	#	if ($interrupt_digit == 35) {$interrupt_digit='#';}
-	#	if ($interrupt_digit == 42) {$interrupt_digit='*';}
 		if ($interrupt_digit == 48) {$interrupt_digit=0;}
 		if ($interrupt_digit == 49) {$interrupt_digit=1;}
 		if ($interrupt_digit == 50) {$interrupt_digit=2;}
@@ -615,10 +515,8 @@ sub confirm_entry
 		if ($interrupt_digit == 55) {$interrupt_digit=7;}
 		if ($interrupt_digit == 56) {$interrupt_digit=8;}
 		if ($interrupt_digit == 57) {$interrupt_digit=9;}
-		
 		$ANSWER_confirm=$interrupt_digit;
 		}
-
 	if (length($ANSWER_confirm) < 1)
 		{
 		$digit_loop_counter=0;
@@ -629,19 +527,15 @@ sub confirm_entry
 				{
 				$ANSWER_confirm = "$ANSWER_confirm$digit";
 				print STDERR "digit |$digit|     ANSWER_confirm |$ANSWER_confirm|\n";
-		#		$AGI->say_digits("$digit");
 				undef $digit;
 				}
 			else
 				{
 				$digits_being_entered=0;
 				}
-			
 			$digit_loop_counter++;
 			}
 		}
-
 	$ANSWER_confirm =~ s/\D//gi;
 	if ($ANSWER_confirm) {print STDERR "digit |$digit|     ANSWER_confirm |$ANSWER_confirm|\n";}
 	}
-##### END confirm entry ######################################

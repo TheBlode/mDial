@@ -1,35 +1,38 @@
 #!/usr/bin/perl
-#
-# VDL_CID_lookup.agi      version 2.6
-#
-# runs after a call goes through AMD in extensions.conf to send the call on to
-# it's proper destination
-#
-# You need to put lines similar to those below in your extensions.conf file:
-# 
-# ; VICIDIAL_auto_dialer transfer script AMD with Load Balanced:
-# exten => 8369,1,Ringing
-# exten => 8369,2,Wait(1)
-# exten => 8369,3,Answer
-# exten => 8369,4,AGI(VDL_CID_lookup.agi)
-# exten => 8369,5,AGI(agi-VDAD_ALL_inbound.agi,CID-----LB-----IN_TEST-----7275551212-----Closer-----park----------999-----1)
-# exten => 8369,6,Hangup
-# exten => 8369,7,AGI(call_logCID.agi,${EXTEN}-----${CALLERID}-----${CALLERIDNUM}-----${CALLERIDNAME})
-# exten => 8369,8,AGI(agi-VDADinbound_NI_DNC_CIDlookup.agi)
-# exten => 8369,9,Hangup
-# 
-#
-# Copyright (C) 2013  Matt Florell <vicidial@gmail.com>    LICENSE: GPLv2
-#
-# changes:
-# 80930-0226 - first build
-# 81015-1702 - added filter stats
-# 130108-1836 - Changes for Asterisk 1.8 compatibility
-#
-
+#/* ========================================
+# * ███╗   ███╗██████╗ ██╗ █████╗ ██╗
+# * ████╗ ████║██╔══██╗██║██╔══██╗██║
+# * ██╔████╔██║██║  ██║██║███████║██║
+# * ██║╚██╔╝██║██║  ██║██║██╔══██║██║
+# * ██║ ╚═╝ ██║██████╔╝██║██║  ██║███████╗
+# * ╚═╝     ╚═╝╚═════╝ ╚═╝╚═╝  ╚═╝╚══════╝
+# * ========================================
+# * mDial - Omni-Channel Contact Centre Suite.
+# * Initially Written by Martin McCarthy.
+# * Contributions welcome.
+# * Active: 2020 - 2023.
+# *
+# * This software is licensed under AGPLv2.
+# * You can find more information here;
+# * https://www.gnu.org/licenses/agpl-3.0.en.html
+# * A copy of the license is also shipped with this build.
+# *
+# * Important note: this software is provided to you free of charge.
+# * If you paid for this software, you were ripped off.
+# *
+# * This project is a fork of the awesome FOSS project, ViCiDial.
+# * ViCiDial is copyrighted by Matt Florell and the ViCiDial Group
+# * under the AGPLv2 license.
+# *
+# * You can find out more about ViCiDial;
+# * Web: https://www.vicidial.com/
+# * Email: Matt Florell <vicidial@gmail.com>
+# * IRC: Libera.Chat - ##vicidial
+# *
+# * Bug reports, feature requests and patches welcome!
+# * ======================================== */
 $filter_stats = 1;
 $script = 'VDL_CID_lookup.agi';
-
 ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
 $year = ($year + 1900);
 $mon++;
@@ -38,14 +41,10 @@ if ($mday < 10) {$mday = "0$mday";}
 if ($hour < 10) {$hour = "0$hour";}
 if ($min < 10) {$min = "0$min";}
 if ($sec < 10) {$sec = "0$sec";}
-
 $now_date_epoch = time();
 $now_date = "$year-$mon-$mday $hour:$min:$sec";
 $SQLdate = "$year-$mon-$mday $hour:$min:$sec";
-
-# default path to astguiclient configuration file:
 $PATHconf =		'/etc/astguiclient.conf';
-
 open(conf, "$PATHconf") || die "can't open $PATHconf: $!\n";
 @conf = <conf>;
 close(conf);
@@ -80,19 +79,13 @@ foreach(@conf)
 		{$VARDB_port = $line;   $VARDB_port =~ s/.*=//gi;}
 	$i++;
 	}
-
 if (!$VARDB_port) {$VARDB_port='3306';}
 if (!$AGILOGfile) {$AGILOGfile = "$PATHlogs/agiout.$year-$mon-$mday";}
-
 use DBI;
 use Asterisk::AGI;
 $AGI = new Asterisk::AGI;
-
-  
 $dbhA = DBI->connect("DBI:mysql:$VARDB_database:$VARDB_server:$VARDB_port", "$VARDB_user", "$VARDB_pass")
     or die "Couldn't connect to database: " . DBI->errstr;
-
-### Grab Server values from the database
 $stmtA = "SELECT agi_output FROM servers where server_ip = '$VARserver_ip';";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -109,9 +102,6 @@ while ($sthArows > $rec_count)
 	 $rec_count++;
 	}
 $sthA->finish();
-
-
-### begin parsing run-time options ###
 if (length($ARGV[0])>1)
 {
 	if ($AGILOG) {$agi_string = "Perl Environment Dump:";   &agi_output;}
@@ -122,7 +112,6 @@ if (length($ARGV[0])>1)
 	if ($AGILOG) {$agi_string = "$i|$ARGV[$i]";   &agi_output;}
 	$i++;
 	}
-
 	if ($args =~ /--help/i)
 	{
 	print "allowed run time options:\n  [-q] = quiet\n  [-t] = test\n  [-debug] = verbose debug messages\n\n";
@@ -153,8 +142,6 @@ if (length($ARGV[0])>1)
 		}
 	}
 }
-
-
 $|=1;
 while(<STDIN>) 
 {
@@ -167,7 +154,6 @@ while(<STDIN>)
 			$AGI{$1} = $2;
 		}
 	}
-
 	if (/^agi_uniqueid\:\s+(.*)$/)		{$unique_id = $1; $uniqueid = $unique_id;}
 	if (/^agi_priority\:\s+(.*)$/)		{$priority = $1;}
 	if (/^agi_channel\:\s+(.*)$/)		{$channel = $1;}
@@ -176,7 +162,6 @@ while(<STDIN>)
 	if (/^agi_callerid\:\s+(.*)$/)		{$callerid = $1;   $calleridnum = $callerid;}
 	if (/^agi_calleridname\:\s+(.*)$/)	{$calleridname = $1;}
 }
-
 if ( (length($callerid)>20) && ($callerid =~ /\"\S\S\S\S\S\S\S\S\S\S\S\S\S\S\S\S\S\S/) )
   {
    $callerid =~ s/^\"//gi;
@@ -188,34 +173,15 @@ if ( (
   {
    $callerid = $calleridname;
   }
-
-
 if ($AGILOG) {$agi_string = "AGI Environment Dump:";   &agi_output;}
-
 foreach $i (sort keys %AGI) 
 {
 	if ($AGILOG) {$agi_string = " -- $i = $AGI{$i}";   &agi_output;}
 }
-
 if ($AGILOG) {$agi_string = "AGI Variables: |$unique_id|$channel|$extension|$type|$callerid|BUS: $business_hours|";   &agi_output;}
-
 $callerid =~ s/\"//gi;
-
-
-
-
-
-
-
-
-
-
-
-
-
 if ($filter_stats > 0)
 	{
-	### find out if phone number exists in the vicidial_list table
 	$stmtA = "SELECT count(*) FROM vicidial_list where phone_number = '$callerid';";
 	$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 	$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -226,7 +192,6 @@ if ($filter_stats > 0)
 		$VDL_count =	"$aryA[0]";
 		}
 	$sthA->finish();
-
 	if ($VDL_count < 1) 
 		{
 		$priority = ($priority + 3);
@@ -234,13 +199,10 @@ if ($filter_stats > 0)
 			if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 		$affected_rows = $dbhA->do($stmtA);
 			if ($AGILOG) {$agi_string = "--    cid_lookup finish: : |$affected_rows|$callerid|$priority|NOT_FOUND|";   &agi_output;}
-
 		print "SET PRIORITY $priority\n";
 			$result = <STDIN>;
 			checkresult($result);
-
 		$dbhA->disconnect();
-
 		exit;
 		}
 	else    #################  LEAD IN SYSTEM, FILTER FURTHER #########################
@@ -255,7 +217,6 @@ if ($filter_stats > 0)
 			$sales_count =	"$aryA[0]";
 			}
 		$sthA->finish();
-
 		if ($sales_count > 0)
 			{
 			$priority = ($priority + 3);
@@ -263,16 +224,12 @@ if ($filter_stats > 0)
 				if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 			$affected_rows = $dbhA->do($stmtA);
 			if ($AGILOG) {$agi_string = "--    cid_lookup finish: : |$affected_rows|$callerid|$priority|EXISTING|SALE|";   &agi_output;}
-
 			print "SET PRIORITY $priority\n";
 				$result = <STDIN>;
 				checkresult($result);
-
 			$dbhA->disconnect();
-
 			exit;
 			}
-
 		$stmtA = "SELECT count(*) FROM vicidial_list where phone_number = '$callerid' and status IN('DNC');";
 		$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 		$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -283,7 +240,6 @@ if ($filter_stats > 0)
 			$dnc_count =	"$aryA[0]";
 			}
 		$sthA->finish();
-
 		if ($dnc_count > 0)
 			{
 			$priority = ($priority + 3);
@@ -291,16 +247,12 @@ if ($filter_stats > 0)
 				if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 			$affected_rows = $dbhA->do($stmtA);
 			if ($AGILOG) {$agi_string = "--    cid_lookup finish: : |$affected_rows|$callerid|$priority|EXISTING|DNC|";   &agi_output;}
-
 			print "SET PRIORITY $priority\n";
 				$result = <STDIN>;
 				checkresult($result);
-
 			$dbhA->disconnect();
-
 			exit;
 			}
-
 		$stmtA = "SELECT count(*) FROM vicidial_list where phone_number = '$callerid' and list_id NOT IN('999999');";
 		$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 		$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -311,7 +263,6 @@ if ($filter_stats > 0)
 			$archive_count =	"$aryA[0]";
 			}
 		$sthA->finish();
-
 		if ($archive_count < 1)
 			{
 			$priority = ($priority + 3);
@@ -319,29 +270,21 @@ if ($filter_stats > 0)
 				if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 			$affected_rows = $dbhA->do($stmtA);
 			if ($AGILOG) {$agi_string = "--    cid_lookup finish: : |$affected_rows|$callerid|$priority|EXISTING|ARCHIVE|";   &agi_output;}
-
 			print "SET PRIORITY $priority\n";
 				$result = <STDIN>;
 				checkresult($result);
-
 			$dbhA->disconnect();
-
 			exit;
 			}
-
 		$stmtA = "INSERT INTO live_inbound_log (uniqueid,channel,server_ip,caller_id,extension,start_time,comment_a,comment_b,comment_c) values('$uniqueid','$channel','$VARserver_ip','$callerid','$extension','$SQLdate','INBOUND_IVR_FILTER','CLEAN','TO_AGENT')";
 			if ($AGILOG) {$agi_string = "|$stmtA|";   &agi_output;}
 		$affected_rows = $dbhA->do($stmtA);
 		if ($AGILOG) {$agi_string = "--    cid_lookup finish: : |$affected_rows|$callerid|$priority|EXISTING|CLEAN|";   &agi_output;}
-
 		exit;
 		}
-
 	}
-
 else
 	{
-	### find out if phone number exists in the vicidial_list table
 	$stmtA = "SELECT count(*) FROM vicidial_list where phone_number = '$callerid' and list_id NOT IN('999999');";
 	$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 	$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -352,7 +295,6 @@ else
 		$VDL_count =	"$aryA[0]";
 		}
 	$sthA->finish();
-
 	if ($VDL_count < 1) 
 		{
 		$priority = ($priority + 3);
@@ -361,18 +303,9 @@ else
 			$result = <STDIN>;
 			checkresult($result);
 		}
-
 	}
-
 $dbhA->disconnect();
-
 exit;
-
-
-
-
-
-
 sub checkresult {
 	my ($res) = @_;
 	my $retval;
@@ -381,30 +314,23 @@ sub checkresult {
 	if ($res =~ /^200/) {
 		$res =~ /result=(-?\d+)/;
 		if (!length($1)) {
-		#	print STDERR "FAIL ($res)\n";
 			$fail++;
 		} else {
-		#	print STDERR "PASS ($1)\n";
 			$pass++;
 		}
 	} else {
-	#	print STDERR "FAIL (unexpected result '$res')\n";
 		$fail++;
 	}
 }
-
-
 sub agi_output
 {
 if ($AGILOG >=2)
 	{
-	### open the log file for writing ###
 	open(Lout, ">>$AGILOGfile")
 			|| die "Can't open $AGILOGfile: $!\n";
 	print Lout "$now_date|$script|$agi_string\n";
 	close(Lout);
 	}
-	### send to STDERR writing ###
 if ( ($AGILOG == '1') || ($AGILOG == '3') )
 	{print STDERR "$now_date|$script|$agi_string\n";}
 $agi_string='';

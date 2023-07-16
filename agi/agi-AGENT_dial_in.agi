@@ -1,49 +1,41 @@
 #!/usr/bin/perl
-#
-# agi-AGENT_dial_in.agi      version 2.6
-#
-# This script is designed to allow agents the ability to dial in to an extension
-# to establish the phone connection to their VICIDIAL session. The user login
-# and password must be only digits and nothing but digits to use this utility.
-#
-# user is prompted for their user ID then press #
-# user is prompted for their passcode then press #
-# then the user is forwarded to the active vicidial agent session
-#
-# ; settings for this script:
-# ; 1. allow user_id only login (disabled by default)
-# ;     Y - allow user ID only with no password
-# ;     CONTACTS - lookup the user ID as the 'office_num' field in the contact_information table
-# ;     N or (blank) - require password (default)
-# ; 2. forward to A or B within Call Menu instead of logging into an agent session
-# ;     Y - forward to A option on valid user ID or B option on invalid user ID
-# ;     N or (blank) - go to agent session (default)
-#
-# can be added as an AGI to a Call Menu, or as below:
-# ;agent dial-in:
-#exten => 2345,1,Answer		; Answer the line
-#exten => 2345,2,AGI(agi-AGENT_dial_in.agi)
-#exten => 2345,3,Hangup
-#
-# ; call menu with options:
-# 	agi-AGENT_dial_in.agi,Y---Y
-#
-# Copyright (C) 2013  Matt Florell <vicidial@gmail.com>    LICENSE: AGPLv2
-#
-# CHANGELOG
-# 81022-2115 - First build
-# 120511-1423 - Added new options
-# 130108-1809 - Changes for Asterisk 1.8 compatibility
-#
-
+#/* ========================================
+# * ███╗   ███╗██████╗ ██╗ █████╗ ██╗
+# * ████╗ ████║██╔══██╗██║██╔══██╗██║
+# * ██╔████╔██║██║  ██║██║███████║██║
+# * ██║╚██╔╝██║██║  ██║██║██╔══██║██║
+# * ██║ ╚═╝ ██║██████╔╝██║██║  ██║███████╗
+# * ╚═╝     ╚═╝╚═════╝ ╚═╝╚═╝  ╚═╝╚══════╝
+# * ========================================
+# * mDial - Omni-Channel Contact Centre Suite.
+# * Initially Written by Martin McCarthy.
+# * Contributions welcome.
+# * Active: 2020 - 2023.
+# *
+# * This software is licensed under AGPLv2.
+# * You can find more information here;
+# * https://www.gnu.org/licenses/agpl-3.0.en.html
+# * A copy of the license is also shipped with this build.
+# *
+# * Important note: this software is provided to you free of charge.
+# * If you paid for this software, you were ripped off.
+# *
+# * This project is a fork of the awesome FOSS project, ViCiDial.
+# * ViCiDial is copyrighted by Matt Florell and the ViCiDial Group
+# * under the AGPLv2 license.
+# *
+# * You can find out more about ViCiDial;
+# * Web: https://www.vicidial.com/
+# * Email: Matt Florell <vicidial@gmail.com>
+# * IRC: Libera.Chat - ##vicidial
+# *
+# * Bug reports, feature requests and patches welcome!
+# * ======================================== */
 &get_time_now;
   $start_epoch = $now_date_epoch;
-
 $script = 'agi-AGENT_dial_in.agi';
-
 $now_date_epoch = time();
 $now_date = "$year-$mon-$mday $hour:$min:$sec";
-
 ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
 $year = ($year + 1900);
 $mon++;
@@ -52,13 +44,8 @@ if ($mday < 10) {$mday = "0$mday";}
 if ($hour < 10) {$hour = "0$hour";}
 if ($min < 10) {$min = "0$min";}
 if ($sec < 10) {$sec = "0$sec";}
-
 $US='_';
-
-
-# default path to astguiclient configuration file:
 $PATHconf =		'/etc/astguiclient.conf';
-
 open(conf, "$PATHconf") || die "can't open $PATHconf: $!\n";
 @conf = <conf>;
 close(conf);
@@ -87,19 +74,13 @@ foreach(@conf)
 		{$VARDB_port = $line;   $VARDB_port =~ s/.*=//gi;}
 	$i++;
 	}
-
 if (!$VARDB_port) {$VARDB_port='3306';}
 if (!$AGILOGfile) {$AGILOGfile = "$PATHlogs/ivrout.$year-$mon-$mday";}
-
 use DBI;
 use Asterisk::AGI;
 $AGI = new Asterisk::AGI;
-
 $dbhA = DBI->connect("DBI:mysql:$VARDB_database:$VARDB_server:$VARDB_port", "$VARDB_user", "$VARDB_pass")
     or die "Couldn't connect to database: " . DBI->errstr;
-
-
-### BEGIN parsing run-time options ###
 if (length($ARGV[0])>1)
 	{
 	if ($AGILOG) {$agi_string = "Perl Environment Dump:";   &agi_output;}
@@ -110,10 +91,7 @@ if (length($ARGV[0])>1)
 		if ($AGILOG) {$agi_string = "$i|$ARGV[$i]";   &agi_output;}
 		$i++;
 		}
-	
-	### list of command-line array arguments:
 	@ARGV_vars = split(/---/, $ARGV[0]);
-
 	$user_id_only =		$ARGV_vars[0];
 	$use_call_menu = 	$ARGV_vars[1];
 	}
@@ -121,9 +99,6 @@ if ( (length($user_id_only) < 1) || ($user_id_only !~ /Y|N/) )
 	{$user_id_only = 'N';}
 if ( (length($use_call_menu) < 1) || ($use_call_menu !~ /Y|N/) )
 	{$use_call_menu = 'N';}
-### END parsing run-time options ###
-
-
 $|=1;
 while(<STDIN>) 
 {
@@ -136,7 +111,6 @@ while(<STDIN>)
 			$AGI{$1} = $2;
 		}
 	}
-
 	if (/^agi_context\:\s+(.*)$/)		{$context = $1;}
 	if (/^agi_uniqueid\:\s+(.*)$/)		{$unique_id = $1;}
 	if (/^agi_extension\:\s+(.*)$/)		{$extension = $1;}
@@ -144,21 +118,17 @@ while(<STDIN>)
 	if (/^agi_callerid\:\s+(.*)$/)		{$callerid = $1;}
 	if (/^agi_calleridname\:\s+(.*)$/)	{$calleridname = $1;}
 }
-
 if ( ($callerid =~ /\".*\"/) && ( (!$calleridname) or ($calleridname =~ /unknown/) ) )
 	{
 	$calleridname = $callerid;
 	$calleridname =~ s/\<\d\d\d\d\d\d\d\d\d\d\>//gi;
 	$calleridname =~ s/\"|\" //gi;
 	}
-
 	$callerid =~ s/\D//gi;
 	$calleridname =~ s/unknown//gi;
 if ( (!$callerid) or ($callerid =~ /unknown/) )
 	{$callerid = $calleridname;}
 $phone_number=$callerid;
-
-### Grab Server values from the database
 $stmtA = "SELECT ext_context,agi_output FROM servers where server_ip = '$VARserver_ip';";
 $sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 $sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -176,13 +146,8 @@ while ($sthArows > $rec_count)
 	 $rec_count++;
 	}
 $sthA->finish();
-
-
-
 $AGI->stream_file('sip-silence');
 $AGI->stream_file('sip-silence');
-
-
 $entry_chances=0;
 $VALID_login=0;
 $ACTIVE_login=0;
@@ -190,16 +155,9 @@ $VDADremDIALstr='';
 while ( ($entry_chances < 3) && ($VALID_login < 1) ) 
 	{
 	$entry_chances++;
-
-
 	&user_password_gather;
-
-
-	###### Check userID and password against vicidial_users table
 	if ($user_id_only =~ /CONTACT/)
 		{
-		#############################################
-		##### START SYSTEM SETTINGS LOOKUP      #####
 		$stmtA = "SELECT alt_log_server_ip,alt_log_dbname,alt_log_login,alt_log_pass,tables_use_alt_log_db FROM system_settings;";
 		$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 		$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -214,9 +172,6 @@ while ( ($entry_chances < 3) && ($VALID_login < 1) )
 			$tables_use_alt_log_db =		$aryA[4];
 			}
 		$sthA->finish();
-		##### END SYSTEM SETTINGS LOOKUP      #####
-		###########################################
-
 		if ( ($tables_use_alt_log_db =~ /contact_information/) && (length($alt_log_server_ip)>4) && (length($alt_log_dbname)>0) )
 			{
 			$linkALT = DBI->connect("DBI:mysql:$alt_log_dbname:$alt_log_server_ip:$VARDB_port", "$alt_log_login", "$alt_log_pass")
@@ -224,7 +179,6 @@ while ( ($entry_chances < 3) && ($VALID_login < 1) )
 			}
 		else
 			{$linkALT = $dbhA;}
-
 		$stmtA = "SELECT count(*) FROM contact_information where office_num='$PIN_number';";
 		$sthA = $linkALT->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 		$sthA->execute or die "executing: $stmtA ", $linkALT->errstr;
@@ -251,11 +205,9 @@ while ( ($entry_chances < 3) && ($VALID_login < 1) )
 			}
 		$sthA->finish();
 		}
-
 	if ($VALID_login > 0) 
 		{
 		$AGI->exec("EXEC Set(_agent_user_id=$PIN_number)");
-
 		$AGI->stream_file('pin-number-accepted');
 		}
 	else
@@ -263,13 +215,9 @@ while ( ($entry_chances < 3) && ($VALID_login < 1) )
 		$AGI->stream_file('pin-invalid');
 		}
 	}
-
-
-
 if ($VALID_login < 1) 
 	{
 	if ($AGILOG) {$agi_string = "DIAL-IN END: Invalid Login   |$VALID_login|$PIN_number|$PASS_word|";   &agi_output;}
-
 	if ($use_call_menu =~ /Y/)
 		{
 		if ($AGILOG) {$agi_string = "exiting the agent dial-in app, transferring call to B @ $context";   &agi_output;}
@@ -286,9 +234,7 @@ if ($VALID_login < 1)
 	else
 		{
 		$AGI->stream_file('vm-goodbye');
-
 		$AGI->hangup();
-
 		$dbhA->disconnect();
 		}
 	exit;
@@ -306,8 +252,6 @@ else
 	if ($Pmin < 10) {$Pmin = "0$Pmin";}
 	if ($Psec < 10) {$Psec = "0$Psec";}
 		$PDtsSQLdate = "$Pyear$Pmon$Pmday$Phour$Pmin$Psec";
-
-
 	if ($use_call_menu =~ /Y/)
 		{
 		if ($AGILOG) {$agi_string = "exiting the agent dial-in app, transferring call to A @ $context";   &agi_output;}
@@ -320,14 +264,10 @@ else
 		print "SET PRIORITY 1\n";
 			$result = <STDIN>;
 			checkresult($result);
-
-
 		exit;
 		}
-
 	else
 		{
-		###### Check if user is logged in, vicidial_live_agents table
 		$stmtA = "SELECT count(*) FROM vicidial_live_agents where user='$PIN_number' and last_update_time > \"$PDtsSQLdate\";";
 		$sthA = $dbhA->prepare($stmtA) or die "preparing: ",$dbhA->errstr;
 		$sthA->execute or die "executing: $stmtA ", $dbhA->errstr;
@@ -338,17 +278,13 @@ else
 			$ACTIVE_login = "$aryA[0]";
 			}
 		$sthA->finish();
-
 		if ($ACTIVE_login < 1) 
 			{
 			if ($AGILOG) {$agi_string = "DIAL-IN END: Inactive Login   |$VALID_login|$PIN_number|$PASS_word|  |$ACTIVE_login|$PDtsSQLdate|";   &agi_output;}
-
 			$AGI->stream_file('login-fail');
 			$AGI->stream_file('you-must-be-logged-in');
 			$AGI->stream_file('vm-goodbye');
-
 			$AGI->hangup();
-
 			$dbhA->disconnect();
 			exit;
 			}
@@ -363,14 +299,11 @@ else
 				if ($sthArows > 0)
 				{
 				@aryA = $sthA->fetchrow_array;
-
 				$VDADconf_exten	= "$aryA[0]";
 				$VDADextension	= "$aryA[1]";
 				$VDADserver_ip	= "$aryA[2]";
 				}
 			$sthA->finish();
-
-			### format the remote server dialstring to get the call to the overflow agent meetme room
 			$S='*';
 			if( $VDADserver_ip =~ m/(\S+)\.(\S+)\.(\S+)\.(\S+)/ )
 				{
@@ -381,9 +314,7 @@ else
 				$VDADremDIALstr = "$a$S$b$S$c$S$d$S";
 				}
 			$VDADremDIALstr .= "$VDADconf_exten";
-
 			if ($AGILOG) {$agi_string = "Agent $PIN_number sent to $VDADremDIALstr";   &agi_output;}
-
 			print "SET CONTEXT $ext_context\n";
 				$result = <STDIN>;
 				checkresult($result);
@@ -396,40 +327,17 @@ else
 			}
 		}
 	}
-
-
-
 $dbhA->disconnect();
-
 exit;
-
-
-
-
-
-################################################################################
-##### SUBROUTINES ##############################################################
-################################################################################
-
-
-##### BEGIN collect the user and password ######################################
 sub user_password_gather
 	{
-	################################################################################
-	# please enter the pin number followed by the pound key
-
 	$interrupt_digit='';
-
 	$interrupt_digit = $AGI->stream_file('ld_welcome_pin_number','0123456789');   
-
 		print STDERR "interrupt_digit |$interrupt_digit|\n";
-
 	$digits_being_entered=1;
 	$PIN_number='';
 	if ($interrupt_digit > 0)
 		{
-	#	if ($interrupt_digit == 35) {$interrupt_digit='#';}
-	#	if ($interrupt_digit == 42) {$interrupt_digit='*';}
 		if ($interrupt_digit == 48) {$interrupt_digit=0;}
 		if ($interrupt_digit == 49) {$interrupt_digit=1;}
 		if ($interrupt_digit == 50) {$interrupt_digit=2;}
@@ -440,10 +348,8 @@ sub user_password_gather
 		if ($interrupt_digit == 55) {$interrupt_digit=7;}
 		if ($interrupt_digit == 56) {$interrupt_digit=8;}
 		if ($interrupt_digit == 57) {$interrupt_digit=9;}
-		
 		$PIN_number=$interrupt_digit;
 		}
-
 	$digit_loop_counter=0;
 	while ( ($digits_being_entered > 0) && ($digit_loop_counter < 20) )
 		{
@@ -452,38 +358,25 @@ sub user_password_gather
 			{
 			$PIN_number = "$PIN_number$digit";
 			print STDERR "digit |$digit|     PIN_number |$PIN_number|\n";
-	#		$AGI->say_digits("$digit");
 			undef $digit;
 			}
 		else
 			{
 			$digits_being_entered=0;
 			}
-		
 		$digit_loop_counter++;
 		}
-
 	$PIN_number =~ s/\D//gi;
 	if ($PIN_number) {print STDERR "digit |$digit|     PIN_number |$PIN_number|\n";}
-
-
 	if ($user_id_only !~ /Y|CONTACT/)
 		{
-		################################################################################
-		# please enter your password followed by the pound key
-
 		$interrupt_digit='';
-
 		$interrupt_digit = $AGI->stream_file('enter-password','0123456789');   
-
 			print STDERR "interrupt_digit |$interrupt_digit|\n";
-
 		$digits_being_entered=1;
 		$PASS_word='';
 		if ($interrupt_digit > 0)
 			{
-		#	if ($interrupt_digit == 35) {$interrupt_digit='#';}
-		#	if ($interrupt_digit == 42) {$interrupt_digit='*';}
 			if ($interrupt_digit == 48) {$interrupt_digit=0;}
 			if ($interrupt_digit == 49) {$interrupt_digit=1;}
 			if ($interrupt_digit == 50) {$interrupt_digit=2;}
@@ -494,10 +387,8 @@ sub user_password_gather
 			if ($interrupt_digit == 55) {$interrupt_digit=7;}
 			if ($interrupt_digit == 56) {$interrupt_digit=8;}
 			if ($interrupt_digit == 57) {$interrupt_digit=9;}
-			
 			$PASS_word=$interrupt_digit;
 			}
-
 		$digit_loop_counter=0;
 		while ( ($digits_being_entered > 0) && ($digit_loop_counter < 20) )
 			{
@@ -506,28 +397,18 @@ sub user_password_gather
 				{
 				$PASS_word = "$PASS_word$digit";
 				print STDERR "digit |$digit|     PASS_word |$PASS_word|\n";
-		#		$AGI->say_digits("$digit");
 				undef $digit;
 				}
 			else
 				{
 				$digits_being_entered=0;
 				}
-			
 			$digit_loop_counter++;
 			}
-
 		$PASS_word =~ s/\D//gi;
 		if ($PASS_word) {print STDERR "digit |$digit|     PASS_word |$PASS_word| PIN_number |$PIN_number|\n";}
 		}
 	}
-##### END collect the user and password ###############################################
-
-
-
-
-##### SUBROUTINES #####
-
 sub get_time_now	#get the current date and time and epoch for logging call lengths and datetimes
 	{
 	($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
@@ -538,14 +419,10 @@ sub get_time_now	#get the current date and time and epoch for logging call lengt
 	if ($hour < 10) {$hour = "0$hour";}
 	if ($min < 10) {$min = "0$min";}
 	if ($sec < 10) {$sec = "0$sec";}
-
 	$now_date_epoch = time();
 	$now_date = "$year-$mon-$mday $hour:$min:$sec";
 	$filedate = "$year$mon$mday$hour$min$sec";
 	}
-
-
-
 sub checkresult 
 	{
 	my ($res) = @_;
@@ -571,23 +448,19 @@ sub checkresult
 		$fail++;
 		}
 	}
-
 sub agi_output
 	{
 	if ($AGILOG >=2)
 		{
-		### open the log file for writing ###
 		open(Lout, ">>$AGILOGfile")
 				|| die "Can't open $AGILOGfile: $!\n";
 		print Lout "$now_date|$script|$agi_string\n";
 		close(Lout);
 		}
-		### send to STDERR writing ###
 	if ( ($AGILOG == '1') || ($AGILOG == '3') )
 		{print STDERR "$now_date|$script|$agi_string\n";}
 	$agi_string='';
 	}
-
 sub leading_zero($) 
 	{
 	$_ = $_[0];
