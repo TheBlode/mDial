@@ -1292,7 +1292,7 @@ if ($ACTION == 'LogiNCamPaigns') {
         $auth=1;
     }
     if((strlen($user)<2) or (strlen($pass)<2) or ($auth==0)) {
-        echo "<select size=1 name=VD_campaign id=VD_campaign>\n";
+        echo "<select class=\"form-control\" size=1 name=VD_campaign id=VD_campaign>\n";
         echo "<option value=\"\">-- "._QXZ("ERROR Invalid Username or Password")." --</option>\n";
         echo "</select>\n";
         if ($SSagent_debug_logging > 0) {
@@ -1388,7 +1388,7 @@ if ($ACTION == 'LogiNCamPaigns') {
                 }
             }
         } else {
-            echo "<select size=1 name=VD_campaign id=VD_campaign>\n";
+            echo "<select class=\"form-control\" size=1 name=VD_campaign id=VD_campaign>\n";
             echo "<option value=\"\">-- "._QXZ("ERROR Invalid Username or Password")." --</option>\n";
             echo "</select>\n";
             if ($SSagent_debug_logging > 0) {
@@ -1475,7 +1475,7 @@ if ($ACTION == 'LogiNCamPaigns') {
             mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '00006', $user, $server_ip, $session_name, $one_mysql_log);
         }
         $camps_to_print = mysqli_num_rows($rslt);
-        echo "<select size=1 name=VD_campaign id=VD_campaign>\n";
+        echo "<select class=\"form-control\" size=1 name=VD_campaign id=VD_campaign>\n";
         echo "<option value=\"\">-- "._QXZ("PLEASE SELECT A CAMPAIGN")." --</option>\n";
         $o=0;
         $campSELECTED=0;
@@ -1498,7 +1498,7 @@ if ($ACTION == 'LogiNCamPaigns') {
                 mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '00599', $user, $server_ip, $session_name, $one_mysql_log);
             }
             $langs_to_print = mysqli_num_rows($rslt);
-            echo "<select size=1 name=VD_language id=VD_language>\n";
+            echo "<select class=\"form-control\" size=1 name=VD_language id=VD_language>\n";
             echo "<option value=\"\">-- "._QXZ("PLEASE SELECT A LANGUAGE")." --</option>\n";
             $o=0;
             $langSELECTED=0;
@@ -1521,7 +1521,7 @@ if ($ACTION == 'LogiNCamPaigns') {
             echo "</select>\n";
         }
     } else {
-        echo "<select size=1 name=VD_campaign id=VD_campaign>\n";
+        echo "<select class=\"form-control\" size=1 name=VD_campaign id=VD_campaign>\n";
         echo "<option value=\"\">-- "._QXZ("YOU MUST LOG IN TO THE TIMECLOCK FIRST")." --</option>\n";
         echo "</select>\n";
     }

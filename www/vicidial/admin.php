@@ -6706,6 +6706,12 @@ if (isset($_GET["dead_stop_recording"])) {
 } elseif (isset($_POST["dead_stop_recording"])) {
     $dead_stop_recording=$_POST["dead_stop_recording"];
 }
+if (isset($_GET["agent_login_background_image"])) {
+    $agent_login_background_image=$_GET["agent_login_background_image"];
+} elseif (isset($_POST["agent_login_background_image"])) {
+    $agent_login_background_image=$_POST["agent_login_background_image"];
+}
+
 $DB=preg_replace("/[^0-9a-zA-Z]/", "", $DB);
 if (isset($script_id)) {
     $script_id= mb_strtoupper($script_id, 'utf-8');
@@ -8095,6 +8101,7 @@ if ($non_latin < 1) {
     $vdc_header_phone_format = preg_replace('/[^- \(\)\_0-9a-zA-Z]/', '', $vdc_header_phone_format);
     $areacode_list = preg_replace('/[^\n0-9a-zA-Z]/', '', $areacode_list);
     $ip_address = preg_replace('/[^\n\.\:\0-9a-zA-Z]/', '', $ip_address);
+    $agent_login_background_image = preg_replace('/[^\n\.\:\0-9a-zA-Z]/', '', $agent_login_background_image);
 } else {
     $is_webphone = preg_replace('/[^-_0-9\p{L}]/u', '', $is_webphone);
     $campaign_script = preg_replace('/[^0-9\p{L}]/u', '', $campaign_script);
@@ -8779,6 +8786,7 @@ if ($non_latin < 1) {
     $vdc_header_phone_format = preg_replace('/[^- \(\)\_0-9\p{L}]/u', '', $vdc_header_phone_format);
     $areacode_list = preg_replace('/[^\n0-9\p{L}]/u', '', $areacode_list);
     $ip_address = preg_replace('/[^\n\.\:\0-9\p{L}]/u', '', $ip_address);
+    $agent_login_background_image = preg_replace('/[^\n\.\:\0-9\p{L}]/u', '', $agent_login_background_image);
 }
 $lead_filter_sql = preg_replace('/;/', '', $lead_filter_sql);
 $list_mix_container = preg_replace('/;/', '', $list_mix_container);
@@ -9374,7 +9382,7 @@ $SSalt_row3_background='CCFFCC';
 $SSbutton_color='EFEFEF';
 $SSweb_logo='default_old';
 if ($SSadmin_screen_colors != 'default') {
-    $stmt = "SELECT menu_background,frame_background,std_row1_background,std_row2_background,std_row3_background,std_row4_background,std_row5_background,alt_row1_background,alt_row2_background,alt_row3_background,web_logo,button_color FROM vicidial_screen_colors where colors_id='$SSadmin_screen_colors';";
+    $stmt = "SELECT menu_background,frame_background,std_row1_background,std_row2_background,std_row3_background,std_row4_background,std_row5_background,alt_row1_background,alt_row2_background,alt_row3_background,web_logo,button_color,agent_login_background_image FROM vicidial_screen_colors where colors_id='$SSadmin_screen_colors';";
     if ($DB) {
         echo "$stmt\n";
     }
@@ -9394,6 +9402,7 @@ if ($SSadmin_screen_colors != 'default') {
         $SSalt_row3_background =    $row[9];
         $SSweb_logo =                $row[10];
         $SSbutton_color =            $row[11];
+        $SSagent_login_background_image = $row[12];
     }
 }
 $Mhead_color =    $SSstd_row5_background;
@@ -22029,7 +22038,7 @@ if ($ADD==482111111111) {
                     $button_color .= '0';
                 }
             }
-            $stmt="UPDATE vicidial_screen_colors set colors_name='$colors_name',active='$active',menu_background='$menu_background',frame_background='$frame_background',std_row1_background='$std_row1_background',std_row2_background='$std_row2_background',std_row3_background='$std_row3_background',std_row4_background='$std_row4_background',std_row5_background='$std_row5_background',alt_row1_background='$alt_row1_background',alt_row2_background='$alt_row2_background',alt_row3_background='$alt_row3_background',button_color='$button_color',user_group='$user_group',web_logo='$web_logo' where colors_id='$colors_id';";
+            $stmt="UPDATE vicidial_screen_colors set colors_name='$colors_name',active='$active',menu_background='$menu_background',frame_background='$frame_background',std_row1_background='$std_row1_background',std_row2_background='$std_row2_background',std_row3_background='$std_row3_background',std_row4_background='$std_row4_background',std_row5_background='$std_row5_background',alt_row1_background='$alt_row1_background',alt_row2_background='$alt_row2_background',alt_row3_background='$alt_row3_background',button_color='$button_color',user_group='$user_group',web_logo='$web_logo', agent_login_background_image='$agent_login_background_image' where colors_id='$colors_id';";
             $rslt=mysql_to_mysqli($stmt, $link);
             echo "<br>"._QXZ("SCREEN COLORS MODIFIED").": $colors_id\n";
             $SQL_log = "$stmt|";
@@ -39315,7 +39324,7 @@ if ($ADD==382111111111) {
         }
         echo "<TABLE><TR><TD>\n";
         echo "<FONT FACE=\"ARIAL,HELVETICA\" COLOR=BLACK SIZE=2>";
-        $stmt="SELECT colors_id,colors_name,active,menu_background,frame_background,std_row1_background,std_row2_background,std_row3_background,std_row4_background,std_row5_background,alt_row1_background,alt_row2_background,alt_row3_background,user_group,web_logo,button_color from vicidial_screen_colors where colors_id='$colors_id' $LOGadmin_viewable_groupsSQL;";
+        $stmt="SELECT colors_id,colors_name,active,menu_background,frame_background,std_row1_background,std_row2_background,std_row3_background,std_row4_background,std_row5_background,alt_row1_background,alt_row2_background,alt_row3_background,user_group,web_logo,button_color,agent_login_background_image from vicidial_screen_colors where colors_id='$colors_id' $LOGadmin_viewable_groupsSQL;";
         $rslt=mysql_to_mysqli($stmt, $link);
         $row=mysqli_fetch_row($rslt);
         $colors_id =                $row[0];
@@ -39334,6 +39343,7 @@ if ($ADD==382111111111) {
         $user_group =                $row[13];
         $web_logo =                    $row[14];
         $button_color =        $row[15];
+        $agent_login_background_image = $row[16];
         echo "<br>"._QXZ("MODIFY SCREEN COLORS").": $colors_id<form action=$PHP_SELF method=POST>\n";
         echo "<input type=hidden name=ADD value=482111111111>\n";
         echo "<input type=hidden name=colors_id value=\"$colors_id\">\n";
@@ -39397,6 +39407,15 @@ if ($ADD==382111111111) {
         echo "<option SELECTED value=\"$web_logo\">$web_logo</option>\n";
         echo "</select>$NWB#screen_colors-web_logo$NWE &nbsp; &nbsp; </td><td align=left valign=top bgcolor=#$menu_background><img src=\"$selected_logo\"></td></tr>\n";
         echo "<tr bgcolor=#$SSstd_row4_background><td align=right>"._QXZ("Button Color")." <font size=2>(<a href=\"javascript:launch_color_chooser('button_color','color','2');\">"._QXZ("color chooser")."</a>)</font>: </td><td align=left bgcolor=\"$button_color\" id=\"button_color_td\" colspan=2><input type=text name=button_color id=button_color size=7 maxlength=6 value=\"$button_color\"> $NWB#screen_colors-alt_row_background$NWE</td></tr>\n";
+        echo "<tr bgcolor=#$SSstd_row4_background valign=top><td align=right valign=top>"._QXZ("Agent Login Background Image").": </td><td align=left valign=top colspan=2><select size=1 name=agent_login_background_image>\n";
+        if ($dir_handle = opendir('./images')) {
+            while (false !== ($entry = readdir($dir_handle))) {
+                echo "<option value=\"$entry\">$entry</option>\n";
+            }
+
+            closedir($dir_handle);
+        }
+        echo "</select>$NWB#screen_colors-agent_login_background_image$NWE &nbsp; &nbsp; </td></tr>\n";
         echo "<tr bgcolor=#$SSstd_row4_background><td align=center colspan=3><input style='background-color:#$SSbutton_color' type=submit name=submit value='"._QXZ("SUBMIT")."'</td></tr>\n";
         echo "</TABLE></center>\n";
         echo "<center><b>\n";
