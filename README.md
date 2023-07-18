@@ -7,7 +7,7 @@ Dialler Page;
 
 Admin Panel;
 
-<img src="https://github.com/TheBlode/mDial/blob/main/images/admin_panel_reimagined.png" height="450" width="1000">
+<img src="https://github.com/TheBlode/mDial/blob/main/images/admin_panel_reimagined.png" height="400" width="1000">
 
 <img src="https://github.com/TheBlode/mDial/blob/main/Tux.png" width="100"><img src="https://github.com/TheBlode/mDial/blob/main/ViCiDial.png" height=100 width="470">
 
