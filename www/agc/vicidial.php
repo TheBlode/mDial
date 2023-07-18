@@ -189,7 +189,7 @@ $webphone_width = 460;
 $webphone_height = 500;
 $VUselected_language = '';
 $random = (rand(1000000, 9999999) + 10000000);
-$stmt = "SELECT use_non_latin,vdc_header_date_format,vdc_customer_date_format,vdc_header_phone_format,webroot_writable,timeclock_end_of_day,vtiger_url,enable_vtiger_integration,outbound_autodial_active,enable_second_webform,user_territories_active,static_agent_url,custom_fields_enabled,pllb_grouping_limit,qc_features_active,allow_emails,callback_time_24hour,enable_languages,language_method,meetme_enter_login_filename,meetme_enter_leave3way_filename,enable_third_webform,default_language,active_modules,allow_chats,chat_url,default_phone_code,agent_screen_colors,manual_auto_next,agent_xfer_park_3way,admin_web_directory,agent_script,agent_push_events,agent_push_url,agent_logout_link,agentonly_callback_campaign_lock,manual_dial_validation,mute_recordings,enable_second_script,enable_first_webform,recording_buttons,outbound_cid_any,browser_call_alerts,manual_dial_phone_strip,require_password_length,pass_hash_enabled,agent_hidden_sound_seconds,agent_hidden_sound,agent_hidden_sound_volume,agent_screen_timer,agent_hide_hangup,allow_web_debug,max_logged_in_agents,login_kickall,agent_notifications,inbound_credits FROM system_settings;";
+$stmt = "SELECT use_non_latin,vdc_header_date_format,vdc_customer_date_format,vdc_header_phone_format,webroot_writable,timeclock_end_of_day,vtiger_url,enable_vtiger_integration,outbound_autodial_active,enable_second_webform,user_territories_active,static_agent_url,custom_fields_enabled,pllb_grouping_limit,qc_features_active,allow_emails,callback_time_24hour,enable_languages,language_method,meetme_enter_login_filename,meetme_enter_leave3way_filename,enable_third_webform,default_language,active_modules,allow_chats,chat_url,default_phone_code,agent_screen_colors,manual_auto_next,agent_xfer_park_3way,admin_web_directory,agent_script,agent_push_events,agent_push_url,agent_logout_link,agentonly_callback_campaign_lock,manual_dial_validation,mute_recordings,enable_second_script,enable_first_webform,recording_buttons,outbound_cid_any,browser_call_alerts,manual_dial_phone_strip,require_password_length,pass_hash_enabled,agent_hidden_sound_seconds,agent_hidden_sound,agent_hidden_sound_volume,agent_screen_timer,agent_hide_hangup,allow_web_debug,max_logged_in_agents,login_kickall,agent_notifications,inbound_credits,open_ai_enabled,open_ai_api_key  FROM system_settings;";
 $rslt=mysql_to_mysqli($stmt, $link);
 if ($mel > 0) {
     mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01001', $VD_login, $server_ip, $session_name, $one_mysql_log);
@@ -253,6 +253,8 @@ if ($qm_conf_ct > 0) {
     $SSlogin_kickall =                    $row[53];
     $SSagent_notifications =            $row[54];
     $SSinbound_credits =                $row[55];
+    $SSopen_ai_enabled =                $row[56];
+    $SSopen_ai_api_key =                $row[57];
     if (($SSagent_hidden_sound == '---NONE---') or ($SSagent_hidden_sound == '')) {
         $SSagent_hidden_sound_seconds=0;
     }
@@ -5946,6 +5948,9 @@ if ($enable_fast_refresh < 1) {
         image_LB_mute_recording_ON.src="./images/<?php echo _QXZ("vdc_LB_mute_recording_ON.gif") ?>";
     var set_timeout_audio_loop = false;
     var latency = 0;
+    const OPEN_AI_ENABLED = "<?php echo $SSopen_ai_enabled; ?>";
+    const OPEN_AI_API_KEY = "<?php echo $SSopen_ai_api_key; ?>";
+
 <?php
     if ($window_validation > 0) {
         echo "var win_valid_name = '$win_valid_name';\n";
@@ -21094,6 +21099,103 @@ if ($call_requeue_button > 0) {
     <span style="background-color: #FFCCFF<?php echo $agent_hide_hangup_ACTIVE_style ?>" id="HangupControl"><img src="./images/<?php echo _QXZ("vdc_LB_hangupcustomer_OFF.gif"); ?>" border="0" alt="Hangup Customer" /></span><br />
     <span id="SpacerSpanD"><img src="./images/<?php echo _QXZ("blank.gif"); ?>" width="145px" height="16px" border="0" /></span><br />
     <div class="text_input" id="SendDTMFdiv"><span style="background-color: <?php echo $MAIN_COLOR ?>" id="SendDTMF"><a href="#" onclick="SendConfDTMF(session_id,'YES');return false;"><img src="./images/<?php echo _QXZ("vdc_LB_senddtmf.gif"); ?>" border="0" alt="Send DTMF" align="bottom" /></a>  <input type="text" size="5" name="conf_dtmf" class="cust_form" value="" maxlength="50" /></div></span><br />
+    <?php
+    if ($SSopen_ai_enabled == "Y")
+        {
+    ?>
+    <span style=\"background-color: $MAIN_COLOR\" id=\"open_ai_button\" onclick="toggle_chatgpt_screen(); return false;"><button>ChatGPT</button></span>
+    <div id="open_ai_chat_window" class="draggable" draggable="true" style="width: 600px; height: auto; background: white; border: 1px solid black; padding: 10px; visibility: visible; position: absolute; left: 200px; top: 210px; opacity: 0.9; border-radius: 15px;">
+        <div id="answer_div" style="height: 85%;">Ask me a question!</div>
+        <div>Question:&nbsp;<input type="text" name="question" id="question" size="50" value=""  autocomplete="off" onkeydown="if (event.keyCode == 13 ) { ask_question(document.getElementById('question').value); return false; }">
+        <input type="button" id="submit" value="Ask Question" name="submit" onclick="ask_question(document.getElementById('question').value); return false;">
+        </div>
+    </div>
+    <script>
+    var chatgpt_window_open = false;
+    hideDiv('open_ai_chat_window');
+    draggable('open_ai_chat_window');
+
+    function toggle_chatgpt_screen()
+        {
+        chatgpt_window_open = !chatgpt_window_open;
+
+        if (chatgpt_window_open == true)
+            {
+                hideDiv('open_ai_chat_window');
+            }
+        else
+            {
+                showDiv('open_ai_chat_window');
+            }
+        }
+
+    var dragObj = null;
+    function draggable(id)
+        {
+        var obj = document.getElementById(id);
+        obj.style.position = "absolute";
+        obj.onmousedown = function()
+            {
+            dragObj = obj;
+            }
+    }
+
+    document.onmouseup = function(e){
+        dragObj = null;
+    };
+
+    document.onmousemove = function(e){
+        var x = e.pageX;
+        var y = e.pageY;
+
+        if (dragObj == null)
+            return;
+
+        dragObj.style.left = x +"px";
+        dragObj.style.top= y +"px";
+    };
+
+    /*
+     * Function Name: ask_question
+     * 04/03/2023
+     * Author: Martin McCarthy
+     * Function Description:
+     * @param - question - string - the question the agent wishes to ask
+     * @return - answer - string - answer from OpenAI
+     */
+    function ask_question(question) {
+        // Disable inputs
+        document.getElementById("submit").disabled = true;
+        document.getElementById("question").disabled = true;
+
+        var xmlhttp=false;
+
+        if (!xmlhttp && typeof XMLHttpRequest != "undefined") {
+            xmlhttp = new XMLHttpRequest();
+        }
+
+        if (xmlhttp) {
+            query = "&openai_api_key=" + OPEN_AI_API_KEY + "&question=" + question;
+            xmlhttp.open("POST", "openai.php"); 
+            xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+            xmlhttp.send(query); 
+            xmlhttp.onreadystatechange = function() {
+                document.getElementById("submit").disabled = false;
+                document.getElementById("question").disabled = false;
+
+                if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                    document.getElementById("answer_div").innerHTML = xmlhttp.responseText;
+                }
+            }
+
+            delete xmlhttp;
+        }
+    }
+    </script>
+    </div>
+    <?php
+        }
+    ?>
     </center>
     </font>
     </td>

@@ -23,8 +23,13 @@ The mDial project manifesto outlines the following principles:
 The mDial project manifesto serves as a guiding framework to drive the development and direction of the project, aiming to provide a compatible, standardized, and freely accessible solution to the ViCiDial community.
 ***
 
+# Specific mDial Features
+- ChatGPT Integration ✅
+
 # Upcoming Developments
-- Communication platform (TBA)
+- Communication platform ⏳
+- Mirror User Feature. ⏳
+- Whatsapp Integration. ⏳
 
 # Donate
 You may donate to the project here via Paypal;

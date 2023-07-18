@@ -1,4 +1,5 @@
-/* ========================================
+<?php
+#/* ========================================
 # * ███╗   ███╗██████╗ ██╗ █████╗ ██╗
 # * ████╗ ████║██╔══██╗██║██╔══██╗██║
 # * ██╔████╔██║██║  ██║██║███████║██║
@@ -29,18 +30,56 @@
 # * IRC: Libera.Chat - ##vicidial
 # *
 # * Bug reports, feature requests and patches welcome!
-# * ========================================
-*/
--- ==================================================
--- Migrations
--- ==================================================
--- Select DATABASE
-use asterisk;
+# * ======================================== */
+?>
+<?php
+// Grab API key
+if (isset($_REQUEST["openai_api_key"])) {
+    $api_key = $_REQUEST["openai_api_key"];
+} else {
+    echo "Error! No valid API key was passed in.\n";
 
--- Add new column to screen colors to hold agent login background image
-ALTER TABLE vicidial_screen_colors ADD COLUMN agent_login_background_image VARCHAR(100) default '';
+    // Exit!
+    exit;
+}
 
--- Add new columns for ChatGPT API
-ALTER TABLE system_settings ADD open_ai_enabled ENUM('Y','N') default 'N';
-ALTER TABLE system_settings ADD open_ai_api_key VARCHAR(100);
+// Grab question
+if (isset($_REQUEST["question"])) {
+    $question = $_REQUEST["question"];
+    $question = preg_replace("/'/", "", $question);
+} else {
+    echo "Error! No valid question was was passed in.\n";
 
+    // Exit!
+    exit;
+}
+
+if (strlen($question) > 500) {
+    echo "Too many characters!";
+    exit;
+}
+// Construct the API call
+$command = <<<EOF
+curl https://api.openai.com/v1/chat/completions -H "Content-Type: application/json" -H "Authorization: Bearer $api_key" -d '{"model": "gpt-3.5-turbo", "stop": "", "messages": [{"role": "user", "content": "$question"}]}'
+EOF;
+
+// Fire off the API call!
+exec($command, $output);
+
+// Get reply
+preg_match('/content\":\s\"(.+)\"/', $output[10], $matches);
+
+// Save reply
+$reply = $matches[1];
+$reply = preg_replace('/\\\n/', "", $reply);
+
+// Send reply back to caller
+if (!empty($reply)) {
+    echo $reply;
+} else {
+    echo "Error with the OpenAI API. Please contact your administrator.";
+}
+
+// Exit!
+exit;
+?>
