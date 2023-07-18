@@ -1627,7 +1627,7 @@ background:rgb(102,255,51);
 .sub_sub_head_links
     {
     font-family:HELVETICA;
-    font-size:11;
+    font-size:14pt;
     color:BLACK;
     }
 -->
@@ -1644,10 +1644,10 @@ background:rgb(102,255,51);
         $header_font_size='12';
     }
     if ($subheader_font_size < 4) {
-        $subheader_font_size='11';
+        $subheader_font_size='14';
     }
     if ($subcamp_font_size < 4) {
-        $subcamp_font_size='11';
+        $subcamp_font_size='14';
     }
     ?>
 <CENTER>
@@ -2774,13 +2774,13 @@ background:rgb(102,255,51);
 <span style="position:absolute;left:300px;top:30px;z-index:1;visibility:hidden;" id="audio_chooser_span">
 </span>
 <TABLE BGCOLOR=#<?php echo $SSframe_background ?> cellpadding=2 cellspacing=0 WIDTH=<?php echo $page_width ?> HEIGHT=15>
-<TR BGCOLOR=#<?php echo "$SSmenu_background" ?>><TD ALIGN=LEFT BGCOLOR=#<?php echo "$SSmenu_background" ?>><FONT FACE="ARIAL,HELVETICA" COLOR=WHITE SIZE=2><B><a href="<?php echo $admin_home_url_LU ?>" STYLE="text-decoration:none;"><FONT FACE="ARIAL,HELVETICA" COLOR=WHITE SIZE=1><?php echo _QXZ("HOME"); ?></a> | <A HREF="../agc/timeclock.php?referrer=admin" STYLE="text-decoration:none;"><FONT FACE="ARIAL,HELVETICA" COLOR=WHITE SIZE=1> <?php echo _QXZ("Timeclock"); ?></A> | <a href="manager_chat_interface.php" STYLE="text-decoration:none;"><FONT FACE="ARIAL,HELVETICA" COLOR=WHITE SIZE=1> <?php echo _QXZ("Chat"); ?></a> | <a href="<?php echo $ADMIN ?>?force_logout=1" STYLE="text-decoration:none;"><FONT FACE="ARIAL,HELVETICA" COLOR=WHITE SIZE=1><?php echo _QXZ("Logout"); ?></a> <FONT FACE="ARIAL,HELVETICA" COLOR=WHITE SIZE=1>(<?php echo $PHP_AUTH_USER ?>)</FONT>
+<TR BGCOLOR=#<?php echo "$SSmenu_background" ?>><TD ALIGN=LEFT BGCOLOR=#<?php echo "$SSmenu_background" ?>><FONT FACE="ARIAL,HELVETICA" COLOR=WHITE SIZE=2><B><a href="<?php echo $admin_home_url_LU ?>" STYLE="text-decoration:none;"><FONT FACE="ARIAL,HELVETICA" COLOR=WHITE SIZE=6pt class="home_button"><?php echo _QXZ("🏠"); ?></a><A HREF="../agc/timeclock.php?referrer=admin" STYLE="text-decoration:none;"><FONT FACE="ARIAL,HELVETICA" COLOR=WHITE SIZE=1 class="home_button"> <?php echo _QXZ("⏲️"); ?></A><a href="manager_chat_interface.php" STYLE="text-decoration:none;"><FONT FACE="ARIAL,HELVETICA" COLOR=WHITE SIZE=1 class="home_button"> <?php echo _QXZ("💬"); ?></a> <FONT FACE="ARIAL,HELVETICA" COLOR=WHITE SIZE=1><?php echo _QXZ("Welcome,") . "&nbsp;$PHP_AUTH_USER!"; ?></FONT>
 <?php
 if ($SSenable_languages == '1') {
     echo " | <a href=\"$ADMIN?ADD=999989\" STYLE=\"text-decoration:none;\"><FONT FACE=\"ARIAL,HELVETICA\" COLOR=WHITE SIZE=1>"._QXZ("Change language")."</a>";
 }
     ?>
-</TD><TD ALIGN=RIGHT><FONT FACE="ARIAL,HELVETICA" COLOR=WHITE SIZE=2><B><?php echo date("l F j, Y G:i:s A") ?> &nbsp; </B></TD></TR>
+</TD><TD ALIGN=RIGHT><FONT FACE="ARIAL,HELVETICA" COLOR=WHITE SIZE=2><B id="clock"></B><a href="<?php echo $ADMIN ?>?force_logout=1" STYLE="text-decoration:none;"><FONT FACE="ARIAL,HELVETICA" COLOR=WHITE SIZE=1 class="home_button"><?php echo _QXZ("🚪➡️"); ?></a></TD></TR>
 <TR BGCOLOR=#<?php echo "$SSmenu_background" ?>>
 </TR>
     <?php

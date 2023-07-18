@@ -1,7 +1,13 @@
 # mDial
 mDial - a complete contact centre solution based on the fantastic ViCiDial.
 
+Dialler Page;
+
 <img src="https://github.com/TheBlode/mDial/blob/main/images/login.png" height="450" width="1000">
+
+Admin Panel;
+
+<img src="admin_panel_reimagined.png" height="450" width="1000">
 
 <img src="https://github.com/TheBlode/mDial/blob/main/Tux.png" width="100"><img src="https://github.com/TheBlode/mDial/blob/main/ViCiDial.png" height=100 width="470">
 
