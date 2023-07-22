@@ -502,10 +502,28 @@ echo <<<EOF
 <script language="JavaScript" src="confetti.php"></script>
 <link rel="stylesheet" href="calendar.css" />
 <link rel="stylesheet" href="./css/bootstrap.min.css">
+EOF;
+if ($SSagent_login_background_image == "Random") {
+    $temp_array = Array();
+
+    if ($dir_handle = opendir('../vicidial/images/wallpaper/')) {
+        while (false !== ($entry = readdir($dir_handle))) {
+            if ($entry != "." && $entry != "..") {
+                array_push($temp_array, $entry);
+            }
+        }
+
+        closedir($dir_handle);
+    }
+
+    $random = array_rand($temp_array);
+    $SSagent_login_background_image = $temp_array[$random];
+}
+echo <<<EOF
 <style>
 body {
 EOF;
-    echo "background-image: url(\\/vicidial\/images\/$SSagent_login_background_image);";
+    echo "background-image: url(\\/vicidial\/images\/wallpaper\/$SSagent_login_background_image);";
 echo <<<EOF
     background-size: cover;
 }
@@ -584,7 +602,6 @@ echo <<<EOF
     animation: fadein 0.8s linear;
 }
 </style>
-';
 EOF;
 echo "<!-- VERSION: $version     "._QXZ("BUILD:")." $build -->\n";
 echo "<!-- BROWSER: $BROWSER_WIDTH x $BROWSER_HEIGHT     $JS_browser_width x $JS_browser_height -->\n";
@@ -887,9 +904,9 @@ if ($relogin == 'YES') {
     if (preg_match("/^READONLY_PHONE$/", $hide_relogin_fields)) {
         echo "<tr><td align=\"center\" colspan=\"2\"><font class=\"skb_text\">"._QXZ("Phone Login")."</font> </td></tr>";
         echo "<tr><td align=\"center\" colspan=\"2\"><b>$phone_login</b></td></tr>\n";
-        echo "<tr><td align=\"center\" colspan=\"2\"><font class=\"skb_text\">"._QXZ("User Login")."</font>  </td></tr>";
+        echo "<tr><td align=\"center\" colspan=\"2\"><font class=\"skb_text\">"._QXZ("User Login")."<br /></font>  </td></tr>";
         echo "<td align=\"center\" colspan=\"2\"><input class=\"form-control\" type=\"text\" name=\"VD_login\" size=\"20\" maxlength=\"20\" value=\"$VD_login\" /></td></tr>\n";
-        echo "<tr><td align=\"center\" colspan=\"2\"><font class=\"skb_text\">"._QXZ("User Password")."</font>  </td></tr>";
+        echo "<tr><td align=\"center\" colspan=\"2\"><font class=\"skb_text\">"._QXZ("User Password")."<br /></font>  </td></tr>";
         echo "<tr><td align=\"center\" colspan=\"2\"><input class=\"form-control\" type=\"password\" name=\"VD_pass\" size=\"20\" maxlength=\"100\" value=\"$VD_pass\" /></td></tr>\n";
     }
     if (preg_match("/^READONLY_LOGIN$/", $hide_relogin_fields)) {
@@ -897,19 +914,19 @@ if ($relogin == 'YES') {
         echo "<td align=\"center\" colspan=\"2\"><b>$VD_login</b></td></tr>\n";
     }
     if (preg_match("/^READONLY_LOGINPHONE$/", $hide_relogin_fields)) {
-        echo "<tr><td align=\"center\" colspan=\"2\"><font class=\"skb_text\">"._QXZ("User Login").":</font>  </td></tr>";
+        echo "<tr><td align=\"center\" colspan=\"2\"><font class=\"skb_text\">"._QXZ("User Login")."</font>  </td></tr>";
         echo "<tr><td align=\"center\" colspan=\"2\"><b>$VD_login</b></td></tr>\n";
         echo "<tr><td align=\"center\" colspan=\"2\"><font class=\"skb_text\">"._QXZ("Phone Login")."</font> </td></tr>";
         echo "</tr><td align=\"center\" colspan=\"2\"><b>$phone_login</b></td></tr>\n";
     }
     if (!preg_match("/^YES$|^READONLY_LOGIN$|^READONLY_PHONE$|^READONLY_LOGINPHONE$/", $hide_relogin_fields)) {
-        echo "<tr><td align=\"center\" colspan=\"2\"><font class=\"skb_text\">"._QXZ("Phone Login")."</font> </td></tr>";
+        echo "<tr><td align=\"center\" colspan=\"2\"><font class=\"skb_text\">"._QXZ("Phone Login")."<br /></font> </td></tr>";
         echo "<tr><td align=\"center\" colspan=\"2\"><input class=\"form-control\" type=\"text\" name=\"phone_login\" size=\"20\" maxlength=\"20\" value=\"$phone_login\" /></td></tr>\n";
-        echo "<tr><td align=\"center\" colspan=\"2\"><font class=\"skb_text\">"._QXZ("Phone Password")."</font>  </td></tr>";
+        echo "<tr><td align=\"center\" colspan=\"2\"><font class=\"skb_text\">"._QXZ("Phone Password")."<br /></font>  </td></tr>";
         echo "<td align=\"center\" colspan=\"2\"><input class=\"form-control\" type=\"password\" name=\"phone_pass\" size=\"20\" maxlength=\"100\" value=\"$phone_pass\" /></td></tr>\n";
-        echo "<tr><td align=\"center\" colspan=\"2\"><font class=\"skb_text\">"._QXZ("User Login")."</font>  </td></tr>";
+        echo "<tr><td align=\"center\" colspan=\"2\"><font class=\"skb_text\">"._QXZ("User Login")."<br /></font>  </td></tr>";
         echo "<td align=\"center\" colspan=\"2\"><input class=\"form-control\" type=\"text\" name=\"VD_login\" size=\"20\" maxlength=\"20\" value=\"$VD_login\" /></td></tr>\n";
-        echo "<tr><td align=\"center\" colspan=\"2\"><font class=\"skb_text\">"._QXZ("User Password")."</font>  </td></tr>";
+        echo "<tr><td align=\"center\" colspan=\"2\"><font class=\"skb_text\">"._QXZ("User Password")."<br /></font>  </td></tr>";
         echo "<td align=\"center\" colspan=\"2\"><input class=\"form-control\" type=\"password\" name=\"VD_pass\" size=\"20\" maxlength=\"100\" value=\"$VD_pass\" /></td></tr>\n";
     }
     echo "<tr><td align=\"center\" valign=\"top\" colspan=\"2\"><font class=\"skb_text\">"._QXZ("Campaign")."</font>  </td></tr>";
@@ -958,9 +975,9 @@ if ($user_login_first == 1) {
         echo "<td align=\"center\" valign=\"middle\" bgcolor=\"#$SSmenu_background\"> <font class=\"sh_text_white\">"._QXZ("Campaign Login")."</font> </td>";
         echo "</tr>\n";
         echo "<tr><td align=\"left\" colspan=\"2\"><font size=\"1\"> &nbsp; </font></td></tr>\n";
-        echo "<tr><td align=\"right\"><font class=\"skb_text\">"._QXZ("User Login").":</font>  </td>";
+        echo "<tr><td align=\"right\"><font class=\"skb_text\">"._QXZ("User Login")."<br /></font>  </td>";
         echo "<td align=\"left\"><input type=\"text\" name=\"VD_login\" size=\"20\" maxlength=\"20\" value=\"$VD_login\" /></td></tr>\n";
-        echo "<tr><td align=\"right\"><font class=\"skb_text\">"._QXZ("User Password:")."</font>  </td>";
+        echo "<tr><td align=\"right\"><font class=\"skb_text\">"._QXZ("User Password:")."<br /></font>  </td>";
         echo "<td align=\"left\"><input type=\"password\" name=\"VD_pass\" size=\"20\" maxlength=\"100\" value=\"$VD_pass\" /></td></tr>\n";
         echo "<tr><td align=\"right\" valign=\"top\"><font class=\"skb_text\">"._QXZ("Campaign:")."</font>  </td>";
         echo "<td align=\"left\"><font class=\"skb_text\"><span id=\"LogiNCamPaigns\">$camp_form_code</span></font></td></tr>\n";
@@ -1018,15 +1035,15 @@ if ($user_login_first == 1) {
                 echo "<td align=\"center\" valign=\"middle\" bgcolor=\"#$SSmenu_background\"> <font class=\"sh_text_white\">"._QXZ("Login")."</font> </td>";
                 echo "</tr>\n";
                 echo "<tr><td align=\"left\" colspan=\"2\"><font size=\"1\"> &nbsp; </font></td></tr>\n";
-                echo "<tr><td align=\"right\"><font class=\"skb_text\">"._QXZ("Phone Login:")."ffffffffff</font> </td>";
+                echo "<tr><td align=\"right\"><font class=\"skb_text\">"._QXZ("Phone Login:")."<br /></font> </td>";
                 echo "<td align=\"left\"><input type=\"text\" name=\"phone_login\" size=\"20\" maxlength=\"20\" value=\"$phone_login\" /></td></tr>\n";
-                echo "<tr><td align=\"right\"><font class=\"skb_text\">"._QXZ("Phone Password:")."</font>  </td>";
+                echo "<tr><td align=\"right\"><font class=\"skb_text\">"._QXZ("Phone Password:")."<br /></font>  </td>";
                 echo "<td align=\"left\"><input type=\"password\" name=\"phone_pass\" size=\"20\" maxlength=\"100\" value=\"$phone_pass\" /></td></tr>\n";
-                echo "<tr><td align=\"right\"><font class=\"skb_text\">"._QXZ("User Login").":</font>  </td>";
+                echo "<tr><td align=\"right\"><font class=\"skb_text\">"._QXZ("User Login")."<br /></font>  </td>";
                 echo "<td align=\"left\"><input type=\"text\" name=\"VD_login\" size=\"20\" maxlength=\"20\" value=\"$VD_login\" /></td></tr>\n";
-                echo "<tr><td align=\"right\"><font class=\"skb_text\">"._QXZ("User Password:")."</font>  </td>";
+                echo "<tr><td align=\"right\"><font class=\"skb_text\">"._QXZ("User Password:")."<br /></font>  </td>";
                 echo "<td align=\"left\"><input type=\"password\" name=\"VD_pass\" size=\"20\" maxlength=\"100\" value=\"$VD_pass\" /></td></tr>\n";
-                echo "<tr><td align=\"right\" valign=\"top\"><font class=\"skb_text\">"._QXZ("Campaign:")."</font>  </td>";
+                echo "<tr><td align=\"right\" valign=\"top\"><font class=\"skb_text\">"._QXZ("Campaign:")."<br /></font>  </td>";
                 echo "<td align=\"left\"><font class=\"skb_text\"><span id=\"LogiNCamPaigns\">$camp_form_code</span></font></td></tr>\n";
                 if ($login_submit_once > 0) {
                     echo "<tr><td align=\"center\" colspan=\"2\"><input type=\"submit\" id=\"login_sub\" name=\"login_sub\" value=\""._QXZ("SUBMIT")."\" onclick=\"login_click()\"> &nbsp; \n";
@@ -1077,9 +1094,9 @@ if ((strlen($phone_login)<2) or (strlen($phone_pass)<2)) {
     echo "<td align=\"center\" valign=\"bottom\" bgcolor=\"white\" width=\"170\" colspan=\"3\"><img src=\"$selected_logo\" border=\"0\" height=\"45\" width=\"170\" alt=\"Agent Screen\" /></td>";
     echo "</tr>\n";
     echo "<tr><td align=\"left\" colspan=\"3\"><font size=\"1\"> &nbsp; </font></td></tr>\n";
-    echo "<tr><td align=\"center\" colspan=\"3\"><font class=\"skb_text\">"._QXZ("Phone Login")."</font>";
+    echo "<tr><td align=\"center\" colspan=\"3\"><font class=\"skb_text\">"._QXZ("Phone Login")."<br /></font>";
     echo "<br /><input class=\"form-control\" type=\"text\" name=\"phone_login\" size=\"10\" maxlength=\"20\" value=\"\" /></td></tr>\n";
-    echo "<tr><td align=\"center\" colspan=\"3\"><font class=\"skb_text\">"._QXZ("Phone Password")."</font>";
+    echo "<tr><td align=\"center\" colspan=\"3\"><font class=\"skb_text\">"._QXZ("Phone Password")."<br /></font>";
     echo "<br /><input class=\"form-control\" type=\"password\" name=\"phone_pass\" size=\"10\" maxlength=\"100\" value=\"\" /></td></tr>\n";
     if ($login_submit_once > 0) {
         echo "<tr><td align=\"center\" colspan=\"2\"><input class=\"btn\" type=\"submit\" id=\"login_sub\" name=\"login_sub\" value=\""._QXZ("Submit")."\" onclick=\"let element = document.getElementById('login_center'); element.classList.remove('fadeIn'); element.classList.add('fadeOut'); setTimeout(function() { login_click()}, 2000);\"><br /></td></tr>";
@@ -3112,6 +3129,9 @@ if ((strlen($phone_login)<2) or (strlen($phone_pass)<2)) {
         if ($link_to_grey_version > 0) {
             $grey_vicidial = "<a class=\"btn\" href=\"./vicidial-grey.php?pl=&amp;pp=&amp;VD_login=&amp;VD_pass=\">Old Agent Interface</a>";
         }
+        if (!empty($VDdisplayMESSAGE)) {
+            echo "<div class=\"alert alert-info fadeIn\"><center>⚠️ $VDdisplayMESSAGE</div><center>";
+        }
         echo "<table width=\"100%\"><tr><td></td>\n";
         echo "<!-- INTERNATIONALIZATION-LINKS-PLACEHOLDER-VICIDIAL -->\n";
         echo "</tr></table>\n";
@@ -3127,15 +3147,15 @@ if ((strlen($phone_login)<2) or (strlen($phone_pass)<2)) {
         echo "<input type=\"hidden\" name=\"LOGINvarFOUR\" id=\"LOGINvarFOUR\" value=\"$LOGINvarFOUR\" />\n";
         echo "<input type=\"hidden\" name=\"LOGINvarFIVE\" id=\"LOGINvarFIVE\" value=\"$LOGINvarFIVE\" />\n";
         echo "<input type=\"hidden\" name=\"hide_relogin_fields\" id=\"hide_relogin_fields\" value=\"$hide_relogin_fields\" />\n";
-        echo "<center id=\"login_center\" class=\"login_center fadeIn\"><br /><b>$VDdisplayMESSAGE</b>";
+        echo "<center id=\"login_center\" class=\"login_center fadeIn\"><br />";
         echo "<table class=\"login_table\" width=\"460px\" cellpadding=\"3\" cellspacing=\"0\" bgcolor=\"white\"><tr bgcolor=\"white\">";
         echo "<td align=\"center\" valign=\"bottom\" bgcolor=\"white\" width=\"170\" colspan=\"3\"><img src=\"$selected_logo\" border=\"0\" height=\"45\" width=\"170\" alt=\"Agent Screen\" /></td>";
         echo "</tr>\n";
-        echo "<tr><td align=\"center\" colspan=\"3\"><font class=\"skb_text\">"._QXZ("User Login").":</font>  </td></tr>";
+        echo "<tr><td align=\"center\" colspan=\"3\"><font class=\"skb_text\">"._QXZ("User Login")."<br /></font>  </td></tr>";
         echo "<td align=\"center\" colspan=\"3\"><input class=\"form-control\" type=\"text\" name=\"VD_login\" size=\"20\" maxlength=\"20\" value=\"$VD_login\" /></td></tr>";
-        echo "<tr><td align=\"center\" colspan=\"3\"><font class=\"skb_text\">"._QXZ("User Password")."</font>  </td></tr>";
+        echo "<tr><td align=\"center\" colspan=\"3\"><font class=\"skb_text\">"._QXZ("User Password")."<br /></font>  </td></tr>";
         echo "<td align=\"center\" colspan=\"3\"><input class=\"form-control\" type=\"password\" name=\"VD_pass\" size=\"20\" maxlength=\"100\" value=\"$VD_pass\" /></td></tr>";
-        echo "<tr><td align=\"center\" valign=\"top\" colspan=\"3\"><font class=\"skb_text\">"._QXZ("Campaign")."</font>  </td></tr>";
+        echo "<tr><td align=\"center\" valign=\"top\" colspan=\"3\"><font class=\"skb_text\">"._QXZ("Campaign")."<br /></font>  </td></tr>";
         echo "<td align=\"center\" colspan=\"3\"><font class=\"skb_text\"><span id=\"LogiNCamPaigns\">$camp_form_code</span></font><br /></td></tr>\n";
         if ($login_submit_once > 0) {
             echo "<tr><td align=\"center\" colspan=\"2\"><input class=\"btn\" type=\"submit\" id=\"login_sub\" name=\"login_sub\" value=\""._QXZ("Submit")."\" onclick=\"login_click()\">";
@@ -3224,7 +3244,7 @@ if ((strlen($phone_login)<2) or (strlen($phone_pass)<2)) {
         if ($link_to_grey_version > 0) {
             $grey_vicidial = "<a class=\"btn\" href=\"./vicidial-grey.php?pl=&amp;pp=&amp;VD_login=&amp;VD_pass=\">Old Agent Interface</a>";
         }
-        echo "<div class=\"alert alert-warning\"><center>" . _QXZ("Sorry, your phone login and password are not active in this system, please try again") . "</div><center>";
+        echo "<div class=\"alert alert-warning fadeIn\"><center>⚠️ " . _QXZ("Sorry, your phone login and password are not active in this system, please try again") . "</div><center>";
         echo "<table width=100%><tr><td></td>\n";
         echo "<!-- INTERNATIONALIZATION-LINKS-PLACEHOLDER-VICIDIAL -->\n";
         echo "</tr></table>\n";
@@ -3242,9 +3262,9 @@ if ((strlen($phone_login)<2) or (strlen($phone_pass)<2)) {
         echo "<td align=\"center\" valign=\"bottom\" bgcolor=\"white\" width=\"170\" colspan=\"3\"><img src=\"$selected_logo\" border=\"0\" height=\"45\" width=\"170\" alt=\"Agent Screen\" /></td>";
         echo "</tr>\n";
         echo "<tr><td align=\"left\" colspan=\"3\"><font size=\"1\"> &nbsp; </font></td></tr>\n";
-        echo "<tr><td align=\"center\" colspan=\"3\"><font class=\"skb_text\">"._QXZ("Phone Login")."</font>";
+        echo "<tr><td align=\"center\" colspan=\"3\"><font class=\"skb_text\">"._QXZ("Phone Login")."<br /></font>";
         echo "<br /><input class=\"form-control\" type=\"text\" name=\"phone_login\" size=\"10\" maxlength=\"20\" value=\"\" /></td></tr>\n";
-        echo "<tr><td align=\"center\" colspan=\"3\"><font class=\"skb_text\">"._QXZ("Phone Password")."</font>";
+        echo "<tr><td align=\"center\" colspan=\"3\"><font class=\"skb_text\">"._QXZ("Phone Password")."<br /></font>";
         echo "<br /><input class=\"form-control\" type=\"password\" name=\"phone_pass\" size=\"10\" maxlength=\"100\" value=\"\" /></td></tr>\n";
         if ($login_submit_once > 0) {
             echo "<tr><td align=\"center\" colspan=\"2\"><input class=\"btn\" type=\"submit\" id=\"login_sub\" name=\"login_sub\" value=\""._QXZ("Submit")."\" onclick=\"let element = document.getElementById('login_center'); element.classList.remove('fadeIn'); element.classList.add('fadeOut'); setTimeout(function() { login_click()}, 2000);\"><br /></td></tr>";
@@ -4241,7 +4261,7 @@ if ((strlen($phone_login)<2) or (strlen($phone_pass)<2)) {
             if ($link_to_grey_version > 0) {
                 $grey_vicidial = "<a class=\"btn\" href=\"./vicidial-grey.php?pl=&amp;pp=&amp;VD_login=&amp;VD_pass=\">Old Agent Interface</a>";
             }
-            echo "<div class=\"alert alert-info\"><center>" . _QXZ("Sorry, there are no leads in the hopper for this campaign") . "</div><center>";
+            echo "<div class=\"alert alert-info fadeIn\"><center>️⚠️ " . _QXZ("Sorry, there are no leads in the hopper for this campaign") . "</div><center>";
             echo "<table width=\"100%\"><tr><td></td>\n";
             echo "<!-- INTERNATIONALIZATION-LINKS-PLACEHOLDER-VICIDIAL -->\n";
             echo "</tr></table>\n";
@@ -4261,11 +4281,11 @@ if ((strlen($phone_login)<2) or (strlen($phone_pass)<2)) {
             echo "<table class=\"login_table\" width=\"460px\" cellpadding=\"3\" cellspacing=\"0\" bgcolor=\"white\"><tr bgcolor=\"white\">";
             echo "<td align=\"center\" valign=\"bottom\" bgcolor=\"white\" width=\"170\" colspan=\"3\"><img src=\"$selected_logo\" border=\"0\" height=\"45\" width=\"170\" alt=\"Agent Screen\" /></td>";
             echo "</tr>\n";
-            echo "<tr><td align=\"center\" colspan=\"3\"><font class=\"skb_text\">"._QXZ("User Login").":</font>  </td></tr>";
+            echo "<tr><td align=\"center\" colspan=\"3\"><font class=\"skb_text\">"._QXZ("User Login")."<br /></font>  </td></tr>";
             echo "<td align=\"center\" colspan=\"3\"><input class=\"form-control\" type=\"text\" name=\"VD_login\" size=\"20\" maxlength=\"20\" value=\"$VD_login\" /></td></tr>";
-            echo "<tr><td align=\"center\" colspan=\"3\"><font class=\"skb_text\">"._QXZ("User Password")."</font>  </td></tr>";
+            echo "<tr><td align=\"center\" colspan=\"3\"><font class=\"skb_text\">"._QXZ("User Password")."<br /></font>  </td></tr>";
             echo "<td align=\"center\" colspan=\"3\"><input class=\"form-control\" type=\"password\" name=\"VD_pass\" size=\"20\" maxlength=\"100\" value=\"$VD_pass\" /></td></tr>";
-            echo "<tr><td align=\"center\" valign=\"top\" colspan=\"3\"><font class=\"skb_text\">"._QXZ("Campaign")."</font>  </td></tr>";
+            echo "<tr><td align=\"center\" valign=\"top\" colspan=\"3\"><font class=\"skb_text\">"._QXZ("Campaign")."<br /></font>  </td></tr>";
             echo "<td align=\"center\" colspan=\"3\"><font class=\"skb_text\"><span id=\"LogiNCamPaigns\">$camp_form_code</span></font><br /></td></tr>\n";
             if ($login_submit_once > 0) {
                 echo "<tr><td align=\"center\" colspan=\"2\"><input class=\"btn\" type=\"submit\" id=\"login_sub\" name=\"login_sub\" value=\""._QXZ("Submit")."\" onclick=\"login_click()\">";
@@ -15732,7 +15752,7 @@ function set_length(SLnumber,SLlength_goal,SLdirection)
                         if (shift_logout_flag > 0)
                             {
                             trigger_shift_logout=10;
-                            showDiv('LogouTBox');
+                            showDiv('LoadingBox');
                             }
                         else
                             {LogouT('API','','');}
@@ -16765,7 +16785,6 @@ function set_length(SLnumber,SLlength_goal,SLdirection)
                 else
                     {
                     agent_events('logged_out', tempreason, aec);   aec++;
-                    document.getElementById("LogouTProcess").innerHTML = "<br /><br /><font class=\"loading_text\"><?php echo _QXZ("LOGOUT PROCESSING..."); ?></font><br /><br />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <img src=\"./images/<?php echo _QXZ("agent_loading_animation.gif"); ?>\" height=\"206px\" width=\"206px\" alt=\"<?php echo _QXZ("LOGOUT PROCESSING..."); ?>\" />";
                     //    document.getElementById("LogouTProcess").innerHTML = "<?php echo _QXZ("LOGOUT PROCESSING..."); ?>";
                     var xmlhttp=false;
                     /*@cc_on @*/
@@ -16799,14 +16818,14 @@ function set_length(SLnumber,SLlength_goal,SLdirection)
                             //    alert(VDlogout_query);
                             //    alert(xmlhttp.responseText);
                                 needToConfirmExit = false;
-                                document.getElementById("LogouTProcess").innerHTML = "<br /><br /><font class=\"loading_text\"><?php echo _QXZ("LOGOUT PROCESS COMPLETE, YOU MAY NOW CLOSE YOUR BROWSER OR LOG BACK IN"); ?></font><br /><br />&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <img src=\"./images/<?php echo _QXZ("agent_loading_done.gif"); ?>\" height=\"206px\" width=\"206px\" alt=\"<?php echo _QXZ("LOGOUT PROCESS COMPLETE, YOU MAY NOW CLOSE YOUR BROWSER OR LOG BACK IN"); ?>\" />";
                                 agent_events('logged_out_complete', '', aec);   aec++;
+                                window.location.href = "vicidial.php";
                                 }
                             }
                         delete xmlhttp;
                         }
                     hideDiv('MainPanel');
-                    showDiv('LogouTBox');
+                    showDiv('LoadingBox');
                     refresh_interval = 7300000;
                     var logout_content='';
                     if (tempreason=='SHIFT')
@@ -20936,17 +20955,59 @@ var body = document.getElementsByTagName("body")[0];
 body.style.backgroundImage = "url()";
 </script>
 <form name=vicidial_form id=vicidial_form onsubmit="return false;">
-<span style="position:absolute;left:0px;top:0px;z-index:300;" id="LoadingBox">
-    <table border="0" bgcolor="white" width="<?php echo $JS_browser_width ?>px" height="<?php echo $JS_browser_height ?>px"><tr><td align="center" valign="top">
- <br />
- <br />
- <font class="loading_text"><?php echo _QXZ("Loading..."); ?></font>
- <br />
- <br />
-    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <img src="./images/<?php echo _QXZ("agent_loading_animation.gif"); ?>" height="206px" width="206px" alt="<?php echo _QXZ("Loading..."); ?>" />
- <br />
- <br />
-    </td></tr></table>
+<span style="position:absolute;left:0px;top:0px;z-index:300; width: 100vw; height: 100vh; background: #FFFFFF;" id="LoadingBox">
+<style>
+.dot-flashing {
+    position: relative;
+    margin-left: 20px;
+    width: 50px;
+    height: 50px;
+    border-radius: 25px;
+    background-color: grey;
+    color: grey;
+    animation: dot-flashing 1s infinite linear alternate;
+    animation-delay: 0.5s;
+}
+
+.dot-flashing::before, .dot-flashing::after {
+    content: "";
+    display: inline-block;
+    position: absolute;
+    top: 0;
+}
+
+.dot-flashing::before {
+    left: -55px;
+    width: 50px;
+    height: 50px;
+    border-radius: 25px;
+    background-color: grey;
+    color: grey;
+    animation: dot-flashing 1s infinite alternate;
+    animation-delay: 0s;
+}
+
+.dot-flashing::after {
+    left: 55px;
+    width: 50px;
+    height: 50px;
+    border-radius: 25px;
+    background-color: grey;
+    color: grey;
+    animation: dot-flashing 1s infinite alternate;
+    animation-delay: 1s;
+}
+
+@keyframes dot-flashing {
+    0% {
+        background-color: grey;
+    }
+    50%, 100% {
+        background-color: rgba(152, 128, 255, 0.2);
+    }
+}
+</style>
+<center><div class="col-3" style="height: 100vh; top: 50vh;"><div class="snippet" data-title="dot-flashing"><div class="stage"><div class="dot-flashing"><br /><br /></div></div></div><br /><br /></div></center>
 </span>
 <!-- ZZZZZZZZZZZZ  header -->
 <span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++;
@@ -22006,17 +22067,6 @@ echo $zi ?>;" id="AgenTDisablEBoX">
 echo $zi ?>;" id="SysteMDisablEBoX">
     <table border="0" bgcolor="#FFFFFF" width="<?php echo $CAwidth ?>px" height="<?php echo $WRheight ?>px"><tr><td align="center"><font class="sh_text"><?php echo _QXZ("There is a time synchronization problem with your system, please tell your system administrator"); ?><br /><br /><br /><a href="#" onclick="hideDiv('SysteMDisablEBoX');return false;"><?php echo _QXZ("Go Back"); ?></a></font>
     </td></tr></table>
-</span>
-<span style="position:absolute;left:0px;top:0px;z-index:<?php $zi++;
-echo $zi ?>;" id="LogouTBox">
-    <table border="0" bgcolor="#FFFFFF" width="<?php echo $JS_browser_width ?>px" height="<?php echo $JS_browser_height ?>px"><tr><td align="center"><br /><span id="LogouTProcess">
-    <br />
-    <br />
-    <font class="loading_text"><?php echo _QXZ("LOGOUT PROCESSING..."); ?></font>
-    <br />
-    <br />
-    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <img src="./images/<?php echo _QXZ("agent_loading_animation.gif"); ?>" height="206px" width="206px" alt="<?php echo _QXZ("LOGOUT PROCESSING..."); ?>" />
-    </span><br /><br /><span id="LogouTBoxLink"><font class="loading_text"><?php echo _QXZ("LOGOUT"); ?></font></span></td></tr></table>
 </span>
 <span style="position:absolute;left:0px;top:70px;z-index:<?php $zi++;
 echo $zi ?>;" id="DispoButtonHideA">

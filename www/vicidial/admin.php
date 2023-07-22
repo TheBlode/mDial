@@ -39432,20 +39432,26 @@ if ($ADD==382111111111) {
         echo "<option SELECTED value=\"$web_logo\">$web_logo</option>\n";
         echo "</select>$NWB#screen_colors-web_logo$NWE &nbsp; &nbsp; </td><td align=left valign=top bgcolor=#$menu_background><img src=\"$selected_logo\"></td></tr>\n";
         echo "<tr bgcolor=#$SSstd_row4_background><td align=right>"._QXZ("Button Color")." <font size=2>(<a href=\"javascript:launch_color_chooser('button_color','color','2');\">"._QXZ("color chooser")."</a>)</font>: </td><td align=left bgcolor=\"$button_color\" id=\"button_color_td\" colspan=2><input type=text name=button_color id=button_color size=7 maxlength=6 value=\"$button_color\"> $NWB#screen_colors-alt_row_background$NWE</td></tr>\n";
-        echo "<tr bgcolor=#$SSstd_row4_background valign=top><td align=right valign=top>"._QXZ("Agent Login Background Image").": </td><td align=left valign=top colspan=2><select size=1 name=agent_login_background_image><option value=\"$agent_login_background_image\">$agent_login_background_image</option selected>\n";
+        echo "<tr bgcolor=#$SSstd_row4_background valign=top><td align=right valign=top>"._QXZ("Agent Login Background Image").": </td><td align=left valign=top colspan=2><select size=1 id=agent_login_background_image name=agent_login_background_image><option value=\"$agent_login_background_image\">$agent_login_background_image</option selected>\n";
         $temp_array = Array();
-        if ($dir_handle = opendir('./images')) {
+        $image_filenames = "Random,";
+        array_push($temp_array, "<option value=\"Random\">Random</option>");
+        if ($dir_handle = opendir('./images/wallpaper')) {
             while (false !== ($entry = readdir($dir_handle))) {
-                array_push($temp_array, "<option value=\"$entry\">$entry</option>");
+                if ($entry != "." && $entry != "..") {
+                    array_push($temp_array, "<option value=\"$entry\">$entry</option>");
+                    $image_filenames .= "$entry,";
+                }
             }
 
             closedir($dir_handle);
         }
+        $image_filenames = rtrim($image_filenames, ",");
         sort($temp_array);
         foreach ($temp_array as $element) {
             echo $element;
         }
-        echo "</select>$NWB#screen_colors-agent_login_background_image$NWE &nbsp; &nbsp; </td></tr>\n";
+        echo "</select>&nbsp;&nbsp;<button class=\"btn\" onclick=\"document.getElementById('image-container').style.display = ''; return false;\">Open Gallery</button>&nbsp;&nbsp;$NWB#screen_colors-agent_login_background_image$NWE &nbsp; &nbsp;</td></tr>\n";
         echo "<tr bgcolor=#$SSstd_row4_background><td align=center colspan=3><input style='background-color:#$SSbutton_color' type=submit class=\"btn\" name=submit value='"._QXZ("SUBMIT")."'</td></tr>\n";
         echo "</TABLE></center>\n";
         echo "<center><b>\n";
@@ -47961,8 +47967,133 @@ echo "</FONT>\n";
 ?>
 </TD><TD BGCOLOR=#<?php echo $SSframe_background ?>>
 </TD></TR><TABLE>
+<style>
+.gallery {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.image-container {
+    max-width: 50%;
+    width: 50%;
+    height: 60%;
+    margin-bottom: 20px;
+    position: fixed;
+    top: 10vh;
+    left: 28vw;
+    border: solid black 0px;
+    border-radius: 10px;
+    background: white;
+    opacity: 0.95;
+    padding: 15px;
+    display: grid;
+    user-select: none;
+}
+
+.gallery img, #galleryImage {
+    max-width: 100%;
+    max-height: 50%;
+    object-fit: contain;
+    border: 1px solid #ccc;
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+}
+
+prevButton, nextButton, selectButton {
+    padding: 10px 20px;
+    margin: 0 5px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+prevButton:hover, nextButton:hover, selectButton:hover {
+    background-color: #45a049;
+}
+</style>
+<div id="image-container" class="image-container">
+    <center><empty style="float: right; font-size: large;" onclick="document.getElementById('image-container').style.display = 'none';">❌</empty><img id="galleryImage" src="" alt="Gallery Image"><br /><br />
+        <button class="btn" id="prevButton" onclick="cycle_photo(); return false;">⬅️&nbsp;Previous</button>&nbsp;&nbsp;&nbsp;
+        <button class="btn" id="nextButton" onclick="cycle_photo('next'); return false;">Next&nbsp;➡️</button>&nbsp;&nbsp;&nbsp;
+        <button class="btn" id="selectButton" onclick="select_photo(); return false;">Select&nbsp;✅</button><br /><br />
+    </center>
+</div>
 </body>
 <script language="Javascript">
+let image_files = [];
+let selectedPhoto = null;
+let currentIndex = -1;
+
+function load_images() {
+    document.getElementById('image-container').style.display = 'none';
+
+    // Grab image filenames from PHP
+    let image_filenames = "<?php echo $image_filenames; ?>";
+    let image_filenames_split = image_filenames.split(",");
+
+    for (let i = 0; i < image_filenames_split.length; i++) {
+        image_files.push("images/wallpaper/" + image_filenames_split[i]);
+    }
+
+    let image = document.getElementById("galleryImage");
+    image.src = "/vicidial/images/wallpaper/" + document.getElementById('agent_login_background_image').value;
+
+    // Return!
+    return;
+}
+
+function cycle_photo(direction) {
+    if (direction == "next") {
+        currentIndex = (currentIndex + 1) % image_files.length;
+    } else {
+        currentIndex = (currentIndex - 1) % image_files.length;
+    }
+
+    // Display the photo!
+    display_photo();
+
+    // Return!
+    return;
+}
+
+function display_photo() {
+    if (currentIndex >= 0 && currentIndex < image_files.length) {
+        const image = document.getElementById("galleryImage");
+        image.src = image_files[currentIndex];
+    }
+
+    // Return!
+    return;
+}
+
+function select_photo() {
+    if (currentIndex >= 0 && currentIndex < image_files.length) {
+        var selected_image = image_files[currentIndex];
+
+        // Remove images prefix
+        selected_image = selected_image.replace("images/wallpaper/", "");
+
+        // Set the image in the code
+        document.getElementById('agent_login_background_image').value = selected_image;
+
+        // Hide the image Gallery
+        document.getElementById('image-container').style.display = "none";
+    }
+
+    // Return!
+    return;
+}
+
+document.addEventListener("DOMContentLoaded", load_images);
+
 if (!window.A_TCALSIDX)
     {
     if (document.addEventListener)
