@@ -1090,6 +1090,9 @@ if ((strlen($phone_login)<2) or (strlen($phone_pass)<2)) {
     echo "<input type=\"hidden\" name=\"LOGINvarFOUR\" id=\"LOGINvarFOUR\" value=\"$LOGINvarFOUR\" />\n";
     echo "<input type=\"hidden\" name=\"LOGINvarFIVE\" id=\"LOGINvarFIVE\" value=\"$LOGINvarFIVE\" />\n";
     echo "<input type=\"hidden\" name=\"hide_relogin_fields\" id=\"hide_relogin_fields\" value=\"$hide_relogin_fields\" />\n";
+    if (empty($VDdisplayMESSAGE)) {
+        echo "<div class=\"alert alert-success fadeIn\"><center>👋 " . _QXZ("Welcome to mDial!") . " 💻☎</div><center>";
+    }
     echo "<br /><br /><br /><center id=\"login_center\" class=\"login_center fadeIn\"><table class=\"login_table\" width=\"460px\" cellpadding=\"3\" cellspacing=\"0\" bgcolor=\"white\"><tr bgcolor=\"white\">";
     echo "<td align=\"center\" valign=\"bottom\" bgcolor=\"white\" width=\"170\" colspan=\"3\"><img src=\"$selected_logo\" border=\"0\" height=\"45\" width=\"170\" alt=\"Agent Screen\" /></td>";
     echo "</tr>\n";

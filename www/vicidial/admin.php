@@ -9346,7 +9346,6 @@ EOF;
         echo "</body>";
         echo "</html>";
         exit;
-    exit;
 }
 $admin_lists_custom = 'admin_lists_custom.php';
 $x_ra_carrier = 0;

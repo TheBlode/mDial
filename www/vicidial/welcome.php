@@ -70,7 +70,7 @@ $SSalt_row1_background='BDFFBD';
 $SSalt_row2_background='99FF99';
 $SSalt_row3_background='CCFFCC';
 if ($agent_screen_colors != 'default') {
-    $stmt = "SELECT menu_background,frame_background,std_row1_background,std_row2_background,std_row3_background,std_row4_background,std_row5_background,alt_row1_background,alt_row2_background,alt_row3_background,web_logo FROM vicidial_screen_colors where colors_id='$agent_screen_colors';";
+    $stmt = "SELECT web_logo,agent_login_background_image FROM vicidial_screen_colors where colors_id='$agent_screen_colors';";
     $rslt=mysql_to_mysqli($stmt, $link);
     if ($mel > 0) {
         mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01XXX', $VD_login, $server_ip, $session_name, $one_mysql_log);
@@ -81,17 +81,8 @@ if ($agent_screen_colors != 'default') {
     $qm_conf_ct = mysqli_num_rows($rslt);
     if ($qm_conf_ct > 0) {
         $row=mysqli_fetch_row($rslt);
-        $SSmenu_background =        $row[0];
-        $SSframe_background =        $row[1];
-        $SSstd_row1_background =    $row[2];
-        $SSstd_row2_background =    $row[3];
-        $SSstd_row3_background =    $row[4];
-        $SSstd_row4_background =    $row[5];
-        $SSstd_row5_background =    $row[6];
-        $SSalt_row1_background =    $row[7];
-        $SSalt_row2_background =    $row[8];
-        $SSalt_row3_background =    $row[9];
-        $SSweb_logo =                $row[10];
+        $SSweb_logo = $row[0];
+        $SSagent_login_background_image = $row[1];
     }
 }
 $Mhead_color =    $SSstd_row5_background;
@@ -117,28 +108,138 @@ if (($SSweb_logo!='default_new') and ($SSweb_logo!='default_old')) {
         $selected_logo = "../$admin_web_directory/images/vicidial_admin_web_logo$SSweb_logo";
     }
 }
+
+if ($web_logo == "default_new") {
+    $selected_logo = "./images/vicidial_admin_web_logo.png";
+} else if ($web_logo == "default_new") {
+    $selected_logo = "./vicidial_admin_web_logo.gif";
+}
+
+if ($SSagent_login_background_image == "Random") {
+    $temp_array = Array();
+
+    if ($dir_handle = opendir('./images/wallpaper/')) {
+        while (false !== ($entry = readdir($dir_handle))) {
+            if ($entry != "." && $entry != "..") {
+                array_push($temp_array, $entry);
+            }
+        }
+
+        closedir($dir_handle);
+    }
+
+    $random = array_rand($temp_array);
+    $SSagent_login_background_image = $temp_array[$random];
+}
+
 echo"<HTML><HEAD>\n";
 echo"<TITLE>"._QXZ("Welcome Screen")."</TITLE>\n";
 echo"<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=utf-8\">\n";
 echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"../agc/css/style.css\" />\n";
 echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"../agc/css/custom.css\" />\n";
+// Include Bootstrap for styling
+echo "<link rel=\"stylesheet\" href=\"./css/bootstrap.min.css\">";
+echo <<<EOF
+<style>
+body {
+EOF;
+    echo "background-image: url(\\/vicidial\/images\/wallpaper\/$SSagent_login_background_image);";
+echo <<<EOF
+    background-size: cover;
+}
+
+.login_center {
+    border: black solid 0px;
+    border-radius: 10px;
+    background: white;
+    opacity: 0.9;
+    width: 37vw;
+    position: absolute;
+    left: 34%;
+    top: 18vh;
+}
+
+.login_table {
+    border: black solid 0px;
+    border-radius: 42px;
+    padding: 10px;
+    margin: 20px;
+}
+
+.black_line_input {
+    border-top: solid black 0px;
+    border-left: solid black 0px;
+    border-right: solid black 0px;
+}
+
+@-webkit-keyframes fadeout {
+    0% {
+        opacity: 0.9;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes fadeout {
+    0% {
+        opacity: 0.9;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+.fadeOut {
+    opacity: 0.9;
+    -moz-animation   : fadeout 0.8s linear;
+    -webkit-animation: fadeout 0.8s linear;
+    animation        : fadeout 0.8s linear;
+}
+
+@-webkit-keyframes fadein {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 0.9;
+    }
+}
+
+@keyframes fadein {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 0.9;
+    }
+}
+
+.fadeIn {
+    opacity: 0.9;
+    -moz-animation: fadein 0.8s linear;
+    -webkit-animation: fadein 0.8s linear;
+    animation: fadein 0.8s linear;
+}
+</style>
+EOF;
 echo"</HEAD>\n";
-echo "<BODY BGCOLOR=WHITE MARGINHEIGHT=0 MARGINWIDTH=0>\n";
+echo "<BODY>\n";
 echo "<table width=\"100%\"><tr><td></td>\n";
 echo "</tr></table>\n";
-echo "<br /><br /><br /><center><table width=\"460px\" cellpadding=\"3\" cellspacing=\"0\" bgcolor=\"#$SSframe_background\"><tr bgcolor=\"white\">";
-echo "<td align=\"left\" valign=\"bottom\" bgcolor=\"#$SSmenu_background\" width=\"170\"><img src=\"$selected_logo\" border=\"0\" height=\"45\" width=\"170\" alt=\"Agent Screen\" /></td>";
-echo "<td align=\"center\" valign=\"middle\" bgcolor=\"#$SSmenu_background\"> <font class=\"sh_text_white\">"._QXZ("Welcome")."</font> </td>";
+echo "<br /><div class=\"alert alert-success fadeIn\"><center>👋 " . _QXZ("Welcome to mDial!") . " 💻</div><center>";
+echo "<br /><br /><br /><center \"login_center\" class=\"login_center fadeIn\"><table class=\"login_table\" width=\"460px\" cellpadding=\"3\" cellspacing=\"0\"><tr bgcolor=\"white\">";
+echo "<td align=\"center\" valign=\"bottom\" bgcolor=\"white\" width=\"170\" colspan=\"3\"><img src=\"$selected_logo\" border=\"0\" height=\"45\" width=\"170\" alt=\"Agent Screen\" /></td>";
 echo "</tr>\n";
 echo "<tr><td align=\"left\" colspan=\"2\"><font size=\"1\"> &nbsp; </font></td></tr>\n";
 echo "<TR><TD ALIGN=CENTER COLSPAN=2><font size=1> &nbsp; </TD></TR>\n";
-echo "<TR><TD ALIGN=CENTER COLSPAN=2><font class=\"skb_text\"> <a href=\"../agc/$SSagent_script\">"._QXZ("Agent Login")."</a> </TD></TR>\n";
+echo "<TR><TD ALIGN=CENTER COLSPAN=2><font class=\"skb_text\"> <a class=\"btn btn-info btn-block\" href=\"../agc/$SSagent_script\">"._QXZ("Agent Login")."</a> </TD></TR>\n";
 echo "<TR><TD ALIGN=CENTER COLSPAN=2><font size=1> &nbsp; </TD></TR>\n";
 if ($hide_timeclock_link < 1) {
-    echo "<TR><TD ALIGN=CENTER COLSPAN=2><font class=\"skb_text\"> <a href=\"../agc/timeclock.php?referrer=welcome\"> "._QXZ("Timeclock")."</a> </TD></TR>\n";
+    echo "<TR><TD ALIGN=CENTER COLSPAN=2><font class=\"skb_text\"> <a class=\"btn btn-info btn-block\" href=\"../agc/timeclock.php?referrer=welcome\"> "._QXZ("Timeclock")."</a> </TD></TR>\n";
 }
 echo "<TR><TD ALIGN=CENTER COLSPAN=2><font size=1> &nbsp; </TD></TR>\n";
-echo "<TR><TD ALIGN=CENTER COLSPAN=2><font class=\"skb_text\"> <a href=\"../$admin_web_directory/admin.php\">"._QXZ("Administration")."</a> </TD></TR>\n";
+echo "<TR><TD ALIGN=CENTER COLSPAN=2><font class=\"skb_text\"> <a class=\"btn btn-info btn-block\" href=\"../$admin_web_directory/admin.php\">"._QXZ("Administration")."</a> </TD></TR>\n";
 echo "<TR><TD ALIGN=CENTER COLSPAN=2><font size=1> &nbsp; </TD></TR>\n";
 echo "</table></center>\n";
 echo "</form>\n\n";
