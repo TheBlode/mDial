@@ -33,6 +33,8 @@
 # * ======================================== */
 ?>
 <?php
+// Start PHP session
+session_start();
 $error_start = "<div class=\"alert alert-warning\">⚠️<strong>Warning!</strong><br /><br />";
 $error_end = "</div>";
 $modified_start = "<div class=\"alert alert-success\">✅<strong>Success!</strong><br /><br />";
@@ -140,8 +142,17 @@ $Msubhead_color =    '#E6E6E6';
 $Mselected_color =    '#C6C6C6';
 $Mhead_color =        '#A3C3D6';
 $Mmain_bgcolor =    '#015B91';
-$PHP_AUTH_USER=$_SERVER['PHP_AUTH_USER'];
-$PHP_AUTH_PW=$_SERVER['PHP_AUTH_PW'];
+
+if (isset($_POST["username"])) {
+    $_SESSION["username"] = $_POST["username"];
+}
+
+if (isset($_POST["pass"])) {
+    $_SESSION["pass"] = $_POST["pass"];
+}
+
+$PHP_AUTH_USER=$_SESSION["username"];
+$PHP_AUTH_PW=$_SESSION["pass"];
 $PHP_SELF=$_SERVER['PHP_SELF'];
 $PHP_SELF = preg_replace('/\.php.*/i', '.php', $PHP_SELF);
 $QUERY_STRING = getenv("QUERY_STRING");
@@ -9060,6 +9071,7 @@ if ($force_logout) {
         echo "</head>\n";
         echo "<BODY BGCOLOR=white marginheight=0 marginwidth=0 leftmargin=0 topmargin=0 onload=\"ajax_logout_now();\">\n";
     }
+    session_destroy();
     echo _QXZ("You have now logged out. Thank you")."\n<BR>"._QXZ("To log back in").", <a href=\"$PHP_SELF\">"._QXZ("click here")."</a>";
     exit;
 }
@@ -9093,6 +9105,8 @@ $qc_auth=0;
 $auth_message = user_authorization($PHP_AUTH_USER, $PHP_AUTH_PW, 'QC', 1, 0);
 if ($auth_message == 'GOOD') {
     $user_auth=1;
+} else {
+    $auth_message = "❌ $auth_message";
 }
 if ($user_auth > 0) {
     $stmt="SELECT count(*) from vicidial_users where user='$PHP_AUTH_USER' and user_level > 7 and api_only_user != '1';";
@@ -9150,17 +9164,188 @@ if ($user_auth > 0) {
         $VDdisplayMESSAGE = _QXZ("Too many login attempts, try again in 15 minutes");
         Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
-        exit;
     }
     if ($auth_message == 'IPBLOCK') {
         $VDdisplayMESSAGE = _QXZ("Your IP Address is not allowed") . ": $ip";
         Header("Content-type: text/html; charset=utf-8");
         echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
-        exit;
     }
-    Header("WWW-Authenticate: Basic realm=\"CONTACT-CENTER-ADMIN\"");
+
     Header("HTTP/1.0 401 Unauthorized");
-    echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$PHP_AUTH_PW|$auth_message|\n";
+
+    if (!empty($PHP_AUTH_USER) && empty(!$PHP_AUTH_PW)) {
+        // Set error message
+        $VDdisplayMESSAGE .= " | Username: $PHP_AUTH_USER | Password: $PHP_AUTH_PW | $auth_message";
+    } else {
+        $VDdisplayMESSAGE = "Welcome to the Administration Panel!";
+    }
+
+    // Include Bootstrap for styling
+    echo "<link rel=\"stylesheet\" href=\"./css/bootstrap.min.css\">";
+
+    // Set default screen colour for de bugging
+    $SSadmin_screen_colors = "alt_green";
+
+    if ($SSadmin_screen_colors != "default") {
+        // Construct our SQL query
+        $stmt = "SELECT web_logo,agent_login_background_image FROM vicidial_screen_colors where colors_id='$SSadmin_screen_colors';";
+
+        // Output SQL query debug
+        if ($DB) {
+            echo "$stmt\n";
+        }
+
+        // Fire off the query!
+        $rslt=mysql_to_mysqli($stmt, $link);
+
+        // Store the results
+        $colors_ct = mysqli_num_rows($rslt);
+
+        if ($colors_ct > 0) {
+            $row = mysqli_fetch_row($rslt);
+            $web_logo = $row[0];
+            $SSagent_login_background_image = $row[1];
+        }
+    }
+
+    if ($web_logo == "default_new") {
+        $selected_logo = "./images/vicidial_admin_web_logo.png";
+    } else if ($web_logo == "default_new") {
+            $selected_logo = "./vicidial_admin_web_logo.gif";
+    }
+
+    if ($SSagent_login_background_image == "Random") {
+        $temp_array = Array();
+
+        if ($dir_handle = opendir('./images/wallpaper/')) {
+            while (false !== ($entry = readdir($dir_handle))) {
+                if ($entry != "." && $entry != "..") {
+                    array_push($temp_array, $entry);
+                }
+            }
+
+            closedir($dir_handle);
+        }
+
+        $random = array_rand($temp_array);
+        $SSagent_login_background_image = $temp_array[$random];
+}
+echo <<<EOF
+<style>
+body {
+EOF;
+    echo "background-image: url(\\/vicidial\/images\/wallpaper\/$SSagent_login_background_image);";
+echo <<<EOF
+    background-size: cover;
+}
+
+.login_center {
+    border: black solid 0px;
+    border-radius: 10px;
+    background: white;
+    opacity: 0.9;
+    width: 37vw;
+    position: absolute;
+    left: 34%;
+    top: 18vh;
+}
+
+.login_table {
+    border: black solid 0px;
+    border-radius: 42px;
+    padding: 10px;
+    margin: 20px;
+}
+
+.black_line_input {
+    border-top: solid black 0px;
+    border-left: solid black 0px;
+    border-right: solid black 0px;
+}
+
+@-webkit-keyframes fadeout {
+    0% {
+        opacity: 0.9;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes fadeout {
+    0% {
+        opacity: 0.9;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+.fadeOut {
+    opacity: 0.9;
+    -moz-animation   : fadeout 0.8s linear;
+    -webkit-animation: fadeout 0.8s linear;
+    animation        : fadeout 0.8s linear;
+}
+
+@-webkit-keyframes fadein {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 0.9;
+    }
+}
+
+@keyframes fadein {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 0.9;
+    }
+}
+
+.fadeIn {
+    opacity: 0.9;
+    -moz-animation: fadein 0.8s linear;
+    -webkit-animation: fadein 0.8s linear;
+    animation: fadein 0.8s linear;
+}
+</style>
+EOF;
+        echo "<title>"._QXZ("mDial Admin Panel")."</title>\n";
+        echo "</head>\n";
+        echo "<body>\n";
+        if (!preg_match("/BAD/", $VDdisplayMESSAGE)) {
+            echo "<br /><div class=\"alert alert-success fadeIn\"><center>👋 $VDdisplayMESSAGE 💻</div><center>";
+        } else {
+            echo "<br /><div class=\"alert alert-warning fadeIn\"><center>⚠️ $VDdisplayMESSAGE</div><center>";
+        }
+        echo "<table width=100%><tr><td></td>\n";
+        echo "</tr></table>\n";
+        echo "<form name=\"vicidial_form\" id=\"vicidial_form\" action=\"$agcPAGE\" method=\"post\" $LOGINformSUBtrigger>\n";
+        echo "<input type=\"hidden\" name=\"DB\" value=\"$DB\" />\n";
+        echo "<br /><br /><br /><center id=\"login_center\" class=\"login_center fadeIn\"><table class=\"login_table\" width=\"460px\" cellpadding=\"3\" cellspacing=\"0\" bgcolor=\"white\"><tr bgcolor=\"white\">";
+        echo "<td align=\"center\" valign=\"bottom\" bgcolor=\"white\" width=\"170\" colspan=\"3\"><img src=\"$selected_logo\" border=\"0\" height=\"45\" width=\"170\" alt=\"Agent Screen\" /></td>";
+        echo "</tr>\n";
+        echo "<tr><td align=\"center\" colspan=\"3\"><font class=\"skb_text\">"._QXZ("Username")."<br /></font>";
+        echo "<br /><input class=\"form-control\" type=\"text\" name=\"username\" size=\"10\" maxlength=\"20\" value=\"\" /></td></tr>\n";
+        echo "<tr><td align=\"center\" colspan=\"3\"><font class=\"skb_text\">"._QXZ("Password")."<br /></font>";
+        echo "<br /><input class=\"form-control\" type=\"password\" name=\"pass\" size=\"10\" maxlength=\"100\" value=\"\" /><br /></td></tr>\n";
+        if ($login_submit_once > 0) {
+            echo "<tr><td align=\"center\" colspan=\"2\"><input class=\"btn\" type=\"submit\" id=\"login_sub\" name=\"login_sub\" value=\""._QXZ("Submit")."\" onclick=\"let element = document.getElementById('login_center'); element.classList.remove('fadeIn'); element.classList.add('fadeOut'); setTimeout(function() { login_click()}, 2000);\"><br /></td></tr>";
+        } else {
+            echo "<tr><td align=\"center\" colspan=\"2\"><input onclick=\"let element = document.getElementById('login_center'); element.classList.remove('fadeIn'); element.classList.add('fadeOut');\"class=\"btn\" type=\"submit\" name=\"SUBMIT\" value=\""._QXZ("Submit")."\" /><br /></td></tr>";
+        }
+        echo "<tr><td colspan=\"3\"><hr /></td></tr>";
+        echo "<tr><td align=\"center\" colspan=\"2\"><font class=\"body_tiny\"><br />" . _QXZ("Version:") . " $admin_version &nbsp; &nbsp; &nbsp; "._QXZ("Build:")." $build</font></td></tr>";
+        echo "</table>\n";
+        echo "</form>";
+        echo "</center>";
+        echo "</body>";
+        echo "</html>";
+        exit;
     exit;
 }
 $admin_lists_custom = 'admin_lists_custom.php';
