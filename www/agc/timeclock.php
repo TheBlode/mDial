@@ -220,7 +220,7 @@ $SSalt_row1_background='BDFFBD';
 $SSalt_row2_background='99FF99';
 $SSalt_row3_background='CCFFCC';
 if ($agent_screen_colors != 'default') {
-    $stmt = "SELECT menu_background,frame_background,std_row1_background,std_row2_background,std_row3_background,std_row4_background,std_row5_background,alt_row1_background,alt_row2_background,alt_row3_background,web_logo FROM vicidial_screen_colors where colors_id='$agent_screen_colors';";
+    $stmt = "SELECT web_logo,agent_login_background_image FROM vicidial_screen_colors where colors_id='$agent_screen_colors';";
     $rslt=mysql_to_mysqli($stmt, $link);
     if ($mel > 0) {
         mysql_error_logging($NOW_TIME, $link, $mel, $stmt, '01XXX', $VD_login, $server_ip, $session_name, $one_mysql_log);
@@ -231,17 +231,8 @@ if ($agent_screen_colors != 'default') {
     $qm_conf_ct = mysqli_num_rows($rslt);
     if ($qm_conf_ct > 0) {
         $row=mysqli_fetch_row($rslt);
-        $SSmenu_background =        $row[0];
-        $SSframe_background =        $row[1];
-        $SSstd_row1_background =    $row[2];
-        $SSstd_row2_background =    $row[3];
-        $SSstd_row3_background =    $row[4];
-        $SSstd_row4_background =    $row[5];
-        $SSstd_row5_background =    $row[6];
-        $SSalt_row1_background =    $row[7];
-        $SSalt_row2_background =    $row[8];
-        $SSalt_row3_background =    $row[9];
-        $SSweb_logo =                $row[10];
+        $SSweb_logo = $row[0];
+        $SSagent_login_background_image = $row[1];
     }
 }
 $Mhead_color =    $SSstd_row5_background;
@@ -267,8 +258,111 @@ if (($SSweb_logo!='default_new') and ($SSweb_logo!='default_old')) {
         $selected_logo = "../$admin_web_directory/images/vicidial_admin_web_logo$SSweb_logo";
     }
 }
+
+if ($SSagent_login_background_image == "Random") {
+    $temp_array = Array();
+
+    if ($dir_handle = opendir('../vicidial/images/wallpaper/')) {
+        while (false !== ($entry = readdir($dir_handle))) {
+            if ($entry != "." && $entry != "..") {
+                array_push($temp_array, $entry);
+            }
+        }
+
+        closedir($dir_handle);
+    }
+
+    $random = array_rand($temp_array);
+    $SSagent_login_background_image = $temp_array[$random];
+}
 echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"../agc/css/style.css\" />\n";
 echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"../agc/css/custom.css\" />\n";
+// Include Bootstrap for styling
+echo "<link rel=\"stylesheet\" href=\"./css/bootstrap.min.css\">";
+echo <<<EOF
+<style>
+body {
+EOF;
+    echo "background-image: url(\\/vicidial\/images\/wallpaper\/$SSagent_login_background_image);";
+echo <<<EOF
+    background-size: cover;
+}
+
+.login_center {
+    border: black solid 0px;
+    border-radius: 10px;
+    background: white;
+    opacity: 0.9;
+    width: 37vw;
+    position: absolute;
+    left: 34%;
+    top: 22vh;
+}
+
+.login_table {
+    border: black solid 0px;
+    border-radius: 42px;
+    padding: 10px;
+    margin: 20px;
+}
+
+.black_line_input {
+    border-top: solid black 0px;
+    border-left: solid black 0px;
+    border-right: solid black 0px;
+}
+
+@-webkit-keyframes fadeout {
+    0% {
+        opacity: 0.9;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes fadeout {
+    0% {
+        opacity: 0.9;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+
+.fadeOut {
+    opacity: 0.9;
+    -moz-animation   : fadeout 0.8s linear;
+    -webkit-animation: fadeout 0.8s linear;
+    animation        : fadeout 0.8s linear;
+}
+
+@-webkit-keyframes fadein {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 0.9;
+    }
+}
+
+@keyframes fadein {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 0.9;
+    }
+}
+
+.fadeIn {
+    opacity: 0.9;
+    -moz-animation: fadein 0.8s linear;
+    -webkit-animation: fadein 0.8s linear;
+    animation: fadein 0.8s linear;
+}
+</style>
+EOF;
 if (($stage == 'login') or ($stage == 'logout')) {
     $valid_user=0;
     $auth_message = user_authorization($user, $pass, '', 1, 0, 0, 0, 'timeclock');
@@ -315,7 +409,7 @@ if (($stage == 'login') or ($stage == 'logout')) {
         echo"<TITLE>"._QXZ("Agent Timeclock")."</TITLE>\n";
         echo"<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=utf-8\">\n";
         echo"</HEAD>\n";
-        echo "<BODY BGCOLOR=WHITE MARGINHEIGHT=0 MARGINWIDTH=0>\n";
+        echo "<body>";
         echo "<FORM  NAME=vicidial_form ID=vicidial_form ACTION=\"$agcPAGE\" METHOD=POST>\n";
         echo "<INPUT TYPE=HIDDEN NAME=referrer VALUE=\"$referrer\">\n";
         echo "<INPUT TYPE=HIDDEN NAME=stage VALUE=\"login\">\n";
@@ -324,20 +418,24 @@ if (($stage == 'login') or ($stage == 'logout')) {
         echo "<INPUT TYPE=HIDDEN NAME=phone_pass VALUE=\"$phone_pass\">\n";
         echo "<INPUT TYPE=HIDDEN NAME=VD_login VALUE=\"$VD_login\">\n";
         echo "<INPUT TYPE=HIDDEN NAME=VD_pass VALUE=\"$VD_pass\">\n";
-        echo "<CENTER><BR><font class=\"sd_text\">$VDdisplayMESSAGE</font><BR><BR>";
+        echo "<CENTER>";
         echo "<table width=\"100%\"><tr><td></td>\n";
         echo "</tr></table>\n";
-        echo "<br /><br /><br /><center><table width=\"460px\" cellpadding=\"3\" cellspacing=\"0\" bgcolor=\"#$SSframe_background\"><tr bgcolor=\"white\">";
-        echo "<td align=\"left\" valign=\"bottom\" bgcolor=\"#$SSmenu_background\" width=\"170\"><img src=\"$selected_logo\" border=\"0\" height=\"45\" width=\"170\" alt=\"Agent Screen\" /></td>";
-        echo "<td align=\"center\" valign=\"middle\" bgcolor=\"#$SSmenu_background\"> <font class=\"sh_text_white\">"._QXZ("Timeclock")."</font> </td>";
+        if (!empty($VDdisplayMESSAGE)) {
+            echo "<br /><div class=\"alert alert-warning fadeIn\"><center>⚠ $VDdisplayMESSAGE</div><center>";
+        } else {
+            echo "<br /><div class=\"alert alert-success fadeIn\"><center>👋 " . _QXZ("Welcome to mDial Timeclock!") . " ⏱</div><center>";
+        }
+        echo "<br /><br /><br /><center id=\"login_center\" class=\"login_center fadeIn\"><table class=\"login_table\" width=\"460px\" cellpadding=\"3\" cellspacing=\"0\"><tr bgcolor=\"white\">";
+        echo "<td colspan=\"2\" align=\"center\" valign=\"bottom\" width=\"170\"><img src=\"$selected_logo\" border=\"0\" height=\"45\" width=\"170\" alt=\"Agent Screen\" /></td>";
         echo "</tr>\n";
         echo "<tr><td align=\"left\" colspan=\"2\"><font size=\"1\"> &nbsp; </font></td></tr>\n";
-        echo "<TR><TD ALIGN=RIGHT><font class=\"skb_text\">"._QXZ("User Login").": </TD>";
-        echo "<TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=user SIZE=10 MAXLENGTH=20 VALUE=\"$VD_login\"></TD></TR>\n";
-        echo "<TR><TD ALIGN=RIGHT><font class=\"skb_text\">"._QXZ("User Password:")."  </TD>";
-        echo "<TD ALIGN=LEFT><INPUT TYPE=PASSWORD NAME=pass SIZE=10 MAXLENGTH=20 VALUE=''></TD></TR>\n";
-        echo "<TR><TD ALIGN=CENTER COLSPAN=2><INPUT TYPE=SUBMIT NAME=SUBMIT VALUE="._QXZ("SUBMIT")."> &nbsp; </TD></TR>\n";
-        echo "<TR><TD ALIGN=LEFT COLSPAN=2><font class=\"body_tiny\"><BR>"._QXZ("VERSION:")." $version &nbsp; &nbsp; &nbsp; "._QXZ("BUILD:")." $build</TD></TR>\n";
+        echo "<TR><TD ALIGN=CENTER><font class=\"skb_text\">"._QXZ("User Login").": </TD></TR>";
+        echo "<TR><TD ALIGN=CENTER><INPUT TYPE=TEXT NAME=user class=\"form-control\" SIZE=10 MAXLENGTH=20 VALUE=\"$VD_login\"></TD></TR>\n";
+        echo "<TR><TD ALIGN=CENTER><font class=\"skb_text\">"._QXZ("User Password:")."  </TD></TR>";
+        echo "<TR><TD ALIGN=LEFT><INPUT TYPE=PASSWORD NAME=pass class=\"form-control\" SIZE=10 MAXLENGTH=20 VALUE=''></TD></TR>\n";
+        echo "<TR><TD ALIGN=CENTER COLSPAN=2><br /><INPUT class=\"btn btn-info\" TYPE=SUBMIT NAME=SUBMIT VALUE="._QXZ("SUBMIT")."> &nbsp; </TD></TR>\n";
+        echo "<TR><TD ALIGN=CENTER COLSPAN=2><font class=\"body_tiny\"><BR>"._QXZ("VERSION:")." $version &nbsp; &nbsp; &nbsp; "._QXZ("BUILD:")." $build</TD></TR>\n";
         echo "</TABLE>\n";
         echo "</FORM>\n\n";
         echo "</body>\n\n";
@@ -414,7 +512,7 @@ if (($stage == 'login') or ($stage == 'logout')) {
             echo"<TITLE>Agent Timeclock</TITLE>\n";
             echo"<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=utf-8\">\n";
             echo"</HEAD>\n";
-            echo "<BODY BGCOLOR=WHITE MARGINHEIGHT=0 MARGINWIDTH=0>\n";
+            echo "<body>";
             echo "<FORM  NAME=vicidial_form ID=vicidial_form ACTION=\"$agcPAGE\" METHOD=POST>\n";
             echo "<INPUT TYPE=HIDDEN NAME=stage VALUE=\"login\">\n";
             echo "<INPUT TYPE=HIDDEN NAME=referrer VALUE=\"$referrer\">\n";
@@ -423,20 +521,24 @@ if (($stage == 'login') or ($stage == 'logout')) {
             echo "<INPUT TYPE=HIDDEN NAME=phone_pass VALUE=\"$phone_pass\">\n";
             echo "<INPUT TYPE=HIDDEN NAME=VD_login VALUE=\"$VD_login\">\n";
             echo "<INPUT TYPE=HIDDEN NAME=VD_pass VALUE=\"$VD_pass\">\n";
-            echo "<CENTER><BR><font class=\"sd_text\">$VDdisplayMESSAGE</font><BR><BR>";
+            echo "<CENTER>";
             echo "<table width=\"100%\"><tr><td></td>\n";
             echo "</tr></table>\n";
-            echo "<br /><br /><br /><center><table width=\"460px\" cellpadding=\"3\" cellspacing=\"0\" bgcolor=\"#$SSframe_background\"><tr bgcolor=\"white\">";
-            echo "<td align=\"left\" valign=\"bottom\" bgcolor=\"#$SSmenu_background\" width=\"170\"><img src=\"$selected_logo\" border=\"0\" height=\"45\" width=\"170\" alt=\"Agent Screen\" /></td>";
-            echo "<td align=\"center\" valign=\"middle\" bgcolor=\"#$SSmenu_background\"> <font class=\"sh_text_white\">"._QXZ("Timeclock")."</font> </td>";
+            if (!empty($VDdisplayMESSAGE)) {
+                echo "<br /><div class=\"alert alert-warning fadeIn\"><center>⚠ $VDdisplayMESSAGE</div><center><br />";
+            } else {
+                echo "<br /><div class=\"alert alert-success fadeIn\"><center>👋 " . _QXZ("Welcome to mDial Timeclock!") . " ⏱</div><center>";
+            }
+            echo "<br /><br /><br /><center id=\"login_center\" class=\"login_center fadeIn\"><table class=\"login_table\" width=\"460px\" cellpadding=\"3\" cellspacing=\"0\"><tr bgcolor=\"white\">";
+            echo "<td colspan=\"2\" align=\"center\" valign=\"bottom\" width=\"170\"><img src=\"$selected_logo\" border=\"0\" height=\"45\" width=\"170\" alt=\"Agent Screen\" /></td>";
             echo "</tr>\n";
             echo "<tr><td align=\"left\" colspan=\"2\"><font size=\"1\"> &nbsp; </font></td></tr>\n";
-            echo "<TR><TD ALIGN=RIGHT><font class=\"skb_text\">"._QXZ("User Login").": </TD>";
-            echo "<TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=user SIZE=10 MAXLENGTH=20 VALUE=\"$VD_login\"></TD></TR>\n";
-            echo "<TR><TD ALIGN=RIGHT><font class=\"skb_text\">"._QXZ("User Password:")."  </TD>";
-            echo "<TD ALIGN=LEFT><INPUT TYPE=PASSWORD NAME=pass SIZE=10 MAXLENGTH=20 VALUE=''></TD></TR>\n";
-            echo "<TR><TD ALIGN=CENTER COLSPAN=2><INPUT TYPE=SUBMIT NAME=SUBMIT VALUE=\""._QXZ("SUBMIT")."\"> &nbsp; </TD></TR>\n";
-            echo "<TR><TD ALIGN=LEFT COLSPAN=2><font class=\"body_tiny\"><BR>"._QXZ("VERSION:")." $version &nbsp; &nbsp; &nbsp; "._QXZ("BUILD:")." $build</TD></TR>\n";
+            echo "<TR><TD ALIGN=CENTER><font class=\"skb_text\">"._QXZ("User Login").": </TD></TR>";
+            echo "<TR><TD ALIGN=CENTER><INPUT TYPE=TEXT NAME=user class=\"form-control\" SIZE=10 MAXLENGTH=20 VALUE=\"$VD_login\"></TD></TR>\n";
+            echo "<TR><TD ALIGN=CENTER><font class=\"skb_text\">"._QXZ("User Password:")."  </TD></TR>";
+            echo "<TR><TD ALIGN=LEFT><INPUT TYPE=PASSWORD NAME=pass class=\"form-control\" SIZE=10 MAXLENGTH=20 VALUE=''></TD></TR>\n";
+            echo "<TR><TD ALIGN=CENTER COLSPAN=2><br /><INPUT class=\"btn btn-info\" TYPE=SUBMIT NAME=SUBMIT VALUE=\""._QXZ("SUBMIT")."\"> &nbsp; </TD></TR>\n";
+            echo "<TR><TD ALIGN=CENTER COLSPAN=2><font class=\"body_tiny\"><BR>"._QXZ("VERSION:")." $version &nbsp; &nbsp; &nbsp; "._QXZ("BUILD:")." $build</TD></TR>\n";
             echo "</TABLE>\n";
             echo "</FORM>\n\n";
             echo "</body>\n\n";
@@ -511,35 +613,34 @@ if (($stage == 'login') or ($stage == 'logout')) {
                 print "<!-- vicidial_timeclock_audit_log record updated for $user:   |$affected_rows| -->\n";
             }
             if (((($status=='AUTOLOGOUT') or ($status=='START') or ($status=='LOGOUT') or ($status=='TIMEOUTLOGOUT')) and ($stage=='logout')) or (($status=='LOGIN') and ($stage=='login'))) {
-                echo _QXZ("ERROR: timeclock log entry already made:")." $status|$stage";
+                echo "<br /><div class=\"alert alert-warning fadeIn\"><center>⚠ " . _QXZ("ERROR: timeclock log entry already made:")." $status | $stage<br /><br /><a href=\"timeclock.php\" class=\"btn btn-info\">Login Again?</a></div><center>";
                 exit;
             }
             $BACKlink='';
             if ($referrer=='agent') {
-                $BACKlink = "<A HREF=\"./$SSagent_script?pl=$phone_login&pp=$phone_pass&VD_login=$user\"><font class=\"sd_text\">"._QXZ("BACK to Agent Login Screen")."</font></A>";
+                $BACKlink = "<A class=\"btn btn-info\" HREF=\"./$SSagent_script?pl=$phone_login&pp=$phone_pass&VD_login=$user\"><font class=\"sd_text\">"._QXZ("BACK to Agent Login Screen")."</font></A>";
             }
             if ($referrer=='admin') {
-                $BACKlink = "<A HREF=\"/$admin_web_directory/admin.php\"><font class=\"sd_text\">"._QXZ("BACK to Administration")."</font></A>";
+                $BACKlink = "<A class=\"btn btn-info\" HREF=\"/$admin_web_directory/admin.php\"><font class=\"sd_text\">"._QXZ("BACK to Administration")."</font></A>";
             }
             if (($referrer=='welcome') or (strlen($BACKlink) < 10)) {
-                $BACKlink = "<A HREF=\"$welcomeURL\"><font class=\"sd_text\">"._QXZ("BACK to Welcome Screen")."</font></A>";
+                $BACKlink = "<A class=\"btn btn-info\" HREF=\"$welcomeURL\"><font class=\"sd_text\">"._QXZ("BACK to Welcome Screen")."</font></A>";
             }
             echo"<HTML><HEAD>\n";
             echo"<TITLE>"._QXZ("Agent Timeclock")."</TITLE>\n";
             echo"<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=utf-8\">\n";
             echo"</HEAD>\n";
-            echo "<BODY BGCOLOR=WHITE MARGINHEIGHT=0 MARGINWIDTH=0>\n";
-            echo "<CENTER><BR><font class=\"sd_text\">$VDdisplayMESSAGE</font><BR><BR>";
+            echo "<body>";
+            echo "<CENTER>";
             echo "<table width=\"100%\"><tr><td></td>\n";
             echo "</tr></table>\n";
-            echo "<br /><br /><br /><center><table width=\"460px\" cellpadding=\"3\" cellspacing=\"0\" bgcolor=\"#$SSframe_background\"><tr bgcolor=\"white\">";
-            echo "<td align=\"left\" valign=\"bottom\" bgcolor=\"#$SSmenu_background\" width=\"170\"><img src=\"$selected_logo\" border=\"0\" height=\"45\" width=\"170\" alt=\"Agent Screen\" /></td>";
-            echo "<td align=\"center\" valign=\"middle\" bgcolor=\"#$SSmenu_background\"> <font class=\"sh_text_white\">"._QXZ("Timeclock")."</font> </td>";
+            echo "<br /><br /><br /><center id=\"login_center\" class=\"login_center fadeIn\"><table class=\"login_table\" width=\"460px\" cellpadding=\"3\" cellspacing=\"0\"><tr bgcolor=\"white\">";
+            echo "<td colspan=\"2\" align=\"center\" valign=\"bottom\" width=\"170\"><img src=\"$selected_logo\" border=\"0\" height=\"45\" width=\"170\" alt=\"Agent Screen\" /></td>";
             echo "</tr>\n";
             echo "<tr><td align=\"left\" colspan=\"2\"><font size=\"1\"> &nbsp; </font></td></tr>\n";
-            echo "<TR><TD ALIGN=CENTER COLSPAN=2><font size=3><font class=\"skb_text\"> $LOGtimeMESSAGE<BR>&nbsp; </font></TD></TR>\n";
+            echo "<TR><TD ALIGN=CENTER COLSPAN=2><font size=3><font class=\"skb_text\"> $LOGtimeMESSAGE<hr /></font></TD></TR>\n";
             echo "<TR><TD ALIGN=CENTER COLSPAN=2><B> $BACKlink <BR>&nbsp; </B></TD></TR>\n";
-            echo "<TR><TD ALIGN=LEFT COLSPAN=2><font class=\"body_tiny\"><BR>"._QXZ("VERSION:")." $version &nbsp; &nbsp; &nbsp; "._QXZ("BUILD:")." $build</TD></TR>\n";
+            echo "<TR><TD ALIGN=CENTER COLSPAN=2><font class=\"body_tiny\"><BR>"._QXZ("VERSION:")." $version &nbsp; &nbsp; &nbsp; "._QXZ("BUILD:")." $build</TD></TR>\n";
             echo "</TABLE>\n";
             echo "</body>\n\n";
             echo "</html>\n\n";
@@ -550,19 +651,19 @@ if (($stage == 'login') or ($stage == 'logout')) {
             $log_action = 'login';
             $button_name = _QXZ("LOGIN");
             ;
-            $LOGtimeMESSAGE = _QXZ("You last logged-out at:")." $last_action_date<BR><BR>"._QXZ("Click LOGIN below to log-in");
+            $LOGtimeMESSAGE = _QXZ("You last logged-out at:")." $last_action_date<hr />"._QXZ("Click LOGIN below to log-in");
         }
         if ($status=='LOGIN') {
             $VDdisplayMESSAGE = _QXZ("Amount of time you have been logged-in:")." $totTIME_HMS";
             $log_action = 'logout';
             $button_name = _QXZ("LOGOUT");
-            $LOGtimeMESSAGE = _QXZ("You logged-in at:")." $last_action_date<BR>"._QXZ("Amount of time you have been logged-in:")." $totTIME_HMS<BR><BR>"._QXZ("Click LOGOUT below to log-out");
+            $LOGtimeMESSAGE = _QXZ("You logged-in at:")." $last_action_date<BR><hr />"._QXZ("Amount of time you have been logged-in:")." $totTIME_HMS<hr />"._QXZ("Click LOGOUT below to log-out");
         }
         echo"<HTML><HEAD>\n";
         echo"<TITLE>"._QXZ("Agent Timeclock")."</TITLE>\n";
         echo"<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=utf-8\">\n";
         echo"</HEAD>\n";
-        echo "<BODY BGCOLOR=WHITE MARGINHEIGHT=0 MARGINWIDTH=0>\n";
+        echo "<body>";
         echo "<FORM  NAME=vicidial_form ID=vicidial_form ACTION=\"$agcPAGE\" METHOD=POST>\n";
         echo "<INPUT TYPE=HIDDEN NAME=stage VALUE=\"$log_action\">\n";
         echo "<INPUT TYPE=HIDDEN NAME=commit VALUE=\"YES\">\n";
@@ -574,17 +675,16 @@ if (($stage == 'login') or ($stage == 'logout')) {
         echo "<INPUT TYPE=HIDDEN NAME=VD_pass VALUE=\"$VD_pass\">\n";
         echo "<INPUT TYPE=HIDDEN NAME=user VALUE=\"$user\">\n";
         echo "<INPUT TYPE=HIDDEN NAME=pass VALUE=\"$pass\">\n";
-        echo "<CENTER><BR><font class=\"sd_text\">$VDdisplayMESSAGE</font><BR><BR>";
+        echo "<CENTER>";
         echo "<table width=\"100%\"><tr><td></td>\n";
         echo "</tr></table>\n";
-        echo "<br /><br /><br /><center><table width=\"460px\" cellpadding=\"3\" cellspacing=\"0\" bgcolor=\"#$SSframe_background\"><tr bgcolor=\"white\">";
-        echo "<td align=\"left\" valign=\"bottom\" bgcolor=\"#$SSmenu_background\" width=\"170\"><img src=\"$selected_logo\" border=\"0\" height=\"45\" width=\"170\" alt=\"Agent Screen\" /></td>";
-        echo "<td align=\"center\" valign=\"middle\" bgcolor=\"#$SSmenu_background\"> <font class=\"sh_text_white\">"._QXZ("Timeclock")."</font> </td>";
+        echo "<br /><br /><br /><center id=\"login_center\" class=\"login_center fadeIn\"><table class=\"login_table\" width=\"460px\" cellpadding=\"3\" cellspacing=\"0\"><tr bgcolor=\"white\">";
+        echo "<td colspan=\"2\" align=\"center\" valign=\"bottom\" width=\"170\"><img src=\"$selected_logo\" border=\"0\" height=\"45\" width=\"170\" alt=\"Agent Screen\" /></td>";
         echo "</tr>\n";
         echo "<tr><td align=\"left\" colspan=\"2\"><font size=\"1\"> &nbsp; </font></td></tr>\n";
-        echo "<TR><TD ALIGN=CENTER COLSPAN=2><font size=3><font class=\"skb_text\"> $LOGtimeMESSAGE<BR>&nbsp; </font></TD></TR>\n";
-        echo "<TR><TD ALIGN=CENTER COLSPAN=2><INPUT TYPE=SUBMIT NAME=\"$button_name\" VALUE=\"$button_name\"> &nbsp; </TD></TR>\n";
-        echo "<TR><TD ALIGN=LEFT COLSPAN=2><font size=1><BR>"._QXZ("VERSION:")." $version &nbsp; &nbsp; &nbsp; "._QXZ("BUILD:")." $build</TD></TR>\n";
+        echo "<TR><TD ALIGN=CENTER COLSPAN=2><font size=3><font class=\"skb_text\">$LOGtimeMESSAGE<hr /></font></TD></TR>\n";
+        echo "<TR><TD ALIGN=CENTER COLSPAN=2><INPUT class=\"btn btn-info\" TYPE=SUBMIT NAME=\"$button_name\" VALUE=\"$button_name\"> &nbsp; </TD></TR>\n";
+        echo "<TR><TD ALIGN=center COLSPAN=2><font size=1><BR>"._QXZ("VERSION:")." $version &nbsp; &nbsp; &nbsp; "._QXZ("BUILD:")." $build</TD></TR>\n";
         echo "</TABLE>\n";
         echo "</FORM>\n\n";
         echo "</body>\n\n";
@@ -596,7 +696,7 @@ if (($stage == 'login') or ($stage == 'logout')) {
     echo"<TITLE>"._QXZ("Agent Timeclock")."</TITLE>\n";
     echo"<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=utf-8\">\n";
     echo"</HEAD>\n";
-    echo "<BODY BGCOLOR=WHITE MARGINHEIGHT=0 MARGINWIDTH=0>\n";
+    echo "<body>";
     echo "<FORM  NAME=vicidial_form ID=vicidial_form ACTION=\"$agcPAGE\" METHOD=POST>\n";
     echo "<INPUT TYPE=HIDDEN NAME=stage VALUE=\"login\">\n";
     echo "<INPUT TYPE=HIDDEN NAME=referrer VALUE=\"$referrer\">\n";
@@ -605,20 +705,24 @@ if (($stage == 'login') or ($stage == 'logout')) {
     echo "<INPUT TYPE=HIDDEN NAME=phone_pass VALUE=\"$phone_pass\">\n";
     echo "<INPUT TYPE=HIDDEN NAME=VD_login VALUE=\"$VD_login\">\n";
     echo "<INPUT TYPE=HIDDEN NAME=VD_pass VALUE=\"$VD_pass\">\n";
-    echo "<CENTER><BR><font class=\"sd_text\">$VDdisplayMESSAGE</font><BR><BR>";
+    echo "<CENTER>";
     echo "<table width=\"100%\"><tr><td></td>\n";
     echo "</tr></table>\n";
-    echo "<br /><br /><br /><center><table width=\"460px\" cellpadding=\"3\" cellspacing=\"0\" bgcolor=\"#$SSframe_background\"><tr bgcolor=\"white\">";
-    echo "<td align=\"left\" valign=\"bottom\" bgcolor=\"#$SSmenu_background\" width=\"170\"><img src=\"$selected_logo\" border=\"0\" height=\"45\" width=\"170\" alt=\"Agent Screen\" /></td>";
-    echo "<td align=\"center\" valign=\"middle\" bgcolor=\"#$SSmenu_background\"> <font class=\"sh_text_white\">"._QXZ("Timeclock")."</font> </td>";
+    if (!empty($VDdisplayMESSAGE)) {
+        echo "<br /><div class=\"alert alert-warning fadeIn\"><center>⚠ $VDdisplayMESSAGE</div><center>";
+    } else {
+        echo "<br /><div class=\"alert alert-success fadeIn\"><center>👋 " . _QXZ("Welcome to mDial Timeclock!") . " ⏱</div><center>";
+    }
+    echo "<br /><br /><br /><center id=\"login_center\" class=\"login_center fadeIn\"><table class=\"login_table\" width=\"460px\" cellpadding=\"3\" cellspacing=\"0\"><tr bgcolor=\"white\">";
+    echo "<td colspan=\"2\" align=\"center\" valign=\"bottom\" width=\"170\"><img src=\"$selected_logo\" border=\"0\" height=\"45\" width=\"170\" alt=\"Agent Screen\" /></td>";
     echo "</tr>\n";
     echo "<tr><td align=\"left\" colspan=\"2\"><font size=\"1\"> &nbsp; </font></td></tr>\n";
-    echo "<TR><TD ALIGN=RIGHT><font class=\"skb_text\">"._QXZ("User Login").": </TD>";
-    echo "<TD ALIGN=LEFT><INPUT TYPE=TEXT NAME=user SIZE=10 MAXLENGTH=20 VALUE=\"$VD_login\"></TD></TR>\n";
-    echo "<TR><TD ALIGN=RIGHT><font class=\"skb_text\">"._QXZ("User Password:")."  </TD>";
-    echo "<TD ALIGN=LEFT><INPUT TYPE=PASSWORD NAME=pass SIZE=10 MAXLENGTH=20 VALUE=''></TD></TR>\n";
-    echo "<TR><TD ALIGN=CENTER COLSPAN=2><INPUT TYPE=SUBMIT NAME=SUBMIT VALUE="._QXZ("SUBMIT")."> &nbsp; </TD></TR>\n";
-    echo "<TR><TD ALIGN=LEFT COLSPAN=2><font class=\"body_tiny\"><BR>"._QXZ("VERSION:")." $version &nbsp; &nbsp; &nbsp; "._QXZ("BUILD:")." $build</TD></TR>\n";
+    echo "<TR><TD ALIGN=CENTER><font class=\"skb_text\">"._QXZ("User Login").": </TD></TR>";
+    echo "<TR><TD ALIGN=CENTER><INPUT TYPE=TEXT NAME=user class=\"form-control\" SIZE=10 MAXLENGTH=20 VALUE=\"$VD_login\"></TD></TR>\n";
+    echo "<TR><TD ALIGN=CENTER><font class=\"skb_text\">"._QXZ("User Password:")."  </TD></TR>";
+    echo "<TR><TD ALIGN=LEFT><INPUT TYPE=PASSWORD NAME=pass class=\"form-control\" SIZE=10 MAXLENGTH=20 VALUE=''></TD></TR>\n";
+    echo "<TR><TD ALIGN=CENTER COLSPAN=2><br /><INPUT class=\"btn btn-info\" TYPE=SUBMIT NAME=SUBMIT VALUE="._QXZ("SUBMIT")."> &nbsp; </TD></TR>\n";
+    echo "<TR><TD ALIGN=CENTER COLSPAN=2><font class=\"body_tiny\"><BR>"._QXZ("VERSION:")." $version &nbsp; &nbsp; &nbsp; "._QXZ("BUILD:")." $build</TD></TR>\n";
     echo "</TABLE>\n";
     echo "</FORM>\n\n";
     echo "</body>\n\n";
