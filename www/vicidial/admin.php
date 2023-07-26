@@ -9177,7 +9177,7 @@ if ($user_auth > 0) {
         // Set error message
         $VDdisplayMESSAGE .= " | Username: $PHP_AUTH_USER | Password: $PHP_AUTH_PW | $auth_message";
     } else {
-        $VDdisplayMESSAGE = "Welcome to the Administration Panel!";
+        $VDdisplayMESSAGE = _QXZ("Welcome to the Administration Panel!");
     }
 
     // Include Bootstrap for styling
@@ -9312,7 +9312,29 @@ echo <<<EOF
     -webkit-animation: fadein 0.8s linear;
     animation: fadein 0.8s linear;
 }
+
+#togglePassword {
+    margin-left: 31vw;
+    cursor: pointer;
+    position: relative;
+    top: -26px;
+}
 </style>
+EOF;
+$INSERT_before_body_close = <<<EOF
+<script>
+    const togglePassword = document.querySelector("#togglePassword");
+    const password = document.querySelector("#password");
+
+    togglePassword.addEventListener("click", function () {
+        // toggle the type attribute
+        const type = password.getAttribute("type") === "password" ? "text" : "password";
+        password.setAttribute("type", type);
+
+        // toggle the icon
+        this.classList.toggle("bi-eye");
+    });
+</script>
 EOF;
         echo "<title>"._QXZ("mDial Admin Panel")."</title>\n";
         echo "</head>\n";
@@ -9327,22 +9349,23 @@ EOF;
         echo "<form name=\"vicidial_form\" id=\"vicidial_form\" action=\"$agcPAGE\" method=\"post\" $LOGINformSUBtrigger>\n";
         echo "<input type=\"hidden\" name=\"DB\" value=\"$DB\" />\n";
         echo "<br /><br /><br /><center id=\"login_center\" class=\"login_center fadeIn\"><table class=\"login_table\" width=\"460px\" cellpadding=\"3\" cellspacing=\"0\" bgcolor=\"white\"><tr bgcolor=\"white\">";
-        echo "<td align=\"center\" valign=\"bottom\" bgcolor=\"white\" width=\"170\" colspan=\"3\"><img src=\"$selected_logo\" border=\"0\" height=\"45\" width=\"170\" alt=\"Agent Screen\" /></td>";
+        echo "<td align=\"center\" valign=\"bottom\" bgcolor=\"white\" width=\"170\" colspan=\"3\"><img src=\"$selected_logo\" border=\"0\" height=\"45\" width=\"170\" alt=\"Agent Screen\" /></td><br />";
         echo "</tr>\n";
         echo "<tr><td align=\"center\" colspan=\"3\"><font class=\"skb_text\">"._QXZ("Username")."<br /></font>";
-        echo "<br /><input class=\"form-control\" type=\"text\" name=\"username\" size=\"10\" maxlength=\"20\" value=\"\" /></td></tr>\n";
+        echo "<br /><input class=\"form-control\" type=\"text\" name=\"username\" size=\"10\" maxlength=\"20\" value=\"\" autofocus /></td></tr>\n";
         echo "<tr><td align=\"center\" colspan=\"3\"><font class=\"skb_text\">"._QXZ("Password")."<br /></font>";
-        echo "<br /><input class=\"form-control\" type=\"password\" name=\"pass\" size=\"10\" maxlength=\"100\" value=\"\" /><br /></td></tr>\n";
+        echo "<br /><input class=\"form-control\" id=\"password\" type=\"password\" name=\"pass\" size=\"10\" maxlength=\"100\" value=\"\" /><i class=\"bi-eye-slash\" id=\"togglePassword\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" class=\"bi-eye-fill\" viewBox=\"0 0 16 16\"><path d=\"M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z\"/><path d=\"M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z\"/></svg></i><br /></td></tr>\n";
         if ($login_submit_once > 0) {
             echo "<tr><td align=\"center\" colspan=\"2\"><input class=\"btn\" type=\"submit\" id=\"login_sub\" name=\"login_sub\" value=\""._QXZ("Submit")."\" onclick=\"let element = document.getElementById('login_center'); element.classList.remove('fadeIn'); element.classList.add('fadeOut'); setTimeout(function() { login_click()}, 2000);\"><br /></td></tr>";
         } else {
-            echo "<tr><td align=\"center\" colspan=\"2\"><input onclick=\"let element = document.getElementById('login_center'); element.classList.remove('fadeIn'); element.classList.add('fadeOut');\"class=\"btn\" type=\"submit\" name=\"SUBMIT\" value=\""._QXZ("Submit")."\" /><br /></td></tr>";
+            echo "<tr><td align=\"center\" colspan=\"2\"><input onclick=\"let element = document.getElementById('login_center'); element.classList.remove('fadeIn'); element.classList.add('fadeOut');\"class=\"btn btn-info\" type=\"submit\" name=\"SUBMIT\" value=\""._QXZ("Submit")."\" /><br /></td></tr>";
         }
         echo "<tr><td colspan=\"3\"><hr /></td></tr>";
         echo "<tr><td align=\"center\" colspan=\"2\"><font class=\"body_tiny\"><br />" . _QXZ("Version:") . " $admin_version &nbsp; &nbsp; &nbsp; "._QXZ("Build:")." $build</font></td></tr>";
         echo "</table>\n";
         echo "</form>";
         echo "</center>";
+        echo $INSERT_before_body_close;
         echo "</body>";
         echo "</html>";
         exit;

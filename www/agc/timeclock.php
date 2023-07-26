@@ -361,7 +361,29 @@ echo <<<EOF
     -webkit-animation: fadein 0.8s linear;
     animation: fadein 0.8s linear;
 }
+
+#togglePassword {
+    margin-left: 31vw;
+    cursor: pointer;
+    position: relative;
+    top: -26px;
+}
 </style>
+EOF;
+$INSERT_before_body_close = <<<EOF
+<script>
+    const togglePassword = document.querySelector("#togglePassword");
+    const password = document.querySelector("#password");
+
+    togglePassword.addEventListener("click", function () {
+        // toggle the type attribute
+        const type = password.getAttribute("type") === "password" ? "text" : "password";
+        password.setAttribute("type", type);
+
+        // toggle the icon
+        this.classList.toggle("bi-eye");
+    });
+</script>
 EOF;
 if (($stage == 'login') or ($stage == 'logout')) {
     $valid_user=0;
@@ -433,11 +455,12 @@ if (($stage == 'login') or ($stage == 'logout')) {
         echo "<TR><TD ALIGN=CENTER><font class=\"skb_text\">"._QXZ("User Login").": </TD></TR>";
         echo "<TR><TD ALIGN=CENTER><INPUT TYPE=TEXT NAME=user class=\"form-control\" SIZE=10 MAXLENGTH=20 VALUE=\"$VD_login\"></TD></TR>\n";
         echo "<TR><TD ALIGN=CENTER><font class=\"skb_text\">"._QXZ("User Password:")."  </TD></TR>";
-        echo "<TR><TD ALIGN=LEFT><INPUT TYPE=PASSWORD NAME=pass class=\"form-control\" SIZE=10 MAXLENGTH=20 VALUE=''></TD></TR>\n";
+        echo "<TR><TD ALIGN=LEFT><INPUT TYPE=PASSWORD NAME=pass id=\"password\" class=\"form-control\" SIZE=10 MAXLENGTH=20 VALUE=''><i class=\"bi-eye-slash\" id=\"togglePassword\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" class=\"bi-eye-fill\" viewBox=\"0 0 16 16\"><path d=\"M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z\"/><path d=\"M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z\"/></svg></i></TD></TR>\n";
         echo "<TR><TD ALIGN=CENTER COLSPAN=2><br /><INPUT class=\"btn btn-info\" TYPE=SUBMIT NAME=SUBMIT VALUE="._QXZ("SUBMIT")."> &nbsp; </TD></TR>\n";
         echo "<TR><TD ALIGN=CENTER COLSPAN=2><font class=\"body_tiny\"><BR>"._QXZ("VERSION:")." $version &nbsp; &nbsp; &nbsp; "._QXZ("BUILD:")." $build</TD></TR>\n";
         echo "</TABLE>\n";
         echo "</FORM>\n\n";
+        echo $INSERT_before_body_close;
         echo "</body>\n\n";
         echo "</html>\n\n";
         exit;
@@ -536,11 +559,12 @@ if (($stage == 'login') or ($stage == 'logout')) {
             echo "<TR><TD ALIGN=CENTER><font class=\"skb_text\">"._QXZ("User Login").": </TD></TR>";
             echo "<TR><TD ALIGN=CENTER><INPUT TYPE=TEXT NAME=user class=\"form-control\" SIZE=10 MAXLENGTH=20 VALUE=\"$VD_login\"></TD></TR>\n";
             echo "<TR><TD ALIGN=CENTER><font class=\"skb_text\">"._QXZ("User Password:")."  </TD></TR>";
-            echo "<TR><TD ALIGN=LEFT><INPUT TYPE=PASSWORD NAME=pass class=\"form-control\" SIZE=10 MAXLENGTH=20 VALUE=''></TD></TR>\n";
+            echo "<TR><TD ALIGN=LEFT><INPUT TYPE=PASSWORD NAME=pass id=\"password\" class=\"form-control\" SIZE=10 MAXLENGTH=20 VALUE=''><i class=\"bi-eye-slash\" id=\"togglePassword\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" class=\"bi-eye-fill\" viewBox=\"0 0 16 16\"><path d=\"M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z\"/><path d=\"M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z\"/></svg></i></TD></TR>\n";
             echo "<TR><TD ALIGN=CENTER COLSPAN=2><br /><INPUT class=\"btn btn-info\" TYPE=SUBMIT NAME=SUBMIT VALUE=\""._QXZ("SUBMIT")."\"> &nbsp; </TD></TR>\n";
             echo "<TR><TD ALIGN=CENTER COLSPAN=2><font class=\"body_tiny\"><BR>"._QXZ("VERSION:")." $version &nbsp; &nbsp; &nbsp; "._QXZ("BUILD:")." $build</TD></TR>\n";
             echo "</TABLE>\n";
             echo "</FORM>\n\n";
+            echo $INSERT_before_body_close;
             echo "</body>\n\n";
             echo "</html>\n\n";
             exit;
@@ -720,11 +744,12 @@ if (($stage == 'login') or ($stage == 'logout')) {
     echo "<TR><TD ALIGN=CENTER><font class=\"skb_text\">"._QXZ("User Login").": </TD></TR>";
     echo "<TR><TD ALIGN=CENTER><INPUT TYPE=TEXT NAME=user class=\"form-control\" SIZE=10 MAXLENGTH=20 VALUE=\"$VD_login\"></TD></TR>\n";
     echo "<TR><TD ALIGN=CENTER><font class=\"skb_text\">"._QXZ("User Password:")."  </TD></TR>";
-    echo "<TR><TD ALIGN=LEFT><INPUT TYPE=PASSWORD NAME=pass class=\"form-control\" SIZE=10 MAXLENGTH=20 VALUE=''></TD></TR>\n";
+    echo "<TR><TD ALIGN=LEFT><INPUT TYPE=PASSWORD NAME=pass id=\"password\" class=\"form-control\" SIZE=10 MAXLENGTH=20 VALUE=''><i class=\"bi-eye-slash\" id=\"togglePassword\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" fill=\"currentColor\" class=\"bi-eye-fill\" viewBox=\"0 0 16 16\"><path d=\"M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z\"/><path d=\"M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z\"/></svg></i></TD></TR>\n";
     echo "<TR><TD ALIGN=CENTER COLSPAN=2><br /><INPUT class=\"btn btn-info\" TYPE=SUBMIT NAME=SUBMIT VALUE="._QXZ("SUBMIT")."> &nbsp; </TD></TR>\n";
     echo "<TR><TD ALIGN=CENTER COLSPAN=2><font class=\"body_tiny\"><BR>"._QXZ("VERSION:")." $version &nbsp; &nbsp; &nbsp; "._QXZ("BUILD:")." $build</TD></TR>\n";
     echo "</TABLE>\n";
     echo "</FORM>\n\n";
+    echo $INSERT_before_body_close;
     echo "</body>\n\n";
     echo "</html>\n\n";
 }
