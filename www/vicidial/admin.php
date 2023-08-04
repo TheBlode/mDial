@@ -151,8 +151,19 @@ if (isset($_POST["pass"])) {
     $_SESSION["pass"] = $_POST["pass"];
 }
 
-$PHP_AUTH_USER=$_SESSION["username"];
-$PHP_AUTH_PW=$_SESSION["pass"];
+if (isset($_GET["ADD"])) {
+    $ADD=$_GET["ADD"];
+} elseif (isset($_POST["ADD"])) {
+    $ADD=$_POST["ADD"];
+}
+
+if ($ADD == 999996) {
+    $PHP_AUTH_USER = $_SESSION["username"];
+    $PHP_AUTH_PW = $pass;
+} else {
+    $PHP_AUTH_USER = $_SESSION["username"];
+    $PHP_AUTH_PW = $_SESSION["pass"];
+}
 $PHP_SELF=$_SERVER['PHP_SELF'];
 $PHP_SELF = preg_replace('/\.php.*/i', '.php', $PHP_SELF);
 $QUERY_STRING = getenv("QUERY_STRING");
@@ -219,11 +230,6 @@ if (isset($_GET["SUB"])) {
     $SUB=$_GET["SUB"];
 } elseif (isset($_POST["SUB"])) {
     $SUB=$_POST["SUB"];
-}
-if (isset($_GET["ADD"])) {
-    $ADD=$_GET["ADD"];
-} elseif (isset($_POST["ADD"])) {
-    $ADD=$_POST["ADD"];
 }
 if (isset($_GET["admin_hangup_enabled"])) {
     $admin_hangup_enabled=$_GET["admin_hangup_enabled"];
