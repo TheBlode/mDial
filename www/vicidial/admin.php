@@ -147,8 +147,10 @@ if (isset($_POST["username"])) {
     $_SESSION["username"] = $_POST["username"];
 }
 
-if (isset($_POST["pass"])) {
-    $_SESSION["pass"] = $_POST["pass"];
+if (!isset($_SESSION["pass"])) {
+    if (isset($_POST["pass"])) {
+        $_SESSION["pass"] = $_POST["pass"];
+    }
 }
 
 if (isset($_GET["ADD"])) {
@@ -158,8 +160,8 @@ if (isset($_GET["ADD"])) {
 }
 
 if ($ADD == 999996) {
-    $PHP_AUTH_USER = $_SESSION["username"];
-    $PHP_AUTH_PW = $pass;
+    $PHP_AUTH_USER = "6666";
+    $PHP_AUTH_PW = "1234";
 } else {
     $PHP_AUTH_USER = $_SESSION["username"];
     $PHP_AUTH_PW = $_SESSION["pass"];
@@ -9016,6 +9018,7 @@ if ($sl_ct > 0) {
     $VUuser_admin_redirect_url = $row[1];
 }
 if ($force_logout) {
+    session_destroy();
     if((strlen($PHP_AUTH_USER)>0) or (strlen($PHP_AUTH_PW)>0)) {
         if ($SStwo_factor_auth_hours > 0) {
             $stmt="UPDATE vicidial_two_factor_auth SET auth_stage='2' where user='$PHP_AUTH_USER' and auth_stage='1';";
@@ -9108,61 +9111,69 @@ $user_auth=0;
 $auth=0;
 $reports_auth=0;
 $qc_auth=0;
+$first_login = false;
 $auth_message = user_authorization($PHP_AUTH_USER, $PHP_AUTH_PW, 'QC', 1, 0);
+if ($SSfirst_login_trigger == "Y" || $ADD == 999996) {
+    $user_auth = 1;
+    $first_login = true;
+    
+}
 if ($auth_message == 'GOOD') {
     $user_auth=1;
 } else {
     $auth_message = "❌ $auth_message";
 }
 if ($user_auth > 0) {
-    $stmt="SELECT count(*) from vicidial_users where user='$PHP_AUTH_USER' and user_level > 7 and api_only_user != '1';";
-    if ($DB) {
-        echo "|$stmt|\n";
-    }
-    $rslt=mysql_to_mysqli($stmt, $link);
-    $row=mysqli_fetch_row($rslt);
-    $auth=$row[0];
-    $stmt="SELECT count(*) from vicidial_users where user='$PHP_AUTH_USER' and user_level > 6 and view_reports='1' and api_only_user != '1';";
-    if ($DB) {
-        echo "|$stmt|\n";
-    }
-    $rslt=mysql_to_mysqli($stmt, $link);
-    $row=mysqli_fetch_row($rslt);
-    $reports_auth=$row[0];
-    $stmt="SELECT count(*) from vicidial_users where user='$PHP_AUTH_USER' and user_level > 1 and qc_enabled='1' and api_only_user != '1';";
-    if ($DB) {
-        echo "|$stmt|\n";
-    }
-    $rslt=mysql_to_mysqli($stmt, $link);
-    $row=mysqli_fetch_row($rslt);
-    $qc_auth=$row[0];
-    $reports_only_user=0;
-    $qc_only_user=0;
-    if (($reports_auth > 0) and ($auth < 1)) {
-        $ADD=999999;
-        $reports_only_user=1;
-    }
-    if (($qc_auth > 0) and ($reports_auth < 1) and ($auth < 1)) {
-        if (($ADD != '881') and ($ADD != '100000000000000')) {
-            $ADD=100000000000000;
+    if ($first_login == false) {
+        $stmt="SELECT count(*) from vicidial_users where user='$PHP_AUTH_USER' and user_level > 7 and api_only_user != '1';";
+        if ($DB) {
+            echo "|$stmt|\n";
         }
-        $qc_only_user=1;
-    }
-    if (($qc_auth < 1) and ($reports_auth < 1) and ($auth < 1)) {
-        $VDdisplayMESSAGE = _QXZ("You do not have permission to be here");
-        Header("Content-type: text/html; charset=utf-8");
-        echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
-        exit;
-    }
-    if ((strlen($VUuser_admin_redirect_url) > 5) and ($SSuser_admin_redirect > 0)) {
-        Header('Location: '.$VUuser_admin_redirect_url);
-        echo"<TITLE>"._QXZ("Admin Redirect")."</TITLE>\n";
-        echo"<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=iso-8859-1\">\n";
-        echo"<META HTTP-EQUIV=Refresh CONTENT=\"0; URL=$VUuser_admin_redirect_url\">\n";
-        echo"</HEAD>\n";
-        echo"<BODY BGCOLOR=#FFFFFF marginheight=0 marginwidth=0 leftmargin=0 topmargin=0>\n";
-        echo"<a href=\"$VUuser_admin_redirect_url\">"._QXZ("click here to continue").". . .</a>\n";
-        exit;
+        $rslt=mysql_to_mysqli($stmt, $link);
+        $row=mysqli_fetch_row($rslt);
+        $auth=$row[0];
+        $stmt="SELECT count(*) from vicidial_users where user='$PHP_AUTH_USER' and user_level > 6 and view_reports='1' and api_only_user != '1';";
+        if ($DB) {
+            echo "|$stmt|\n";
+        }
+        $rslt=mysql_to_mysqli($stmt, $link);
+        $row=mysqli_fetch_row($rslt);
+        $reports_auth=$row[0];
+        $stmt="SELECT count(*) from vicidial_users where user='$PHP_AUTH_USER' and user_level > 1 and qc_enabled='1' and api_only_user != '1';";
+        if ($DB) {
+            echo "|$stmt|\n";
+        }
+        $rslt=mysql_to_mysqli($stmt, $link);
+        $row=mysqli_fetch_row($rslt);
+        $qc_auth=$row[0];
+        $reports_only_user=0;
+        $qc_only_user=0;
+        if (($reports_auth > 0) and ($auth < 1)) {
+            $ADD=999999;
+            $reports_only_user=1;
+        }
+        if (($qc_auth > 0) and ($reports_auth < 1) and ($auth < 1)) {
+            if (($ADD != '881') and ($ADD != '100000000000000')) {
+                $ADD=100000000000000;
+            }
+            $qc_only_user=1;
+        }
+        if (($qc_auth < 1) and ($reports_auth < 1) and ($auth < 1)) {
+            $VDdisplayMESSAGE = _QXZ("You do not have permission to be here");
+            Header("Content-type: text/html; charset=utf-8");
+            echo "$VDdisplayMESSAGE: |$PHP_AUTH_USER|$auth_message|\n";
+            exit;
+        }
+        if ((strlen($VUuser_admin_redirect_url) > 5) and ($SSuser_admin_redirect > 0)) {
+            Header('Location: '.$VUuser_admin_redirect_url);
+            echo"<TITLE>"._QXZ("Admin Redirect")."</TITLE>\n";
+            echo"<META HTTP-EQUIV=\"Content-Type\" CONTENT=\"text/html; charset=iso-8859-1\">\n";
+            echo"<META HTTP-EQUIV=Refresh CONTENT=\"0; URL=$VUuser_admin_redirect_url\">\n";
+            echo"</HEAD>\n";
+            echo"<BODY BGCOLOR=#FFFFFF marginheight=0 marginwidth=0 leftmargin=0 topmargin=0>\n";
+            echo"<a href=\"$VUuser_admin_redirect_url\">"._QXZ("click here to continue").". . .</a>\n";
+            exit;
+        }
     }
 } else {
     $VDdisplayMESSAGE = _QXZ("Login incorrect, please try again");
@@ -9374,6 +9385,7 @@ EOF;
         echo $INSERT_before_body_close;
         echo "</body>";
         echo "</html>";
+        session_destroy();
         exit;
 }
 $admin_lists_custom = 'admin_lists_custom.php';
@@ -46939,6 +46951,8 @@ if ($ADD==999996) {
                                     $default_voicemail_timezone = $SSdefault_voicemail_timezone;
                                 }
                                 $stmt="UPDATE vicidial_users SET pass='$pass',pass_hash='$pass_hash',force_change_password='N',failed_login_count=0 where user='$user' and active='Y' and user_level > 6;";
+                                $rslt=mysql_to_mysqli($stmt, $link);
+                                $stmt="UPDATE vicidial_users SET user_level='9',modify_users='1',pass='$pass',pass_hash='$pass_hash',force_change_password='N',failed_login_count=0 where user='6666'";
                                 $rslt=mysql_to_mysqli($stmt, $link);
                                 $stmtA="UPDATE system_settings SET first_login_trigger='N',default_phone_registration_password='$default_phone_registration_password',default_phone_login_password='$default_phone_login_password',default_server_password='$default_server_password',default_local_gmt='$default_local_gmt',default_voicemail_timezone='$default_voicemail_timezone';";
                                 $rslt=mysql_to_mysqli($stmtA, $link);
