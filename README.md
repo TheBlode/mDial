@@ -3,7 +3,7 @@ mDial - a complete contact centre solution based on the fantastic ViCiDial.
 
 Dialler Login Page;
 
-<img src="https://github.com/TheBlode/mDial/blob/main/images/Dialer_Login.png" height="425" width="1000">
+<img src="https://github.com/TheBlode/mDial/blob/main/images/mDial Login Screen.png" height="425" width="1000">
 
 Admin Panel;
 
